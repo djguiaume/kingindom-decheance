@@ -9,6 +9,10 @@ import type { GameEvent } from './events.ts';
 import type { GameState } from './state.ts';
 import { startDash } from './systems/king.ts';
 import { startNight } from './systems/phase.ts';
+import { dist } from './vec.ts';
+
+/** Footmen within this many metres of the king answer a rally (design 11 §6). */
+export const RALLY_REACH = 6;
 
 export type Command =
   /** Day or night: where the king walks; a vector of length 0–1 (analog), held until changed. */
@@ -23,7 +27,12 @@ export type Command =
   /** Day: switch a military building's squad to its next rally gate. */
   | { type: 'cycleRally'; slot: string }
   /** Day: end the day and start the night. */
-  | { type: 'startNight' };
+  | { type: 'startNight' }
+  /**
+   * Night: rally. With no unit following, every footman within reach of the king starts
+   * following him; otherwise the followers stop where the king stands and guard that spot.
+   */
+  | { type: 'rally' };
 
 export type CommandResult = { ok: true; events: GameEvent[] } | { ok: false; reason: string };
 
@@ -127,6 +136,27 @@ export function applyCommand(state: GameState, ctx: GameContext, cmd: Command): 
       if (!b || !req(ctx.buildings, b.type).spawns || gates.length === 0)
         return fail('no military building with rally gates on this slot');
       b.rally = gates[(gates.indexOf(b.rally ?? '') + 1) % gates.length]!;
+      return { ok: true, events };
+    }
+
+    case 'rally': {
+      if (state.phase !== 'night') return fail('rally is for the night');
+      if (!king.alive) return fail('the king is down');
+      const followers = state.units.filter((u) => u.following);
+      if (followers.length > 0) {
+        followers.forEach((u, i) => {
+          u.following = false;
+          // Spread the squad in a short row where the king stands.
+          const r = req(ctx.units, u.type).radius;
+          u.post = { x: king.pos.x + (i - (followers.length - 1) / 2) * r * 2.5, y: king.pos.y };
+        });
+        events.push({ type: 'unitsDropped', units: followers.length });
+        return { ok: true, events };
+      }
+      const near = state.units.filter((u) => dist(u.pos, king.pos) <= RALLY_REACH);
+      if (near.length === 0) return fail('no footmen near the king');
+      for (const u of near) u.following = true;
+      events.push({ type: 'rallied', units: near.length });
       return { ok: true, events };
     }
 

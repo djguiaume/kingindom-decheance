@@ -9,8 +9,8 @@
  */
 import type { TargetCategory } from '@kd/content';
 import { req, type GameContext } from '../context.ts';
-import type { EnemyState, GameState } from '../state.ts';
-import { dist, distToPolyline } from '../vec.ts';
+import type { EnemyState, GameState, UnitState } from '../state.ts';
+import { dist, distToPolyline, type Vec } from '../vec.ts';
 import {
   enemyTargets,
   gap,
@@ -47,10 +47,16 @@ export function targetingSystem(state: GameState, ctx: GameContext): void {
   const theirs = enemyTargets(state, ctx);
   for (const unit of state.units) {
     const def = req(ctx.units, unit.type);
+    // A rallied unit whose king fell stays where it is and guards that spot.
+    if (unit.following && !state.king.alive) {
+      unit.following = false;
+      unit.post = { ...unit.pos };
+    }
+    const anchor = unitAnchor(state, unit);
     const current = unit.target && theirs.find((t) => sameRef(t, unit.target!));
     // Keep a chase going until the enemy leaves the leash; otherwise pick near the post.
-    if (current && gap(unit.post, 0, current) <= def.leash) continue;
-    const inZone = theirs.filter((c) => gap(unit.post, 0, c) <= def.guardRadius);
+    if (current && gap(anchor, 0, current) <= def.leash) continue;
+    const inZone = theirs.filter((c) => gap(anchor, 0, c) <= def.guardRadius);
     unit.target = nearest(unit.pos, def.radius, Infinity, def.attack.targets, inZone)?.ref ?? null;
   }
 }
@@ -81,12 +87,14 @@ function groundTarget(state: GameState, ctx: GameContext, enemy: EnemyState, min
   // Too far from the lane (a long chase): give up and walk back first.
   if (distToPolyline(enemy.pos, lane.points) > def.leash) return null;
 
-  // Behind a standing wall is out of reach until the wall falls.
+  // Behind a standing wall is out of reach until the wall falls, except for siege engines,
+  // which lob over it.
   const gate = wallGate(state, ctx, enemy);
+  const overWalls = def.archetype === 'siege';
   const reachable = mine.filter(
     (t) =>
       distToPolyline(t.pos, lane.points) - t.radius <= def.leash &&
-      (!gate || pastGate(gate, t.pos) < 0),
+      (!gate || overWalls || pastGate(gate, t.pos) < 0),
   );
   for (const category of effectivePriority(def.targetPriority, false)) {
     const pick = nearest(
@@ -104,6 +112,11 @@ function groundTarget(state: GameState, ctx: GameContext, enemy: EnemyState, min
     return { kind: 'building' as const, id: gate.wall.id };
   }
   return null;
+}
+
+/** What a unit guards: its post, or the king while it follows him. */
+export function unitAnchor(state: GameState, unit: UnitState): Vec {
+  return unit.following ? state.king.pos : unit.post;
 }
 
 function sameRef(t: Target, ref: NonNullable<EnemyState['target']>): boolean {

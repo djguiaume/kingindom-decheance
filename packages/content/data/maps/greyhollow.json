@@ -1,7 +1,7 @@
 {
   "$schema": "../../schema/map.schema.json",
   "schemaVersion": 1,
-  "notes": "Greyhollow, prototype design 11 \u00a72 and \u00a78.3. Wall slots double as lane waypoints. Tuned after the first playtest (2026-10-13): more gold (start 75, castle 25 a dawn) and 30% more enemies per group.",
+  "notes": "Greyhollow, prototype design 11 \u00a72 and \u00a78.3. Wall slots double as lane waypoints. Tuned after the first playtest (2026-10-13): more gold (start 75, castle 25 a dawn) and 30% more enemies per group. Night 6: the warlord replaces the west brutes.",
   "id": "greyhollow",
   "name": "Greyhollow",
   "size": [64, 48],
@@ -333,6 +333,13 @@
           "interval": 1.2
         },
         {
+          "lane": "east",
+          "enemy": "catapult",
+          "count": 1,
+          "delay": 15,
+          "interval": 3
+        },
+        {
           "lane": "north",
           "enemy": "raider",
           "count": 8,
@@ -367,10 +374,10 @@
         },
         {
           "lane": "west",
-          "enemy": "brute",
-          "count": 3,
-          "delay": 8,
-          "interval": 4
+          "enemy": "warlord",
+          "count": 1,
+          "delay": 30,
+          "interval": 1
         },
         {
           "lane": "east",
@@ -385,6 +392,13 @@
           "count": 5,
           "delay": 6,
           "interval": 2
+        },
+        {
+          "lane": "east",
+          "enemy": "catapult",
+          "count": 2,
+          "delay": 10,
+          "interval": 4
         },
         {
           "lane": "north",

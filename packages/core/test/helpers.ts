@@ -66,6 +66,7 @@ export function placeEnemy(
     maxHp: def.hp,
     cooldown: 999,
     target: null,
+    abilityCooldown: 0,
     ...over,
   };
   session.state.enemies.push(enemy);

@@ -2,7 +2,7 @@
   "name": "balanced-win-seed-8",
   "why": "same plan, another seed: RNG flows through spawns",
   "replay": {
-    "contentHash": "1b226cbfd751b5",
+    "contentHash": "04a05befad5bbb",
     "config": {
       "mapId": "greyhollow",
       "weaponId": "spear",
@@ -1620,7 +1620,7 @@
         }
       },
       {
-        "tick": 3278,
+        "tick": 3314,
         "command": {
           "type": "move",
           "x": -0.67,
@@ -1628,7 +1628,7 @@
         }
       },
       {
-        "tick": 3284,
+        "tick": 3320,
         "command": {
           "type": "move",
           "x": -0.68,
@@ -1636,7 +1636,7 @@
         }
       },
       {
-        "tick": 3290,
+        "tick": 3326,
         "command": {
           "type": "move",
           "x": -0.67,
@@ -1644,7 +1644,7 @@
         }
       },
       {
-        "tick": 3296,
+        "tick": 3332,
         "command": {
           "type": "move",
           "x": -0.68,
@@ -1652,29 +1652,37 @@
         }
       },
       {
-        "tick": 3302,
+        "tick": 3338,
         "command": {
           "type": "move",
-          "x": -0.68,
+          "x": -0.7,
+          "y": -0.72
+        }
+      },
+      {
+        "tick": 3344,
+        "command": {
+          "type": "move",
+          "x": -0.67,
           "y": -0.74
         }
       },
       {
-        "tick": 3308,
+        "tick": 3350,
         "command": {
           "type": "move",
-          "x": -0.68,
-          "y": -0.74
+          "x": -0.76,
+          "y": -0.65
         }
       },
       {
-        "tick": 3308,
+        "tick": 3350,
         "command": {
           "type": "ability"
         }
       },
       {
-        "tick": 3320,
+        "tick": 3362,
         "command": {
           "type": "move",
           "x": 0,
@@ -1682,35 +1690,11 @@
         }
       },
       {
-        "tick": 3356,
-        "command": {
-          "type": "move",
-          "x": -1,
-          "y": -0.09
-        }
-      },
-      {
-        "tick": 3362,
-        "command": {
-          "type": "move",
-          "x": -1,
-          "y": -0.09
-        }
-      },
-      {
-        "tick": 3368,
-        "command": {
-          "type": "move",
-          "x": -1,
-          "y": -0.06
-        }
-      },
-      {
         "tick": 3374,
         "command": {
           "type": "move",
-          "x": -1,
-          "y": -0.03
+          "x": -0.54,
+          "y": 0.84
         }
       },
       {
@@ -1718,7 +1702,7 @@
         "command": {
           "type": "move",
           "x": -1,
-          "y": -0.02
+          "y": -0.09
         }
       },
       {
@@ -1726,7 +1710,7 @@
         "command": {
           "type": "move",
           "x": -1,
-          "y": -0.02
+          "y": -0.09
         }
       },
       {
@@ -1734,7 +1718,7 @@
         "command": {
           "type": "move",
           "x": -1,
-          "y": -0.02
+          "y": -0.09
         }
       },
       {
@@ -1742,7 +1726,7 @@
         "command": {
           "type": "move",
           "x": -1,
-          "y": 0
+          "y": -0.08
         }
       },
       {
@@ -1750,7 +1734,7 @@
         "command": {
           "type": "move",
           "x": -1,
-          "y": 0
+          "y": -0.08
         }
       },
       {
@@ -1758,27 +1742,11 @@
         "command": {
           "type": "move",
           "x": -1,
-          "y": 0
+          "y": -0.08
         }
       },
       {
         "tick": 3416,
-        "command": {
-          "type": "move",
-          "x": -0.96,
-          "y": -0.29
-        }
-      },
-      {
-        "tick": 3422,
-        "command": {
-          "type": "move",
-          "x": 0,
-          "y": 0
-        }
-      },
-      {
-        "tick": 3584,
         "command": {
           "type": "move",
           "x": -1,
@@ -1786,21 +1754,23 @@
         }
       },
       {
-        "tick": 3584,
-        "command": {
-          "type": "ability"
-        }
-      },
-      {
-        "tick": 3596,
+        "tick": 3422,
         "command": {
           "type": "move",
-          "x": 0.86,
-          "y": 0.52
+          "x": -1,
+          "y": -0.08
         }
       },
       {
-        "tick": 3602,
+        "tick": 3428,
+        "command": {
+          "type": "move",
+          "x": -1,
+          "y": -0.08
+        }
+      },
+      {
+        "tick": 3434,
         "command": {
           "type": "move",
           "x": 0,
@@ -1808,31 +1778,61 @@
         }
       },
       {
-        "tick": 3650,
+        "tick": 3572,
         "command": {
           "type": "move",
-          "x": 0.61,
-          "y": 0.79
+          "x": -0.96,
+          "y": -0.3
+        }
+      },
+      {
+        "tick": 3578,
+        "command": {
+          "type": "move",
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "tick": 3614,
+        "command": {
+          "type": "move",
+          "x": -1,
+          "y": 0.09
+        }
+      },
+      {
+        "tick": 3614,
+        "command": {
+          "type": "ability"
+        }
+      },
+      {
+        "tick": 3626,
+        "command": {
+          "type": "move",
+          "x": 0.9,
+          "y": 0.44
+        }
+      },
+      {
+        "tick": 3632,
+        "command": {
+          "type": "move",
+          "x": 0,
+          "y": 0
         }
       },
       {
         "tick": 3656,
         "command": {
           "type": "move",
-          "x": 0,
-          "y": 0
+          "x": 0.9,
+          "y": 0.44
         }
       },
       {
-        "tick": 3680,
-        "command": {
-          "type": "move",
-          "x": 0.31,
-          "y": 0.95
-        }
-      },
-      {
-        "tick": 3686,
+        "tick": 3662,
         "command": {
           "type": "move",
           "x": 0,
@@ -1840,15 +1840,15 @@
         }
       },
       {
-        "tick": 3710,
+        "tick": 3692,
         "command": {
           "type": "move",
-          "x": 0.16,
-          "y": 0.99
+          "x": 0.46,
+          "y": 0.89
         }
       },
       {
-        "tick": 3716,
+        "tick": 3698,
         "command": {
           "type": "move",
           "x": 0,
@@ -1856,26 +1856,34 @@
         }
       },
       {
-        "tick": 3734,
+        "tick": 3722,
         "command": {
           "type": "move",
-          "x": 0.1,
+          "x": 0.23,
+          "y": 0.97
+        }
+      },
+      {
+        "tick": 3728,
+        "command": {
+          "type": "move",
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "tick": 3746,
+        "command": {
+          "type": "move",
+          "x": 0.07,
           "y": 1
-        }
-      },
-      {
-        "tick": 3740,
-        "command": {
-          "type": "move",
-          "x": 0,
-          "y": 0
         }
       },
       {
         "tick": 3752,
         "command": {
           "type": "move",
-          "x": 0.03,
+          "x": 0.07,
           "y": 1
         }
       },
@@ -1888,15 +1896,15 @@
         }
       },
       {
-        "tick": 3764,
+        "tick": 3776,
         "command": {
           "type": "move",
-          "x": 0.02,
+          "x": 0.04,
           "y": 1
         }
       },
       {
-        "tick": 3770,
+        "tick": 3782,
         "command": {
           "type": "move",
           "x": 0,
@@ -1904,15 +1912,15 @@
         }
       },
       {
-        "tick": 3788,
+        "tick": 3800,
         "command": {
           "type": "move",
-          "x": 0.02,
+          "x": 0.03,
           "y": 1
         }
       },
       {
-        "tick": 3794,
+        "tick": 3806,
         "command": {
           "type": "move",
           "x": 0,
@@ -1920,21 +1928,61 @@
         }
       },
       {
-        "tick": 3824,
+        "tick": 3848,
         "command": {
           "type": "move",
-          "x": 0.01,
+          "x": 0.04,
           "y": 1
         }
       },
       {
-        "tick": 3824,
+        "tick": 3854,
+        "command": {
+          "type": "move",
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "tick": 4016,
+        "command": {
+          "type": "move",
+          "x": -0.04,
+          "y": 1
+        }
+      },
+      {
+        "tick": 4016,
         "command": {
           "type": "ability"
         }
       },
       {
-        "tick": 3836,
+        "tick": 4028,
+        "command": {
+          "type": "move",
+          "x": -0.96,
+          "y": -0.28
+        }
+      },
+      {
+        "tick": 4034,
+        "command": {
+          "type": "move",
+          "x": -0.96,
+          "y": -0.29
+        }
+      },
+      {
+        "tick": 4040,
+        "command": {
+          "type": "move",
+          "x": -0.96,
+          "y": -0.28
+        }
+      },
+      {
+        "tick": 4046,
         "command": {
           "type": "move",
           "x": 0,
@@ -1942,55 +1990,7 @@
         }
       },
       {
-        "tick": 3956,
-        "command": {
-          "type": "move",
-          "x": -1,
-          "y": 0.09
-        }
-      },
-      {
-        "tick": 3962,
-        "command": {
-          "type": "move",
-          "x": -1,
-          "y": 0.08
-        }
-      },
-      {
-        "tick": 3968,
-        "command": {
-          "type": "move",
-          "x": -1,
-          "y": 0.06
-        }
-      },
-      {
-        "tick": 3974,
-        "command": {
-          "type": "move",
-          "x": -1,
-          "y": 0.06
-        }
-      },
-      {
-        "tick": 3980,
-        "command": {
-          "type": "move",
-          "x": -0.97,
-          "y": 0.23
-        }
-      },
-      {
-        "tick": 3986,
-        "command": {
-          "type": "move",
-          "x": 0,
-          "y": 0
-        }
-      },
-      {
-        "tick": 4013,
+        "tick": 4077,
         "command": {
           "type": "buy",
           "slot": "m2",
@@ -1998,7 +1998,7 @@
         }
       },
       {
-        "tick": 4013,
+        "tick": 4077,
         "command": {
           "type": "buy",
           "slot": "h2",
@@ -2006,7 +2006,7 @@
         }
       },
       {
-        "tick": 4013,
+        "tick": 4077,
         "command": {
           "type": "buy",
           "slot": "ww",
@@ -2014,13 +2014,37 @@
         }
       },
       {
-        "tick": 4013,
+        "tick": 4077,
         "command": {
           "type": "startNight"
         }
       },
       {
-        "tick": 4019,
+        "tick": 4083,
+        "command": {
+          "type": "move",
+          "x": -0.99,
+          "y": 0.1
+        }
+      },
+      {
+        "tick": 4089,
+        "command": {
+          "type": "move",
+          "x": -0.99,
+          "y": 0.11
+        }
+      },
+      {
+        "tick": 4095,
+        "command": {
+          "type": "move",
+          "x": -0.99,
+          "y": 0.11
+        }
+      },
+      {
+        "tick": 4101,
         "command": {
           "type": "move",
           "x": -0.99,
@@ -2028,7 +2052,7 @@
         }
       },
       {
-        "tick": 4025,
+        "tick": 4107,
         "command": {
           "type": "move",
           "x": -0.99,
@@ -2036,7 +2060,7 @@
         }
       },
       {
-        "tick": 4031,
+        "tick": 4113,
         "command": {
           "type": "move",
           "x": -0.99,
@@ -2044,7 +2068,7 @@
         }
       },
       {
-        "tick": 4037,
+        "tick": 4119,
         "command": {
           "type": "move",
           "x": -0.99,
@@ -2052,7 +2076,7 @@
         }
       },
       {
-        "tick": 4043,
+        "tick": 4125,
         "command": {
           "type": "move",
           "x": -0.99,
@@ -2060,7 +2084,7 @@
         }
       },
       {
-        "tick": 4049,
+        "tick": 4131,
         "command": {
           "type": "move",
           "x": -0.99,
@@ -2068,15 +2092,7 @@
         }
       },
       {
-        "tick": 4055,
-        "command": {
-          "type": "move",
-          "x": -0.99,
-          "y": 0.16
-        }
-      },
-      {
-        "tick": 4061,
+        "tick": 4137,
         "command": {
           "type": "move",
           "x": -0.99,
@@ -2084,7 +2100,7 @@
         }
       },
       {
-        "tick": 4067,
+        "tick": 4143,
         "command": {
           "type": "move",
           "x": -0.98,
@@ -2092,29 +2108,29 @@
         }
       },
       {
-        "tick": 4073,
+        "tick": 4149,
         "command": {
           "type": "move",
           "x": -0.98,
-          "y": 0.2
+          "y": 0.21
         }
       },
       {
-        "tick": 4079,
+        "tick": 4155,
         "command": {
           "type": "move",
-          "x": -0.98,
-          "y": 0.22
+          "x": -0.97,
+          "y": 0.24
         }
       },
       {
-        "tick": 4079,
+        "tick": 4155,
         "command": {
           "type": "ability"
         }
       },
       {
-        "tick": 4091,
+        "tick": 4167,
         "command": {
           "type": "move",
           "x": 0,
@@ -2122,77 +2138,7 @@
         }
       },
       {
-        "tick": 4649,
-        "command": {
-          "type": "move",
-          "x": 1,
-          "y": -0.03
-        }
-      },
-      {
-        "tick": 4649,
-        "command": {
-          "type": "ability"
-        }
-      },
-      {
-        "tick": 4661,
-        "command": {
-          "type": "move",
-          "x": 0,
-          "y": 0
-        }
-      },
-      {
-        "tick": 4793,
-        "command": {
-          "type": "move",
-          "x": 0.95,
-          "y": -0.33
-        }
-      },
-      {
-        "tick": 4799,
-        "command": {
-          "type": "move",
-          "x": 0,
-          "y": 0
-        }
-      },
-      {
-        "tick": 4961,
-        "command": {
-          "type": "move",
-          "x": 0.73,
-          "y": -0.68
-        }
-      },
-      {
-        "tick": 4967,
-        "command": {
-          "type": "move",
-          "x": 0.74,
-          "y": -0.67
-        }
-      },
-      {
-        "tick": 4973,
-        "command": {
-          "type": "move",
-          "x": 0.75,
-          "y": -0.67
-        }
-      },
-      {
-        "tick": 4979,
-        "command": {
-          "type": "move",
-          "x": 0.75,
-          "y": -0.66
-        }
-      },
-      {
-        "tick": 4985,
+        "tick": 4581,
         "command": {
           "type": "move",
           "x": 0.76,
@@ -2200,85 +2146,181 @@
         }
       },
       {
-        "tick": 4991,
+        "tick": 4587,
         "command": {
           "type": "move",
-          "x": 0.77,
-          "y": -0.64
+          "x": 0.76,
+          "y": -0.65
         }
       },
       {
-        "tick": 4997,
+        "tick": 4593,
         "command": {
           "type": "move",
-          "x": 0.78,
-          "y": -0.62
+          "x": 0.76,
+          "y": -0.65
         }
       },
       {
-        "tick": 5003,
+        "tick": 4599,
         "command": {
           "type": "move",
-          "x": 0.8,
-          "y": -0.6
+          "x": 0.76,
+          "y": -0.65
         }
       },
       {
-        "tick": 5009,
+        "tick": 4605,
         "command": {
           "type": "move",
-          "x": 0.81,
-          "y": -0.59
+          "x": 0.76,
+          "y": -0.65
         }
       },
       {
-        "tick": 5015,
+        "tick": 4611,
         "command": {
           "type": "move",
-          "x": 0.83,
-          "y": -0.56
+          "x": 0.76,
+          "y": -0.65
         }
       },
       {
-        "tick": 5021,
+        "tick": 4617,
         "command": {
           "type": "move",
-          "x": 0.84,
-          "y": -0.54
+          "x": 0.76,
+          "y": -0.65
         }
       },
       {
-        "tick": 5027,
+        "tick": 4623,
         "command": {
           "type": "move",
-          "x": 0.86,
-          "y": -0.51
+          "x": 0.76,
+          "y": -0.65
         }
       },
       {
-        "tick": 5033,
+        "tick": 4629,
         "command": {
           "type": "move",
-          "x": 0.88,
-          "y": -0.47
+          "x": 0.76,
+          "y": -0.65
         }
       },
       {
-        "tick": 5039,
+        "tick": 4635,
         "command": {
           "type": "move",
-          "x": 0.91,
-          "y": -0.41
+          "x": 0.76,
+          "y": -0.65
         }
       },
       {
-        "tick": 5039,
+        "tick": 4641,
+        "command": {
+          "type": "move",
+          "x": 0.67,
+          "y": -0.74
+        }
+      },
+      {
+        "tick": 4647,
+        "command": {
+          "type": "move",
+          "x": 0.67,
+          "y": -0.74
+        }
+      },
+      {
+        "tick": 4653,
+        "command": {
+          "type": "move",
+          "x": 0.67,
+          "y": -0.74
+        }
+      },
+      {
+        "tick": 4659,
+        "command": {
+          "type": "move",
+          "x": 0.67,
+          "y": -0.74
+        }
+      },
+      {
+        "tick": 4665,
+        "command": {
+          "type": "move",
+          "x": 0.67,
+          "y": -0.74
+        }
+      },
+      {
+        "tick": 4671,
+        "command": {
+          "type": "move",
+          "x": 0.67,
+          "y": -0.74
+        }
+      },
+      {
+        "tick": 4677,
+        "command": {
+          "type": "move",
+          "x": 0.67,
+          "y": -0.74
+        }
+      },
+      {
+        "tick": 4683,
+        "command": {
+          "type": "move",
+          "x": 0.67,
+          "y": -0.74
+        }
+      },
+      {
+        "tick": 4689,
+        "command": {
+          "type": "move",
+          "x": 0.67,
+          "y": -0.74
+        }
+      },
+      {
+        "tick": 4695,
+        "command": {
+          "type": "move",
+          "x": 0.67,
+          "y": -0.74
+        }
+      },
+      {
+        "tick": 4701,
+        "command": {
+          "type": "move",
+          "x": 0.67,
+          "y": -0.74
+        }
+      },
+      {
+        "tick": 4707,
+        "command": {
+          "type": "move",
+          "x": 0.67,
+          "y": -0.74
+        }
+      },
+      {
+        "tick": 4707,
         "command": {
           "type": "ability"
         }
       },
       {
-        "tick": 5051,
+        "tick": 4719,
         "command": {
           "type": "move",
           "x": 0,
@@ -2286,15 +2328,15 @@
         }
       },
       {
-        "tick": 5153,
+        "tick": 4869,
         "command": {
           "type": "move",
-          "x": -0.4,
-          "y": 0.92
+          "x": 0.44,
+          "y": 0.9
         }
       },
       {
-        "tick": 5159,
+        "tick": 4875,
         "command": {
           "type": "move",
           "x": 0,
@@ -2302,15 +2344,15 @@
         }
       },
       {
-        "tick": 5183,
+        "tick": 4905,
         "command": {
           "type": "move",
-          "x": -0.2,
-          "y": 0.98
+          "x": 0.54,
+          "y": 0.84
         }
       },
       {
-        "tick": 5189,
+        "tick": 4911,
         "command": {
           "type": "move",
           "x": 0,
@@ -2318,109 +2360,85 @@
         }
       },
       {
-        "tick": 5207,
+        "tick": 5061,
         "command": {
           "type": "move",
-          "x": -0.11,
+          "x": 0.12,
           "y": 0.99
         }
       },
       {
-        "tick": 5213,
+        "tick": 5067,
         "command": {
           "type": "move",
-          "x": 0,
-          "y": 0
-        }
-      },
-      {
-        "tick": 5249,
-        "command": {
-          "type": "move",
-          "x": 0.06,
+          "x": 0.07,
           "y": 1
         }
       },
       {
-        "tick": 5255,
+        "tick": 5073,
         "command": {
           "type": "move",
-          "x": 0,
-          "y": 0
+          "x": 0.01,
+          "y": 1
         }
       },
       {
-        "tick": 5537,
+        "tick": 5079,
         "command": {
           "type": "move",
-          "x": -1,
-          "y": -0.08
+          "x": -0.06,
+          "y": 1
         }
       },
       {
-        "tick": 5537,
+        "tick": 5085,
+        "command": {
+          "type": "move",
+          "x": -0.13,
+          "y": 0.99
+        }
+      },
+      {
+        "tick": 5091,
+        "command": {
+          "type": "move",
+          "x": -0.22,
+          "y": 0.98
+        }
+      },
+      {
+        "tick": 5097,
+        "command": {
+          "type": "move",
+          "x": -0.32,
+          "y": 0.95
+        }
+      },
+      {
+        "tick": 5097,
         "command": {
           "type": "ability"
         }
       },
       {
-        "tick": 5549,
+        "tick": 5109,
         "command": {
           "type": "move",
-          "x": 0.33,
-          "y": 0.94
+          "x": 0.92,
+          "y": 0.39
         }
       },
       {
-        "tick": 5555,
+        "tick": 5115,
         "command": {
           "type": "move",
-          "x": 0.36,
-          "y": 0.93
+          "x": 0.92,
+          "y": 0.39
         }
       },
       {
-        "tick": 5561,
-        "command": {
-          "type": "move",
-          "x": 0,
-          "y": 0
-        }
-      },
-      {
-        "tick": 5579,
-        "command": {
-          "type": "move",
-          "x": 0.71,
-          "y": -0.7
-        }
-      },
-      {
-        "tick": 5585,
-        "command": {
-          "type": "move",
-          "x": 0.74,
-          "y": -0.67
-        }
-      },
-      {
-        "tick": 5591,
-        "command": {
-          "type": "move",
-          "x": 0.74,
-          "y": -0.67
-        }
-      },
-      {
-        "tick": 5597,
-        "command": {
-          "type": "move",
-          "x": 0.74,
-          "y": -0.67
-        }
-      },
-      {
-        "tick": 5603,
+        "tick": 5121,
         "command": {
           "type": "move",
           "x": 0,
@@ -2428,31 +2446,23 @@
         }
       },
       {
-        "tick": 5615,
+        "tick": 5175,
         "command": {
           "type": "move",
-          "x": 0.58,
-          "y": 0.82
+          "x": 0.52,
+          "y": 0.86
         }
       },
       {
-        "tick": 5621,
+        "tick": 5181,
         "command": {
           "type": "move",
-          "x": 0.58,
-          "y": 0.82
+          "x": 0.52,
+          "y": 0.86
         }
       },
       {
-        "tick": 5627,
-        "command": {
-          "type": "move",
-          "x": 0.58,
-          "y": 0.82
-        }
-      },
-      {
-        "tick": 5633,
+        "tick": 5187,
         "command": {
           "type": "move",
           "x": 0,
@@ -2460,31 +2470,15 @@
         }
       },
       {
-        "tick": 5669,
+        "tick": 5223,
         "command": {
           "type": "move",
-          "x": 0.36,
-          "y": 0.93
+          "x": 0.46,
+          "y": 0.89
         }
       },
       {
-        "tick": 5675,
-        "command": {
-          "type": "move",
-          "x": 0,
-          "y": 0
-        }
-      },
-      {
-        "tick": 5723,
-        "command": {
-          "type": "move",
-          "x": 0.13,
-          "y": 0.99
-        }
-      },
-      {
-        "tick": 5729,
+        "tick": 5229,
         "command": {
           "type": "move",
           "x": 0,
@@ -2492,23 +2486,243 @@
         }
       },
       {
-        "tick": 5759,
+        "tick": 5283,
         "command": {
           "type": "move",
-          "x": 1,
-          "y": 0.05
+          "x": 0.99,
+          "y": -0.11
         }
       },
       {
-        "tick": 5765,
+        "tick": 5289,
         "command": {
           "type": "move",
-          "x": 1,
-          "y": 0.05
+          "x": 0,
+          "y": 0
         }
       },
       {
-        "tick": 5771,
+        "tick": 5319,
+        "command": {
+          "type": "move",
+          "x": 0.99,
+          "y": -0.13
+        }
+      },
+      {
+        "tick": 5325,
+        "command": {
+          "type": "move",
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "tick": 5355,
+        "command": {
+          "type": "move",
+          "x": 0.87,
+          "y": -0.5
+        }
+      },
+      {
+        "tick": 5361,
+        "command": {
+          "type": "move",
+          "x": 0.87,
+          "y": -0.5
+        }
+      },
+      {
+        "tick": 5361,
+        "command": {
+          "type": "ability"
+        }
+      },
+      {
+        "tick": 5373,
+        "command": {
+          "type": "move",
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "tick": 5451,
+        "command": {
+          "type": "move",
+          "x": -1,
+          "y": -0.03
+        }
+      },
+      {
+        "tick": 5457,
+        "command": {
+          "type": "move",
+          "x": -1,
+          "y": -0.03
+        }
+      },
+      {
+        "tick": 5463,
+        "command": {
+          "type": "move",
+          "x": -1,
+          "y": -0.03
+        }
+      },
+      {
+        "tick": 5469,
+        "command": {
+          "type": "move",
+          "x": -1,
+          "y": -0.03
+        }
+      },
+      {
+        "tick": 5475,
+        "command": {
+          "type": "move",
+          "x": -1,
+          "y": -0.03
+        }
+      },
+      {
+        "tick": 5481,
+        "command": {
+          "type": "move",
+          "x": -1,
+          "y": -0.03
+        }
+      },
+      {
+        "tick": 5487,
+        "command": {
+          "type": "move",
+          "x": -1,
+          "y": -0.03
+        }
+      },
+      {
+        "tick": 5493,
+        "command": {
+          "type": "move",
+          "x": -1,
+          "y": -0.03
+        }
+      },
+      {
+        "tick": 5499,
+        "command": {
+          "type": "move",
+          "x": -1,
+          "y": -0.04
+        }
+      },
+      {
+        "tick": 5505,
+        "command": {
+          "type": "move",
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "tick": 5541,
+        "command": {
+          "type": "move",
+          "x": -0.28,
+          "y": 0.96
+        }
+      },
+      {
+        "tick": 5547,
+        "command": {
+          "type": "move",
+          "x": -0.95,
+          "y": 0.31
+        }
+      },
+      {
+        "tick": 5553,
+        "command": {
+          "type": "move",
+          "x": -0.95,
+          "y": 0.31
+        }
+      },
+      {
+        "tick": 5559,
+        "command": {
+          "type": "move",
+          "x": -0.95,
+          "y": 0.31
+        }
+      },
+      {
+        "tick": 5565,
+        "command": {
+          "type": "move",
+          "x": -0.95,
+          "y": 0.31
+        }
+      },
+      {
+        "tick": 5571,
+        "command": {
+          "type": "move",
+          "x": -0.95,
+          "y": 0.31
+        }
+      },
+      {
+        "tick": 5577,
+        "command": {
+          "type": "move",
+          "x": -0.95,
+          "y": 0.3
+        }
+      },
+      {
+        "tick": 5583,
+        "command": {
+          "type": "move",
+          "x": -0.95,
+          "y": 0.31
+        }
+      },
+      {
+        "tick": 5589,
+        "command": {
+          "type": "move",
+          "x": -0.95,
+          "y": 0.3
+        }
+      },
+      {
+        "tick": 5595,
+        "command": {
+          "type": "move",
+          "x": -0.95,
+          "y": 0.3
+        }
+      },
+      {
+        "tick": 5601,
+        "command": {
+          "type": "move",
+          "x": -0.95,
+          "y": 0.31
+        }
+      },
+      {
+        "tick": 5601,
+        "command": {
+          "type": "ability"
+        }
+      },
+      {
+        "tick": 5613,
         "command": {
           "type": "move",
           "x": 0,
@@ -2518,7 +2732,7 @@
     ]
   },
   "expected": {
-    "contentHash": "1b226cbfd751b5",
+    "contentHash": "04a05befad5bbb",
     "policy": "balanced",
     "config": {
       "mapId": "greyhollow",
@@ -2527,10 +2741,24 @@
     },
     "outcome": "won",
     "nightReached": 6,
-    "goldPerNight": [45, 55, 65, 65, 75, 70],
-    "buildingsLostPerNight": [0, 0, 0, 2, 5, 9],
-    "enemiesKilled": 172,
-    "ticks": 5794,
-    "finalHash": "011ca49ec6d470"
+    "goldPerNight": [
+      45,
+      55,
+      65,
+      65,
+      75,
+      80
+    ],
+    "buildingsLostPerNight": [
+      0,
+      0,
+      0,
+      2,
+      5,
+      6
+    ],
+    "enemiesKilled": 173,
+    "ticks": 6410,
+    "finalHash": "140fc16284a89d"
   }
 }

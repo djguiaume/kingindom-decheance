@@ -61,6 +61,7 @@ function play(
         const [x, y] = script.moves[i++ % script.moves.length]!;
         session.submit({ type: 'move', x, y });
         if (x !== 0 && y !== 0) session.submit({ type: 'ability' });
+        if (x === 0 && y !== 0) session.submit({ type: 'rally' });
       }
       const events = session.step();
       eventLog = cyrb53(eventLog + canonicalJson(events));

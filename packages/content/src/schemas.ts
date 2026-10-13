@@ -115,6 +115,17 @@ export const Enemy = z.object({
   leash: Positive.default(5),
   attack: Attack,
   targetPriority: z.array(TargetCategory).min(1),
+  /** A ground enemy's own ability; only the boss's stomp exists so far. */
+  ability: z
+    .object({
+      id: Id,
+      kind: z.literal('stomp'),
+      /** Everyone of the player's side (units and king) within this many metres is hit. */
+      radius: Positive,
+      damage: Positive,
+      cooldown: Positive,
+    })
+    .optional(),
 });
 
 /** The king's active ability. Only dashes exist so far. */

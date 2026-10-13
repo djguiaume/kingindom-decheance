@@ -15,6 +15,9 @@ export type GameEvent =
   | { type: 'killed'; target: Ref }
   | { type: 'buildingDestroyed'; id: number; slot: string }
   | { type: 'kingRespawned' }
+  | { type: 'stomp'; enemy: number; hits: number }
+  | { type: 'rallied'; units: number }
+  | { type: 'unitsDropped'; units: number }
   | { type: 'dawn'; night: number; income: number }
   | { type: 'won' }
   | { type: 'lost' };

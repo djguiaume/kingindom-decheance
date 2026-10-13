@@ -2,7 +2,7 @@
   "name": "king-only",
   "why": "no buildings: the king and the castle alone fall on night 5",
   "replay": {
-    "contentHash": "1b226cbfd751b5",
+    "contentHash": "04a05befad5bbb",
     "config": {
       "mapId": "greyhollow",
       "weaponId": "spear",
@@ -1592,41 +1592,11 @@
           "x": 0,
           "y": 0
         }
-      },
-      {
-        "tick": 3738,
-        "command": {
-          "type": "move",
-          "x": 0.88,
-          "y": -0.47
-        }
-      },
-      {
-        "tick": 3738,
-        "command": {
-          "type": "ability"
-        }
-      },
-      {
-        "tick": 3750,
-        "command": {
-          "type": "move",
-          "x": -0.22,
-          "y": 0.98
-        }
-      },
-      {
-        "tick": 3756,
-        "command": {
-          "type": "move",
-          "x": 0,
-          "y": 0
-        }
       }
     ]
   },
   "expected": {
-    "contentHash": "1b226cbfd751b5",
+    "contentHash": "04a05befad5bbb",
     "policy": "king-only",
     "config": {
       "mapId": "greyhollow",
@@ -1635,10 +1605,22 @@
     },
     "outcome": "lost",
     "nightReached": 5,
-    "goldPerNight": [25, 25, 25, 25, 0],
-    "buildingsLostPerNight": [0, 0, 0, 0, 0],
-    "enemiesKilled": 102,
-    "ticks": 3758,
-    "finalHash": "136ae8f60f89dd"
+    "goldPerNight": [
+      25,
+      25,
+      25,
+      25,
+      0
+    ],
+    "buildingsLostPerNight": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "enemiesKilled": 101,
+    "ticks": 3742,
+    "finalHash": "0f68e919b7b826"
   }
 }

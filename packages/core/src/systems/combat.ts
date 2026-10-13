@@ -176,8 +176,36 @@ function strike(
 }
 
 function damageFor(atk: Attack, target: Target): number {
-  const bonus = target.archetype ? atk.bonus[target.archetype] : undefined;
+  const kind = target.archetype;
+  // A boss counts as a tank for counters (design 11 §7) unless a bonus names bosses directly.
+  const bonus = kind
+    ? (atk.bonus[kind] ?? (kind === 'boss' ? atk.bonus.tank : undefined))
+    : undefined;
   return atk.damage * (bonus ?? 1);
+}
+
+/**
+ * Enemy abilities: the boss's stomp hits every unit and the king within its radius. It waits
+ * for someone to be in reach, then cools down.
+ */
+export function stompSystem(state: GameState, ctx: GameContext, events: GameEvent[]): void {
+  for (const e of state.enemies) {
+    const ability = req(ctx.enemies, e.type).ability;
+    if (!ability || e.hp <= 0) continue;
+    if (e.abilityCooldown > 0) {
+      e.abilityCooldown--;
+      continue;
+    }
+    const inReach = playerTargets(state, ctx).filter(
+      (t) =>
+        (t.ref.kind === 'unit' || t.ref.kind === 'king') &&
+        dist(e.pos, t.pos) - t.radius <= ability.radius,
+    );
+    if (inReach.length === 0) continue;
+    for (const t of inReach) hit(state, { kind: 'enemy', id: e.id }, t, ability.damage, events);
+    e.abilityCooldown = secondsToTicks(ability.cooldown, 1);
+    events.push({ type: 'stomp', enemy: e.id, hits: inReach.length });
+  }
 }
 
 export function hit(
