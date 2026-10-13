@@ -24,7 +24,15 @@ const Meta = {
 export const TargetLayer = z.enum(['ground', 'air']);
 
 /** What an enemy may choose to attack, in priority order (08 §5 `target_priority`). */
-export const TargetCategory = z.enum(['wall', 'eco', 'building', 'unit', 'king', 'castle']);
+export const TargetCategory = z.enum([
+  'wall',
+  'eco',
+  'tower',
+  'building',
+  'unit',
+  'king',
+  'castle',
+]);
 
 export const Attack = z.object({
   damage: Positive,
@@ -33,6 +41,15 @@ export const Attack = z.object({
   range: Positive,
   /** Splash radius around the target; 0 = single target. */
   aoe: NonNegative.default(0),
+  /** How many enemies one attack hits (the nearest ones in range). */
+  maxTargets: z.number().int().positive().default(1),
+  /**
+   * Extra targets must lie within this cone (degrees) around the direction of the first one.
+   * 360 = any direction.
+   */
+  arc: z.number().positive().max(360).default(360),
+  /** Damage multiplier per enemy archetype, e.g. { "tank": 1.6 } (08 §3.2 counters). */
+  bonus: z.record(z.string(), Positive).default({}),
   targets: z.array(TargetLayer).min(1),
 });
 
@@ -65,8 +82,10 @@ export const Unit = z.object({
   hp: Positive,
   speed: Positive,
   radius: Positive.default(0.3),
-  /** Distance from its post at which the unit notices an enemy. */
-  aggroRange: Positive,
+  /** The unit engages enemies within this distance of its post (rally gate). */
+  guardRadius: Positive,
+  /** It gives up a chase beyond this distance from its post and walks back. */
+  leash: Positive,
   attack: Attack,
 });
 
@@ -88,21 +107,53 @@ export const Enemy = z.object({
   hp: Positive,
   speed: Positive,
   radius: Positive.default(0.3),
+  /** Flyers ignore lanes and walls and fly straight to their target. */
   flying: z.boolean().default(false),
-  /** Distance at which the enemy leaves its lane to go for a target. */
-  aggroRange: Positive,
+  /** Distance at which a ground enemy leaves its lane to go for a target. */
+  aggroRange: Positive.default(3),
+  /** A ground enemy never goes for a target farther than this from its lane. */
+  leash: Positive.default(5),
   attack: Attack,
   targetPriority: z.array(TargetCategory).min(1),
 });
 
+/** The king's active ability. Only dashes exist so far. */
+export const Ability = z.object({
+  id: Id,
+  name: z.string(),
+  kind: z.literal('dash'),
+  /** Metres covered by the dash. */
+  distance: Positive,
+  /** Seconds the dash lasts. */
+  duration: Positive,
+  /** Damage dealt once to every enemy the king touches during the dash. */
+  damage: NonNegative,
+  cooldown: Positive,
+});
+
+/**
+ * A king weapon. The run's weapon is chosen in RunConfig (later from a starter or bonus pick),
+ * so adding a weapon means adding an entry here, never changing king code.
+ */
 export const Weapon = z.object({
   id: Id,
   name: z.string(),
+  attack: Attack,
+  ability: Ability.optional(),
+});
+
+/** King settings shared by every weapon. */
+export const KingSettings = z.object({
+  ...Meta,
   hp: Positive,
   speed: Positive,
-  radius: Positive.default(0.4),
+  radius: Positive.default(0.5),
+  /** HP per second regained after `regenDelay` seconds without taking damage. */
+  regen: NonNegative.default(0),
+  regenDelay: NonNegative.default(0),
   respawnSeconds: NonNegative,
-  attack: Attack,
+  /** How close the king must stand to a slot to build there (used by the input layer). */
+  buildReach: Positive,
 });
 
 export const MapNode = z.object({
@@ -112,14 +163,19 @@ export const MapNode = z.object({
   slot: z
     .object({
       options: z.array(Id).min(1),
+      /** For military slots: rally gate node ids the squad can guard, the first is the default. */
+      rally: z.array(Id).optional(),
     })
     .optional(),
 });
 
 export const Lane = z.object({
   id: Id,
-  /** Node ids from spawn to castle, in walking order. */
-  path: z.array(Id).min(2),
+  /**
+   * Node ids from spawn to castle, in walking order; the first is the spawn. A wall slot on the
+   * path blocks the lane while its wall stands. Air lanes only need the spawn node.
+   */
+  path: z.array(Id).min(1),
   air: z.boolean().default(false),
 });
 
@@ -142,9 +198,18 @@ export const GameMap = z.object({
   ...Meta,
   id: Id,
   name: z.string(),
+  /** Width and height of the playable area in metres; the king stays inside it. */
+  size: Vec2,
   nights: z.number().int().positive(),
   startingGold: NonNegative,
-  castle: z.object({ node: Id, hp: Positive, radius: Positive.default(1) }),
+  castle: z.object({
+    node: Id,
+    hp: Positive,
+    radius: Positive.default(1),
+    /** Gold paid at every dawn while the castle stands. */
+    income: NonNegative.default(0),
+    attack: Attack.optional(),
+  }),
   /** Where the king appears at the start of each night and after respawning. */
   kingSpawn: Id,
   nodes: z.array(MapNode).min(1),
@@ -164,7 +229,10 @@ export type BuildingClass = z.infer<typeof BuildingClass>;
 export type Building = z.infer<typeof Building>;
 export type Unit = z.infer<typeof Unit>;
 export type Enemy = z.infer<typeof Enemy>;
+export type EnemyArchetype = z.infer<typeof EnemyArchetype>;
 export type Weapon = z.infer<typeof Weapon>;
+export type Ability = z.infer<typeof Ability>;
+export type KingSettings = z.infer<typeof KingSettings>;
 export type MapNode = z.infer<typeof MapNode>;
 export type Lane = z.infer<typeof Lane>;
 export type WaveGroup = z.infer<typeof WaveGroup>;
@@ -176,6 +244,7 @@ export interface ContentBundle {
   units: Unit[];
   enemies: Enemy[];
   weapons: Weapon[];
+  king: KingSettings;
   maps: GameMap[];
   /** Stable hash of the validated content, recorded in every run (ADR-006). */
   hash: string;
@@ -187,5 +256,6 @@ export interface RawContent {
   units: unknown;
   enemies: unknown;
   weapons: unknown;
+  king: unknown;
   maps: unknown[];
 }

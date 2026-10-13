@@ -9,6 +9,7 @@ import {
   BuildingCatalog,
   EnemyCatalog,
   GameMap,
+  KingSettings,
   UnitCatalog,
   WeaponCatalog,
   type ContentBundle,
@@ -43,6 +44,7 @@ export function loadContent(raw: RawContent): LoadResult {
   const units = parse(UnitCatalog, raw.units, 'units.json');
   const enemies = parse(EnemyCatalog, raw.enemies, 'enemies.json');
   const weapons = parse(WeaponCatalog, raw.weapons, 'weapons.json');
+  const king = parse(KingSettings, raw.king, 'king.json');
   const maps = raw.maps.map((m, i) => {
     const id =
       m !== null && typeof m === 'object' && 'id' in m && typeof m.id === 'string'
@@ -51,7 +53,7 @@ export function loadContent(raw: RawContent): LoadResult {
     return parse(GameMap, m, `maps/${id}.json`);
   });
 
-  if (errors.length > 0 || !buildings || !units || !enemies || !weapons) {
+  if (errors.length > 0 || !buildings || !units || !enemies || !weapons || !king) {
     return { ok: false, errors };
   }
 
@@ -60,6 +62,7 @@ export function loadContent(raw: RawContent): LoadResult {
     units: units.units,
     enemies: enemies.enemies,
     weapons: weapons.weapons,
+    king,
     maps: maps.filter((m) => m !== undefined),
   };
   errors.push(...checkSemantics(bundle));
@@ -127,6 +130,18 @@ export function checkSemantics(bundle: Omit<ContentBundle, 'hash'>): ContentErro
     if (b.class === 'military' && !b.spawns)
       err('buildings.json', `buildings.${i}`, 'military buildings must declare "spawns"');
   });
+  // An upgrade-only building repeats its upgrade edge's cost: the edge is authoritative.
+  bundle.buildings.forEach((b) =>
+    b.upgrades.forEach((u, j) => {
+      const target = bundle.buildings.find((x) => x.id === u.to);
+      if (target && target.cost !== u.cost)
+        err(
+          'buildings.json',
+          `buildings.${bundle.buildings.indexOf(b)}.upgrades.${j}.cost`,
+          `upgrade cost ${u.cost} differs from "${u.to}" cost ${target.cost}`,
+        );
+    }),
+  );
   const visiting = new Set<string>();
   const done = new Set<string>();
   const visit = (id: string): boolean => {
@@ -157,12 +172,18 @@ export function checkSemantics(bundle: Omit<ContentBundle, 'hash'>): ContentErro
       err(file, 'castle.node', 'the castle node cannot also be a building slot');
     if (!nodeIds.has(map.kingSpawn)) err(file, 'kingSpawn', `unknown node "${map.kingSpawn}"`);
 
-    map.nodes.forEach((n, i) =>
+    map.nodes.forEach((n, i) => {
       n.slot?.options.forEach((o, j) => {
         if (!buildingIds.has(o))
           err(file, `nodes.${i}.slot.options.${j}`, `unknown building "${o}"`);
-      }),
-    );
+      });
+      n.slot?.rally?.forEach((r, j) => {
+        if (!nodeIds.has(r)) err(file, `nodes.${i}.slot.rally.${j}`, `unknown node "${r}"`);
+      });
+      const [x, y] = n.pos;
+      if (x < 0 || y < 0 || x > map.size[0] || y > map.size[1])
+        err(file, `nodes.${i}.pos`, 'node is outside the map');
+    });
 
     const laneIds = unique(
       file,
@@ -172,8 +193,11 @@ export function checkSemantics(bundle: Omit<ContentBundle, 'hash'>): ContentErro
       lane.path.forEach((p, j) => {
         if (!nodeIds.has(p)) err(file, `lanes.${i}.path.${j}`, `unknown node "${p}"`);
       });
-      if (lane.path[lane.path.length - 1] !== map.castle.node)
-        err(file, `lanes.${i}.path`, 'a lane must end at the castle node');
+      if (
+        !lane.air &&
+        (lane.path.length < 2 || lane.path[lane.path.length - 1] !== map.castle.node)
+      )
+        err(file, `lanes.${i}.path`, 'a ground lane must end at the castle node');
     });
 
     const nights = new Set<number>();

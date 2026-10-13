@@ -7,6 +7,7 @@ import {
   BuildingCatalog,
   EnemyCatalog,
   GameMap,
+  KingSettings,
   UnitCatalog,
   WeaponCatalog,
 } from '../src/schemas.ts';
@@ -19,6 +20,7 @@ const files: Record<string, z.ZodType> = {
   'units.schema.json': UnitCatalog,
   'enemies.schema.json': EnemyCatalog,
   'weapons.schema.json': WeaponCatalog,
+  'king.schema.json': KingSettings,
   'map.schema.json': GameMap,
 };
 for (const [name, schema] of Object.entries(files)) {

@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { placeholderContent } from '@kd/content/placeholder';
+import { prototypeContent } from '@kd/content/prototype';
+import { useRoute } from 'vue-router';
 
+const route = useRoute();
 const commit = __COMMIT__;
-const contentHash = placeholderContent.hash;
+const contentHash = prototypeContent.hash;
 </script>
 
 <template>
-  <main>
-    <RouterView />
-  </main>
-  <footer>build {{ commit }} · content {{ contentHash }}</footer>
+  <RouterView />
+  <footer v-if="route.path === '/'">build {{ commit }} · content {{ contentHash }}</footer>
 </template>

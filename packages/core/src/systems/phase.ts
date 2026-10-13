@@ -2,7 +2,8 @@
  * The run's state machine (08 §4):
  *   DAY(d) --startNight--> NIGHT(d) --no enemies left--> DAWN(d) --> DAY(d+1) | WON
  *   NIGHT(d) --castle hp 0--> LOST
- * DAWN is instantaneous: income, then everything is restored ([U] assumption in 08).
+ * DAWN is instantaneous: income, then free rebuild of everything destroyed, full HP for the
+ * castle, buildings and king, and fallen units return the next night (design 11 §8.1).
  */
 import { secondsToTicks } from '../constants.ts';
 import { req, type GameContext } from '../context.ts';
@@ -24,16 +25,18 @@ export function startNight(state: GameState, ctx: GameContext, events: GameEvent
     const spawns = req(ctx.buildings, b.type).spawns;
     if (!spawns) continue;
     const def = req(ctx.units, spawns.unit);
+    // The squad guards its rally gate, or the front of the building if it has none.
+    const gate = b.rally ? req(ctx.nodes, b.rally) : { x: b.pos.x, y: b.pos.y - 2 };
     for (let i = 0; i < spawns.count; i++) {
       const id = state.nextId++;
-      // Spread the squad in a short row in front of the building.
-      const post = { x: b.pos.x + (i - (spawns.count - 1) / 2) * def.radius * 2.5, y: b.pos.y + 1 };
+      // Spread the squad in a short row across the gate.
+      const post = { x: gate.x + (i - (spawns.count - 1) / 2) * def.radius * 2.5, y: gate.y };
       state.units.push({
         id,
         type: def.id,
         home: b.id,
         post,
-        pos: { ...post },
+        pos: { x: b.pos.x, y: b.pos.y },
         hp: def.hp,
         maxHp: def.hp,
         cooldown: 0,
@@ -71,8 +74,8 @@ export function phaseSystem(state: GameState, ctx: GameContext, events: GameEven
 }
 
 function dawn(state: GameState, ctx: GameContext, events: GameEvent[]): void {
-  // Income only from eco buildings that survived the night (00 fact sheet).
-  let income = 0;
+  // Income from the castle, and from eco buildings that survived the night (00 fact sheet).
+  let income = ctx.map.castle.income;
   for (const b of state.buildings) {
     if (!b.destroyed) income += req(ctx.buildings, b.type).income;
   }
@@ -89,6 +92,7 @@ function dawn(state: GameState, ctx: GameContext, events: GameEvent[]): void {
   }
   state.units = [];
   state.castle.hp = state.castle.maxHp;
+  state.castle.cooldown = 0;
   const king = state.king;
   if (!king.alive) {
     king.alive = true;
@@ -97,6 +101,8 @@ function dawn(state: GameState, ctx: GameContext, events: GameEvent[]): void {
   king.hp = king.maxHp;
   king.respawnIn = 0;
   king.cooldown = 0;
+  king.dash = null;
+  king.abilityCooldown = 0;
 
   if (state.day >= ctx.map.nights) {
     state.phase = 'won';
@@ -107,4 +113,19 @@ function dawn(state: GameState, ctx: GameContext, events: GameEvent[]): void {
   state.nightTick = 0;
   state.phase = 'day';
   state.current = newNightStats(state.day);
+}
+
+/** Tonight's wave per lane, for the HUD telegraph (design 11 §8.3). */
+export function telegraph(
+  ctx: GameContext,
+  night: number,
+): { lane: string; enemy: string; count: number }[] {
+  const wave = ctx.map.waves.find((w) => w.night === night);
+  const out: { lane: string; enemy: string; count: number }[] = [];
+  for (const g of wave?.groups ?? []) {
+    const same = out.find((o) => o.lane === g.lane && o.enemy === g.enemy);
+    if (same) same.count += g.count;
+    else out.push({ lane: g.lane, enemy: g.enemy, count: g.count });
+  }
+  return out;
 }

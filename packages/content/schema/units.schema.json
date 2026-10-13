@@ -37,7 +37,11 @@
             "type": "number",
             "exclusiveMinimum": 0
           },
-          "aggroRange": {
+          "guardRadius": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "leash": {
             "type": "number",
             "exclusiveMinimum": 0
           },
@@ -60,6 +64,29 @@
                 "default": 0,
                 "type": "number",
                 "minimum": 0
+              },
+              "maxTargets": {
+                "default": 1,
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "arc": {
+                "default": 360,
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "maximum": 360
+              },
+              "bonus": {
+                "default": {},
+                "type": "object",
+                "propertyNames": {
+                  "type": "string"
+                },
+                "additionalProperties": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                }
               },
               "targets": {
                 "minItems": 1,
@@ -86,7 +113,8 @@
           "name",
           "hp",
           "speed",
-          "aggroRange",
+          "guardRadius",
+          "leash",
           "attack"
         ]
       }

@@ -16,12 +16,12 @@ import { targetingSystem } from './systems/targeting.ts';
 export function createGame(ctx: GameContext, config: RunConfig): GameState {
   const map = ctx.map;
   const castlePos = ctx.nodes.get(map.castle.node)!;
-  const weapon = ctx.weapon;
+  const king = ctx.king;
   return {
     schemaVersion: STATE_SCHEMA_VERSION,
     contentHash: ctx.contentHash,
     mapId: map.id,
-    weaponId: weapon.id,
+    weaponId: ctx.weapon.id,
     seed: config.seed,
     rng: seedRng(config.seed),
     phase: 'day',
@@ -35,15 +35,20 @@ export function createGame(ctx: GameContext, config: RunConfig): GameState {
       hp: map.castle.hp,
       maxHp: map.castle.hp,
       radius: map.castle.radius,
+      cooldown: 0,
     },
     king: {
       pos: { ...ctx.kingSpawn },
-      hp: weapon.hp,
-      maxHp: weapon.hp,
+      hp: king.hp,
+      maxHp: king.hp,
       cooldown: 0,
       alive: true,
       respawnIn: 0,
       intent: { x: 0, y: 0 },
+      facing: { x: 0, y: -1 },
+      calm: 0,
+      abilityCooldown: 0,
+      dash: null,
     },
     buildings: [],
     units: [],

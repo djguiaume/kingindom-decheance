@@ -1,46 +1,124 @@
 {
   "$schema": "../schema/buildings.schema.json",
   "schemaVersion": 1,
-  "notes": "PLACEHOLDER content to exercise the core. Real numbers come from the prototype design.",
+  "notes": "Prototype design 11 §4. Upgrade-only buildings repeat their upgrade edge's cost.",
   "buildings": [
-    { "id": "house", "name": "House", "class": "eco", "cost": 3, "hp": 20, "income": 1 },
-    { "id": "farm", "name": "Farm", "class": "eco", "cost": 4, "hp": 15, "income": 2 },
+    {
+      "id": "house",
+      "name": "House",
+      "class": "eco",
+      "cost": 15,
+      "hp": 150,
+      "income": 5,
+      "radius": 0.9,
+      "upgrades": [{ "to": "manor", "cost": 20 }]
+    },
+    {
+      "id": "manor",
+      "name": "Manor",
+      "class": "eco",
+      "cost": 20,
+      "hp": 250,
+      "income": 10,
+      "radius": 1
+    },
+    {
+      "id": "gold_mine",
+      "name": "Gold mine",
+      "class": "eco",
+      "cost": 30,
+      "hp": 200,
+      "income": 12,
+      "radius": 1
+    },
     {
       "id": "tower",
       "name": "Tower",
       "class": "tower",
-      "cost": 5,
-      "hp": 40,
-      "attack": { "damage": 4, "interval": 1, "range": 6, "targets": ["ground", "air"] },
+      "cost": 25,
+      "hp": 300,
+      "radius": 0.8,
+      "attack": { "damage": 8, "interval": 1, "range": 7, "targets": ["ground", "air"] },
+      "upgrades": [{ "to": "watchtower", "cost": 35 }]
+    },
+    {
+      "id": "watchtower",
+      "name": "Watchtower",
+      "class": "tower",
+      "cost": 35,
+      "hp": 400,
+      "radius": 0.8,
+      "attack": { "damage": 12, "interval": 1, "range": 8.5, "targets": ["ground", "air"] },
       "upgrades": [
-        { "to": "tower-heavy", "cost": 6, "exclusiveGroup": "tower-branch" },
-        { "to": "tower-swift", "cost": 6, "exclusiveGroup": "tower-branch" }
+        { "to": "ballista_tower", "cost": 50, "exclusiveGroup": "tower_t3" },
+        { "to": "volley_tower", "cost": 50, "exclusiveGroup": "tower_t3" }
       ]
     },
     {
-      "id": "tower-heavy",
-      "name": "Heavy tower",
+      "id": "ballista_tower",
+      "name": "Ballista tower",
       "class": "tower",
-      "cost": 0,
-      "hp": 60,
-      "attack": { "damage": 10, "interval": 1.5, "range": 6, "aoe": 1.5, "targets": ["ground"] }
+      "cost": 50,
+      "hp": 500,
+      "radius": 0.9,
+      "attack": {
+        "damage": 40,
+        "interval": 2,
+        "range": 10,
+        "bonus": { "tank": 1.6 },
+        "targets": ["ground"]
+      }
     },
     {
-      "id": "tower-swift",
-      "name": "Swift tower",
+      "id": "volley_tower",
+      "name": "Volley tower",
       "class": "tower",
-      "cost": 0,
-      "hp": 40,
-      "attack": { "damage": 3, "interval": 0.4, "range": 7, "targets": ["ground", "air"] }
+      "cost": 50,
+      "hp": 450,
+      "radius": 0.9,
+      "attack": {
+        "damage": 8,
+        "interval": 1,
+        "range": 8,
+        "maxTargets": 3,
+        "targets": ["ground", "air"]
+      }
     },
-    { "id": "wall", "name": "Wall", "class": "wall", "cost": 2, "hp": 80, "radius": 0.8 },
+    {
+      "id": "wall",
+      "name": "Wall",
+      "class": "wall",
+      "cost": 10,
+      "hp": 500,
+      "radius": 1.2,
+      "upgrades": [{ "to": "stone_wall", "cost": 20 }]
+    },
+    {
+      "id": "stone_wall",
+      "name": "Stone wall",
+      "class": "wall",
+      "cost": 20,
+      "hp": 1200,
+      "radius": 1.2
+    },
     {
       "id": "barracks",
       "name": "Barracks",
       "class": "military",
-      "cost": 6,
-      "hp": 40,
-      "spawns": { "unit": "footman", "count": 2 }
+      "cost": 40,
+      "hp": 400,
+      "radius": 1.2,
+      "spawns": { "unit": "footman", "count": 3 },
+      "upgrades": [{ "to": "garrison", "cost": 40 }]
+    },
+    {
+      "id": "garrison",
+      "name": "Garrison",
+      "class": "military",
+      "cost": 40,
+      "hp": 600,
+      "radius": 1.3,
+      "spawns": { "unit": "footman", "count": 5 }
     }
   ]
 }

@@ -4,6 +4,7 @@
  *   pnpm golden:update
  */
 import type { ContentBundle } from '@kd/content';
+import { prototypeRun } from '@kd/content/prototype';
 import type { Replay } from '@kd/core';
 import { policies } from '../src/policies.ts';
 import { runHeadless, type RunSummary } from '../src/runner.ts';
@@ -25,7 +26,7 @@ export interface GoldenFile {
 export const GOLDEN_CASES: GoldenCase[] = [
   {
     name: 'defensive-win',
-    why: 'towers, walls and an active king win the run',
+    why: 'towers, walls, charges and an active king win Greyhollow',
     policy: 'defensive',
     seed: 1,
   },
@@ -37,8 +38,14 @@ export const GOLDEN_CASES: GoldenCase[] = [
   },
   {
     name: 'greedy-loss',
-    why: 'eco-first with an idle king loses to flyers',
+    why: 'eco-first with an idle king falls on night 3 (pass and flyers open)',
     policy: 'greedy',
+    seed: 1,
+  },
+  {
+    name: 'king-only',
+    why: 'no buildings: how far the king and the castle get alone',
+    policy: 'king-only',
     seed: 1,
   },
   { name: 'idle-loss', why: 'no buildings, no king: the castle falls', policy: 'idle', seed: 1 },
@@ -47,10 +54,6 @@ export const GOLDEN_CASES: GoldenCase[] = [
 export function recordGolden(content: ContentBundle, c: GoldenCase): GoldenFile {
   const policy = policies[c.policy];
   if (!policy) throw new Error(`unknown policy ${c.policy}`);
-  const { summary, replay } = runHeadless(
-    content,
-    { mapId: 'placeholder', weaponId: 'sword', seed: c.seed },
-    policy,
-  );
+  const { summary, replay } = runHeadless(content, { ...prototypeRun, seed: c.seed }, policy);
   return { name: c.name, why: c.why, replay, expected: summary };
 }

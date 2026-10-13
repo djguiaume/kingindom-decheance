@@ -24,6 +24,8 @@ export class GameRuntime {
   private accumulator = 0;
   private previous = new Map<string, Vec>();
   private listeners: ((events: GameEvent[]) => void)[] = [];
+  /** While paused the clock is ignored: no ticks run (view-only, never reaches the core). */
+  paused = false;
 
   constructor(
     private readonly content: ContentBundle,
@@ -55,6 +57,7 @@ export class GameRuntime {
 
   /** Called once per rendered frame with the elapsed wall-clock time. */
   advance(deltaMs: number): void {
+    if (this.paused) return;
     this.accumulator += deltaMs;
     let ticks = 0;
     while (this.accumulator >= TICK_MS && ticks < MAX_TICKS_PER_FRAME) {

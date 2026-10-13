@@ -4,7 +4,7 @@
  * Node is a dev tool only; the game never depends on it.
  */
 import { parseArgs } from 'node:util';
-import { placeholderContent } from '@kd/content/placeholder';
+import { prototypeContent, prototypeRun } from '@kd/content/prototype';
 import { policies } from './policies.ts';
 import { runHeadless } from './runner.ts';
 
@@ -12,8 +12,8 @@ const { values } = parseArgs({
   args: process.argv.slice(2).filter((a) => a !== '--'),
   options: {
     policy: { type: 'string', default: 'greedy' },
-    map: { type: 'string', default: 'placeholder' },
-    weapon: { type: 'string', default: 'sword' },
+    map: { type: 'string', default: prototypeRun.mapId },
+    weapon: { type: 'string', default: prototypeRun.weaponId },
     runs: { type: 'string', default: '100' },
     seed: { type: 'string', default: '1' },
     json: { type: 'boolean', default: false },
@@ -30,7 +30,7 @@ const started = Date.now();
 const summaries = [];
 for (let i = 0; i < runs; i++) {
   const config = { mapId: values.map, weaponId: values.weapon, seed: firstSeed + i };
-  summaries.push(runHeadless(placeholderContent, config, policy).summary);
+  summaries.push(runHeadless(prototypeContent, config, policy).summary);
 }
 const elapsed = (Date.now() - started) / 1000;
 
@@ -40,7 +40,7 @@ if (values.json) {
   const wins = summaries.filter((s) => s.outcome === 'won').length;
   const meanNight = summaries.reduce((n, s) => n + s.nightReached, 0) / runs;
   console.log(
-    `content ${placeholderContent.hash} · policy ${policy.id} · ${runs} runs in ${elapsed.toFixed(2)}s`,
+    `content ${prototypeContent.hash} · policy ${policy.id} · ${runs} runs in ${elapsed.toFixed(2)}s`,
   );
   console.log(
     `win rate ${((100 * wins) / runs).toFixed(1)}% · mean night reached ${meanNight.toFixed(2)}`,

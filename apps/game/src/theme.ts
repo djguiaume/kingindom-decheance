@@ -5,7 +5,9 @@
 export const colors = {
   background: 0x1b2130,
   ground: 0x243044,
-  lane: 0x3c4a63,
+  grass: 0x6fa857,
+  night: 0x0b1a4a,
+  lane: 0xc9b47e,
   airLane: 0x5b4a7a,
   slot: 0x6b7d99,
   castle: 0xe8c547,

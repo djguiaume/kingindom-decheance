@@ -1,39 +1,49 @@
 {
   "$schema": "../schema/enemies.schema.json",
   "schemaVersion": 1,
-  "notes": "PLACEHOLDER content.",
+  "notes": "Prototype design 11 §7. aggroRange 3 and leash 5 are schema defaults (§8.2).",
   "enemies": [
     {
-      "id": "grunt",
-      "name": "Grunt",
+      "id": "raider",
+      "name": "Goblin raider",
       "archetype": "swarm",
-      "hp": 10,
-      "speed": 2,
-      "aggroRange": 2.5,
-      "attack": { "damage": 2, "interval": 1, "range": 0.8, "targets": ["ground"] },
-      "targetPriority": ["wall", "unit", "king", "eco", "building", "castle"]
+      "hp": 30,
+      "speed": 2.5,
+      "radius": 0.4,
+      "attack": { "damage": 5, "interval": 1, "range": 0.8, "targets": ["ground"] },
+      "targetPriority": ["unit", "king", "wall", "eco", "tower", "castle"]
+    },
+    {
+      "id": "skirmisher",
+      "name": "Hooded archer",
+      "archetype": "ranged",
+      "hp": 25,
+      "speed": 2.2,
+      "radius": 0.4,
+      "aggroRange": 5,
+      "attack": { "damage": 6, "interval": 1.5, "range": 5, "targets": ["ground"] },
+      "targetPriority": ["unit", "king", "tower", "wall", "castle"]
     },
     {
       "id": "brute",
-      "name": "Brute",
+      "name": "Ogre brute",
       "archetype": "tank",
-      "hp": 45,
-      "speed": 1.2,
-      "radius": 0.5,
-      "aggroRange": 2,
-      "attack": { "damage": 6, "interval": 1.5, "range": 1, "targets": ["ground"] },
-      "targetPriority": ["wall", "building", "eco", "castle", "unit", "king"]
+      "hp": 250,
+      "speed": 1.6,
+      "radius": 0.7,
+      "attack": { "damage": 25, "interval": 1.5, "range": 1, "targets": ["ground"] },
+      "targetPriority": ["wall", "tower", "castle"]
     },
     {
-      "id": "bat",
-      "name": "Bat",
+      "id": "harpy",
+      "name": "Harpy",
       "archetype": "flyer",
-      "hp": 6,
+      "hp": 40,
       "speed": 3,
+      "radius": 0.4,
       "flying": true,
-      "aggroRange": 3,
-      "attack": { "damage": 1, "interval": 0.8, "range": 0.8, "targets": ["ground"] },
-      "targetPriority": ["eco", "castle"]
+      "attack": { "damage": 8, "interval": 1, "range": 0.8, "targets": ["ground"] },
+      "targetPriority": ["eco", "tower", "castle"]
     }
   ]
 }

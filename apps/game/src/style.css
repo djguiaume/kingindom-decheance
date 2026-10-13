@@ -6,13 +6,15 @@
   color-scheme: dark;
   font-family: system-ui, sans-serif;
 }
+html,
+body {
+  height: 100%;
+}
 body {
   margin: 0;
+  -webkit-tap-highlight-color: transparent;
   background: var(--bg);
   color: var(--fg);
-}
-main {
-  padding: 16px;
 }
 footer {
   padding: 8px 16px;
@@ -22,7 +24,8 @@ footer {
 button,
 a.primary {
   font: inherit;
-  padding: 4px 10px;
+  min-height: 44px;
+  padding: 6px 12px;
   border-radius: 4px;
   border: 1px solid var(--muted);
   background: #2a3346;

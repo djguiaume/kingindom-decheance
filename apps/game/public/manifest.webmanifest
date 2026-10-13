@@ -1,0 +1,12 @@
+{
+  "name": "Throne falling",
+  "short_name": "Throne falling",
+  "description": "Build by day, defend by night.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#1b2130",
+  "theme_color": "#1b2130",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}
