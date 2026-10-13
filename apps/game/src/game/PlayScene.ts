@@ -5,16 +5,14 @@
  * from the ground, drawn back to front.
  */
 import Phaser from 'phaser';
-import type { Ref } from '@kd/core';
+import { telegraph, type Ref } from '@kd/core';
 import { nearbySlotId } from '../stores/hud.ts';
 import { colors } from '../theme.ts';
+import type { CameraView } from './camera.ts';
+import { SCALE, SQUASH } from './camera.ts';
 import type { GameRuntime } from './runtime.ts';
 import { shadow, spriteFor } from './sprites.ts';
 
-/** Pixels per metre at close zoom (design 11 §9). */
-export const SCALE = 32;
-/** Vertical squash of the ground plane for the slightly-from-above view. */
-const SQUASH = 0.75;
 const HIT_FLASH_MS = 90;
 const SHOT_MS = 180;
 const DOUBLE_TAP_MS = 300;
@@ -25,7 +23,12 @@ const LEAD_EASE_MS = 300;
 export interface ViewOptions {
   zoomClose: () => boolean;
   toggleZoom: () => void;
+  /** Updated every frame for the DOM overlays (edge arrows). */
+  camera: CameraView;
 }
+
+/** How long the ring of a boss stomp stays visible. */
+const STOMP_MS = 350;
 
 interface Flash {
   from: { x: number; y: number };
@@ -41,6 +44,7 @@ export class PlayScene extends Phaser.Scene {
   private unsubscribe: (() => void) | null = null;
   private lastTap = 0;
   private lead = { x: 0, y: 0 };
+  private stomps: { at: { x: number; y: number }; radius: number; start: number }[] = [];
 
   constructor(
     private readonly runtime: GameRuntime,
@@ -66,6 +70,17 @@ export class PlayScene extends Phaser.Scene {
 
     this.unsubscribe = this.runtime.onEvents((events) => {
       for (const e of events) {
+        if (e.type === 'stomp') {
+          const enemy = this.runtime.state.enemies.find((x) => x.id === e.enemy);
+          const ability = enemy && this.runtime.ctx.enemies.get(enemy.type)?.ability;
+          if (enemy && ability)
+            this.stomps.push({
+              at: { ...enemy.pos },
+              radius: ability.radius,
+              start: this.time.now,
+            });
+          continue;
+        }
         if (e.type !== 'hit') continue;
         const from = this.refPos(e.attacker);
         const to = this.refPos(e.target);
@@ -80,6 +95,14 @@ export class PlayScene extends Phaser.Scene {
   override update(_time: number, delta: number): void {
     this.runtime.advance(delta);
     this.updateCamera(delta);
+    const cam = this.cameras.main;
+    Object.assign(this.view.camera, {
+      left: cam.worldView.x,
+      top: cam.worldView.y,
+      zoom: cam.zoom,
+      width: cam.width,
+      height: cam.height,
+    });
     this.drawDynamic();
   }
 
@@ -146,6 +169,16 @@ export class PlayScene extends Phaser.Scene {
       const [w, h] = ctx.map.size;
       g.fillStyle(colors.night, 0.35);
       g.fillRect(0, 0, w * SCALE, h * SCALE * SQUASH);
+    }
+
+    // By day, the spawns of tonight's lanes glow (off-screen ones get edge arrows instead).
+    if (state.phase === 'day') {
+      const pulse = 0.35 + 0.25 * Math.sin(this.time.now / 250);
+      for (const lane of new Set(telegraph(ctx, state.day).map((t) => t.lane))) {
+        const p = this.px(ctx.lanes.get(lane)!.points[0]!);
+        g.fillStyle(colors.enemies.swarm, pulse);
+        g.fillEllipse(p.x, p.y, SCALE * 3, SCALE * 3 * SQUASH);
+      }
     }
 
     // Range circle at the slot the king stands at, during the day.
@@ -218,6 +251,14 @@ export class PlayScene extends Phaser.Scene {
     for (const item of items) item.draw();
 
     const now = this.time.now;
+    this.stomps = this.stomps.filter((st) => now - st.start < STOMP_MS);
+    for (const st of this.stomps) {
+      const t = (now - st.start) / STOMP_MS;
+      const p = this.px(st.at);
+      const r = st.radius * SCALE * (0.4 + 0.6 * t);
+      g.lineStyle(4, colors.enemies.boss, 1 - t);
+      g.strokeEllipse(p.x, p.y, r * 2, r * 2 * SQUASH);
+    }
     this.flashes = this.flashes.filter((f) => now - f.start < (f.shot ? SHOT_MS : HIT_FLASH_MS));
     for (const f of this.flashes) {
       if (!f.shot) {

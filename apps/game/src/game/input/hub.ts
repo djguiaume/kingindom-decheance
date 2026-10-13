@@ -68,6 +68,12 @@ export class InputHub {
     this.buy(def?.spawns && b?.rally ? 0 : 1);
   }
 
+  /** Night: pick up the footmen near the king, or drop the ones following him. */
+  rally(device: Device): void {
+    this.used(device);
+    this.send({ type: 'rally' });
+  }
+
   startNight(): void {
     this.send({ type: 'startNight' });
   }

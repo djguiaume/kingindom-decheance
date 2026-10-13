@@ -8,6 +8,16 @@ test('desktop: keyboard holds buy and start the night', async ({ page }) => {
   await expect(page.getByTestId('gold')).toHaveText('🪙 75');
   await expect(page.getByTestId('buy-0')).toBeVisible();
 
+  // Tonight's spawn is off-screen: an edge arrow points at it.
+  await expect(page.locator('[data-kind="spawn"]')).toHaveCount(1);
+  // Tab opens the waves panel with all six nights, tonight highlighted, boss night marked.
+  await page.keyboard.press('Tab');
+  await expect(page.getByTestId('waves-panel').locator('[data-night]')).toHaveCount(6);
+  await expect(page.locator('[data-night="1"]')).toHaveClass(/tonight/);
+  await expect(page.locator('[data-night="6"] .boss')).toBeVisible();
+  await page.screenshot({ path: 'test-results/desktop-waves.png' });
+  await page.keyboard.press('Tab');
+
   // Hold E to buy: a tap is not enough, a 0.4 s hold is.
   await page.keyboard.press('e');
   await expect(page.getByTestId('gold')).toHaveText('🪙 75');

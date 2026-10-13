@@ -77,6 +77,9 @@ export function attachKeyboard(hub: InputHub): () => void {
         hub.used('keyboard');
         startHold('night', HOLD_NIGHT_MS, () => hub.startNight());
         break;
+      case 'KeyF':
+        hub.rally('keyboard');
+        break;
       case 'Tab':
         e.preventDefault();
         store.waveOpen = !store.waveOpen;

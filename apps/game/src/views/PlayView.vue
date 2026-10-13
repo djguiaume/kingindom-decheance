@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { prototypeContent, prototypeRun } from '@kd/content/prototype';
 import { computed, markRaw, onBeforeUnmount, onMounted, ref, watchEffect } from 'vue';
+import { CameraView } from '../game/camera.ts';
 import GameView from '../game/GameView.vue';
+import EdgeArrows from '../components/EdgeArrows.vue';
 import { InputHub } from '../game/input/hub.ts';
 import { attachKeyboard } from '../game/input/keyboard.ts';
 import { GameRuntime } from '../game/runtime.ts';
@@ -14,6 +16,7 @@ const runtime = markRaw(
   new GameRuntime(prototypeContent, { ...prototypeRun, seed: Math.floor(Math.random() * 2 ** 31) }),
 );
 const hub = markRaw(new InputHub(runtime));
+const camera = markRaw(new CameraView());
 
 // Phones play in landscape only (design 11 §10.4): portrait shows a rotate screen and pauses.
 const portraitPhone = ref(false);
@@ -68,7 +71,8 @@ async function fullscreen(): Promise<void> {
 
 <template>
   <div class="play">
-    <GameView :runtime="runtime" />
+    <GameView :runtime="runtime" :camera="camera" />
+    <EdgeArrows :runtime="runtime" :camera="camera" />
     <GameHud :runtime="runtime" :hub="hub" @restart="restart" @fullscreen="fullscreen" />
     <div v-if="showRotate" class="rotate" data-testid="rotate">
       <div class="phone">📱</div>

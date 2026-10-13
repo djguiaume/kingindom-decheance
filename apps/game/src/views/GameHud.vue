@@ -7,9 +7,10 @@
 import { computed, onBeforeUnmount, onMounted } from 'vue';
 import HoldButton from '../components/HoldButton.vue';
 import VirtualJoystick from '../components/VirtualJoystick.vue';
+import WavesPanel from '../components/WavesPanel.vue';
 import { HOLD_BUY_MS, HOLD_NIGHT_MS, type InputHub } from '../game/input/hub.ts';
 import type { GameRuntime } from '../game/runtime.ts';
-import { snapshot, useHudStore } from '../stores/hud.ts';
+import { nightPlans, snapshot, useHudStore } from '../stores/hud.ts';
 
 const props = defineProps<{ runtime: GameRuntime; hub: InputHub }>();
 const emit = defineEmits<{ restart: []; fullscreen: [] }>();
@@ -24,6 +25,11 @@ function onStick(x: number, y: number) {
 }
 function charge(e: PointerEvent) {
   props.hub.ability(e.pointerType === 'mouse' ? 'keyboard' : 'touch', stick);
+}
+
+const plans = nightPlans(props.runtime.ctx);
+function rally(e: PointerEvent) {
+  props.hub.rally(e.pointerType === 'mouse' ? 'keyboard' : 'touch');
 }
 
 const refresh = () => {
@@ -74,11 +80,15 @@ const cooldownStyle = computed(() => ({
       </span>
     </header>
 
-    <section v-if="store.waveOpen" class="wave-panel" @click="store.waveOpen = false">
-      <div v-for="t in store.hud.threats" :key="t.lane">
-        <strong>{{ t.lane }}</strong>
-        <span v-for="e in t.enemies" :key="e.name"> {{ e.count }} × {{ e.name }}</span>
+    <div v-if="store.hud.boss" class="boss-bar" data-testid="boss-bar">
+      <span>{{ store.hud.boss.name }}</span>
+      <div class="bar">
+        <div :style="{ width: `${(100 * store.hud.boss.hp) / store.hud.boss.maxHp}%` }" />
       </div>
+    </div>
+
+    <section v-if="store.waveOpen" class="wave-panel" @click="store.waveOpen = false">
+      <WavesPanel :plans="plans" :tonight="store.hud.day" />
     </section>
 
     <p v-if="store.message" class="toast">{{ store.message }}</p>
@@ -111,6 +121,16 @@ const cooldownStyle = computed(() => ({
           <kbd v-if="!touch">{{ store.hud.nearby.rally || o.option === 1 ? 'R' : 'E' }}</kbd>
         </HoldButton>
       </template>
+
+      <button
+        v-if="store.hud.phase === 'night' && store.hud.hasBarracks"
+        class="rally-btn"
+        data-testid="rally-night"
+        @pointerdown.prevent="rally"
+      >
+        {{ store.hud.followers > 0 ? `Drop ${store.hud.followers}` : 'Rally' }}
+        <kbd v-if="!touch">F</kbd>
+      </button>
 
       <button
         v-if="store.hud.phase === 'night' && store.hud.abilityName"
@@ -150,8 +170,13 @@ const cooldownStyle = computed(() => ({
       <button class="primary big" @click="hub.togglePause()">Resume</button>
       <button class="big" @click="emit('fullscreen')">Full screen</button>
       <button class="big" @click="emit('restart')">Restart run</button>
+      <WavesPanel :plans="plans" :tonight="store.hud.day" />
       <p class="hint">
-        {{ keyHint('WASD/arrows move · Space ability · hold E/R buy · hold Enter night · Z zoom') }}
+        {{
+          keyHint(
+            'WASD/arrows move · Space ability · F rally · hold E/R buy · hold Enter night · Tab waves · Z zoom',
+          )
+        }}
       </p>
     </div>
   </div>
@@ -233,6 +258,36 @@ const cooldownStyle = computed(() => ({
 .card {
   min-width: 180px;
   text-align: left;
+}
+.rally-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: 12px;
+  touch-action: none;
+  margin-right: 8px;
+}
+.boss-bar {
+  position: absolute;
+  top: calc(max(8px, env(safe-area-inset-top)) + 56px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(60vw, 420px);
+  text-align: center;
+  font-weight: 700;
+  text-shadow: 0 1px 2px #000;
+}
+.boss-bar .bar {
+  height: 10px;
+  border-radius: 5px;
+  background: rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  margin-top: 2px;
+}
+.boss-bar .bar div {
+  height: 100%;
+  background: #c0392b;
 }
 .charge {
   position: relative;

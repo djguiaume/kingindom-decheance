@@ -28,7 +28,7 @@ export interface NearbySlot {
 export interface LaneThreat {
   lane: string;
   total: number;
-  enemies: { name: string; count: number }[];
+  enemies: { id: string; name: string; count: number }[];
 }
 
 export interface HudSnapshot {
@@ -49,6 +49,37 @@ export interface HudSnapshot {
   nearby: NearbySlot | null;
   threats: LaneThreat[];
   lastIncome: number | null;
+  /** A standing military building (the Rally button shows only then). */
+  hasBarracks: boolean;
+  /** Footmen on the field tonight, and how many follow the king. */
+  units: number;
+  followers: number;
+  /** The living boss, for the bar at the top of the screen. */
+  boss: { name: string; hp: number; maxHp: number } | null;
+}
+
+export interface NightPlan {
+  night: number;
+  lanes: { lane: string; enemies: { id: string; name: string; count: number }[] }[];
+  boss: string | null;
+}
+
+/** Every night of the map, lane by lane (the waves panel, design 11 §8.3). */
+export function nightPlans(ctx: GameContext): NightPlan[] {
+  const plans: NightPlan[] = [];
+  for (let night = 1; night <= ctx.map.nights; night++) {
+    const lanes: NightPlan['lanes'] = [];
+    let boss: string | null = null;
+    for (const t of telegraph(ctx, night)) {
+      const def = ctx.enemies.get(t.enemy)!;
+      if (def.archetype === 'boss') boss = t.enemy;
+      let lane = lanes.find((l) => l.lane === t.lane);
+      if (!lane) lanes.push((lane = { lane: t.lane, enemies: [] }));
+      lane.enemies.push({ id: t.enemy, name: def.name, count: t.count });
+    }
+    plans.push({ night, lanes, boss });
+  }
+  return plans;
 }
 
 /** The slot the king stands at, if any (within build reach). */
@@ -88,7 +119,7 @@ export function snapshot(state: GameState, ctx: GameContext): HudSnapshot {
     let lane = threats.find((x) => x.lane === t.lane);
     if (!lane) threats.push((lane = { lane: t.lane, total: 0, enemies: [] }));
     lane.total += t.count;
-    lane.enemies.push({ name: ctx.enemies.get(t.enemy)!.name, count: t.count });
+    lane.enemies.push({ id: t.enemy, name: ctx.enemies.get(t.enemy)!.name, count: t.count });
   }
   const ability = ctx.weapon.ability;
   return {
@@ -108,7 +139,17 @@ export function snapshot(state: GameState, ctx: GameContext): HudSnapshot {
     nearby,
     threats,
     lastIncome: state.history.at(-1)?.income ?? null,
+    hasBarracks: state.buildings.some((b) => !b.destroyed && !!ctx.buildings.get(b.type)!.spawns),
+    units: state.units.length,
+    followers: state.units.filter((u) => u.following).length,
+    boss: bossOf(state, ctx),
   };
+}
+
+function bossOf(state: GameState, ctx: GameContext): HudSnapshot['boss'] {
+  const e = state.enemies.find((x) => ctx.enemies.get(x.type)!.archetype === 'boss');
+  if (!e) return null;
+  return { name: ctx.enemies.get(e.type)!.name, hp: Math.ceil(e.hp), maxHp: e.maxHp };
 }
 
 export type Device = 'keyboard' | 'touch';

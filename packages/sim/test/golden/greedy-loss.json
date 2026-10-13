@@ -127,16 +127,8 @@
     },
     "outcome": "lost",
     "nightReached": 3,
-    "goldPerNight": [
-      55,
-      70,
-      0
-    ],
-    "buildingsLostPerNight": [
-      1,
-      4,
-      7
-    ],
+    "goldPerNight": [55, 70, 0],
+    "buildingsLostPerNight": [1, 4, 7],
     "enemiesKilled": 36,
     "ticks": 6470,
     "finalHash": "1d9fbcbb43793d"

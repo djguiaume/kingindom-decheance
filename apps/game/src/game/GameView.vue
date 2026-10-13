@@ -7,10 +7,11 @@ import Phaser from 'phaser';
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { useHudStore } from '../stores/hud.ts';
 import { colors } from '../theme.ts';
+import type { CameraView } from './camera.ts';
 import { PlayScene } from './PlayScene.ts';
 import type { GameRuntime } from './runtime.ts';
 
-const props = defineProps<{ runtime: GameRuntime }>();
+const props = defineProps<{ runtime: GameRuntime; camera: CameraView }>();
 const store = useHudStore();
 const host = ref<HTMLDivElement>();
 let game: Phaser.Game | null = null;
@@ -24,6 +25,7 @@ onMounted(() => {
     scene: new PlayScene(props.runtime, {
       zoomClose: () => store.zoomClose,
       toggleZoom: () => (store.zoomClose = !store.zoomClose),
+      camera: props.camera,
     }),
     banner: false,
   });
