@@ -85,8 +85,8 @@ mine 25) and stronger waves (+30% enemy HP and +30% enemies per group). Targets,
 | `idle`      | nothing                                          | falls night 3 |
 | `king-only` | no buildings, king fights                        | falls night 5 |
 | `greedy`    | fills slots in map order, idle king              | falls night 3 |
-| `defensive` | towers, walls, barracks first, no early eco      | wins ~35%     |
-| `balanced`  | half its gold into eco on days 1–3, then defends | wins ~85%     |
+| `defensive` | towers, walls, barracks first, no early eco      | wins ~80%     |
+| `balanced`  | half its gold into eco on days 1–3, then defends | wins ~90%     |
 
 So investing in eco pays off, and building nothing loses. Bots are a rough guide: real play
 decides the final numbers.
