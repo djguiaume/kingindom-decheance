@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "schemaVersion": {
+      "type": "number",
+      "const": 1
+    },
+    "notes": {
+      "type": "string"
+    },
+    "enemies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+          },
+          "name": {
+            "type": "string"
+          },
+          "archetype": {
+            "type": "string",
+            "enum": [
+              "swarm",
+              "tank",
+              "siege",
+              "flyer",
+              "ranged",
+              "fast",
+              "exploder",
+              "boss"
+            ]
+          },
+          "hp": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "speed": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "radius": {
+            "default": 0.3,
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "flying": {
+            "default": false,
+            "type": "boolean"
+          },
+          "aggroRange": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "attack": {
+            "type": "object",
+            "properties": {
+              "damage": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "interval": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "range": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "aoe": {
+                "default": 0,
+                "type": "number",
+                "minimum": 0
+              },
+              "targets": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "ground",
+                    "air"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "damage",
+              "interval",
+              "range",
+              "targets"
+            ]
+          },
+          "targetPriority": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "wall",
+                "eco",
+                "building",
+                "unit",
+                "king",
+                "castle"
+              ]
+            }
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "archetype",
+          "hp",
+          "speed",
+          "aggroRange",
+          "attack",
+          "targetPriority"
+        ]
+      }
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "enemies"
+  ]
+}

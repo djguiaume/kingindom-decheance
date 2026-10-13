@@ -1,0 +1,21 @@
+{
+  "name": "@kd/sim",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "cli": "tsx src/cli.ts"
+  },
+  "dependencies": {
+    "@kd/content": "workspace:*",
+    "@kd/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.5",
+    "tsx": "4.23.15"
+  }
+}

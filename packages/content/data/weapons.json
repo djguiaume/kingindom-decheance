@@ -1,0 +1,15 @@
+{
+  "$schema": "../schema/weapons.schema.json",
+  "schemaVersion": 1,
+  "notes": "PLACEHOLDER content.",
+  "weapons": [
+    {
+      "id": "sword",
+      "name": "Sword",
+      "hp": 50,
+      "speed": 5,
+      "respawnSeconds": 5,
+      "attack": { "damage": 5, "interval": 0.5, "range": 1.2, "targets": ["ground", "air"] }
+    }
+  ]
+}

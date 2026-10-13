@@ -1,0 +1,46 @@
+{
+  "$schema": "../schema/buildings.schema.json",
+  "schemaVersion": 1,
+  "notes": "PLACEHOLDER content to exercise the core. Real numbers come from the prototype design.",
+  "buildings": [
+    { "id": "house", "name": "House", "class": "eco", "cost": 3, "hp": 20, "income": 1 },
+    { "id": "farm", "name": "Farm", "class": "eco", "cost": 4, "hp": 15, "income": 2 },
+    {
+      "id": "tower",
+      "name": "Tower",
+      "class": "tower",
+      "cost": 5,
+      "hp": 40,
+      "attack": { "damage": 4, "interval": 1, "range": 6, "targets": ["ground", "air"] },
+      "upgrades": [
+        { "to": "tower-heavy", "cost": 6, "exclusiveGroup": "tower-branch" },
+        { "to": "tower-swift", "cost": 6, "exclusiveGroup": "tower-branch" }
+      ]
+    },
+    {
+      "id": "tower-heavy",
+      "name": "Heavy tower",
+      "class": "tower",
+      "cost": 0,
+      "hp": 60,
+      "attack": { "damage": 10, "interval": 1.5, "range": 6, "aoe": 1.5, "targets": ["ground"] }
+    },
+    {
+      "id": "tower-swift",
+      "name": "Swift tower",
+      "class": "tower",
+      "cost": 0,
+      "hp": 40,
+      "attack": { "damage": 3, "interval": 0.4, "range": 7, "targets": ["ground", "air"] }
+    },
+    { "id": "wall", "name": "Wall", "class": "wall", "cost": 2, "hp": 80, "radius": 0.8 },
+    {
+      "id": "barracks",
+      "name": "Barracks",
+      "class": "military",
+      "cost": 6,
+      "hp": 40,
+      "spawns": { "unit": "footman", "count": 2 }
+    }
+  ]
+}

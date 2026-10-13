@@ -1,0 +1,15 @@
+{
+  "$schema": "../schema/units.schema.json",
+  "schemaVersion": 1,
+  "notes": "PLACEHOLDER content.",
+  "units": [
+    {
+      "id": "footman",
+      "name": "Footman",
+      "hp": 30,
+      "speed": 2.5,
+      "aggroRange": 4,
+      "attack": { "damage": 3, "interval": 0.8, "range": 0.8, "targets": ["ground"] }
+    }
+  ]
+}

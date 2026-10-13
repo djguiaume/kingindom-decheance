@@ -1,0 +1,39 @@
+{
+  "$schema": "../schema/enemies.schema.json",
+  "schemaVersion": 1,
+  "notes": "PLACEHOLDER content.",
+  "enemies": [
+    {
+      "id": "grunt",
+      "name": "Grunt",
+      "archetype": "swarm",
+      "hp": 10,
+      "speed": 2,
+      "aggroRange": 2.5,
+      "attack": { "damage": 2, "interval": 1, "range": 0.8, "targets": ["ground"] },
+      "targetPriority": ["wall", "unit", "king", "eco", "building", "castle"]
+    },
+    {
+      "id": "brute",
+      "name": "Brute",
+      "archetype": "tank",
+      "hp": 45,
+      "speed": 1.2,
+      "radius": 0.5,
+      "aggroRange": 2,
+      "attack": { "damage": 6, "interval": 1.5, "range": 1, "targets": ["ground"] },
+      "targetPriority": ["wall", "building", "eco", "castle", "unit", "king"]
+    },
+    {
+      "id": "bat",
+      "name": "Bat",
+      "archetype": "flyer",
+      "hp": 6,
+      "speed": 3,
+      "flying": true,
+      "aggroRange": 3,
+      "attack": { "damage": 1, "interval": 0.8, "range": 0.8, "targets": ["ground"] },
+      "targetPriority": ["eco", "castle"]
+    }
+  ]
+}

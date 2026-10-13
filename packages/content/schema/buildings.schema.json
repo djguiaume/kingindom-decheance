@@ -1,0 +1,154 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "schemaVersion": {
+      "type": "number",
+      "const": 1
+    },
+    "notes": {
+      "type": "string"
+    },
+    "buildings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+          },
+          "name": {
+            "type": "string"
+          },
+          "class": {
+            "type": "string",
+            "enum": [
+              "eco",
+              "tower",
+              "wall",
+              "military"
+            ]
+          },
+          "cost": {
+            "type": "number",
+            "minimum": 0
+          },
+          "hp": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "income": {
+            "default": 0,
+            "type": "number",
+            "minimum": 0
+          },
+          "radius": {
+            "default": 0.5,
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "upgrades": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "to": {
+                  "type": "string",
+                  "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                },
+                "cost": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "exclusiveGroup": {
+                  "default": null,
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "to",
+                "cost"
+              ]
+            }
+          },
+          "attack": {
+            "type": "object",
+            "properties": {
+              "damage": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "interval": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "range": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "aoe": {
+                "default": 0,
+                "type": "number",
+                "minimum": 0
+              },
+              "targets": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "ground",
+                    "air"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "damage",
+              "interval",
+              "range",
+              "targets"
+            ]
+          },
+          "spawns": {
+            "type": "object",
+            "properties": {
+              "unit": {
+                "type": "string",
+                "pattern": "^[a-z0-9][a-z0-9_-]*$"
+              },
+              "count": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "unit",
+              "count"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "class",
+          "cost",
+          "hp"
+        ]
+      }
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "buildings"
+  ]
+}

@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      - name: Format
+        run: pnpm format:check
+      - name: Lint (includes architecture boundaries)
+        run: pnpm lint
+      - name: Type-check
+        run: pnpm typecheck
+      - name: Content JSON Schemas are up to date
+        run: pnpm content:schema && git diff --exit-code packages/content/schema
+      - name: Tests (unit, content, determinism, golden runs)
+        run: pnpm test
+      - name: Build
+        run: pnpm build
+
+      - name: Install Chromium for Playwright
+        run: pnpm --filter @kd/game exec playwright install --with-deps chromium
+      - name: Browser smoke test
+        run: pnpm e2e
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright
+          path: |
+            apps/game/playwright-report
+            apps/game/test-results
+          if-no-files-found: ignore
