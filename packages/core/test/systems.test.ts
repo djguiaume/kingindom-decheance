@@ -29,7 +29,7 @@ describe('waves', () => {
   it('turns wave groups into a time-ordered spawn queue', () => {
     const s = newSession();
     const queue = buildSpawnQueue(s.ctx, 2);
-    expect(queue).toHaveLength(12);
+    expect(queue).toHaveLength(16);
     expect(queue.map((o) => o.at)).toEqual([...queue.map((o) => o.at)].sort((a, b) => a - b));
     expect(queue[0]).toEqual({ at: 0, lane: 'west', enemy: 'raider' });
     expect(queue.find((o) => o.lane === 'east')!.at).toBe(6 * TICK_RATE);
@@ -37,8 +37,8 @@ describe('waves', () => {
 
   it('summarises a night per lane for the telegraph', () => {
     const s = newSession();
-    expect(telegraph(s.ctx, 6)).toContainEqual({ lane: 'air', enemy: 'harpy', count: 6 });
-    expect(telegraph(s.ctx, 1)).toEqual([{ lane: 'west', enemy: 'raider', count: 6 }]);
+    expect(telegraph(s.ctx, 6)).toContainEqual({ lane: 'air', enemy: 'harpy', count: 8 });
+    expect(telegraph(s.ctx, 1)).toEqual([{ lane: 'west', enemy: 'raider', count: 8 }]);
   });
 
   it('spawns enemies near the first node of their lane', () => {
@@ -70,6 +70,22 @@ describe('targeting and movement', () => {
       for (const e of s.state.enemies) expect(e.pos.x).toBeLessThan(wall.pos.x);
     }
     expect(wall.hp).toBeLessThan(wall.maxHp);
+  });
+
+  it('enemies do not walk around a wall to reach the king behind it', () => {
+    const s = newSession();
+    s.submit({ type: 'buy', slot: 'ww', option: 0 });
+    emptyNight(s, 10_000);
+    const wall = s.state.buildings[0]!;
+    // Just behind the wall: in a raider's aggro range, out of the king's own reach.
+    s.state.king.pos = { x: wall.pos.x + 2, y: wall.pos.y + 2 };
+    const raider = placeEnemy(s, 'raider', 15.5, 27.5, { cooldown: 0, waypoint: 2 });
+    for (let i = 0; i < TICK_RATE * 5; i++) {
+      s.step();
+      expect(raider.pos.x).toBeLessThan(wall.pos.x);
+    }
+    expect(raider.target).toEqual({ kind: 'building', id: wall.id });
+    expect(s.state.king.hp).toBe(s.state.king.maxHp);
   });
 
   it('brutes attack a blocking wall even though it is first on their list anyway', () => {
@@ -111,7 +127,7 @@ describe('combat', () => {
     s.submit({ type: 'startNight' });
     const events = collectUntil(s, () => s.state.phase !== 'night');
     expect(hitsBy(events, 'building').length).toBeGreaterThan(0);
-    expect(s.state.history[0]!.enemiesKilled).toBe(6);
+    expect(s.state.history[0]!.enemiesKilled).toBe(8);
   });
 
   it('the volley tower hits up to three enemies per shot', () => {
@@ -214,8 +230,8 @@ describe('phases', () => {
   it('pays the castle and eco buildings that survived, at dawn', () => {
     const s = newSession();
     s.state.gold = 100;
-    s.submit({ type: 'buy', slot: 'h1', option: 0 }); // 5
-    s.submit({ type: 'buy', slot: 'm2', option: 0 }); // 12
+    s.submit({ type: 'buy', slot: 'h1', option: 0 }); // 10
+    s.submit({ type: 'buy', slot: 'm2', option: 0 }); // 25
     const goldBefore = s.state.gold;
     emptyNight(s);
     s.state.buildings.find((b) => b.type === 'gold_mine')!.hp = 0;
@@ -223,9 +239,9 @@ describe('phases', () => {
     expect(events).toContainEqual(
       expect.objectContaining({ type: 'buildingDestroyed', slot: 'm2' }),
     );
-    expect(events).toContainEqual({ type: 'dawn', night: 1, income: 10 + 5 });
-    expect(s.state.gold).toBe(goldBefore + 15);
-    expect(s.state.history[0]).toMatchObject({ night: 1, income: 15, buildingsLost: 1 });
+    expect(events).toContainEqual({ type: 'dawn', night: 1, income: 25 + 10 });
+    expect(s.state.gold).toBe(goldBefore + 35);
+    expect(s.state.history[0]).toMatchObject({ night: 1, income: 35, buildingsLost: 1 });
   });
 
   it('rebuilds for free and restores everything at dawn, then starts the next day', () => {

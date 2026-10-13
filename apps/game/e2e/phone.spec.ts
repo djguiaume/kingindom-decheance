@@ -41,16 +41,16 @@ test('phone: hold-to-buy, hold-to-start, joystick and Charge', async ({ page }) 
   await page.goto('./');
   await page.getByTestId('play').tap();
   await expect(page.getByTestId('rotate')).toHaveCount(0);
-  await expect(page.getByTestId('gold')).toHaveText('🪙 50');
+  await expect(page.getByTestId('gold')).toHaveText('🪙 75');
 
   const card = page.getByTestId('buy-0');
   const box = await card.boundingBox();
   expect(box!.height).toBeGreaterThanOrEqual(48);
   // A tap does not buy; a hold does.
   await finger.hold(page, card, 80);
-  await expect(page.getByTestId('gold')).toHaveText('🪙 50');
+  await expect(page.getByTestId('gold')).toHaveText('🪙 75');
   await finger.hold(page, card, 600);
-  await expect(page.getByTestId('gold')).toHaveText('🪙 25');
+  await expect(page.getByTestId('gold')).toHaveText('🪙 50');
 
   await finger.hold(page, page.getByTestId('start-night'), 1300);
   await expect(page.getByTestId('night')).toContainText('Night 1');

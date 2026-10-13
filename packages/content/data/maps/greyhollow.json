@@ -1,17 +1,17 @@
 {
   "$schema": "../../schema/map.schema.json",
   "schemaVersion": 1,
-  "notes": "Greyhollow, prototype design 11 \u00a72 and \u00a78.3. Wall slots double as lane waypoints. Starting values, to be tuned.",
+  "notes": "Greyhollow, prototype design 11 \u00a72 and \u00a78.3. Wall slots double as lane waypoints. Tuned after the first playtest (2026-10-13): more gold (start 75, castle 25 a dawn) and 30% more enemies per group.",
   "id": "greyhollow",
   "name": "Greyhollow",
   "size": [64, 48],
   "nights": 6,
-  "startingGold": 50,
+  "startingGold": 75,
   "castle": {
     "node": "castle",
     "hp": 1500,
     "radius": 1.8,
-    "income": 10,
+    "income": 25,
     "attack": {
       "damage": 5,
       "interval": 1,
@@ -210,7 +210,7 @@
         {
           "lane": "west",
           "enemy": "raider",
-          "count": 6,
+          "count": 8,
           "delay": 0,
           "interval": 1.5
         }
@@ -222,14 +222,14 @@
         {
           "lane": "west",
           "enemy": "raider",
-          "count": 6,
+          "count": 8,
           "delay": 0,
           "interval": 1.5
         },
         {
           "lane": "east",
           "enemy": "raider",
-          "count": 6,
+          "count": 8,
           "delay": 6,
           "interval": 1.5
         }
@@ -241,28 +241,28 @@
         {
           "lane": "east",
           "enemy": "raider",
-          "count": 8,
+          "count": 10,
           "delay": 0,
           "interval": 1.2
         },
         {
           "lane": "north",
           "enemy": "raider",
-          "count": 4,
+          "count": 5,
           "delay": 4,
           "interval": 1.5
         },
         {
           "lane": "north",
           "enemy": "skirmisher",
-          "count": 2,
+          "count": 3,
           "delay": 8,
           "interval": 2
         },
         {
           "lane": "air",
           "enemy": "harpy",
-          "count": 2,
+          "count": 3,
           "delay": 10,
           "interval": 2
         }
@@ -274,7 +274,7 @@
         {
           "lane": "west",
           "enemy": "raider",
-          "count": 10,
+          "count": 13,
           "delay": 0,
           "interval": 1.2
         },
@@ -288,21 +288,21 @@
         {
           "lane": "east",
           "enemy": "raider",
-          "count": 6,
+          "count": 8,
           "delay": 3,
           "interval": 1.3
         },
         {
           "lane": "east",
           "enemy": "skirmisher",
-          "count": 4,
+          "count": 5,
           "delay": 8,
           "interval": 2
         },
         {
           "lane": "air",
           "enemy": "harpy",
-          "count": 3,
+          "count": 4,
           "delay": 8,
           "interval": 2
         }
@@ -314,42 +314,42 @@
         {
           "lane": "west",
           "enemy": "raider",
-          "count": 8,
+          "count": 10,
           "delay": 0,
           "interval": 1.2
         },
         {
           "lane": "west",
           "enemy": "skirmisher",
-          "count": 3,
+          "count": 4,
           "delay": 6,
           "interval": 2
         },
         {
           "lane": "east",
           "enemy": "raider",
-          "count": 10,
+          "count": 13,
           "delay": 2,
           "interval": 1.2
         },
         {
           "lane": "north",
           "enemy": "raider",
-          "count": 6,
+          "count": 8,
           "delay": 4,
           "interval": 1.3
         },
         {
           "lane": "north",
           "enemy": "brute",
-          "count": 2,
+          "count": 3,
           "delay": 10,
           "interval": 4
         },
         {
           "lane": "air",
           "enemy": "harpy",
-          "count": 4,
+          "count": 5,
           "delay": 6,
           "interval": 2
         }
@@ -361,56 +361,56 @@
         {
           "lane": "west",
           "enemy": "raider",
-          "count": 12,
+          "count": 16,
           "delay": 0,
           "interval": 1
         },
         {
           "lane": "west",
           "enemy": "brute",
-          "count": 2,
+          "count": 3,
           "delay": 8,
           "interval": 4
         },
         {
           "lane": "east",
           "enemy": "raider",
-          "count": 10,
+          "count": 13,
           "delay": 2,
           "interval": 1.2
         },
         {
           "lane": "east",
           "enemy": "skirmisher",
-          "count": 4,
+          "count": 5,
           "delay": 6,
           "interval": 2
         },
         {
           "lane": "north",
           "enemy": "skirmisher",
-          "count": 4,
+          "count": 5,
           "delay": 4,
           "interval": 2
         },
         {
           "lane": "north",
           "enemy": "brute",
-          "count": 2,
+          "count": 3,
           "delay": 12,
           "interval": 4
         },
         {
           "lane": "air",
           "enemy": "harpy",
-          "count": 3,
+          "count": 4,
           "delay": 0,
           "interval": 2
         },
         {
           "lane": "air",
           "enemy": "harpy",
-          "count": 3,
+          "count": 4,
           "delay": 25,
           "interval": 2
         }

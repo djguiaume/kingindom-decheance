@@ -32,7 +32,7 @@ corepack enable          # gives you the pinned pnpm
 pnpm install
 pnpm dev                 # game at http://localhost:5173
 pnpm test                # unit, content, determinism and golden-run tests
-pnpm sim --policy defensive --runs 200   # headless batch on the command line
+pnpm sim --policy balanced --runs 200    # headless batch on the command line
 ```
 
 Requires Node 22 (see `.nvmrc`).

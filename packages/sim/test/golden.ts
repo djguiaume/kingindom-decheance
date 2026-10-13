@@ -25,16 +25,22 @@ export interface GoldenFile {
 
 export const GOLDEN_CASES: GoldenCase[] = [
   {
-    name: 'defensive-win',
-    why: 'towers, walls, charges and an active king win Greyhollow',
-    policy: 'defensive',
+    name: 'balanced-win',
+    why: 'eco early, then towers, walls and an active king win Greyhollow',
+    policy: 'balanced',
     seed: 1,
   },
   {
-    name: 'defensive-win-seed-7',
+    name: 'balanced-win-seed-8',
     why: 'same plan, another seed: RNG flows through spawns',
+    policy: 'balanced',
+    seed: 8,
+  },
+  {
+    name: 'defensive-loss',
+    why: 'defences only, no eco: not enough gold to hold night 6',
     policy: 'defensive',
-    seed: 7,
+    seed: 1,
   },
   {
     name: 'greedy-loss',
@@ -44,7 +50,7 @@ export const GOLDEN_CASES: GoldenCase[] = [
   },
   {
     name: 'king-only',
-    why: 'no buildings: how far the king and the castle get alone',
+    why: 'no buildings: the king and the castle alone fall on night 5',
     policy: 'king-only',
     seed: 1,
   },

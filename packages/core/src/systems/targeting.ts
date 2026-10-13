@@ -2,7 +2,7 @@
  * Who goes for whom this tick (design 11 §8.2).
  * - Ground enemies look for a target within `aggroRange` of themselves, by their priority list
  *   then distance, but only targets within `leash` of their lane. A standing wall on the lane
- *   blocks them: if nothing else is in reach, they attack it.
+ *   blocks them and hides everything behind it: if nothing else is in reach, they attack it.
  * - Flyers ignore lanes and walls: the nearest standing target of their first available
  *   priority category, anywhere on the map.
  * - Units engage enemies near their post and drop chases that stray beyond their leash.
@@ -11,7 +11,15 @@ import type { TargetCategory } from '@kd/content';
 import { req, type GameContext } from '../context.ts';
 import type { EnemyState, GameState } from '../state.ts';
 import { dist, distToPolyline } from '../vec.ts';
-import { enemyTargets, gap, nearest, playerTargets, wallAt, type Target } from './targets.ts';
+import {
+  enemyTargets,
+  gap,
+  nearest,
+  pastGate,
+  playerTargets,
+  wallGate,
+  type Target,
+} from './targets.ts';
 
 /**
  * The order in which an enemy considers target categories: the content's priority list,
@@ -73,7 +81,13 @@ function groundTarget(state: GameState, ctx: GameContext, enemy: EnemyState, min
   // Too far from the lane (a long chase): give up and walk back first.
   if (distToPolyline(enemy.pos, lane.points) > def.leash) return null;
 
-  const reachable = mine.filter((t) => distToPolyline(t.pos, lane.points) - t.radius <= def.leash);
+  // Behind a standing wall is out of reach until the wall falls.
+  const gate = wallGate(state, ctx, enemy);
+  const reachable = mine.filter(
+    (t) =>
+      distToPolyline(t.pos, lane.points) - t.radius <= def.leash &&
+      (!gate || pastGate(gate, t.pos) < 0),
+  );
   for (const category of effectivePriority(def.targetPriority, false)) {
     const pick = nearest(
       enemy.pos,
@@ -86,13 +100,8 @@ function groundTarget(state: GameState, ctx: GameContext, enemy: EnemyState, min
   }
 
   // Blocked by a wall on the way: attack it even if walls are not on the priority list.
-  const nodeId = lane.nodes[enemy.waypoint];
-  const wall = nodeId ? wallAt(state, ctx, nodeId) : null;
-  if (wall) {
-    const wallRadius = req(ctx.buildings, wall.type).radius;
-    if (dist(enemy.pos, wall.pos) - wallRadius - def.radius <= def.aggroRange) {
-      return { kind: 'building' as const, id: wall.id };
-    }
+  if (gate && dist(enemy.pos, gate.wall.pos) - gate.depth - def.radius <= def.aggroRange) {
+    return { kind: 'building' as const, id: gate.wall.id };
   }
   return null;
 }

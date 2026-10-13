@@ -4,7 +4,7 @@
  */
 import type { EnemyArchetype, TargetCategory, TargetLayer } from '@kd/content';
 import { req, type GameContext } from '../context.ts';
-import type { BuildingState, GameState, Ref } from '../state.ts';
+import type { BuildingState, EnemyState, GameState, Ref } from '../state.ts';
 import type { Vec } from '../vec.ts';
 import { dist } from '../vec.ts';
 
@@ -159,4 +159,51 @@ export function wallAt(state: GameState, ctx: GameContext, nodeId: string): Buil
   const b = state.buildings.find((x) => x.slot === nodeId);
   if (!b || b.destroyed) return null;
   return req(ctx.buildings, b.type).class === 'wall' ? b : null;
+}
+
+/**
+ * A standing wall on an enemy's next waypoint acts as a gate line across its lane: the line
+ * through the wall, square to the lane. The enemy stays on its own side and only sees targets
+ * on that side, so it cannot walk around the wall to reach what is behind it.
+ */
+export interface WallGate {
+  wall: BuildingState;
+  /** Centre of the wall, on the lane. */
+  at: Vec;
+  /** Unit vector along the lane, pointing through the wall towards the castle. */
+  dir: Vec;
+  /** Half the wall's thickness along the lane. */
+  depth: number;
+}
+
+export function wallGate(state: GameState, ctx: GameContext, enemy: EnemyState): WallGate | null {
+  const lane = req(ctx.lanes, enemy.lane);
+  const nodeId = lane.nodes[enemy.waypoint];
+  const wall = nodeId ? wallAt(state, ctx, nodeId) : null;
+  if (!wall) return null;
+  const at = lane.points[enemy.waypoint]!;
+  const from = enemy.waypoint > 0 ? lane.points[enemy.waypoint - 1]! : enemy.pos;
+  const dx = at.x - from.x;
+  const dy = at.y - from.y;
+  const len = Math.sqrt(dx * dx + dy * dy);
+  if (len < 1e-9) return null;
+  return {
+    wall,
+    at,
+    dir: { x: dx / len, y: dy / len },
+    depth: req(ctx.buildings, wall.type).radius,
+  };
+}
+
+/** Signed distance along the lane from the gate line: negative is the enemy's side. */
+export function pastGate(gate: WallGate, p: Vec): number {
+  return (p.x - gate.at.x) * gate.dir.x + (p.y - gate.at.y) * gate.dir.y;
+}
+
+/** Pushes a body back to its side of the gate if it has crossed the wall's face. */
+export function holdAtGate(gate: WallGate, pos: Vec, radius: number): void {
+  const over = pastGate(gate, pos) + gate.depth + radius;
+  if (over <= 0) return;
+  pos.x -= gate.dir.x * over;
+  pos.y -= gate.dir.y * over;
 }
