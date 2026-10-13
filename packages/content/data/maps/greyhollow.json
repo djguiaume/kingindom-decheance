@@ -4,10 +4,7 @@
   "notes": "Greyhollow, prototype design 11 \u00a72 and \u00a78.3. Wall slots double as lane waypoints. Starting values, to be tuned.",
   "id": "greyhollow",
   "name": "Greyhollow",
-  "size": [
-    64,
-    48
-  ],
+  "size": [64, 48],
   "nights": 6,
   "startingGold": 50,
   "castle": {
@@ -19,333 +16,190 @@
       "damage": 5,
       "interval": 1,
       "range": 8,
-      "targets": [
-        "ground",
-        "air"
-      ]
+      "targets": ["ground", "air"]
     }
   },
   "kingSpawn": "king_start",
   "nodes": [
     {
       "id": "castle",
-      "pos": [
-        32,
-        24
-      ]
+      "pos": [32, 24]
     },
     {
       "id": "king_start",
-      "pos": [
-        32,
-        27
-      ]
+      "pos": [32, 27]
     },
     {
       "id": "sp_w",
-      "pos": [
-        0,
-        27
-      ]
+      "pos": [0, 27]
     },
     {
       "id": "w1",
-      "pos": [
-        9,
-        28
-      ]
+      "pos": [9, 28]
     },
     {
       "id": "ww",
-      "pos": [
-        17,
-        26
-      ],
+      "pos": [17, 26],
       "slot": {
-        "options": [
-          "wall"
-        ]
+        "options": ["wall"]
       }
     },
     {
       "id": "w3",
-      "pos": [
-        25,
-        24
-      ]
+      "pos": [25, 24]
     },
     {
       "id": "sp_e",
-      "pos": [
-        63,
-        19
-      ]
+      "pos": [63, 19]
     },
     {
       "id": "e1",
-      "pos": [
-        54,
-        17
-      ]
+      "pos": [54, 17]
     },
     {
       "id": "we",
-      "pos": [
-        47,
-        20
-      ],
+      "pos": [47, 20],
       "slot": {
-        "options": [
-          "wall"
-        ]
+        "options": ["wall"]
       }
     },
     {
       "id": "e3",
-      "pos": [
-        39,
-        23
-      ]
+      "pos": [39, 23]
     },
     {
       "id": "sp_n",
-      "pos": [
-        31,
-        0
-      ]
+      "pos": [31, 0]
     },
     {
       "id": "wn",
-      "pos": [
-        31,
-        8
-      ],
+      "pos": [31, 8],
       "slot": {
-        "options": [
-          "wall"
-        ]
+        "options": ["wall"]
       }
     },
     {
       "id": "n2",
-      "pos": [
-        32,
-        16
-      ]
+      "pos": [32, 16]
     },
     {
       "id": "sp_air",
-      "pos": [
-        62,
-        2
-      ]
+      "pos": [62, 2]
     },
     {
       "id": "h1",
-      "pos": [
-        27,
-        19
-      ],
+      "pos": [27, 19],
       "slot": {
-        "options": [
-          "house"
-        ]
+        "options": ["house"]
       }
     },
     {
       "id": "h2",
-      "pos": [
-        37,
-        19
-      ],
+      "pos": [37, 19],
       "slot": {
-        "options": [
-          "house"
-        ]
+        "options": ["house"]
       }
     },
     {
       "id": "h3",
-      "pos": [
-        27,
-        29
-      ],
+      "pos": [27, 29],
       "slot": {
-        "options": [
-          "house"
-        ]
+        "options": ["house"]
       }
     },
     {
       "id": "h4",
-      "pos": [
-        37,
-        29
-      ],
+      "pos": [37, 29],
       "slot": {
-        "options": [
-          "house"
-        ]
+        "options": ["house"]
       }
     },
     {
       "id": "m1",
-      "pos": [
-        50,
-        9
-      ],
+      "pos": [50, 9],
       "slot": {
-        "options": [
-          "gold_mine"
-        ]
+        "options": ["gold_mine"]
       }
     },
     {
       "id": "m2",
-      "pos": [
-        11,
-        30
-      ],
+      "pos": [11, 30],
       "slot": {
-        "options": [
-          "gold_mine"
-        ]
+        "options": ["gold_mine"]
       }
     },
     {
       "id": "tw",
-      "pos": [
-        19,
-        22
-      ],
+      "pos": [19, 22],
       "slot": {
-        "options": [
-          "tower"
-        ]
+        "options": ["tower"]
       }
     },
     {
       "id": "te",
-      "pos": [
-        47,
-        16
-      ],
+      "pos": [47, 16],
       "slot": {
-        "options": [
-          "tower"
-        ]
+        "options": ["tower"]
       }
     },
     {
       "id": "tn",
-      "pos": [
-        34,
-        9
-      ],
+      "pos": [34, 9],
       "slot": {
-        "options": [
-          "tower"
-        ]
+        "options": ["tower"]
       }
     },
     {
       "id": "tm",
-      "pos": [
-        53,
-        11
-      ],
+      "pos": [53, 11],
       "slot": {
-        "options": [
-          "tower"
-        ]
+        "options": ["tower"]
       }
     },
     {
       "id": "tc",
-      "pos": [
-        34,
-        27
-      ],
+      "pos": [34, 27],
       "slot": {
-        "options": [
-          "tower"
-        ]
+        "options": ["tower"]
       }
     },
     {
       "id": "b1",
-      "pos": [
-        32,
-        32
-      ],
+      "pos": [32, 32],
       "slot": {
-        "options": [
-          "barracks"
-        ],
-        "rally": [
-          "gate_w",
-          "gate_e",
-          "gate_n"
-        ]
+        "options": ["barracks"],
+        "rally": ["gate_w", "gate_e", "gate_n"]
       }
     },
     {
       "id": "gate_w",
-      "pos": [
-        23,
-        25
-      ]
+      "pos": [23, 25]
     },
     {
       "id": "gate_e",
-      "pos": [
-        41,
-        22
-      ]
+      "pos": [41, 22]
     },
     {
       "id": "gate_n",
-      "pos": [
-        32,
-        13
-      ]
+      "pos": [32, 13]
     }
   ],
   "lanes": [
     {
       "id": "west",
-      "path": [
-        "sp_w",
-        "w1",
-        "ww",
-        "w3",
-        "castle"
-      ]
+      "path": ["sp_w", "w1", "ww", "w3", "castle"]
     },
     {
       "id": "east",
-      "path": [
-        "sp_e",
-        "e1",
-        "we",
-        "e3",
-        "castle"
-      ]
+      "path": ["sp_e", "e1", "we", "e3", "castle"]
     },
     {
       "id": "north",
-      "path": [
-        "sp_n",
-        "wn",
-        "n2",
-        "castle"
-      ]
+      "path": ["sp_n", "wn", "n2", "castle"]
     },
     {
       "id": "air",
-      "path": [
-        "sp_air"
-      ],
+      "path": ["sp_air"],
       "air": true
     }
   ],

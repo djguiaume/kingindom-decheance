@@ -55,7 +55,13 @@ function flyerTarget(
   mine: Target[],
 ) {
   for (const category of priority) {
-    const pick = nearest(enemy.pos, radius, Infinity, layers, mine.filter((t) => t.category === category));
+    const pick = nearest(
+      enemy.pos,
+      radius,
+      Infinity,
+      layers,
+      mine.filter((t) => t.category === category),
+    );
     if (pick) return pick.ref;
   }
   return null;
@@ -92,5 +98,7 @@ function groundTarget(state: GameState, ctx: GameContext, enemy: EnemyState, min
 }
 
 function sameRef(t: Target, ref: NonNullable<EnemyState['target']>): boolean {
-  return t.ref.kind === ref.kind && ('id' in t.ref ? t.ref.id === (ref as { id: number }).id : true);
+  return (
+    t.ref.kind === ref.kind && ('id' in t.ref ? t.ref.id === (ref as { id: number }).id : true)
+  );
 }

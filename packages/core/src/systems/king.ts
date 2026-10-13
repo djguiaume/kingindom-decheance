@@ -40,7 +40,12 @@ export function kingSystem(state: GameState, ctx: GameContext, events: GameEvent
     dashStep(state, ctx, events);
     return;
   }
-  moveBy(state, ctx, king.intent.x * perTick(ctx.king.speed), king.intent.y * perTick(ctx.king.speed));
+  moveBy(
+    state,
+    ctx,
+    king.intent.x * perTick(ctx.king.speed),
+    king.intent.y * perTick(ctx.king.speed),
+  );
 }
 
 function moveBy(state: GameState, ctx: GameContext, dx: number, dy: number): void {

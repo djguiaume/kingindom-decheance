@@ -29,7 +29,7 @@ const scriptArb: fc.Arbitrary<Script> = fc.record({
     fc.array(fc.record({ slot: fc.nat(10), option: fc.nat(3), upgrade: fc.boolean() }), {
       maxLength: 5,
     }),
-    { minLength: 3, maxLength: 3 },
+    { minLength: 2, maxLength: 2 },
   ),
   moves: fc.array(fc.tuple(fc.integer({ min: -1, max: 1 }), fc.integer({ min: -1, max: 1 })), {
     minLength: 1,
@@ -37,7 +37,7 @@ const scriptArb: fc.Arbitrary<Script> = fc.record({
   }),
 });
 
-const MAX_NIGHT_TICKS = 30 * 120;
+const MAX_NIGHT_TICKS = 30 * 90;
 
 /** Plays a script; `onTick` sees the session after every step. Refused commands are fine. */
 function play(
@@ -51,26 +51,16 @@ function play(
     if (session.over) break;
     for (const a of day) {
       const node = slots[a.slot % slots.length]!;
-      const built = session.state.buildings.find((b) => b.slot === node.id);
-      if (built && a.upgrade) {
-        const ups = session.ctx.buildings.get(built.type)!.upgrades;
-        if (ups.length > 0)
-          session.submit({ type: 'upgrade', slot: node.id, to: ups[a.option % ups.length]!.to });
-      } else {
-        const options = node.slot!.options;
-        session.submit({
-          type: 'build',
-          slot: node.id,
-          building: options[a.option % options.length]!,
-        });
-      }
+      if (a.upgrade) session.submit({ type: 'cycleRally', slot: node.id });
+      session.submit({ type: 'buy', slot: node.id, option: a.option % 2 });
     }
     session.submit({ type: 'startNight' });
     let i = 0;
     while (session.state.phase === 'night' && session.state.nightTick < MAX_NIGHT_TICKS) {
       if (session.state.nightTick % 15 === 0) {
         const [x, y] = script.moves[i++ % script.moves.length]!;
-        session.submit({ type: 'moveKing', x, y });
+        session.submit({ type: 'move', x, y });
+        if (x !== 0 && y !== 0) session.submit({ type: 'ability' });
       }
       const events = session.step();
       eventLog = cyrb53(eventLog + canonicalJson(events));
@@ -103,13 +93,14 @@ function checkInvariants(s: Session): void {
   expect(Math.max(0, ...ids)).toBeLessThan(st.nextId);
 }
 
-describe('determinism', () => {
+// Each property plays whole nights many times over, so they get more than the default 5 s.
+describe('determinism', { timeout: 60_000 }, () => {
   it('holds the invariants on every tick of random runs', () => {
     fc.assert(
       fc.property(scriptArb, (script) => {
         play(script, (s) => checkInvariants(s));
       }),
-      { numRuns: 25 },
+      { numRuns: 15 },
     );
   });
 

@@ -2,7 +2,7 @@
  * Bot policies (08 §6.1) decide the day's commands. These are deliberately naive stand-ins
  * to exercise the runner; the real baselines come with the balancing simulator (ADR-001).
  */
-import type { Command, GameContext, GameState } from '@kd/core';
+import { buyOptions, type Command, type GameContext, type GameState } from '@kd/core';
 
 export interface Policy {
   id: string;
@@ -36,15 +36,20 @@ export function chaseNearestEnemy(state: GameState, ctx: GameContext): Command[]
   }
   const reach = ctx.weapon.attack.range + ctx.king.radius;
   if (!best || bestD <= reach) {
-    return king.intent.x === 0 && king.intent.y === 0 ? [] : [{ type: 'moveKing', x: 0, y: 0 }];
+    return king.intent.x === 0 && king.intent.y === 0 ? [] : [{ type: 'move', x: 0, y: 0 }];
   }
   // Rounded so the command log stays readable; the core normalises the vector.
   const round = (v: number) => Math.round(v * 100) / 100;
   const commands: Command[] = [
-    { type: 'moveKing', x: round((best.x - king.pos.x) / bestD), y: round((best.y - king.pos.y) / bestD) },
+    {
+      type: 'move',
+      x: round((best.x - king.pos.x) / bestD),
+      y: round((best.y - king.pos.y) / bestD),
+    },
   ];
   const ability = ctx.weapon.ability;
-  if (ability && king.abilityCooldown === 0 && bestD <= ability.distance) commands.push({ type: 'useAbility' });
+  if (ability && king.abilityCooldown === 0 && bestD <= ability.distance)
+    commands.push({ type: 'ability' });
   return commands;
 }
 
@@ -62,12 +67,10 @@ export const greedyPolicy: Policy = {
     let gold = state.gold;
     for (const node of ctx.map.nodes) {
       if (!node.slot || state.buildings.some((b) => b.slot === node.id)) continue;
-      const option = node.slot.options.find(
-        (o) => (ctx.buildings.get(o)?.cost ?? Infinity) <= gold,
-      );
-      if (!option) continue;
-      gold -= ctx.buildings.get(option)!.cost;
-      commands.push({ type: 'build', slot: node.id, building: option });
+      const offer = buyOptions(state, ctx, node.id).find((o) => o.cost <= gold);
+      if (!offer) continue;
+      gold -= offer.cost;
+      commands.push({ type: 'buy', slot: node.id, option: offer.option });
     }
     return commands;
   },
@@ -87,20 +90,19 @@ export const defensivePolicy: Policy = {
     for (const cls of CLASS_ORDER) {
       for (const node of ctx.map.nodes) {
         if (!node.slot || state.buildings.some((b) => b.slot === node.id)) continue;
-        const option = node.slot.options.find((o) => {
-          const def = ctx.buildings.get(o);
-          return def?.class === cls && def.cost <= gold;
-        });
-        if (!option) continue;
-        gold -= ctx.buildings.get(option)!.cost;
-        commands.push({ type: 'build', slot: node.id, building: option });
+        const offer = buyOptions(state, ctx, node.id).find(
+          (o) => ctx.buildings.get(o.building)?.class === cls && o.cost <= gold,
+        );
+        if (!offer) continue;
+        gold -= offer.cost;
+        commands.push({ type: 'buy', slot: node.id, option: offer.option });
       }
     }
     for (const b of state.buildings) {
-      const upgrade = ctx.buildings.get(b.type)?.upgrades.find((u) => u.cost <= gold);
-      if (!upgrade) continue;
-      gold -= upgrade.cost;
-      commands.push({ type: 'upgrade', slot: b.slot, to: upgrade.to });
+      const offer = buyOptions(state, ctx, b.slot).find((o) => o.cost <= gold);
+      if (!offer) continue;
+      gold -= offer.cost;
+      commands.push({ type: 'buy', slot: b.slot, option: offer.option });
     }
     return commands;
   },

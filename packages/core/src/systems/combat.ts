@@ -21,7 +21,18 @@ export function combatSystem(state: GameState, ctx: GameContext, events: GameEve
     const atk = ctx.weapon.attack;
     if (king.cooldown <= 0) {
       const first = nearest(king.pos, ctx.king.radius, atk.range, atk.targets, enemies);
-      if (first) strike(state, { kind: 'king' }, king, king.pos, ctx.king.radius, atk, first, enemies, events);
+      if (first)
+        strike(
+          state,
+          { kind: 'king' },
+          king,
+          king.pos,
+          ctx.king.radius,
+          atk,
+          first,
+          enemies,
+          events,
+        );
     }
   }
 
@@ -31,7 +42,18 @@ export function combatSystem(state: GameState, ctx: GameContext, events: GameEve
     tickDown(castle);
     if (castle.cooldown <= 0) {
       const first = nearest(castle.pos, castle.radius, castleAtk.range, castleAtk.targets, enemies);
-      if (first) strike(state, { kind: 'castle' }, castle, castle.pos, castle.radius, castleAtk, first, enemies, events);
+      if (first)
+        strike(
+          state,
+          { kind: 'castle' },
+          castle,
+          castle.pos,
+          castle.radius,
+          castleAtk,
+          first,
+          enemies,
+          events,
+        );
     }
   }
 
@@ -42,7 +64,18 @@ export function combatSystem(state: GameState, ctx: GameContext, events: GameEve
     tickDown(b);
     if (b.cooldown > 0) continue;
     const first = nearest(b.pos, def.radius, atk.range, atk.targets, enemies);
-    if (first) strike(state, { kind: 'building', id: b.id }, b, b.pos, def.radius, atk, first, enemies, events);
+    if (first)
+      strike(
+        state,
+        { kind: 'building', id: b.id },
+        b,
+        b.pos,
+        def.radius,
+        atk,
+        first,
+        enemies,
+        events,
+      );
   }
 
   for (const u of state.units) {
@@ -52,7 +85,17 @@ export function combatSystem(state: GameState, ctx: GameContext, events: GameEve
     if (u.cooldown > 0 || !u.target) continue;
     const target = resolve(state, ctx, u.target);
     if (target && gap(u.pos, def.radius, target) <= def.attack.range) {
-      strike(state, { kind: 'unit', id: u.id }, u, u.pos, def.radius, def.attack, target, enemies, events);
+      strike(
+        state,
+        { kind: 'unit', id: u.id },
+        u,
+        u.pos,
+        def.radius,
+        def.attack,
+        target,
+        enemies,
+        events,
+      );
     }
   }
 
@@ -63,7 +106,17 @@ export function combatSystem(state: GameState, ctx: GameContext, events: GameEve
     if (e.cooldown > 0 || !e.target) continue;
     const target = resolve(state, ctx, e.target);
     if (target && gap(e.pos, def.radius, target) <= def.attack.range) {
-      strike(state, { kind: 'enemy', id: e.id }, e, e.pos, def.radius, def.attack, target, mine, events);
+      strike(
+        state,
+        { kind: 'enemy', id: e.id },
+        e,
+        e.pos,
+        def.radius,
+        def.attack,
+        target,
+        mine,
+        events,
+      );
     }
   }
 }
@@ -114,8 +167,10 @@ function strike(
 
   if (atk.aoe > 0) {
     for (const other of pool) {
-      if (struck.includes(other) || other.body.hp <= 0 || !atk.targets.includes(other.layer)) continue;
-      if (dist(first.pos, other.pos) - other.radius <= atk.aoe) hit(state, ref, other, damageFor(atk, other), events);
+      if (struck.includes(other) || other.body.hp <= 0 || !atk.targets.includes(other.layer))
+        continue;
+      if (dist(first.pos, other.pos) - other.radius <= atk.aoe)
+        hit(state, ref, other, damageFor(atk, other), events);
     }
   }
 }
@@ -125,7 +180,13 @@ function damageFor(atk: Attack, target: Target): number {
   return atk.damage * (bonus ?? 1);
 }
 
-export function hit(state: GameState, attacker: Ref, target: Target, damage: number, events: GameEvent[]): void {
+export function hit(
+  state: GameState,
+  attacker: Ref,
+  target: Target,
+  damage: number,
+  events: GameEvent[],
+): void {
   target.body.hp = Math.max(0, target.body.hp - damage);
   if (target.ref.kind === 'king') state.king.calm = 0;
   events.push({ type: 'hit', attacker, target: target.ref, damage });

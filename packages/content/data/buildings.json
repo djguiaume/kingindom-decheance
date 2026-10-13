@@ -13,8 +13,24 @@
       "radius": 0.9,
       "upgrades": [{ "to": "manor", "cost": 20 }]
     },
-    { "id": "manor", "name": "Manor", "class": "eco", "cost": 20, "hp": 250, "income": 10, "radius": 1 },
-    { "id": "gold_mine", "name": "Gold mine", "class": "eco", "cost": 30, "hp": 200, "income": 12, "radius": 1 },
+    {
+      "id": "manor",
+      "name": "Manor",
+      "class": "eco",
+      "cost": 20,
+      "hp": 250,
+      "income": 10,
+      "radius": 1
+    },
+    {
+      "id": "gold_mine",
+      "name": "Gold mine",
+      "class": "eco",
+      "cost": 30,
+      "hp": 200,
+      "income": 12,
+      "radius": 1
+    },
     {
       "id": "tower",
       "name": "Tower",
@@ -60,7 +76,13 @@
       "cost": 50,
       "hp": 450,
       "radius": 0.9,
-      "attack": { "damage": 8, "interval": 1, "range": 8, "maxTargets": 3, "targets": ["ground", "air"] }
+      "attack": {
+        "damage": 8,
+        "interval": 1,
+        "range": 8,
+        "maxTargets": 3,
+        "targets": ["ground", "air"]
+      }
     },
     {
       "id": "wall",
@@ -71,7 +93,14 @@
       "radius": 1.2,
       "upgrades": [{ "to": "stone_wall", "cost": 20 }]
     },
-    { "id": "stone_wall", "name": "Stone wall", "class": "wall", "cost": 20, "hp": 1200, "radius": 1.2 },
+    {
+      "id": "stone_wall",
+      "name": "Stone wall",
+      "class": "wall",
+      "cost": 20,
+      "hp": 1200,
+      "radius": 1.2
+    },
     {
       "id": "barracks",
       "name": "Barracks",

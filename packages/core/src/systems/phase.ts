@@ -116,7 +116,10 @@ function dawn(state: GameState, ctx: GameContext, events: GameEvent[]): void {
 }
 
 /** Tonight's wave per lane, for the HUD telegraph (design 11 §8.3). */
-export function telegraph(ctx: GameContext, night: number): { lane: string; enemy: string; count: number }[] {
+export function telegraph(
+  ctx: GameContext,
+  night: number,
+): { lane: string; enemy: string; count: number }[] {
   const wave = ctx.map.waves.find((w) => w.night === night);
   const out: { lane: string; enemy: string; count: number }[] = [];
   for (const g of wave?.groups ?? []) {

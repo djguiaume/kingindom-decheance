@@ -23,7 +23,12 @@ export function movementSystem(state: GameState, ctx: GameContext): void {
     const step = perTick(def.speed);
     const target = enemy.target && resolve(state, ctx, enemy.target);
     if (target) {
-      moveToward(enemy.pos, target.pos, step, def.radius + target.radius + def.attack.range - RANGE_SLACK);
+      moveToward(
+        enemy.pos,
+        target.pos,
+        step,
+        def.radius + target.radius + def.attack.range - RANGE_SLACK,
+      );
       continue;
     }
     if (def.flying) continue;
@@ -53,7 +58,12 @@ export function movementSystem(state: GameState, ctx: GameContext): void {
     const step = perTick(def.speed);
     const target = unit.target && resolve(state, ctx, unit.target);
     if (target) {
-      moveToward(unit.pos, target.pos, step, def.radius + target.radius + def.attack.range - RANGE_SLACK);
+      moveToward(
+        unit.pos,
+        target.pos,
+        step,
+        def.radius + target.radius + def.attack.range - RANGE_SLACK,
+      );
     } else {
       moveToward(unit.pos, unit.post, step);
     }

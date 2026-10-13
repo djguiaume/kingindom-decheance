@@ -24,7 +24,15 @@ const Meta = {
 export const TargetLayer = z.enum(['ground', 'air']);
 
 /** What an enemy may choose to attack, in priority order (08 §5 `target_priority`). */
-export const TargetCategory = z.enum(['wall', 'eco', 'tower', 'building', 'unit', 'king', 'castle']);
+export const TargetCategory = z.enum([
+  'wall',
+  'eco',
+  'tower',
+  'building',
+  'unit',
+  'king',
+  'castle',
+]);
 
 export const Attack = z.object({
   damage: Positive,

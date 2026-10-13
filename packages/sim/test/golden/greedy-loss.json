@@ -1,0 +1,96 @@
+{
+  "name": "greedy-loss",
+  "why": "eco-first with an idle king falls on night 3 (pass and flyers open)",
+  "replay": {
+    "contentHash": "1aa241242615da",
+    "config": {
+      "mapId": "greyhollow",
+      "weaponId": "spear",
+      "seed": 1
+    },
+    "commands": [
+      {
+        "tick": 0,
+        "command": {
+          "type": "buy",
+          "slot": "ww",
+          "option": 0
+        }
+      },
+      {
+        "tick": 0,
+        "command": {
+          "type": "buy",
+          "slot": "we",
+          "option": 0
+        }
+      },
+      {
+        "tick": 0,
+        "command": {
+          "type": "buy",
+          "slot": "wn",
+          "option": 0
+        }
+      },
+      {
+        "tick": 0,
+        "command": {
+          "type": "buy",
+          "slot": "h1",
+          "option": 0
+        }
+      },
+      {
+        "tick": 0,
+        "command": {
+          "type": "startNight"
+        }
+      },
+      {
+        "tick": 1330,
+        "command": {
+          "type": "buy",
+          "slot": "h2",
+          "option": 0
+        }
+      },
+      {
+        "tick": 1330,
+        "command": {
+          "type": "startNight"
+        }
+      },
+      {
+        "tick": 3708,
+        "command": {
+          "type": "buy",
+          "slot": "h3",
+          "option": 0
+        }
+      },
+      {
+        "tick": 3708,
+        "command": {
+          "type": "startNight"
+        }
+      }
+    ]
+  },
+  "expected": {
+    "contentHash": "1aa241242615da",
+    "policy": "greedy",
+    "config": {
+      "mapId": "greyhollow",
+      "weaponId": "spear",
+      "seed": 1
+    },
+    "outcome": "lost",
+    "nightReached": 3,
+    "goldPerNight": [15, 15, 0],
+    "buildingsLostPerNight": [1, 3, 5],
+    "enemiesKilled": 31,
+    "ticks": 5982,
+    "finalHash": "0b17957b95927d"
+  }
+}

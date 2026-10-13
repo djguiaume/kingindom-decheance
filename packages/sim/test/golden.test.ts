@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { prototypeContent, prototypeRun } from '@kd/content/prototype';
+import { prototypeContent } from '@kd/content/prototype';
 import { playReplay } from '@kd/core';
 import { describe, expect, it } from 'vitest';
 import { summarize } from '../src/runner.ts';

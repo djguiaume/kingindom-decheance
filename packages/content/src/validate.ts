@@ -135,8 +135,11 @@ export function checkSemantics(bundle: Omit<ContentBundle, 'hash'>): ContentErro
     b.upgrades.forEach((u, j) => {
       const target = bundle.buildings.find((x) => x.id === u.to);
       if (target && target.cost !== u.cost)
-        err('buildings.json', `buildings.${bundle.buildings.indexOf(b)}.upgrades.${j}.cost`,
-          `upgrade cost ${u.cost} differs from "${u.to}" cost ${target.cost}`);
+        err(
+          'buildings.json',
+          `buildings.${bundle.buildings.indexOf(b)}.upgrades.${j}.cost`,
+          `upgrade cost ${u.cost} differs from "${u.to}" cost ${target.cost}`,
+        );
     }),
   );
   const visiting = new Set<string>();
@@ -190,7 +193,10 @@ export function checkSemantics(bundle: Omit<ContentBundle, 'hash'>): ContentErro
       lane.path.forEach((p, j) => {
         if (!nodeIds.has(p)) err(file, `lanes.${i}.path.${j}`, `unknown node "${p}"`);
       });
-      if (!lane.air && (lane.path.length < 2 || lane.path[lane.path.length - 1] !== map.castle.node))
+      if (
+        !lane.air &&
+        (lane.path.length < 2 || lane.path[lane.path.length - 1] !== map.castle.node)
+      )
         err(file, `lanes.${i}.path`, 'a ground lane must end at the castle node');
     });
 
