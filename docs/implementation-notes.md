@@ -24,22 +24,37 @@ Pinia 4, Vue Router 5, Zod 4, Vitest 5, fast-check 4, Playwright 1.64, Node 22, 
 ## Rules the core applies on top of content
 
 These follow the approved map defaults (fixed slots, predefined lanes with simple local
-steering, hand-made maps) and are easy to revisit:
+steering, hand-made maps) and the prototype design (corpus 11), and are easy to revisit:
 
-- Ground enemies always consider walls first (walls block); flyers never target walls.
+- Ground enemies keep their content priority order; a wall standing on their next waypoint
+  stops them, and they attack it when nothing in their priority list is in reach. Flyers never
+  target walls and ignore lanes (the air lane is a single spawn node).
 - Every enemy will attack the castle when it reaches it, even if its priority list omits it.
-- Enemies follow their lane; within `aggroRange` of a target in their priority list they leave
-  the lane to attack it, then walk back toward their next waypoint.
-- Units guard a post in front of their military building and only engage enemies near that post.
-- The king attacks the nearest enemy in reach automatically; the player only moves him.
+- Enemies leave their lane for targets within `aggroRange`, but only up to `leash` metres from
+  the lane, then walk back.
+- Units guard a post at their barracks' rally gate (`guardRadius`, `leash`). The player cycles
+  the gate during the day.
+- The king attacks automatically with the run's weapon (multi-target arc for the spear). The
+  weapon's ability (the spear's Charge dash) is the only manual attack. Weapon and map are
+  chosen per run (`prototypeRun`), so starters and bonuses can swap them later.
 - Overlapping enemies and units push each other apart (separation), computed order-independently.
 - Dawn restores every building, the castle and the king; units are re-fielded each night.
-  Income is paid only for eco buildings that survived (corpus fact sheet).
-- Day commands do not require the king to be near the slot. Whether building needs the king
-  present is a design question for the prototype.
+  Income is the castle's plus each eco building that survived.
+
+## Deviations from design 11 §10
+
+- The core command is `ability` rather than `charge`, so it stays weapon-agnostic.
+- Pause is a view concern (the runtime stops ticking), not a core command, so it never enters a
+  replay.
+- "The king must stand near a slot to buy" is enforced by the input layer (build reach from
+  `king.json`), not by the core. Bots can buy anywhere.
+- At a barracks, E (or the Guard card) cycles the rally gate and R (or the card) upgrades.
+- Zoom is double tap or wheel; pinch zoom is not built.
+- Phone smoke tests use a Pixel preset on Chromium; an iPhone/WebKit run is not in CI yet.
 
 ## Not built yet
 
+- Day/night music and lighting, object pools for effects.
 - Web Worker pool and Comlink (ADR-003): the runner is ready to be moved into a worker.
 - Tier 3 nightly balance assertions (ADR-007) and the ECharts dashboard (ADR-005).
 - Perks, mutators, research, score.

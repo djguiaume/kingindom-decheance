@@ -4,8 +4,26 @@ A browser-only build-by-day, defend-by-night game in the spirit of Thronefall. N
 Design corpus and architecture decisions (ADR-001 to ADR-008) live in the project's design corpus;
 this repository implements them.
 
-> **Status:** engineering skeleton. The map, numbers and art are **placeholders** that exist only
-> to exercise the core. The real prototype content comes from the design work.
+> **Status:** playable prototype. Content follows the approved prototype design (corpus file 11):
+> one map (Greyhollow), six nights, the spear as starting weapon. Art is flat code-drawn stand-ins,
+> keyed by content id so every asset can be swapped in the final art pass. Plays on desktop
+> (keyboard) and on a phone in landscape (touch joystick).
+
+## Controls
+
+| Action      | Keyboard             | Phone                                     |
+| ----------- | -------------------- | ----------------------------------------- |
+| Move        | WASD / arrows        | Floating joystick, left side of screen    |
+| Attack      | automatic            | automatic                                 |
+| Ability     | Space                | Charge button, bottom right               |
+| Buy/upgrade | hold E (or R) 0.4 s  | hold the slot card 0.4 s                  |
+| Rally gate  | hold E at a barracks | hold the Guard card                       |
+| Start night | hold Enter 1 s       | hold Start night 1 s                      |
+| Wave info   | Tab                  | tap the wave chip                         |
+| Zoom        | Z or mouse wheel     | double tap                                |
+| Pause       | Esc                  | pause button (full screen is in the menu) |
+
+The last device used decides which controls and hints are shown.
 
 ## Quick start
 
@@ -38,8 +56,9 @@ fails on any forbidden import (`phaser`/`vue` in the core, a reverse arrow, `Mat
 - **`GameState`** is one plain data object (like a DTO graph): castle, king, buildings, units,
   enemies, gold, RNG state. No classes with behaviour, so `JSON.stringify` is a save file and a
   deep copy is a snapshot.
-- **Commands** (`build`, `upgrade`, `startNight`, `moveKing`) are the only way in, like a command
-  bus in front of a domain model: validated, then applied, or refused with a reason and no change.
+- **Commands** (`move`, `ability`, `buy`, `cycleRally`, `startNight`) are the only way in. They
+  are device-neutral: keyboard, touch and bots all send the same ones. They are, like a command
+  bus in front of a domain model, validated, then applied, or refused with a reason and no change.
 - **Systems** are plain functions run in a fixed order each tick, like a pipeline of stateless
   services: `king → spawning → targeting → movement → separation → combat → death → phase`.
 - **Fixed tick.** Nights advance in exact 1/30 s steps whatever the frame rate. The browser
@@ -62,7 +81,9 @@ Implementation choices made here (open questions in ADR-010 §hooks) are listed 
 - **Golden runs** (`packages/sim/test/golden/*.json`) are recorded replays with their expected
   summary. If a change alters an outcome the test fails with a diff. If the change is intended,
   run `pnpm golden:update` and say why in the commit.
-- `pnpm e2e` runs the Playwright smoke test against the production build.
+- `pnpm e2e` runs the Playwright smoke tests against the production build: a desktop keyboard
+  run and a phone run (Pixel 7 landscape, real touch events) that drives the joystick, Charge,
+  hold-to-buy and hold-to-start, plus the rotate screen in portrait.
 
 ## CI and deploy
 
