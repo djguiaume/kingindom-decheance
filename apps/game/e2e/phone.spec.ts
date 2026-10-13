@@ -1,6 +1,8 @@
 import { expect, test, type CDPSession, type Locator, type Page } from '@playwright/test';
 import { collectErrors } from './errors.ts';
 
+type TouchType = 'touchStart' | 'touchMove' | 'touchEnd';
+
 /**
  * Real touch input through the Chrome DevTools Protocol, so the browser produces genuine touch
  * pointer events (with capture, touch-action and all) rather than synthetic DOM events.
@@ -10,7 +12,7 @@ class Finger {
   static async on(page: Page): Promise<Finger> {
     return new Finger(await page.context().newCDPSession(page));
   }
-  private async send(type: string, x: number, y: number): Promise<void> {
+  private async send(type: TouchType, x: number, y: number): Promise<void> {
     const touchPoints = type === 'touchEnd' ? [] : [{ x, y, id: 1 }];
     await this.cdp.send('Input.dispatchTouchEvent', { type, touchPoints });
   }
