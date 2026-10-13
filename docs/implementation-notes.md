@@ -27,7 +27,10 @@ These follow the approved map defaults (fixed slots, predefined lanes with simpl
 steering, hand-made maps) and the prototype design (corpus 11), and are easy to revisit:
 
 - Ground enemies keep their content priority order; a wall standing on their next waypoint
-  stops them, and they attack it when nothing in their priority list is in reach. Flyers never
+  stops them, and they attack it when nothing in their priority list is in reach. The wall
+  acts as a gate line across the lane (through the wall, square to the lane): enemies stay on
+  their side of it and ignore anything beyond it, so they cannot walk around a wall to chase
+  the king or hit a tower behind it. Flyers never
   target walls and ignore lanes (the air lane is a single spawn node).
 - Every enemy will attack the castle when it reaches it, even if its priority list omits it.
 - Enemies leave their lane for targets within `aggroRange`, but only up to `leash` metres from
@@ -51,6 +54,24 @@ steering, hand-made maps) and the prototype design (corpus 11), and are easy to 
 - At a barracks, E (or the Guard card) cycles the rally gate and R (or the card) upgrades.
 - Zoom is double tap or wheel; pinch zoom is not built.
 - Phone smoke tests use a Pixel preset on Chromium; an iPhone/WebKit run is not in CI yet.
+
+## Balance (first playtest, 2026-10-13)
+
+Gold felt scarce in play while the simulator found the game easy (the king alone reached
+night 6). Both were tuned together: more gold (start 75, castle 25 a dawn, house 10, manor 20,
+mine 25) and stronger waves (+30% enemy HP and +30% enemies per group). Targets, checked with
+`pnpm sim` over many seeds:
+
+| Bot         | What it does                                     | Result        |
+| ----------- | ------------------------------------------------ | ------------- |
+| `idle`      | nothing                                          | falls night 3 |
+| `king-only` | no buildings, king fights                        | falls night 5 |
+| `greedy`    | fills slots in map order, idle king              | falls night 3 |
+| `defensive` | towers, walls, barracks first, no early eco      | wins ~35%     |
+| `balanced`  | half its gold into eco on days 1–3, then defends | wins ~85%     |
+
+So investing in eco pays off, and building nothing loses. Bots are a rough guide: real play
+decides the final numbers.
 
 ## Not built yet
 

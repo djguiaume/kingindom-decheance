@@ -1,7 +1,7 @@
 {
   "$schema": "../schema/buildings.schema.json",
   "schemaVersion": 1,
-  "notes": "Prototype design 11 §4. Upgrade-only buildings repeat their upgrade edge's cost.",
+  "notes": "Prototype design 11 §4. Upgrade-only buildings repeat their upgrade edge's cost. Eco income raised after the first playtest (gold felt scarce).",
   "buildings": [
     {
       "id": "house",
@@ -9,7 +9,7 @@
       "class": "eco",
       "cost": 15,
       "hp": 150,
-      "income": 5,
+      "income": 10,
       "radius": 0.9,
       "upgrades": [{ "to": "manor", "cost": 20 }]
     },
@@ -19,7 +19,7 @@
       "class": "eco",
       "cost": 20,
       "hp": 250,
-      "income": 10,
+      "income": 20,
       "radius": 1
     },
     {
@@ -28,7 +28,7 @@
       "class": "eco",
       "cost": 30,
       "hp": 200,
-      "income": 12,
+      "income": 25,
       "radius": 1
     },
     {

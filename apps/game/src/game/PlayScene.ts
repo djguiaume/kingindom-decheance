@@ -16,7 +16,11 @@ export const SCALE = 32;
 /** Vertical squash of the ground plane for the slightly-from-above view. */
 const SQUASH = 0.75;
 const HIT_FLASH_MS = 90;
+const SHOT_MS = 180;
 const DOUBLE_TAP_MS = 300;
+/** How far the camera looks ahead of a moving king, and how quickly it gets there. */
+const LEAD_PX = 2.5 * SCALE;
+const LEAD_EASE_MS = 300;
 
 export interface ViewOptions {
   zoomClose: () => boolean;
@@ -26,7 +30,9 @@ export interface ViewOptions {
 interface Flash {
   from: { x: number; y: number };
   to: { x: number; y: number };
-  until: number;
+  start: number;
+  /** Towers and the castle fire a visible bolt; everyone else shows a short strike line. */
+  shot: boolean;
 }
 
 export class PlayScene extends Phaser.Scene {
@@ -34,6 +40,7 @@ export class PlayScene extends Phaser.Scene {
   private flashes: Flash[] = [];
   private unsubscribe: (() => void) | null = null;
   private lastTap = 0;
+  private lead = { x: 0, y: 0 };
 
   constructor(
     private readonly runtime: GameRuntime,
@@ -62,7 +69,9 @@ export class PlayScene extends Phaser.Scene {
         if (e.type !== 'hit') continue;
         const from = this.refPos(e.attacker);
         const to = this.refPos(e.target);
-        if (from && to) this.flashes.push({ from, to, until: this.time.now + HIT_FLASH_MS });
+        if (!from || !to) continue;
+        const shot = e.attacker.kind === 'building' || e.attacker.kind === 'castle';
+        this.flashes.push({ from, to, start: this.time.now, shot });
       }
     });
     this.events.once('shutdown', () => this.unsubscribe?.());
@@ -70,7 +79,7 @@ export class PlayScene extends Phaser.Scene {
 
   override update(_time: number, delta: number): void {
     this.runtime.advance(delta);
-    this.updateCamera();
+    this.updateCamera(delta);
     this.drawDynamic();
   }
 
@@ -79,7 +88,7 @@ export class PlayScene extends Phaser.Scene {
     return { x: p.x * SCALE, y: p.y * SCALE * SQUASH };
   }
 
-  private updateCamera(): void {
+  private updateCamera(deltaMs: number): void {
     const cam = this.cameras.main;
     const [w, h] = this.runtime.ctx.map.size;
     const fit = Math.min(cam.width / (w * SCALE), cam.height / (h * SCALE * SQUASH));
@@ -89,9 +98,12 @@ export class PlayScene extends Phaser.Scene {
     cam.setZoom(cam.zoom + (target - cam.zoom) * 0.15);
     const king = this.runtime.state.king;
     const k = this.px(this.runtime.drawPos('king', king.pos));
-    // A small lead in the movement direction shows more of what is ahead.
-    const lead = 2.5 * SCALE;
-    cam.centerOn(k.x + king.intent.x * lead, k.y + king.intent.y * lead * SQUASH);
+    // A small lead in the movement direction shows more of what is ahead. It eases in and out
+    // so starting or releasing the stick never makes the view (and the king on it) jump.
+    const ease = 1 - Math.exp(-deltaMs / LEAD_EASE_MS);
+    this.lead.x += (king.intent.x * LEAD_PX - this.lead.x) * ease;
+    this.lead.y += (king.intent.y * LEAD_PX * SQUASH - this.lead.y) * ease;
+    cam.centerOn(k.x + this.lead.x, k.y + this.lead.y);
   }
 
   private drawStatic(): void {
@@ -206,10 +218,27 @@ export class PlayScene extends Phaser.Scene {
     for (const item of items) item.draw();
 
     const now = this.time.now;
-    this.flashes = this.flashes.filter((f) => f.until > now);
-    g.lineStyle(3, colors.hit, 0.85);
-    for (const f of this.flashes)
-      g.lineBetween(f.from.x, f.from.y - SCALE * 0.6, f.to.x, f.to.y - SCALE * 0.6);
+    this.flashes = this.flashes.filter((f) => now - f.start < (f.shot ? SHOT_MS : HIT_FLASH_MS));
+    for (const f of this.flashes) {
+      if (!f.shot) {
+        g.lineStyle(3, colors.hit, 0.85);
+        g.lineBetween(f.from.x, f.from.y - SCALE * 0.6, f.to.x, f.to.y - SCALE * 0.6);
+        continue;
+      }
+      // A bolt flies from the top of the tower to the target. The damage is already dealt in
+      // the core; this only shows where it came from.
+      const t = (now - f.start) / SHOT_MS;
+      const ax = f.from.x;
+      const ay = f.from.y - SCALE * 1.8;
+      const bx = f.to.x;
+      const by = f.to.y - SCALE * 0.5;
+      const x = ax + (bx - ax) * t;
+      const y = ay + (by - ay) * t;
+      const len = Math.sqrt((bx - ax) ** 2 + (by - ay) ** 2) || 1;
+      const tail = SCALE * 0.6;
+      g.lineStyle(3, colors.shot, 1);
+      g.lineBetween(x - ((bx - ax) / len) * tail, y - ((by - ay) / len) * tail, x, y);
+    }
   }
 
   private hpBar(x: number, y: number, s: number, hp: number, max: number): void {

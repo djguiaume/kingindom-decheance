@@ -3,7 +3,7 @@ import { req, type GameContext } from '../context.ts';
 import { nextFloat } from '../rng.ts';
 import type { GameState } from '../state.ts';
 import { dist, moveToward, type Vec } from '../vec.ts';
-import { resolve, wallAt } from './targets.ts';
+import { holdAtGate, resolve, wallAt, wallGate } from './targets.ts';
 
 /** Stop slightly inside attack range so floating-point rounding never leaves us just outside. */
 const RANGE_SLACK = 0.05;
@@ -22,6 +22,8 @@ export function movementSystem(state: GameState, ctx: GameContext): void {
     const def = req(ctx.enemies, enemy.type);
     const step = perTick(def.speed);
     const target = enemy.target && resolve(state, ctx, enemy.target);
+    // Ground enemies never get past a standing wall, whatever they are chasing.
+    const gate = def.flying ? null : wallGate(state, ctx, enemy);
     if (target) {
       moveToward(
         enemy.pos,
@@ -29,6 +31,7 @@ export function movementSystem(state: GameState, ctx: GameContext): void {
         step,
         def.radius + target.radius + def.attack.range - RANGE_SLACK,
       );
+      if (gate) holdAtGate(gate, enemy.pos, def.radius);
       continue;
     }
     if (def.flying) continue;
@@ -51,6 +54,7 @@ export function movementSystem(state: GameState, ctx: GameContext): void {
         ? state.castle.radius + def.radius
         : 0;
     moveToward(enemy.pos, lane.points[enemy.waypoint]!, step, stopAt);
+    if (gate) holdAtGate(gate, enemy.pos, def.radius);
   }
 
   for (const unit of state.units) {

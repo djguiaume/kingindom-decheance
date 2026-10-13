@@ -76,7 +76,41 @@ export const greedyPolicy: Policy = {
   },
 };
 
-const CLASS_ORDER = ['tower', 'wall', 'military', 'eco'] as const;
+type BuildingClass = 'tower' | 'wall' | 'military' | 'eco';
+
+/** Buys empty slots of one class in map order while `budget` allows; returns what is left. */
+function buyClass(
+  state: GameState,
+  ctx: GameContext,
+  cls: BuildingClass,
+  budget: number,
+  commands: Command[],
+): number {
+  for (const node of ctx.map.nodes) {
+    if (!node.slot || state.buildings.some((b) => b.slot === node.id)) continue;
+    if (commands.some((c) => c.type === 'buy' && c.slot === node.id)) continue;
+    const offer = buyOptions(state, ctx, node.id).find(
+      (o) => ctx.buildings.get(o.building)?.class === cls && o.cost <= budget,
+    );
+    if (!offer) continue;
+    budget -= offer.cost;
+    commands.push({ type: 'buy', slot: node.id, option: offer.option });
+  }
+  return budget;
+}
+
+/** Spends gold on defences first (towers, walls, military), then eco, then upgrades. */
+function defend(state: GameState, ctx: GameContext, gold: number, commands: Command[]): void {
+  for (const cls of ['tower', 'wall', 'military', 'eco'] as const) {
+    gold = buyClass(state, ctx, cls, gold, commands);
+  }
+  for (const b of state.buildings) {
+    const offer = buyOptions(state, ctx, b.slot).find((o) => o.cost <= gold);
+    if (!offer) continue;
+    gold -= offer.cost;
+    commands.push({ type: 'buy', slot: b.slot, option: offer.option });
+  }
+}
 
 /**
  * Like greedy, but buys towers, then walls, then military, then eco, and upgrades with
@@ -86,24 +120,27 @@ export const defensivePolicy: Policy = {
   id: 'defensive',
   day(state, ctx) {
     const commands: Command[] = [];
+    defend(state, ctx, state.gold, commands);
+    return commands;
+  },
+  night: chaseNearestEnemy,
+};
+
+/**
+ * A rough stand-in for a sensible player: invests up to half its gold in eco buildings on the
+ * first three days, then spends like `defensive`. The balance target is that this bot usually
+ * wins while the others do not.
+ */
+export const balancedPolicy: Policy = {
+  id: 'balanced',
+  day(state, ctx) {
+    const commands: Command[] = [];
     let gold = state.gold;
-    for (const cls of CLASS_ORDER) {
-      for (const node of ctx.map.nodes) {
-        if (!node.slot || state.buildings.some((b) => b.slot === node.id)) continue;
-        const offer = buyOptions(state, ctx, node.id).find(
-          (o) => ctx.buildings.get(o.building)?.class === cls && o.cost <= gold,
-        );
-        if (!offer) continue;
-        gold -= offer.cost;
-        commands.push({ type: 'buy', slot: node.id, option: offer.option });
-      }
+    if (state.day <= 3) {
+      const ecoBudget = Math.floor(gold / 2);
+      gold -= ecoBudget - buyClass(state, ctx, 'eco', ecoBudget, commands);
     }
-    for (const b of state.buildings) {
-      const offer = buyOptions(state, ctx, b.slot).find((o) => o.cost <= gold);
-      if (!offer) continue;
-      gold -= offer.cost;
-      commands.push({ type: 'buy', slot: b.slot, option: offer.option });
-    }
+    defend(state, ctx, gold, commands);
     return commands;
   },
   night: chaseNearestEnemy,
@@ -121,4 +158,5 @@ export const policies: Record<string, Policy> = {
   [kingOnlyPolicy.id]: kingOnlyPolicy,
   [greedyPolicy.id]: greedyPolicy,
   [defensivePolicy.id]: defensivePolicy,
+  [balancedPolicy.id]: balancedPolicy,
 };

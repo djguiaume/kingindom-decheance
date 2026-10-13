@@ -16,6 +16,7 @@ export const colors = {
   hpBar: 0x58d68d,
   hpBack: 0x000000,
   hit: 0xffffff,
+  shot: 0xffe066,
   text: 0xe6e9ef,
   buildings: {
     eco: 0x7cc576,

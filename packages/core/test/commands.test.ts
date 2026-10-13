@@ -7,7 +7,7 @@ describe('day commands', () => {
     const s = newSession();
     const result = s.submit({ type: 'buy', slot: 'tw', option: 0 });
     expect(result).toMatchObject({ ok: true, events: [{ type: 'built', slot: 'tw' }] });
-    expect(s.state.gold).toBe(50 - 25);
+    expect(s.state.gold).toBe(75 - 25);
     expect(s.state.buildings).toHaveLength(1);
     expect(s.log).toHaveLength(1);
   });
@@ -29,11 +29,11 @@ describe('day commands', () => {
 
   it('refuses to build on an occupied slot or without gold', () => {
     const s = newSession();
+    s.submit({ type: 'buy', slot: 'm1', option: 0 }); // a gold mine has no upgrade
+    expect(s.submit({ type: 'buy', slot: 'm1', option: 0 })).toMatchObject({ ok: false });
     s.submit({ type: 'buy', slot: 'tw', option: 0 });
-    expect(s.submit({ type: 'buy', slot: 'tw', option: 0 })).toMatchObject({ ok: false });
-    s.submit({ type: 'buy', slot: 'te', option: 0 });
-    expect(s.state.gold).toBe(0);
-    expect(s.submit({ type: 'buy', slot: 'h1', option: 0 })).toEqual({
+    expect(s.state.gold).toBe(75 - 30 - 25);
+    expect(s.submit({ type: 'buy', slot: 'te', option: 0 })).toEqual({
       ok: false,
       reason: 'not enough gold',
     });
@@ -65,7 +65,7 @@ describe('day commands', () => {
     const s = newSession();
     expect(s.submit({ type: 'startNight' })).toMatchObject({ ok: true });
     expect(s.state.phase).toBe('night');
-    expect(s.state.spawnQueue.length).toBe(6);
+    expect(s.state.spawnQueue.length).toBe(8);
     expect(s.submit({ type: 'buy', slot: 'h1', option: 0 })).toMatchObject({ ok: false });
     expect(s.submit({ type: 'startNight' })).toMatchObject({ ok: false });
   });
