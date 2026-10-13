@@ -1,15 +1,17 @@
 {
   "$schema": "../schema/units.schema.json",
   "schemaVersion": 1,
-  "notes": "PLACEHOLDER content.",
+  "notes": "Prototype design 11 §6.",
   "units": [
     {
       "id": "footman",
       "name": "Footman",
-      "hp": 30,
-      "speed": 2.5,
-      "aggroRange": 4,
-      "attack": { "damage": 3, "interval": 0.8, "range": 0.8, "targets": ["ground"] }
+      "hp": 60,
+      "speed": 3.5,
+      "radius": 0.35,
+      "guardRadius": 4,
+      "leash": 6,
+      "attack": { "damage": 6, "interval": 1, "range": 1, "targets": ["ground"] }
     }
   ]
 }

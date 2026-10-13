@@ -3,26 +3,38 @@
  * It is not part of GameState (it never changes), so snapshots stay small.
  * Comparable to an application-scoped bean built once at startup.
  */
-import type { Building, ContentBundle, Enemy, GameMap, Unit, Weapon } from '@kd/content';
+import type {
+  Building,
+  ContentBundle,
+  Enemy,
+  GameMap,
+  KingSettings,
+  Unit,
+  Weapon,
+} from '@kd/content';
 import type { Vec } from './vec.ts';
 
 export interface LaneInfo {
   id: string;
   air: boolean;
+  /** Path node ids; the first is the spawn. */
+  nodes: string[];
   points: Vec[];
 }
 
 export interface GameContext {
   contentHash: string;
   map: GameMap;
+  /** The run's weapon, picked in RunConfig: the king never hard-codes one. */
   weapon: Weapon;
+  king: KingSettings;
   buildings: ReadonlyMap<string, Building>;
   units: ReadonlyMap<string, Unit>;
   enemies: ReadonlyMap<string, Enemy>;
   nodes: ReadonlyMap<string, Vec>;
   lanes: ReadonlyMap<string, LaneInfo>;
   kingSpawn: Vec;
-  /** Area the king may walk in: the bounding box of all nodes plus a margin. */
+  /** The map area; the king stays inside it. */
   bounds: { minX: number; minY: number; maxX: number; maxY: number };
 }
 
@@ -44,26 +56,21 @@ export function createContext(bundle: ContentBundle, config: RunConfig): GameCon
     if (!p) throw new Error(`Unknown node "${id}"`);
     return p;
   };
-  const xs = map.nodes.map((n) => n.pos[0]);
-  const ys = map.nodes.map((n) => n.pos[1]);
-  const margin = 2;
 
   return {
     contentHash: bundle.hash,
     map,
     weapon,
+    king: bundle.king,
     buildings: new Map(bundle.buildings.map((b) => [b.id, b])),
     units: new Map(bundle.units.map((u) => [u.id, u])),
     enemies: new Map(bundle.enemies.map((e) => [e.id, e])),
     nodes,
-    lanes: new Map(map.lanes.map((l) => [l.id, { id: l.id, air: l.air, points: l.path.map(at) }])),
+    lanes: new Map(
+      map.lanes.map((l) => [l.id, { id: l.id, air: l.air, nodes: l.path, points: l.path.map(at) }]),
+    ),
     kingSpawn: at(map.kingSpawn),
-    bounds: {
-      minX: Math.min(...xs) - margin,
-      minY: Math.min(...ys) - margin,
-      maxX: Math.max(...xs) + margin,
-      maxY: Math.max(...ys) + margin,
-    },
+    bounds: { minX: 0, minY: 0, maxX: map.size[0], maxY: map.size[1] },
   };
 }
 

@@ -4,6 +4,7 @@
  *   pnpm golden:update
  */
 import type { ContentBundle } from '@kd/content';
+import { prototypeRun } from '@kd/content/prototype';
 import type { Replay } from '@kd/core';
 import { policies } from '../src/policies.ts';
 import { runHeadless, type RunSummary } from '../src/runner.ts';
@@ -49,7 +50,7 @@ export function recordGolden(content: ContentBundle, c: GoldenCase): GoldenFile 
   if (!policy) throw new Error(`unknown policy ${c.policy}`);
   const { summary, replay } = runHeadless(
     content,
-    { mapId: 'placeholder', weaponId: 'sword', seed: c.seed },
+    { ...prototypeRun, seed: c.seed },
     policy,
   );
   return { name: c.name, why: c.why, replay, expected: summary };

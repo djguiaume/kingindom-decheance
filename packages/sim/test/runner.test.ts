@@ -1,22 +1,22 @@
-import { placeholderContent } from '@kd/content/placeholder';
+import { prototypeContent, prototypeRun } from '@kd/content/prototype';
 import { describe, expect, it } from 'vitest';
 import { defensivePolicy, greedyPolicy, idlePolicy } from '../src/policies.ts';
 import { runHeadless } from '../src/runner.ts';
 
-const config = (seed: number) => ({ mapId: 'placeholder', weaponId: 'sword', seed });
+const config = (seed: number) => ({ ...prototypeRun, seed });
 
 describe('headless runner', () => {
   it('produces identical summaries for identical inputs', () => {
-    const a = runHeadless(placeholderContent, config(5), defensivePolicy).summary;
-    const b = runHeadless(placeholderContent, config(5), defensivePolicy).summary;
+    const a = runHeadless(prototypeContent, config(5), defensivePolicy).summary;
+    const b = runHeadless(prototypeContent, config(5), defensivePolicy).summary;
     expect(b).toEqual(a);
   });
 
   it('runs every policy to a finished outcome', () => {
     for (const policy of [idlePolicy, greedyPolicy, defensivePolicy]) {
-      const { summary } = runHeadless(placeholderContent, config(1), policy);
+      const { summary } = runHeadless(prototypeContent, config(1), policy);
       expect(['won', 'lost']).toContain(summary.outcome);
-      expect(summary.contentHash).toBe(placeholderContent.hash);
+      expect(summary.contentHash).toBe(prototypeContent.hash);
       expect(summary.goldPerNight.length).toBe(summary.nightReached);
     }
   });

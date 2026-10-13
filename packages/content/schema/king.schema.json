@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "schemaVersion": {
+      "type": "number",
+      "const": 1
+    },
+    "notes": {
+      "type": "string"
+    },
+    "hp": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "speed": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "radius": {
+      "default": 0.5,
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "regen": {
+      "default": 0,
+      "type": "number",
+      "minimum": 0
+    },
+    "regenDelay": {
+      "default": 0,
+      "type": "number",
+      "minimum": 0
+    },
+    "respawnSeconds": {
+      "type": "number",
+      "minimum": 0
+    },
+    "buildReach": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "hp",
+    "speed",
+    "respawnSeconds",
+    "buildReach"
+  ]
+}

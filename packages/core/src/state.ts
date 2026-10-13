@@ -25,11 +25,16 @@ export interface Combatant {
   cooldown: number;
 }
 
-export interface CastleState {
-  pos: Vec;
-  hp: number;
-  maxHp: number;
+export interface CastleState extends Combatant {
   radius: number;
+}
+
+export interface DashState {
+  /** Unit direction of the dash. */
+  dir: Vec;
+  ticksLeft: number;
+  /** Enemies already hit by this dash (each is hit once). */
+  hit: number[];
 }
 
 export interface KingState extends Combatant {
@@ -38,6 +43,13 @@ export interface KingState extends Combatant {
   respawnIn: number;
   /** Desired movement direction from the latest move command, length ≤ 1. */
   intent: Vec;
+  /** Last non-zero movement direction (unit vector); abilities aim along it. */
+  facing: Vec;
+  /** Ticks since the king last took damage; regeneration starts after a delay. */
+  calm: number;
+  /** Ticks before the weapon ability can be used again. */
+  abilityCooldown: number;
+  dash: DashState | null;
 }
 
 export interface BuildingState extends Combatant {
@@ -47,13 +59,16 @@ export interface BuildingState extends Combatant {
   /** Building content id (changes on upgrade). */
   type: string;
   destroyed: boolean;
+  /** Military buildings: the rally gate node its squad guards. */
+  rally: string | null;
 }
 
 export interface UnitState extends Combatant {
   id: number;
   type: string;
-  /** The military building this unit belongs to; it guards that spot. */
+  /** The military building this unit belongs to. */
   home: number;
+  /** The spot it guards (around its building's rally gate). */
   post: Vec;
   target: Ref | null;
 }

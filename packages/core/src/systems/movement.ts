@@ -3,37 +3,49 @@ import { req, type GameContext } from '../context.ts';
 import { nextFloat } from '../rng.ts';
 import type { GameState } from '../state.ts';
 import { dist, moveToward, type Vec } from '../vec.ts';
-import { resolve } from './targets.ts';
+import { resolve, wallAt } from './targets.ts';
 
 /** Stop slightly inside attack range so floating-point rounding never leaves us just outside. */
 const RANGE_SLACK = 0.05;
+/**
+ * Waypoints count as reached within this radius: crowds pushed apart by separation could
+ * otherwise never touch the exact point and would mill around it forever.
+ */
 const WAYPOINT_RADIUS = 1;
 
-/** Enemies walk their lane or close in on their target; units close in or return to their post. */
+/**
+ * Enemies close in on their target, or walk their lane (stopping at standing walls);
+ * flyers without a target hover. Units close in on their target or return to their post.
+ */
 export function movementSystem(state: GameState, ctx: GameContext): void {
   for (const enemy of state.enemies) {
     const def = req(ctx.enemies, enemy.type);
     const step = perTick(def.speed);
     const target = enemy.target && resolve(state, ctx, enemy.target);
     if (target) {
-      moveToward(
-        enemy.pos,
-        target.pos,
-        step,
-        def.radius + target.radius + def.attack.range - RANGE_SLACK,
-      );
+      moveToward(enemy.pos, target.pos, step, def.radius + target.radius + def.attack.range - RANGE_SLACK);
       continue;
     }
-    const points = req(ctx.lanes, enemy.lane).points;
-    const last = points.length - 1;
-    // Waypoints count as reached within a small radius: crowds pushed apart by separation
-    // could otherwise never touch the exact point and would mill around it forever.
-    if (enemy.waypoint < last && dist(enemy.pos, points[enemy.waypoint]!) <= WAYPOINT_RADIUS) {
+    if (def.flying) continue;
+
+    const lane = req(ctx.lanes, enemy.lane);
+    const last = lane.points.length - 1;
+    const wall = wallAt(state, ctx, lane.nodes[enemy.waypoint]!);
+    if (
+      !wall &&
+      enemy.waypoint < last &&
+      dist(enemy.pos, lane.points[enemy.waypoint]!) <= WAYPOINT_RADIUS
+    ) {
       enemy.waypoint++;
     }
-    // The last waypoint is the castle: stop at its wall rather than walking into it.
-    const stopAt = enemy.waypoint === last ? state.castle.radius + def.radius : 0;
-    moveToward(enemy.pos, points[enemy.waypoint]!, step, stopAt);
+    const blocker = wallAt(state, ctx, lane.nodes[enemy.waypoint]!);
+    // Stop at a standing wall's face, or at the castle's wall at the end of the lane.
+    const stopAt = blocker
+      ? req(ctx.buildings, blocker.type).radius + def.radius
+      : enemy.waypoint === last
+        ? state.castle.radius + def.radius
+        : 0;
+    moveToward(enemy.pos, lane.points[enemy.waypoint]!, step, stopAt);
   }
 
   for (const unit of state.units) {
@@ -41,12 +53,7 @@ export function movementSystem(state: GameState, ctx: GameContext): void {
     const step = perTick(def.speed);
     const target = unit.target && resolve(state, ctx, unit.target);
     if (target) {
-      moveToward(
-        unit.pos,
-        target.pos,
-        step,
-        def.radius + target.radius + def.attack.range - RANGE_SLACK,
-      );
+      moveToward(unit.pos, target.pos, step, def.radius + target.radius + def.attack.range - RANGE_SLACK);
     } else {
       moveToward(unit.pos, unit.post, step);
     }

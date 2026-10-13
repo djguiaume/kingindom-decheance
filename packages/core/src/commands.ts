@@ -6,6 +6,7 @@
 import { req, type GameContext } from './context.ts';
 import type { GameEvent } from './events.ts';
 import type { GameState } from './state.ts';
+import { startDash } from './systems/king.ts';
 import { startNight } from './systems/phase.ts';
 
 export type Command =
@@ -15,8 +16,12 @@ export type Command =
   | { type: 'upgrade'; slot: string; to: string }
   /** Day: end the day and start the night. */
   | { type: 'startNight' }
+  /** Day: choose which rally gate a military building's squad guards. */
+  | { type: 'setRally'; slot: string; gate: string }
   /** Any phase: the direction the king should walk (held until the next move command). */
-  | { type: 'moveKing'; x: number; y: number };
+  | { type: 'moveKing'; x: number; y: number }
+  /** Any phase: use the weapon's ability (the spear's Charge) along the facing direction. */
+  | { type: 'useAbility' };
 
 export type CommandResult = { ok: true; events: GameEvent[] } | { ok: false; reason: string };
 
@@ -32,6 +37,26 @@ export function applyCommand(state: GameState, ctx: GameContext, cmd: Command): 
       if (!Number.isFinite(cmd.x) || !Number.isFinite(cmd.y)) return fail('invalid direction');
       const len = Math.sqrt(cmd.x * cmd.x + cmd.y * cmd.y);
       state.king.intent = len > 1 ? { x: cmd.x / len, y: cmd.y / len } : { x: cmd.x, y: cmd.y };
+      if (len > 0) state.king.facing = { x: cmd.x / len, y: cmd.y / len };
+      return { ok: true, events };
+    }
+
+    case 'useAbility': {
+      const king = state.king;
+      if (!ctx.weapon.ability) return fail('this weapon has no ability');
+      if (!king.alive) return fail('the king is down');
+      if (king.dash || king.abilityCooldown > 0) return fail('ability is not ready');
+      startDash(state, ctx);
+      return { ok: true, events };
+    }
+
+    case 'setRally': {
+      if (state.phase !== 'day') return fail('can only change rally gates during the day');
+      const b = state.buildings.find((x) => x.slot === cmd.slot);
+      const gates = ctx.map.nodes.find((n) => n.id === cmd.slot)?.slot?.rally ?? [];
+      if (!b || !req(ctx.buildings, b.type).spawns) return fail('no military building on this slot');
+      if (!gates.includes(cmd.gate)) return fail(`"${cmd.gate}" is not a rally gate of this slot`);
+      b.rally = cmd.gate;
       return { ok: true, events };
     }
 
@@ -55,6 +80,7 @@ export function applyCommand(state: GameState, ctx: GameContext, cmd: Command): 
         maxHp: def.hp,
         cooldown: 0,
         destroyed: false,
+        rally: node.slot.rally?.[0] ?? null,
       });
       events.push({ type: 'built', slot: cmd.slot, building: def.id, id });
       return { ok: true, events };

@@ -9,4 +9,4 @@ export * from './rng.ts';
 export * from './vec.ts';
 export { canonicalJson, clone, cyrb53 } from './hash.ts';
 export { effectivePriority } from './systems/targeting.ts';
-export { buildSpawnQueue } from './systems/phase.ts';
+export { buildSpawnQueue, telegraph } from './systems/phase.ts';

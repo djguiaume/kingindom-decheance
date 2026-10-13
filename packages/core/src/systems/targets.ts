@@ -2,9 +2,9 @@
  * Target lookup shared by the systems: turns a Ref into a uniform view
  * (position, radius, layer, category), and lists who can be attacked by whom.
  */
-import type { TargetCategory, TargetLayer } from '@kd/content';
+import type { EnemyArchetype, TargetCategory, TargetLayer } from '@kd/content';
 import { req, type GameContext } from '../context.ts';
-import type { GameState, Ref } from '../state.ts';
+import type { BuildingState, GameState, Ref } from '../state.ts';
 import type { Vec } from '../vec.ts';
 import { dist } from '../vec.ts';
 
@@ -15,6 +15,8 @@ export interface Target {
   layer: TargetLayer;
   /** How enemies classify this target (player side only). */
   category: TargetCategory | null;
+  /** Enemy archetype, for damage bonuses (enemy side only). */
+  archetype: EnemyArchetype | null;
   /** The live record whose `hp` is changed by damage. */
   body: { hp: number };
 }
@@ -27,7 +29,7 @@ export function resolve(state: GameState, ctx: GameContext, ref: Ref): Target | 
       return state.castle.hp > 0 ? castleTarget(state) : null;
     case 'building': {
       const b = state.buildings.find((x) => x.id === ref.id);
-      return b && !b.destroyed ? buildingTarget(state, ctx, b.id) : null;
+      return b && !b.destroyed ? buildingTarget(ctx, b) : null;
     }
     case 'unit': {
       const u = state.units.find((x) => x.id === ref.id);
@@ -38,6 +40,7 @@ export function resolve(state: GameState, ctx: GameContext, ref: Ref): Target | 
         radius: req(ctx.units, u.type).radius,
         layer: 'ground',
         category: 'unit',
+        archetype: null,
         body: u,
       };
     }
@@ -51,6 +54,7 @@ export function resolve(state: GameState, ctx: GameContext, ref: Ref): Target | 
         radius: def.radius,
         layer: def.flying ? 'air' : 'ground',
         category: null,
+        archetype: def.archetype,
         body: e,
       };
     }
@@ -62,9 +66,10 @@ function kingTarget(state: GameState, ctx: GameContext): Target {
   return {
     ref: { kind: 'king' },
     pos: k.pos,
-    radius: ctx.weapon.radius,
+    radius: ctx.king.radius,
     layer: 'ground',
     category: 'king',
+    archetype: null,
     body: k,
   };
 }
@@ -77,21 +82,24 @@ function castleTarget(state: GameState): Target {
     radius: c.radius,
     layer: 'ground',
     category: 'castle',
+    archetype: null,
     body: c,
   };
 }
 
-function buildingTarget(state: GameState, ctx: GameContext, id: number): Target {
-  const b = state.buildings.find((x) => x.id === id)!;
+export function buildingCategory(cls: string): TargetCategory {
+  return cls === 'eco' ? 'eco' : cls === 'wall' ? 'wall' : cls === 'tower' ? 'tower' : 'building';
+}
+
+function buildingTarget(ctx: GameContext, b: BuildingState): Target {
   const def = req(ctx.buildings, b.type);
-  const category: TargetCategory =
-    def.class === 'eco' ? 'eco' : def.class === 'wall' ? 'wall' : 'building';
   return {
-    ref: { kind: 'building', id },
+    ref: { kind: 'building', id: b.id },
     pos: b.pos,
     radius: def.radius,
     layer: 'ground',
-    category,
+    category: buildingCategory(def.class),
+    archetype: null,
     body: b,
   };
 }
@@ -101,7 +109,7 @@ export function playerTargets(state: GameState, ctx: GameContext): Target[] {
   const out: Target[] = [];
   if (state.castle.hp > 0) out.push(castleTarget(state));
   if (state.king.alive) out.push(kingTarget(state, ctx));
-  for (const b of state.buildings) if (!b.destroyed) out.push(buildingTarget(state, ctx, b.id));
+  for (const b of state.buildings) if (!b.destroyed) out.push(buildingTarget(ctx, b));
   for (const u of state.units) {
     if (u.hp > 0) out.push(resolve(state, ctx, { kind: 'unit', id: u.id })!);
   }
@@ -144,4 +152,11 @@ export function nearest(
     }
   }
   return best;
+}
+
+/** The standing wall on a lane node, if that node is a wall slot with a wall on it. */
+export function wallAt(state: GameState, ctx: GameContext, nodeId: string): BuildingState | null {
+  const b = state.buildings.find((x) => x.slot === nodeId);
+  if (!b || b.destroyed) return null;
+  return req(ctx.buildings, b.type).class === 'wall' ? b : null;
 }

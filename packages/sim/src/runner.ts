@@ -41,8 +41,7 @@ export function runHeadless(content: ContentBundle, config: RunConfig, policy: P
     session.submit({ type: 'startNight' });
     while (session.state.phase === 'night') {
       if (policy.night && session.state.nightTick % KING_DECISION_TICKS === 0) {
-        const command = policy.night(session.state, session.ctx);
-        if (command) session.submit(command);
+        for (const command of policy.night(session.state, session.ctx)) session.submit(command);
       }
       session.step();
       if (session.state.nightTick > MAX_NIGHT_TICKS) {

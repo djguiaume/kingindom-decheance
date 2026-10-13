@@ -1,0 +1,12 @@
+{
+  "$schema": "../schema/king.schema.json",
+  "schemaVersion": 1,
+  "notes": "Prototype design 11 §5. Starting values, to be tuned.",
+  "hp": 200,
+  "speed": 7,
+  "radius": 0.6,
+  "regen": 10,
+  "regenDelay": 4,
+  "respawnSeconds": 8,
+  "buildReach": 1.5
+}
