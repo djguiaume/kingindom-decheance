@@ -1,0 +1,40 @@
+{
+  "name": "kingdom-decheance",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.28.0",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @kd/game dev",
+    "build": "pnpm --filter @kd/game build",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "e2e": "pnpm --filter @kd/game e2e",
+    "content:schema": "pnpm --filter @kd/content schema",
+    "sim": "pnpm --filter @kd/sim cli",
+    "golden:update": "UPDATE_GOLDEN=1 vitest run packages/sim/test/golden.test.ts"
+  },
+  "devDependencies": {
+    "typescript": "6.0.3",
+    "vitest": "5.0.4",
+    "fast-check": "4.10.2",
+    "eslint": "10.12.0",
+    "@eslint/js": "10.0.1",
+    "typescript-eslint": "8.71.2",
+    "eslint-plugin-vue": "10.11.1",
+    "globals": "17.13.0",
+    "prettier": "3.9.10",
+    "@types/node": "22.20.5"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  }
+}

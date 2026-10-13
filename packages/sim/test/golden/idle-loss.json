@@ -1,0 +1,42 @@
+{
+  "name": "idle-loss",
+  "why": "no buildings, no king: the castle falls",
+  "replay": {
+    "contentHash": "141237692a94f6",
+    "config": {
+      "mapId": "placeholder",
+      "weaponId": "sword",
+      "seed": 1
+    },
+    "commands": [
+      {
+        "tick": 0,
+        "command": {
+          "type": "startNight"
+        }
+      },
+      {
+        "tick": 428,
+        "command": {
+          "type": "startNight"
+        }
+      }
+    ]
+  },
+  "expected": {
+    "contentHash": "141237692a94f6",
+    "policy": "idle",
+    "config": {
+      "mapId": "placeholder",
+      "weaponId": "sword",
+      "seed": 1
+    },
+    "outcome": "lost",
+    "nightReached": 2,
+    "goldPerNight": [0, 0],
+    "buildingsLostPerNight": [0, 0],
+    "enemiesKilled": 11,
+    "ticks": 1421,
+    "finalHash": "15b8e67e387f98"
+  }
+}

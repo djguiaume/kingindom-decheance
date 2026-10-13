@@ -1,0 +1,9 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    // No "DOM": browser APIs must not type-check in the core (ADR-008 boundary, layer 1).
+    "lib": ["ES2022"],
+    "types": []
+  },
+  "include": ["src", "test"]
+}
