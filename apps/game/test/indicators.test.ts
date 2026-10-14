@@ -150,3 +150,8 @@ describe('edge arrows', () => {
     expect(later[0]!.kind).toBe('boss');
   });
 });
+
+it('marks a threat clipped by the reserved night toolbar as off-screen', () => {
+  expect(placeArrow({ x: 400, y: 30 }, { ...view, offsetTop: 60 }, layout)).not.toBeNull();
+  expect(placeArrow({ x: 400, y: 80 }, { ...view, offsetTop: 60 }, layout)).toBeNull();
+});

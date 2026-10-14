@@ -20,7 +20,12 @@ defineProps<{
 </script>
 
 <template>
-  <button class="track panel" data-testid="night">
+  <button
+    class="track panel"
+    :class="{ combat: phase === 'night' }"
+    data-battlefield-obstacle
+    data-testid="night"
+  >
     <span class="label display">{{ phase === 'night' ? 'Night' : 'Day' }} {{ day }}</span>
     <span class="line" aria-hidden="true">
       <span
@@ -53,6 +58,13 @@ defineProps<{
   gap: 10px;
   padding: 6px 14px;
   min-height: 40px;
+}
+.track.combat {
+  gap: 6px;
+  padding: 4px 10px;
+}
+.track.combat .line {
+  display: none;
 }
 .label {
   font-size: 15px;

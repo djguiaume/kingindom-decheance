@@ -1,6 +1,7 @@
 # Panda Kingdom playtest remediation strategy
 
-Status: planned; no fixes in this document are implemented.
+Status: first existing-asset batch implemented on `fix/panda-playtest-existing-assets`; pending
+PR review and playtest. Remaining batches are planned.
 
 Reported by Guillaume after testing the latest `main` on 2026-10-14. Code reviewed at
 `1de7567a91912545aa9343791f21aab43d53b104` (PR #39, “Bring the panda art into main”).
@@ -55,6 +56,18 @@ that every observation has the same severity.
   king definition. The ability command is generic, but content's `Ability.kind` accepts only
   `dash`, and `systems/king.ts` implements that dash. Different dash parameters are feasible;
   crowd control or new special-ability types require core/content work.
+
+## First batch progress
+
+Implemented on the feature branch: F01 walk cadence, F02 rolling charge, F11 occupied-plot
+foundation visibility, F20 source-specific projectile art and F21 compact night toolbar with
+separate battlefield viewport. F05/F06 receive stronger thrust/swing/recoil and target-facing
+improvements, but animation quality remains subject to in-game review. No finding is closed
+before the next playtest. No assets were generated and no simulation stats were changed.
+
+F07/F08 gate scale/orientation and F10 per-building anchor calibration remain open; hiding the
+empty plot foundation does not establish that every building's ground anchor is correct.
+The remaining findings and batch dependencies below are unchanged.
 
 ## Complete finding register
 

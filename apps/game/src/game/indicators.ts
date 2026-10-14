@@ -11,6 +11,7 @@ export interface Projection {
   toScreen(p: Vec): Vec;
   width: number;
   height: number;
+  offsetTop?: number;
 }
 
 export interface Rect {
@@ -133,14 +134,21 @@ const TIP = 14;
  */
 export function placeArrow(
   target: Vec,
-  view: { width: number; height: number },
+  view: { width: number; height: number; offsetTop?: number },
   layout: ArrowLayout,
   half: { w: number; h: number } = { w: 0, h: 0 },
   /** Place it on the edge even if the point is just on screen. */
   force = false,
 ): { x: number; y: number; angle: number } | null {
   const { width: w, height: h } = view;
-  if (!force && target.x >= 0 && target.x <= w && target.y >= 0 && target.y <= h) return null;
+  if (
+    !force &&
+    target.x >= 0 &&
+    target.x <= w &&
+    target.y >= (view.offsetTop ?? 0) &&
+    target.y <= h
+  )
+    return null;
   const inner = innerRect(view, layout, half);
   const cx = w / 2;
   const cy = h / 2;

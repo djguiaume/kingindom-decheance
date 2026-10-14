@@ -1,6 +1,15 @@
 <script setup lang="ts">
 import { prototypeContent, prototypeRun } from '@kd/content/prototype';
-import { computed, markRaw, onBeforeUnmount, onMounted, ref, watchEffect } from 'vue';
+import {
+  computed,
+  markRaw,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  watch,
+  watchEffect,
+} from 'vue';
 import { CameraView } from '../game/camera.ts';
 import GameView from '../game/GameView.vue';
 import EdgeArrows from '../components/EdgeArrows.vue';
@@ -21,6 +30,31 @@ const runtime = markRaw(
 );
 const hub = markRaw(new InputHub(runtime));
 const camera = markRaw(new CameraView());
+const battlefieldTop = ref(0);
+let toolbarObserver: ResizeObserver | null = null;
+
+/** Keep the rendered battlefield below the actual toolbar, including safe areas and boss HP. */
+function measureToolbar(): void {
+  if (store.hud?.phase !== 'night') {
+    battlefieldTop.value = 0;
+    return;
+  }
+  let bottom = 0;
+  for (const el of document.querySelectorAll('[data-battlefield-obstacle]')) {
+    const r = el.getBoundingClientRect();
+    if (r.width && r.height) bottom = Math.max(bottom, r.bottom);
+  }
+  battlefieldTop.value = Math.ceil(bottom + 4);
+}
+
+async function observeToolbar(): Promise<void> {
+  await nextTick();
+  toolbarObserver?.disconnect();
+  for (const el of document.querySelectorAll('[data-battlefield-obstacle]'))
+    toolbarObserver?.observe(el);
+  measureToolbar();
+}
+watch(() => [store.hud?.phase, !!store.hud?.boss], observeToolbar);
 
 // Phones play in landscape only (design 11 §10.4): portrait shows a rotate screen and pauses.
 const portraitPhone = ref(false);
@@ -42,12 +76,17 @@ const onVisibility = () => {
 let detachKeyboard = () => {};
 let detachAudio = () => {};
 onMounted(() => {
+  toolbarObserver = new ResizeObserver(measureToolbar);
+  void observeToolbar();
+  window.addEventListener('resize', measureToolbar);
   detachKeyboard = attachKeyboard(hub);
   detachAudio = attachAudio(runtime, audio);
   media.addEventListener('change', onMedia);
   document.addEventListener('visibilitychange', onVisibility);
 });
 onBeforeUnmount(() => {
+  toolbarObserver?.disconnect();
+  window.removeEventListener('resize', measureToolbar);
   detachKeyboard();
   detachAudio();
   media.removeEventListener('change', onMedia);
@@ -78,7 +117,7 @@ async function fullscreen(): Promise<void> {
 
 <template>
   <div class="play">
-    <GameView :runtime="runtime" :camera="camera" />
+    <GameView :runtime="runtime" :camera="camera" :top-inset="battlefieldTop" />
     <EdgeArrows :runtime="runtime" :camera="camera" />
     <GameHud :runtime="runtime" :hub="hub" @restart="restart" @fullscreen="fullscreen" />
     <SoundToggle />

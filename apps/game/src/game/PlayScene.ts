@@ -21,11 +21,20 @@ import { colors } from '../theme.ts';
 import type { CameraView } from './camera.ts';
 import { SCALE, SQUASH } from './camera.ts';
 import type { GameRuntime } from './runtime.ts';
-import { Animator, fallAt, keyOf, STRIDE_M, type Pose } from './animation.ts';
+import {
+  Animator,
+  fallAt,
+  keyOf,
+  STRIDE_M,
+  strideFor,
+  KingActions,
+  type Pose,
+} from './animation.ts';
 import { Art, ART_PX_PER_M, CATAPULT_ARM, HAND, loadArt, weaponAngle } from './art.ts';
 import { Painter } from './painter.ts';
 import { bobHeight, shadow, spriteFor } from './sprites.ts';
 import { drawTerrain } from './terrain.ts';
+import { emptyPlotIds, projectileFrame } from './presentation.ts';
 
 const HIT_FLASH_MS = 160;
 const SHOT_MS = 180;
@@ -39,6 +48,8 @@ export interface ViewOptions {
   toggleZoom: () => void;
   /** Updated every frame for the DOM overlays (edge arrows). */
   camera: CameraView;
+  /** Canvas offset below the night toolbar, in CSS pixels. */
+  topInset: () => number;
 }
 
 /** Scene pixels per art pixel at the art's own scale (1 m = 64 px). */
@@ -67,6 +78,7 @@ interface Flash {
   start: number;
   /** Towers and the castle fire a visible bolt; everyone else shows a short strike line. */
   shot: boolean;
+  source: string;
 }
 
 export class PlayScene extends Phaser.Scene {
@@ -82,8 +94,13 @@ export class PlayScene extends Phaser.Scene {
   private puffs: { at: { x: number; y: number }; start: number }[] = [];
   /** Who fired each shot in flight (the shooter may die before it lands). */
   private shooters = new Map<number, string>();
+  /** Types before the current tick: a shooter can die in the same tick it fires. */
+  private sourceTypes = new Map<string, string>();
   /** Walk bob, swings, hit flashes and falling bodies (view-only). */
   private animator = new Animator();
+  private kingActions = new KingActions();
+  private animationNow = 0;
+  private session: GameRuntime['session'] | null = null;
 
   constructor(
     private readonly runtime: GameRuntime,
@@ -113,7 +130,16 @@ export class PlayScene extends Phaser.Scene {
     this.input.on('wheel', () => this.view.toggleZoom());
 
     this.unsubscribe = this.runtime.onEvents((events) => {
-      this.animator.onEvents(events, this.time.now, (ref) => this.refWorld(ref));
+      for (const e of events) {
+        if (e.type === 'enemySpawned') this.sourceTypes.set(`e${e.id}`, e.enemy);
+        if (e.type === 'unitSpawned') this.sourceTypes.set(`u${e.id}`, e.unit);
+      }
+      this.animator.onEvents(
+        events,
+        this.animationNow,
+        (ref) => this.refWorld(ref),
+        (id) => this.runtime.state.projectiles.find((p) => p.id === id)?.to ?? null,
+      );
       for (const e of events) {
         if (e.type === 'stomp') {
           const enemy = this.runtime.state.enemies.find((x) => x.id === e.enemy);
@@ -122,20 +148,17 @@ export class PlayScene extends Phaser.Scene {
             this.stomps.push({
               at: { ...enemy.pos },
               radius: ability.radius,
-              start: this.time.now,
+              start: this.animationNow,
             });
           continue;
         }
         if (e.type === 'fired') {
-          const ref = e.attacker;
-          const enemy =
-            ref.kind === 'enemy' && this.runtime.state.enemies.find((x) => x.id === ref.id);
-          this.shooters.set(e.id, enemy ? enemy.type : '');
+          this.shooters.set(e.id, this.sourceType(e.attacker));
           continue;
         }
         if (e.type === 'missed') {
           this.shooters.delete(e.id);
-          this.puffs.push({ at: this.px(e.at), start: this.time.now });
+          this.puffs.push({ at: this.px(e.at), start: this.animationNow });
           continue;
         }
         // A shot that flew has already been drawn in flight.
@@ -144,13 +167,34 @@ export class PlayScene extends Phaser.Scene {
         const to = this.refPos(e.target);
         if (!from || !to) continue;
         const shot = e.attacker.kind === 'building' || e.attacker.kind === 'castle';
-        this.flashes.push({ from, to, start: this.time.now, shot });
+        this.flashes.push({
+          from,
+          to,
+          start: this.animationNow,
+          shot,
+          source: this.sourceType(e.attacker),
+        });
       }
     });
     this.events.once('shutdown', () => this.unsubscribe?.());
   }
 
   override update(_time: number, delta: number): void {
+    if (this.session !== this.runtime.session) {
+      this.session = this.runtime.session;
+      this.animator = new Animator();
+      this.kingActions = new KingActions();
+      this.flashes = [];
+      this.stomps = [];
+      this.puffs = [];
+      this.shooters.clear();
+      this.animationNow = 0;
+    }
+    if (!this.runtime.paused) this.animationNow += delta;
+    this.sourceTypes.clear();
+    for (const e of this.runtime.state.enemies) this.sourceTypes.set(`e${e.id}`, e.type);
+    for (const u of this.runtime.state.units) this.sourceTypes.set(`u${u.id}`, u.type);
+    for (const b of this.runtime.state.buildings) this.sourceTypes.set(`b${b.id}`, b.type);
     this.runtime.advance(delta);
     this.updateCamera(delta);
     const cam = this.cameras.main;
@@ -159,9 +203,34 @@ export class PlayScene extends Phaser.Scene {
       top: cam.worldView.y,
       zoom: cam.zoom,
       width: cam.width,
-      height: cam.height,
+      height: cam.height + this.view.topInset(),
+      offsetTop: this.view.topInset(),
     });
     this.drawDynamic();
+  }
+
+  private sourceType(ref: Ref): string {
+    const state = this.runtime.state;
+    switch (ref.kind) {
+      case 'enemy':
+        return (
+          state.enemies.find((e) => e.id === ref.id)?.type ??
+          this.sourceTypes.get(`e${ref.id}`) ??
+          ''
+        );
+      case 'unit':
+        return (
+          state.units.find((u) => u.id === ref.id)?.type ?? this.sourceTypes.get(`u${ref.id}`) ?? ''
+        );
+      case 'building':
+        return (
+          state.buildings.find((b) => b.id === ref.id)?.type ??
+          this.sourceTypes.get(`b${ref.id}`) ??
+          ''
+        );
+      default:
+        return ref.kind;
+    }
   }
 
   /** Shapes drawn now go above every image placed so far this frame. */
@@ -220,27 +289,29 @@ export class PlayScene extends Phaser.Scene {
       g.fillStyle(lane.air ? colors.enemies.flyer : colors.enemies.swarm, 0.6);
       g.fillCircle(s.x, s.y, SCALE * 0.8);
     }
-    const plot = this.art.still('slot_empty');
-    for (const node of ctx.map.nodes) {
-      if (!node.slot) continue;
-      const p = this.px({ x: node.pos[0], y: node.pos[1] });
-      if (plot) {
-        // A flat foundation on the ground, under whatever is built there (painter depth 10+).
-        this.add
-          .image(p.x, p.y, this.art.atlas(plot)!, plot)
-          .setScale(ART_SCALE * BUILDING_SIZE)
-          .setDepth(1);
-        continue;
-      }
-      g.lineStyle(2, colors.slot, 0.9);
-      g.strokeEllipse(p.x, p.y, SCALE * 1.8, SCALE * 1.8 * SQUASH);
-    }
   }
 
   private drawDynamic(): void {
     const { state, ctx } = this.runtime;
     this.painter.begin();
     let g = this.dynamic;
+
+    const plot = this.art.still('slot_empty');
+    const empty = emptyPlotIds(
+      ctx.map.nodes.filter((n) => n.slot).map((n) => n.id),
+      state.buildings,
+    );
+    for (const node of ctx.map.nodes) {
+      if (!node.slot || !empty.has(node.id)) continue;
+      const p = this.px({ x: node.pos[0], y: node.pos[1] });
+      if (plot) {
+        // Only empty plots have a foundation marker; buildings carry their own base.
+        this.image(plot, p.x, p.y, ART_SCALE * BUILDING_SIZE);
+        continue;
+      }
+      g.lineStyle(2, colors.slot, 0.9);
+      g.strokeEllipse(p.x, p.y, SCALE * 1.8, SCALE * 1.8 * SQUASH);
+    }
 
     if (state.phase === 'night') {
       // Moonlit, never black (design 11 §9): tint the ground, keep actors bright.
@@ -251,7 +322,7 @@ export class PlayScene extends Phaser.Scene {
 
     // By day, the spawns of tonight's lanes glow (off-screen ones get edge arrows instead).
     if (state.phase === 'day') {
-      const pulse = 0.35 + 0.25 * Math.sin(this.time.now / 250);
+      const pulse = 0.35 + 0.25 * Math.sin(this.animationNow / 250);
       for (const lane of new Set(telegraph(ctx, state.day).map((t) => t.lane))) {
         const p = this.px(ctx.lanes.get(lane)!.points[0]!);
         g.fillStyle(colors.enemies.swarm, pulse);
@@ -288,7 +359,7 @@ export class PlayScene extends Phaser.Scene {
     if (kingAt) kingAt.y -= SCALE * 0.6;
     /** Health bars go over everything, after the sorted items. */
     const bars: (() => void)[] = [];
-    const now = this.time.now;
+    const now = this.animationNow;
     /** Animation keys drawn this frame; the animator forgets the others. */
     const seen = new Set<string>();
     /**
@@ -367,6 +438,7 @@ export class PlayScene extends Phaser.Scene {
       const def = ctx.enemies.get(e.type)!;
       add(this.runtime.drawPos(key, e.pos), def.radius, e.type, 1, [e.hp, e.maxHp], key, true);
     }
+    if (!state.king.alive) this.kingActions.update(false, false, this.animationNow);
     if (state.king.alive) {
       const hp: [number, number] = [state.king.hp, state.king.maxHp];
       add(
@@ -434,7 +506,7 @@ export class PlayScene extends Phaser.Scene {
       const by = f.to.y - SCALE * 0.5;
       const x = ax + (bx - ax) * t;
       const y = ay + (by - ay) * t;
-      const bolt = this.art.still('bolt');
+      const bolt = this.art.still(projectileFrame(f.source));
       if (bolt) {
         this.image(bolt, x, y, ART_SCALE).setRotation(Math.atan2(by - ay, bx - ax));
         continue;
@@ -680,7 +752,6 @@ export class PlayScene extends Phaser.Scene {
 
   /** Enemy shots in flight: arrows fly flat and fast, catapult stones arc with a landing shadow. */
   private drawProjectiles(): void {
-    const arrow = this.art.still('arrow');
     const boulder = this.art.still('boulder');
     for (const p of this.runtime.state.projectiles) {
       const g = this.dynamic;
@@ -721,11 +792,13 @@ export class PlayScene extends Phaser.Scene {
       g.fillEllipse(ground.x, ground.y, SCALE * 0.35, SCALE * 0.18);
       const head = at(t);
       const tail = at(Math.max(0, t - ARROW_LENGTH / Math.max(1, p.flight)));
-      if (arrow && p.attacker.kind === 'enemy') {
+      const arrow = this.art.still(projectileFrame(this.shooters.get(p.id) ?? ''));
+      if (arrow) {
         // The painted arrow's tip is its right end.
         this.image(arrow, head.x, head.y, ART_SCALE)
           .setOrigin(0.85, 0.5)
-          .setRotation(Math.atan2(head.y - tail.y, head.x - tail.x));
+          .setRotation(Math.atan2(head.y - tail.y, head.x - tail.x))
+          .setTint(p.attacker.kind === 'enemy' ? 0xffffff : 0xc7dcff);
         continue;
       }
       // The player's own archers shoot pale arrows, so they never read as shots to dodge.
@@ -779,16 +852,25 @@ export class PlayScene extends Phaser.Scene {
     alpha: number,
     pose: Pose,
   ): boolean {
-    const frame = this.art.body(id, pose, STRIDE_M, this.time.now);
+    const action =
+      id === 'king'
+        ? this.kingActions.update(
+            !!this.runtime.state.king.dash,
+            this.runtime.state.king.alive,
+            this.animationNow,
+          )
+        : null;
+    const frame = this.art.body(id, pose, strideFor(id), this.animationNow, action);
     if (!frame) return false;
     const k = ART_SCALE * ACTOR_SIZE;
     const f = pose.facing;
+    const lean = action ? 0 : pose.lean;
     // A flyer hovers high above its shadow; walkers hop with their step.
-    const by = y - (id === 'harpy' ? s * 2.2 : pose.bob * bobHeight(id) * s);
+    const by = y - (id === 'harpy' ? s * 2.2 : action ? 0 : pose.bob * bobHeight(id) * s);
     const body = () => {
       const im = this.image(frame, x, by, k)
         .setScale(k * f, k)
-        .setRotation(pose.lean * f)
+        .setRotation(lean * f)
         .setAlpha(alpha);
       if (pose.flash > 0) this.painter.whiteout(im, pose.flash * 0.8);
     };
@@ -796,8 +878,8 @@ export class PlayScene extends Phaser.Scene {
     // A point on the body, in art pixels from the feet (facing right), to scene pixels; the lean
     // turns the body around its feet.
     const onBody = (fx: number, fy: number) => {
-      const c = Math.cos(pose.lean);
-      const sn = Math.sin(pose.lean);
+      const c = Math.cos(lean);
+      const sn = Math.sin(lean);
       return { x: x + f * (fx * c - fy * sn) * k, y: by + (fx * sn + fy * c) * k };
     };
     if (id === 'catapult') {
@@ -813,15 +895,15 @@ export class PlayScene extends Phaser.Scene {
       if (pose.flash > 0) this.painter.whiteout(im, pose.flash * 0.8);
       return true;
     }
-    const rig = this.art.rig(id);
+    const rig = action ? null : this.art.rig(id);
     if (!rig) {
       body();
       return true;
     }
     const hand = rig.hand ?? HAND;
     let hx = hand[0] * size.cutWidth;
-    if (rig.kind === 'thrust') hx += pose.swing * 0.25 * size.cutWidth;
-    if (rig.kind === 'aim') hx -= pose.swing * 4;
+    if (rig.kind === 'thrust') hx += pose.swing * 0.42 * size.cutWidth;
+    if (rig.kind === 'aim') hx -= pose.swing * 0.12 * size.cutWidth;
     const at = onBody(hx, -hand[1] * size.cutHeight);
     const held = this.textures.getFrame(this.art.atlas(rig.frame)!, rig.frame);
     const w = (k * rig.length * size.cutHeight) / Math.max(held.cutWidth, held.cutHeight);
@@ -829,7 +911,7 @@ export class PlayScene extends Phaser.Scene {
       const im = this.image(rig.frame, at.x, at.y, w)
         .setOrigin(rig.grip[0], rig.grip[1])
         .setScale(w * f, w)
-        .setRotation(f * (weaponAngle(rig, pose.swing) + pose.lean))
+        .setRotation(f * (weaponAngle(rig, pose.swing) + lean))
         .setAlpha(alpha);
       if (pose.flash > 0) this.painter.whiteout(im, pose.flash * 0.8);
     };

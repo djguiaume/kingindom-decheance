@@ -9,6 +9,37 @@ The [2026-10-14 panda playtest remediation strategy](plans/2026-10-14-playtest-r
 tracks the 21 findings from the latest main-branch playtest, their implementation order and
 acceptance criteria. It is planned work; the notes below describe implemented behavior.
 
+## Panda playtest integration fixes (2026-10-14)
+
+First remediation batch; existing assets only, view-only changes with no new art generation or
+simulation/content changes:
+
+- Night combat uses a compact toolbar. A ResizeObserver measures treasury, night track, boss
+  HP, pause and sound; the Phaser canvas starts below them and refreshes its size when the
+  inset changes. Camera projection includes that offset so edge markers still point correctly;
+  enemies clipped above the battlefield receive an off-screen marker. Day/restart restores
+  the full canvas. Night messages sit near the bottom instead of expanding the top toolbar.
+- The on-foot king's four walk frames use a 2.8 m stride (about 10 frame advances/s at the
+  current 7 m/s), independently of movement stats. Feet settle by elapsed time rather than
+  one increment per rendered frame.
+- Actual dash state selects anticipation, rolling and uncurl assets. The spear and normal
+  walk bob are hidden during these poses. The initial anticipation is visual only and never
+  postpones the dash. Death/restart clears action state; pause freezes the animation clock.
+- Attacks retain their target facing during the longer 300 ms visual swing/recoil; ranged
+  attackers face the projectile destination at release. Spear thrust and bow/crossbow recoil
+  are stronger. Projectile impacts do not replay the release animation.
+- Empty foundations are drawn dynamically only at unoccupied slots. Buildings and ruins carry
+  their own footing; repair and restart need no static-image cleanup.
+- Shot art is selected by source: arrows for archers/goblin archers/ordinary towers/castle,
+  bolts for crossbowmen, heavy bolts for ballistas, boulders for catapults. Friendly in-flight
+  shots use art with a pale blue tint. Existing instant tower shot effects remain view-only;
+  their damage/flight semantics are unchanged.
+
+Gate scale/orientation, per-building ground anchor calibration, painted terrain, panda UI,
+night lighting, real audio, king selection and tutorial remain in the remediation plan. Attack
+quality still needs playtest feedback; these rig improvements do not constitute new attack
+sequences or pre-hit gameplay telegraphs.
+
 ## PRNG
 
 sfc32 (four 32-bit integers of state), seeded through splitmix32 and warmed up 12 rounds.

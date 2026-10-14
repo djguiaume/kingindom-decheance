@@ -125,11 +125,11 @@ const pct = (v: number, max: number) =>
 </script>
 
 <template>
-  <div v-if="store.hud" class="hud" :class="{ touch }">
+  <div v-if="store.hud" class="hud" :class="{ touch, combat: store.hud.phase === 'night' }">
     <VirtualJoystick @move="onStick" />
 
     <!-- Zone 1, top left: the treasury. Gold, then castle and king health as bars. -->
-    <div class="treasury panel zone">
+    <div class="treasury panel zone" data-battlefield-obstacle>
       <span class="coin"><GameIcon name="coin" /></span>
       <span class="gold display" data-testid="gold">{{ store.hud.gold }}</span>
       <span class="health">
@@ -174,7 +174,12 @@ const pct = (v: number, max: number) =>
       <section v-if="store.waveOpen" class="wave-panel" @click="store.waveOpen = false">
         <WavesPanel :plans="plans" :tonight="store.hud.day" />
       </section>
-      <div v-else-if="store.hud.boss" class="boss-bar panel" data-testid="boss-bar">
+      <div
+        v-else-if="store.hud.boss"
+        class="boss-bar panel"
+        data-battlefield-obstacle
+        data-testid="boss-bar"
+      >
         <GameIcon :name="bosses[store.hud.nights] ?? 'helm'" />
         <strong class="display">{{ store.hud.boss.name }}</strong>
         <span class="bar"
@@ -195,12 +200,19 @@ const pct = (v: number, max: number) =>
           ></span
         >
       </div>
-      <p v-if="store.message" class="toast panel">{{ store.message }}</p>
+      <p v-if="store.message && store.hud.phase !== 'night'" class="toast panel">
+        {{ store.message }}
+      </p>
     </div>
+
+    <p v-if="store.message && store.hud.phase === 'night'" class="toast panel">
+      {{ store.message }}
+    </p>
 
     <!-- Zone 3, top right: pause (sound sits just left of it, see SoundToggle). -->
     <button
       class="pause panel round zone"
+      data-battlefield-obstacle
       aria-label="Pause"
       data-testid="pause"
       @click="hub.togglePause()"
@@ -484,6 +496,43 @@ const pct = (v: number, max: number) =>
   .zone {
     zoom: 1.3;
   }
+}
+/* Night combat uses one compact top row. The canvas starts below these measured panels. */
+.combat .zone {
+  zoom: 1;
+}
+.combat .treasury {
+  padding: 4px 8px;
+  gap: 5px;
+  min-height: 32px;
+}
+.combat .coin {
+  width: 24px;
+  height: 24px;
+  font-size: 15px;
+}
+.combat .gold {
+  font-size: 20px;
+}
+.combat .health {
+  padding-left: 5px;
+}
+.combat .health .bar {
+  width: 46px;
+}
+.combat .centre {
+  gap: 4px;
+}
+.combat .boss-bar {
+  padding: 3px 10px;
+  font-size: 14px;
+}
+.combat .toast {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: max(82px, env(safe-area-inset-bottom));
+  max-width: 45vw;
 }
 .bar {
   display: block;

@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
   Animator,
+  KingActions,
+  KING_STRIDE_M,
   bobAt,
   FADE_MS,
   FALL_MS,
@@ -50,7 +52,7 @@ describe('Animator', () => {
     expect(walking.bob).toBeGreaterThan(0.9);
     expect(walking.facing).toBe(1);
     let still = walking;
-    for (let i = 0; i < 20; i++) still = a.pose('u1', { x: STRIDE_M / 2, y: 0 }, look, 32 + i);
+    for (let i = 0; i < 20; i++) still = a.pose('u1', { x: STRIDE_M / 2, y: 0 }, look, 32 + i * 16);
     expect(still.bob).toBeCloseTo(0);
   });
 
@@ -112,4 +114,61 @@ describe('Animator', () => {
     expect(a.flash('b4', 10)).toBe(1);
     expect(a.flash('b4', 10 + FLASH_MS)).toBe(0);
   });
+});
+
+describe('king action presentation', () => {
+  it('rolls only during an actual accepted dash, then uncurls, and clears on death', () => {
+    const a = new KingActions();
+    expect(a.update(false, true, 0)).toBeNull();
+    expect(a.update(true, true, 10)?.phase).toBe('anticipate');
+    expect(a.update(true, true, 50)?.phase).toBe('roll');
+    expect(a.update(false, true, 310)?.phase).toBe('uncurl');
+    expect(a.update(false, true, 471)).toBeNull();
+    a.update(true, true, 500);
+    expect(a.update(false, false, 510)).toBeNull();
+    expect(a.update(false, true, 900)).toBeNull();
+  });
+
+  it('settles the king at the same pace at 30, 60 and 120 FPS', () => {
+    for (const fps of [30, 60, 120]) {
+      const a = new Animator();
+      const king = { sprite: 'king', radius: 0.6 };
+      a.pose('king', { x: 0, y: 0 }, king, 0);
+      const moving = a.pose('king', { x: KING_STRIDE_M / 4, y: 0 }, king, 16);
+      expect(moving.bob).toBeGreaterThan(0);
+      let pose = moving;
+      for (let t = 1000 / fps; t <= 160 + 0.01; t += 1000 / fps)
+        pose = a.pose('king', { x: KING_STRIDE_M / 4, y: 0 }, king, 16 + t);
+      expect(pose.bob).toBeCloseTo(0);
+    }
+  });
+});
+
+it('faces a ranged attacker at release, keeps that facing through its recoil, and does not attack again on impact', () => {
+  const a = new Animator();
+  const archer = { sprite: 'skirmisher', radius: 0.3 };
+  a.pose('e1', { x: 5, y: 5 }, archer, 0);
+  a.onEvents(
+    [{ type: 'fired', id: 2, attacker: { kind: 'enemy', id: 1 } }],
+    100,
+    () => null,
+    () => ({ x: 0, y: 5 }),
+  );
+  const pose = a.pose('e1', { x: 5.1, y: 5 }, archer, 100 + SWING_MS * 0.35);
+  expect(pose.swing).toBeCloseTo(1);
+  expect(pose.facing).toBe(-1); // small movement cannot turn the weapon away during recoil
+  a.onEvents(
+    [
+      {
+        type: 'hit',
+        attacker: { kind: 'enemy', id: 1 },
+        target: { kind: 'king' },
+        damage: 1,
+        projectile: true,
+      },
+    ],
+    500,
+    () => null,
+  );
+  expect(a.pose('e1', { x: 5.1, y: 5 }, archer, 500).swing).toBe(0);
 });

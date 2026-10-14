@@ -8,8 +8,39 @@ import type { GameEvent, Ref } from '@kd/core';
 
 /** Metres walked per full step (two bobs). */
 export const STRIDE_M = 0.9;
+/** The king covers 7 m/s: a longer painted stride keeps his four frames near 10 FPS. */
+export const KING_STRIDE_M = 2.8;
+export const strideFor = (id: string): number => (id === 'king' ? KING_STRIDE_M : STRIDE_M);
+
+export interface KingAction {
+  phase: 'anticipate' | 'roll' | 'uncurl';
+  elapsed: number;
+}
+
+/** Observes the real dash; it never delays or changes movement, damage or cooldown. */
+export class KingActions {
+  private dashing = false;
+  private started = 0;
+  private ended = -Infinity;
+
+  update(dashing: boolean, alive: boolean, now: number): KingAction | null {
+    if (!alive) {
+      this.dashing = false;
+      this.ended = -Infinity;
+      return null;
+    }
+    if (dashing && !this.dashing) this.started = now;
+    if (!dashing && this.dashing) this.ended = now;
+    this.dashing = dashing;
+    if (dashing) {
+      const elapsed = now - this.started;
+      return { phase: elapsed < 30 ? 'anticipate' : 'roll', elapsed };
+    }
+    return now - this.ended < 160 ? { phase: 'uncurl', elapsed: now - this.ended } : null;
+  }
+}
 /** How long a weapon swing lasts. */
-export const SWING_MS = 220;
+export const SWING_MS = 300;
 /** How long a hit flash lasts. */
 export const FLASH_MS = 120;
 /** A death: the body tips over, then fades. */
@@ -60,8 +91,8 @@ export function seenFromBehind(dx: number, dy: number, was: boolean): boolean {
 }
 
 /** The step bob for `walked` metres: one hop per stride, from 0 (feet down) to 1. */
-export function bobAt(walked: number): number {
-  return Math.abs(Math.sin((walked / STRIDE_M) * Math.PI));
+export function bobAt(walked: number, strideM = STRIDE_M): number {
+  return Math.abs(Math.sin((walked / strideM) * Math.PI));
 }
 
 /** The swing `ms` after a blow started: a fast wind-through, then a slower return. */
@@ -112,6 +143,7 @@ interface Track {
   facing: 1 | -1;
   back: boolean;
   lastStep: number;
+  lastPose: number;
   swingStart: number;
   flashStart: number;
 }
@@ -143,6 +175,7 @@ export class Animator {
     events: readonly GameEvent[],
     now: number,
     posOf: (ref: Ref) => { x: number; y: number } | null,
+    shotTarget: (id: number) => { x: number; y: number } | null = () => null,
   ): void {
     for (const e of events) {
       // A shot is swung when it leaves (`fired`); its later hit only flashes the target.
@@ -150,7 +183,7 @@ export class Animator {
         const track = this.track(e.attacker);
         if (track) {
           track.swingStart = now;
-          const target = e.type === 'hit' ? posOf(e.target) : null;
+          const target = e.type === 'hit' ? posOf(e.target) : shotTarget(e.id);
           if (target && Math.abs(target.x - track.pos.x) > 0.05)
             track.facing = target.x < track.pos.x ? -1 : 1;
           if (target)
@@ -188,6 +221,7 @@ export class Animator {
         facing: 1,
         back: false,
         lastStep: -Infinity,
+        lastPose: now,
         swingStart: -Infinity,
         flashStart: -Infinity,
       };
@@ -200,19 +234,23 @@ export class Animator {
     // Big jumps are respawns or restarts, not steps.
     if (moved < 1) {
       track.walked += moved;
-      if (Math.abs(dx) > 0.002) track.facing = dx < 0 ? -1 : 1;
+      const attacking = now - track.swingStart < SWING_MS;
+      if (!attacking && Math.abs(dx) > 0.002) track.facing = dx < 0 ? -1 : 1;
       if (moved > 0.002) {
-        track.back = seenFromBehind(dx, dy, track.back);
+        if (!attacking) track.back = seenFromBehind(dx, dy, track.back);
         track.lastStep = now;
       }
     }
     // Standing still settles the foot down instead of freezing mid-hop.
-    if (moved < 0.001) track.walked = settle(track.walked);
+    const stride = strideFor(look.sprite);
+    if (moved < 0.001)
+      track.walked = settle(track.walked, stride, Math.max(0, now - track.lastPose));
+    track.lastPose = now;
     track.pos = { ...pos };
     const swing = swingAt(now - track.swingStart);
     return {
-      bob: bobAt(track.walked),
-      lean: swing * 0.25,
+      bob: bobAt(track.walked, stride),
+      lean: swing * 0.35,
       swing,
       flash: flashAt(now - track.flashStart),
       facing: track.facing,
@@ -237,6 +275,7 @@ export class Animator {
         facing: 1,
         back: false,
         lastStep: -Infinity,
+        lastPose: 0,
         swingStart: -Infinity,
         flashStart: -Infinity,
       });
@@ -259,9 +298,9 @@ export class Animator {
 }
 
 /** Moves the walked distance on to the next point where both feet are down (bob 0). */
-function settle(walked: number): number {
-  const into = walked % STRIDE_M;
-  if (into < 0.001 || STRIDE_M - into < 0.001) return walked - into;
+function settle(walked: number, stride: number, deltaMs: number): number {
+  const into = walked % stride;
+  if (into < 0.001 || stride - into < 0.001) return walked - into;
   // Finish the hop quickly rather than snapping to the ground.
-  return Math.min(walked - into + STRIDE_M, walked + 0.08);
+  return Math.min(walked - into + stride, walked + (stride * deltaMs) / 120);
 }
