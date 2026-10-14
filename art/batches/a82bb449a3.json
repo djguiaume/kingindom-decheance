@@ -37,5 +37,20 @@
     }
   ],
   "skipped": [],
-  "runs": []
+  "runs": [
+    {
+      "at": "2026-10-14T14:41:05.954Z",
+      "budgetCU": 100,
+      "spentCU": 74,
+      "done": [
+        "king_roll_idle",
+        "footman",
+        "footman_weapon",
+        "raider",
+        "raider_weapon",
+        "house"
+      ],
+      "failed": []
+    }
+  ]
 }

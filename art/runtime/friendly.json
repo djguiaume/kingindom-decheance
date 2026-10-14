@@ -1,0 +1,69 @@
+{
+  "frames": {
+    "footman": {
+      "frame": {
+        "x": 2,
+        "y": 2,
+        "w": 78,
+        "h": 96
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 41,
+        "y": 48,
+        "w": 78,
+        "h": 96
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 160
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "footman",
+      "num": 15,
+      "contentId": "footman"
+    },
+    "footman_weapon": {
+      "frame": {
+        "x": 82,
+        "y": 2,
+        "w": 29,
+        "h": 44
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 82,
+        "y": 2,
+        "w": 29,
+        "h": 44
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "asset": "footman_weapon",
+      "num": 16,
+      "contentId": "footman"
+    }
+  },
+  "meta": {
+    "app": "@kd/art-pipeline",
+    "version": "1",
+    "image": "friendly.webp",
+    "format": "RGBA8888",
+    "size": {
+      "w": 113,
+      "h": 100
+    },
+    "scale": "1"
+  }
+}

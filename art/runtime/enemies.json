@@ -1,0 +1,69 @@
+{
+  "frames": {
+    "raider": {
+      "frame": {
+        "x": 2,
+        "y": 2,
+        "w": 54,
+        "h": 80
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 53,
+        "y": 64,
+        "w": 54,
+        "h": 80
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 160
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "raider",
+      "num": 27,
+      "contentId": "raider"
+    },
+    "raider_weapon": {
+      "frame": {
+        "x": 58,
+        "y": 2,
+        "w": 36,
+        "h": 59
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 30,
+        "y": 3,
+        "w": 36,
+        "h": 59
+      },
+      "sourceSize": {
+        "w": 96,
+        "h": 64
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "asset": "raider_weapon",
+      "num": 28,
+      "contentId": "raider"
+    }
+  },
+  "meta": {
+    "app": "@kd/art-pipeline",
+    "version": "1",
+    "image": "enemies.webp",
+    "format": "RGBA8888",
+    "size": {
+      "w": 96,
+      "h": 84
+    },
+    "scale": "1"
+  }
+}

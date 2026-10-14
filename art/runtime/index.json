@@ -1,0 +1,78 @@
+{
+  "scale": "1 m = 64 px",
+  "atlases": [
+    {
+      "key": "kings",
+      "image": "kings.webp",
+      "json": "kings.json",
+      "frames": [
+        "king_roll_idle"
+      ]
+    },
+    {
+      "key": "friendly",
+      "image": "friendly.webp",
+      "json": "friendly.json",
+      "frames": [
+        "footman",
+        "footman_weapon"
+      ]
+    },
+    {
+      "key": "enemies",
+      "image": "enemies.webp",
+      "json": "enemies.json",
+      "frames": [
+        "raider",
+        "raider_weapon"
+      ]
+    },
+    {
+      "key": "buildings",
+      "image": "buildings.webp",
+      "json": "buildings.json",
+      "frames": [
+        "house"
+      ]
+    }
+  ],
+  "images": [],
+  "frames": {
+    "king_roll_idle": {
+      "atlas": "kings",
+      "num": 1,
+      "asset": "king_roll_idle",
+      "contentId": "king"
+    },
+    "footman": {
+      "atlas": "friendly",
+      "num": 15,
+      "asset": "footman",
+      "contentId": "footman"
+    },
+    "footman_weapon": {
+      "atlas": "friendly",
+      "num": 16,
+      "asset": "footman_weapon",
+      "contentId": "footman"
+    },
+    "raider": {
+      "atlas": "enemies",
+      "num": 27,
+      "asset": "raider",
+      "contentId": "raider"
+    },
+    "raider_weapon": {
+      "atlas": "enemies",
+      "num": 28,
+      "asset": "raider_weapon",
+      "contentId": "raider"
+    },
+    "house": {
+      "atlas": "buildings",
+      "num": 43,
+      "asset": "house",
+      "contentId": "house"
+    }
+  }
+}

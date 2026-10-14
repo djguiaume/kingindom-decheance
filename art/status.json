@@ -1,7 +1,74 @@
 {
   "modelId": "model_openai-gpt-image-2-5-flare",
-  "spentCU": 0,
-  "parts": {},
   "referenceAssetId": "asset_RvvNgxiXxMS5HiHWN85YLtqS",
-  "referenceSha256": "1ced3f125f8dd4584f33ed856a41dec5b679d0f7b65d0e95681f59689a4f65d8"
+  "referenceSha256": "1ced3f125f8dd4584f33ed856a41dec5b679d0f7b65d0e95681f59689a4f65d8",
+  "spentCU": 74,
+  "parts": {
+    "footman": {
+      "state": "validated",
+      "attempts": 1,
+      "costCU": 12,
+      "issues": [],
+      "promptHash": "a3eef3b624e8",
+      "updatedAt": "2026-10-14T14:39:10.265Z",
+      "jobId": "job_W5H71gcQqTmRoahasxmqjN4W",
+      "assetId": "asset_FEvHKziwvg4BpLmBKus9QLps",
+      "originalSha256": "d9ac81d17a3cac2113292de0f5367a58e43b61b36140049352354ec88717a03e"
+    },
+    "footman_weapon": {
+      "state": "validated",
+      "attempts": 1,
+      "costCU": 13,
+      "issues": [],
+      "promptHash": "e9f42951fd69",
+      "updatedAt": "2026-10-14T14:39:39.300Z",
+      "jobId": "job_GkNHzHosCUzuWGr2XcUZCTbx",
+      "assetId": "asset_hMuZoSQzGEbWakvpC81dTeyZ",
+      "originalSha256": "49d3ee7beda03ce1c94fb4a4f84ab031d6b52377a9be297313039044e63edf2a"
+    },
+    "house": {
+      "state": "validated",
+      "attempts": 1,
+      "costCU": 12,
+      "issues": [],
+      "promptHash": "99668566a628",
+      "updatedAt": "2026-10-14T14:41:05.953Z",
+      "jobId": "job_LtchjMHarqTSnTTi9p128KHJ",
+      "assetId": "asset_t1MSkFTNVQe26ySFzhqrVcH9",
+      "originalSha256": "ab6da362c71898632e7b9f95221283dd5f2141c69657a6d05aadf1abf6d194b9"
+    },
+    "king_roll_idle": {
+      "state": "validated",
+      "attempts": 1,
+      "costCU": 12,
+      "issues": [],
+      "promptHash": "fa3607ad6c43",
+      "updatedAt": "2026-10-14T14:38:34.287Z",
+      "jobId": "job_GFieL599QcxrAJixpmraeFqQ",
+      "assetId": "asset_PPJADp6CvcxDuuKQzTUTNeYZ",
+      "originalSha256": "52edd2877e9257e2951c1f81dca38bf8f11cd12ce394915e7c79e7c446aa9bd7"
+    },
+    "raider": {
+      "state": "validated",
+      "attempts": 1,
+      "costCU": 12,
+      "issues": [],
+      "promptHash": "217be3e40e80",
+      "updatedAt": "2026-10-14T14:40:08.578Z",
+      "jobId": "job_fErLGXEnsaGo7wwN33G4u5sG",
+      "assetId": "asset_hMk6BE5pyXsRWBf1R1WYPKwZ",
+      "originalSha256": "dcffdfa47c5700a115aa96778434f57580729812b4e0f25ebca4a43c14d9fa44"
+    },
+    "raider_weapon": {
+      "state": "validated",
+      "attempts": 1,
+      "costCU": 13,
+      "issues": [],
+      "promptHash": "dbf88cbe519a",
+      "updatedAt": "2026-10-14T14:40:34.229Z",
+      "jobId": "job_6qSWWBqwotQRVGqpoxtut3bp",
+      "assetId": "asset_KFt9ZHVmqGTYpHHCCnbBtDb8",
+      "originalSha256": "abbdf06e5d75335ace413873d0f72a9f0d75a9f06574b490023deb31fa590042"
+    }
+  }
 }
