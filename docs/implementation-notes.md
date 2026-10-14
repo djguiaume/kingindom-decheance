@@ -118,6 +118,13 @@ steering, hand-made maps) and the prototype design (corpus 11), and are easy to 
   pill never pokes off screen. When it would cover the joystick or the buttons it slides along
   its own edge, never inwards. Group markers keep a stable key (lane and rank along the lane),
   and every pin eases toward its new spot, so they no longer jump.
+- **Pins on a short phone screen** (follow-up): pins sat 40 px in from every edge plus a 52 px
+  top bar, which on a phone in landscape (about 330 px tall) put them near the middle. They now
+  hug the edge (6 px inside the safe area) and keep clear of the HUD by measuring its panels and
+  buttons (`.hud .panel`, `.hud button`, every 250 ms) instead of fixed zones: a pin slides along
+  its edge to the nearest free spot, and steps just past a panel only when the whole edge is
+  blocked there. The joystick zone is the bottom-left corner, at most 200 × 160 px. A spawn pin
+  standing over an on-screen spawn is kept inside the screen.
 - **Spawn pin while the spawn is on screen**: by day the pin stands over the spawn, pointing
   down, so the king can walk there and still read what is coming.
 - **Readable attacks**: melee hits draw a short slash on the target instead of a white line
@@ -156,6 +163,21 @@ steering, hand-made maps) and the prototype design (corpus 11), and are easy to 
   100% with Tithe or Royal Archers, 80% with Commander (the bots never rally, so for them it does
   nothing), 64% with Gambler's Oath (enemies +20% HP on nights 5-6; its score bonus waits for the
   score); defensive 45% (no eco no longer wins), king-only falls night 5, greedy night 3.
+
+## Character animation (2026-10-14, corpus 11 §12.0)
+
+Light, code-driven and view-only (`apps/game/src/game/animation.ts`); the core, replays and
+balance are untouched.
+
+- Walk bob: actors hop once per 0.9 m walked, so faster walkers bob faster; standing still
+  settles the feet down. The king's horse bobs less, the catapult only rattles, the harpy flaps.
+- Facing: actors turn toward where they walk and toward the one they strike.
+- Weapon swing: footmen carry a sword, raiders and the Warlord an axe, brutes a club,
+  skirmishers a bow they draw; the king levels his spear into a thrust; the catapult throws its
+  arm. A melee blow swings on its `hit` event, a shot on its `fired` event.
+- Hit flash: anything hit, buildings included, washes white for 0.12 s (any sprite, no extra
+  drawers: the flash re-draws it with every colour replaced by white).
+- Death fall: a dead footman or enemy tips over backwards where it died, then fades (0.6 s).
 
 ## Balance (first playtest, 2026-10-13)
 
