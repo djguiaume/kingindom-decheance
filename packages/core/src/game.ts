@@ -4,7 +4,7 @@ import type { GameEvent } from './events.ts';
 import { canonicalJson, cyrb53 } from './hash.ts';
 import { seedRng } from './rng.ts';
 import type { GameState } from './state.ts';
-import { combatSystem, stompSystem } from './systems/combat.ts';
+import { combatSystem, projectileSystem, stompSystem } from './systems/combat.ts';
 import { deathSystem } from './systems/death.ts';
 import { kingSystem } from './systems/king.ts';
 import { movementSystem, separationSystem } from './systems/movement.ts';
@@ -53,6 +53,7 @@ export function createGame(ctx: GameContext, config: RunConfig): GameState {
     buildings: [],
     units: [],
     enemies: [],
+    projectiles: [],
     spawnQueue: [],
     history: [],
     current: newNightStats(1),
@@ -63,7 +64,8 @@ export function createGame(ctx: GameContext, config: RunConfig): GameState {
  * Advances the run by one fixed tick (1/30 s) and returns what happened.
  * During the day only the king moves (time has no rule effect); during the night every system
  * runs in this documented order:
- *   king → spawning → targeting → movement → separation → combat → death → phase
+ *   king → spawning → targeting → movement → separation → combat → projectiles → stomp → death
+ *   → phase
  */
 export function step(state: GameState, ctx: GameContext): GameEvent[] {
   if (state.phase === 'won' || state.phase === 'lost') return [];
@@ -78,6 +80,7 @@ export function step(state: GameState, ctx: GameContext): GameEvent[] {
   movementSystem(state, ctx);
   separationSystem(state, ctx);
   combatSystem(state, ctx, events);
+  projectileSystem(state, ctx, events);
   stompSystem(state, ctx, events);
   deathSystem(state, ctx, events);
   phaseSystem(state, ctx, events);

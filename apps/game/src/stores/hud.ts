@@ -3,7 +3,15 @@
  * second, plus view-only UI state (device, pause, zoom, holds). Vue's reactivity never wraps the
  * live GameState (that would put proxies on hot simulation data).
  */
-import { buyOptions, telegraph, type GameContext, type GameState, type Phase } from '@kd/core';
+import {
+  buyOptions,
+  militaryAt,
+  telegraph,
+  type GameContext,
+  type GameState,
+  type Phase,
+} from '@kd/core';
+import { buildingStats, offerInfo } from '../game/buildingInfo.ts';
 import { defineStore } from 'pinia';
 import { ref, shallowRef } from 'vue';
 import { dist } from '@kd/core';
@@ -15,11 +23,16 @@ export interface SlotOffer {
   name: string;
   cost: number;
   affordable: boolean;
+  /** What the building is for, and its numbers (or what the upgrade changes). */
+  description: string;
+  stats: string;
 }
 
 export interface NearbySlot {
   id: string;
   current: string | null;
+  /** The current building's numbers. */
+  currentStats: string;
   offers: SlotOffer[];
   /** Military building with rally gates: which gate it guards now. */
   rally: string | null;
@@ -54,6 +67,10 @@ export interface HudSnapshot {
   /** Footmen on the field tonight, and how many follow the king. */
   units: number;
   followers: number;
+  /** By day: the king stands at a barracks whose flag he can take. */
+  flagHere: boolean;
+  /** By day: how many squad flags the king carries. */
+  flagsCarried: number;
   /** The living boss, for the bar at the top of the screen. */
   boss: { name: string; hp: number; maxHp: number } | null;
 }
@@ -106,11 +123,13 @@ export function snapshot(state: GameState, ctx: GameContext): HudSnapshot {
     nearby = {
       id: slotId,
       current: built ? ctx.buildings.get(built.type)!.name : null,
-      rally: built?.rally ?? null,
+      currentStats: built ? buildingStats(ctx, built.type) : '',
+      rally: built?.banner ? 'flag' : (built?.rally ?? null),
       offers: buyOptions(state, ctx, slotId).map((o) => ({
         ...o,
         name: ctx.buildings.get(o.building)!.name,
         affordable: o.cost <= state.gold,
+        ...offerInfo(ctx, built?.type ?? null, o.building),
       })),
     };
   }
@@ -142,6 +161,8 @@ export function snapshot(state: GameState, ctx: GameContext): HudSnapshot {
     hasBarracks: state.buildings.some((b) => !b.destroyed && !!ctx.buildings.get(b.type)!.spawns),
     units: state.units.length,
     followers: state.units.filter((u) => u.following).length,
+    flagHere: state.phase === 'day' && !(militaryAt(state, ctx)?.carried ?? true),
+    flagsCarried: state.buildings.filter((b) => b.carried).length,
     boss: bossOf(state, ctx),
   };
 }

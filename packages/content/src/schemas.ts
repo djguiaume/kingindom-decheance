@@ -51,6 +51,12 @@ export const Attack = z.object({
   /** Damage multiplier per enemy archetype, e.g. { "tank": 1.6 } (08 §3.2 counters). */
   bonus: z.record(z.string(), Positive).default({}),
   targets: z.array(TargetLayer).min(1),
+  /**
+   * The attack fires a projectile that flies to where the target stood when it was fired and
+   * only hits if the target is still there, so a moving target can dodge it. Without it the
+   * hit lands at once. Single-target attacks only (no maxTargets or aoe).
+   */
+  projectile: z.object({ speed: Positive }).optional(),
 });
 
 export const BuildingClass = z.enum(['eco', 'tower', 'wall', 'military']);
@@ -65,6 +71,8 @@ export const Upgrade = z.object({
 export const Building = z.object({
   id: Id,
   name: z.string(),
+  /** One short line for the buy button: what the building is for. */
+  description: z.string().default(''),
   class: BuildingClass,
   cost: NonNegative,
   hp: Positive,

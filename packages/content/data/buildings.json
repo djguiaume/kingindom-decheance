@@ -6,6 +6,7 @@
     {
       "id": "house",
       "name": "House",
+      "description": "Pays gold every dawn.",
       "class": "eco",
       "cost": 15,
       "hp": 150,
@@ -16,6 +17,7 @@
     {
       "id": "manor",
       "name": "Manor",
+      "description": "A bigger house: pays more gold every dawn.",
       "class": "eco",
       "cost": 20,
       "hp": 250,
@@ -25,6 +27,7 @@
     {
       "id": "gold_mine",
       "name": "Gold mine",
+      "description": "Pays the most gold every dawn.",
       "class": "eco",
       "cost": 30,
       "hp": 200,
@@ -34,6 +37,7 @@
     {
       "id": "tower",
       "name": "Tower",
+      "description": "Shoots arrows at ground and air enemies.",
       "class": "tower",
       "cost": 25,
       "hp": 300,
@@ -44,6 +48,7 @@
     {
       "id": "watchtower",
       "name": "Watchtower",
+      "description": "Taller tower: more damage and range.",
       "class": "tower",
       "cost": 35,
       "hp": 400,
@@ -57,6 +62,7 @@
     {
       "id": "ballista_tower",
       "name": "Ballista tower",
+      "description": "Heavy bolts that wreck brutes and bosses. Can't hit flyers.",
       "class": "tower",
       "cost": 50,
       "hp": 500,
@@ -72,6 +78,7 @@
     {
       "id": "volley_tower",
       "name": "Volley tower",
+      "description": "Shoots three enemies at once.",
       "class": "tower",
       "cost": 50,
       "hp": 450,
@@ -87,6 +94,7 @@
     {
       "id": "wall",
       "name": "Wall",
+      "description": "Blocks the road: enemies must break it to pass.",
       "class": "wall",
       "cost": 10,
       "hp": 500,
@@ -96,6 +104,7 @@
     {
       "id": "stone_wall",
       "name": "Stone wall",
+      "description": "A much tougher wall.",
       "class": "wall",
       "cost": 20,
       "hp": 1200,
@@ -104,6 +113,7 @@
     {
       "id": "barracks",
       "name": "Barracks",
+      "description": "Trains footmen who guard its flag at night.",
       "class": "military",
       "cost": 40,
       "hp": 400,
@@ -114,6 +124,7 @@
     {
       "id": "garrison",
       "name": "Garrison",
+      "description": "Trains more footmen.",
       "class": "military",
       "cost": 40,
       "hp": 600,

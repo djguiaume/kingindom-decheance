@@ -38,7 +38,10 @@ export interface Arrow {
   /** 1 small, 2 medium, 3 large. */
   size: 1 | 2 | 3;
   color: string;
+  /** Plain-text form of `parts`, e.g. "🪓8 🏹3". */
   label: string;
+  /** What the marker shows inside: an icon with an optional count, per enemy type. */
+  parts: { icon: string; count: number | null }[];
 }
 
 export const MAX_ARROWS = 6;
@@ -138,8 +141,10 @@ export function placeArrow(
 }
 
 const sizeFor = (count: number): 1 | 2 | 3 => (count >= 12 ? 3 : count >= 5 ? 2 : 1);
-const typeColor = (ctx: GameContext, type: string) =>
-  css(colors.enemies[req(ctx.enemies, type).archetype]);
+/** Every enemy marker is one danger red, like Thronefall's; the icons tell the types apart. */
+const ENEMY_RED = css(0xc73a3a);
+const BOSS_RED = css(colors.enemies.boss);
+const ALERT_RED = css(0xff4d4d);
 
 /**
  * Every arrow to show now, most important first, at most MAX_ARROWS.
@@ -160,10 +165,11 @@ export function buildArrows(
     world: Vec,
     size: Arrow['size'],
     color: string,
-    label: string,
+    parts: Arrow['parts'],
   ) => {
     const at = placeArrow(view.toScreen(world), view, layout);
-    if (at) out.push({ key, kind, ...at, size, color, label });
+    const label = parts.map((p) => `${p.icon}${p.count ?? ''}`).join(' ');
+    if (at) out.push({ key, kind, ...at, size, color, label, parts });
   };
 
   if (state.phase === 'day') {
@@ -172,15 +178,14 @@ export function buildArrows(
     for (const t of telegraph(ctx, state.day)) lanes.set(t.lane, [...(lanes.get(t.lane) ?? []), t]);
     for (const [lane, list] of lanes) {
       const total = list.reduce((n, t) => n + t.count, 0);
-      const main = [...list].sort((a, b) => b.count - a.count)[0]!.enemy;
-      const label = list.map((t) => `${enemyIcon(t.enemy)}${t.count}`).join(' ');
+      const parts = list.map((t) => ({ icon: enemyIcon(t.enemy), count: t.count }));
       add(
         `spawn-${lane}`,
         'spawn',
         req(ctx.lanes, lane).points[0]!,
         sizeFor(total),
-        typeColor(ctx, main),
-        label,
+        ENEMY_RED,
+        parts,
       );
     }
     return out.slice(0, MAX_ARROWS);
@@ -188,16 +193,18 @@ export function buildArrows(
   if (state.phase !== 'night') return [];
 
   const recent = (key: string) => now - (lastHit.get(key) ?? -Infinity) < UNDER_ATTACK_MS;
-  if (recent('castle')) add('castle', 'castle', state.castle.pos, 3, css(0xff4d4d), '🏰');
+  if (recent('castle'))
+    add('castle', 'castle', state.castle.pos, 3, ALERT_RED, [{ icon: '🏰', count: null }]);
 
   const bosses = state.enemies.filter((e) => req(ctx.enemies, e.type).archetype === 'boss');
   for (const b of bosses)
-    add(`boss-${b.id}`, 'boss', b.pos, 3, typeColor(ctx, b.type), enemyIcon(b.type));
+    add(`boss-${b.id}`, 'boss', b.pos, 3, BOSS_RED, [{ icon: enemyIcon(b.type), count: null }]);
 
   const hitBuildings = state.buildings
     .filter((b) => !b.destroyed && recent(`b${b.id}`))
     .sort((a, b) => (lastHit.get(`b${b.id}`) ?? 0) - (lastHit.get(`b${a.id}`) ?? 0));
-  for (const b of hitBuildings) add(`b${b.id}`, 'building', b.pos, 2, css(0xff4d4d), '⚠');
+  for (const b of hitBuildings)
+    add(`b${b.id}`, 'building', b.pos, 2, ALERT_RED, [{ icon: '⚠', count: null }]);
 
   const bossIds = new Set(bosses.map((b) => b.id));
   const groups = enemyGroups(state, (id) => bossIds.has(id)).sort((a, b) => b.count - a.count);
@@ -207,8 +214,8 @@ export function buildArrows(
       'group',
       g.pos,
       sizeFor(g.count),
-      typeColor(ctx, g.main),
-      `${enemyIcon(g.main)}${g.count}`,
+      ENEMY_RED,
+      [{ icon: enemyIcon(g.main), count: g.count }],
     );
   return out.slice(0, MAX_ARROWS);
 }

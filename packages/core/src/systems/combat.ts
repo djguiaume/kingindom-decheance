@@ -1,5 +1,5 @@
 import type { Attack } from '@kd/content';
-import { secondsToTicks } from '../constants.ts';
+import { perTick, secondsToTicks } from '../constants.ts';
 import { req, type GameContext } from '../context.ts';
 import type { GameEvent } from '../events.ts';
 import type { GameState, Ref } from '../state.ts';
@@ -9,7 +9,8 @@ import { enemyTargets, gap, nearest, playerTargets, resolve, type Target } from 
 /**
  * Every attacker whose cooldown is over hits if a target is in range.
  * Fixed order: king, castle, buildings, units, enemies (each in id order). Damage lands
- * immediately; an attacker killed earlier in the same tick no longer attacks (hp is checked).
+ * immediately, except for attacks with a projectile (see `projectileSystem`); an attacker
+ * killed earlier in the same tick no longer attacks (hp is checked).
  */
 export function combatSystem(state: GameState, ctx: GameContext, events: GameEvent[]): void {
   const enemies = enemyTargets(state, ctx);
@@ -141,6 +142,10 @@ function strike(
   events: GameEvent[],
 ): void {
   attacker.cooldown = secondsToTicks(atk.interval, 1);
+  if (atk.projectile) {
+    fire(state, ref, pos, atk.projectile.speed, first, damageFor(atk, first), events);
+    return;
+  }
   const struck: Target[] = [first];
 
   if (atk.maxTargets > 1) {
@@ -173,6 +178,60 @@ function strike(
         hit(state, ref, other, damageFor(atk, other), events);
     }
   }
+}
+
+/**
+ * A shot lands on its target if the target's edge is still within this distance of the point
+ * it was aimed at: a target that has moved about its own width away is missed.
+ */
+export const PROJECTILE_SLACK = 0.2;
+
+function fire(
+  state: GameState,
+  attacker: Ref,
+  from: Vec,
+  speed: number,
+  target: Target,
+  damage: number,
+  events: GameEvent[],
+): void {
+  const to = { ...target.pos };
+  const flight = Math.max(1, Math.ceil(dist(from, to) / perTick(speed)));
+  const id = state.nextId++;
+  state.projectiles.push({
+    id,
+    attacker,
+    target: target.ref,
+    from: { ...from },
+    to,
+    damage,
+    flight,
+    ticksLeft: flight,
+  });
+  events.push({ type: 'fired', id, attacker });
+}
+
+/**
+ * Shots in flight count down and land: they hit their target only if it is still where they
+ * were aimed (within PROJECTILE_SLACK of its edge), so the king and units can step aside.
+ * Buildings never move, so shots at them always land while they stand.
+ */
+export function projectileSystem(state: GameState, ctx: GameContext, events: GameEvent[]): void {
+  if (state.projectiles.length === 0) return;
+  const flying: GameState['projectiles'] = [];
+  for (const p of state.projectiles) {
+    if (--p.ticksLeft > 0) {
+      flying.push(p);
+      continue;
+    }
+    const target = resolve(state, ctx, p.target);
+    if (target && dist(p.to, target.pos) - target.radius <= PROJECTILE_SLACK) {
+      hit(state, p.attacker, target, p.damage, events, true);
+    } else {
+      events.push({ type: 'missed', id: p.id, at: p.to });
+    }
+  }
+  state.projectiles = flying;
 }
 
 function damageFor(atk: Attack, target: Target): number {
@@ -214,8 +273,13 @@ export function hit(
   target: Target,
   damage: number,
   events: GameEvent[],
+  projectile = false,
 ): void {
   target.body.hp = Math.max(0, target.body.hp - damage);
   if (target.ref.kind === 'king') state.king.calm = 0;
-  events.push({ type: 'hit', attacker, target: target.ref, damage });
+  events.push(
+    projectile
+      ? { type: 'hit', attacker, target: target.ref, damage, projectile }
+      : { type: 'hit', attacker, target: target.ref, damage },
+  );
 }

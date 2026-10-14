@@ -331,7 +331,10 @@ describe('siege, boss and rally', () => {
   it('rally picks up nearby footmen, who follow the king until dropped', () => {
     const s = newSession();
     s.submit({ type: 'buy', slot: 'b1', option: 0 });
-    expect(s.submit({ type: 'rally' })).toEqual({ ok: false, reason: 'rally is for the night' });
+    expect(s.submit({ type: 'rally' })).toEqual({
+      ok: false,
+      reason: 'stand at a barracks to take its flag',
+    });
     emptyNight(s, 10_000);
     expect(s.state.units).toHaveLength(3);
     expect(s.submit({ type: 'rally' })).toMatchObject({
@@ -365,5 +368,131 @@ describe('siege, boss and rally', () => {
     emptyNight(s, 10_000);
     s.state.king.pos = { x: 5, y: 5 };
     expect(s.submit({ type: 'rally' })).toEqual({ ok: false, reason: 'no footmen near the king' });
+  });
+
+  it('by day the king takes a barracks flag and plants it; the squad guards it at night', () => {
+    const s = newSession();
+    s.submit({ type: 'buy', slot: 'b1', option: 0 });
+    const barracks = s.state.buildings[0]!;
+    s.state.king.pos = { ...barracks.pos };
+    expect(s.submit({ type: 'rally' })).toMatchObject({
+      ok: true,
+      events: [{ type: 'flagTaken', building: barracks.id }],
+    });
+    expect(barracks.carried).toBe(true);
+    s.state.king.pos = { x: 40, y: 34 };
+    expect(s.submit({ type: 'rally' })).toMatchObject({
+      ok: true,
+      events: [{ type: 'flagPlanted', buildings: 1 }],
+    });
+    expect(barracks).toMatchObject({ carried: false, banner: { x: 40, y: 34 } });
+    emptyNight(s, 10_000);
+    for (const u of s.state.units) {
+      expect(u.following).toBe(false);
+      expect(Math.abs(u.post.y - 34)).toBeLessThan(0.01);
+      expect(Math.abs(u.post.x - 40)).toBeLessThan(1);
+    }
+  });
+
+  it('choosing a gate takes the flag back', () => {
+    const s = newSession();
+    s.submit({ type: 'buy', slot: 'b1', option: 0 });
+    const barracks = s.state.buildings[0]!;
+    barracks.banner = { x: 40, y: 34 };
+    s.submit({ type: 'cycleRally', slot: 'b1' });
+    expect(barracks.banner).toBeNull();
+  });
+
+  it('a squad whose flag the king carries at nightfall starts the night following him', () => {
+    const s = newSession();
+    s.submit({ type: 'buy', slot: 'b1', option: 0 });
+    s.state.king.pos = { ...s.state.buildings[0]!.pos };
+    s.submit({ type: 'rally' });
+    emptyNight(s, 10_000);
+    expect(s.state.buildings[0]!.carried).toBe(false);
+    expect(s.state.units.map((u) => u.following)).toEqual([true, true, true]);
+  });
+
+  it('at night, rallying at a barracks calls its whole squad from anywhere', () => {
+    const s = newSession();
+    s.submit({ type: 'buy', slot: 'b1', option: 0 });
+    emptyNight(s, 10_000);
+    for (const u of s.state.units) u.pos = { x: 5, y: 5 };
+    s.state.king.pos = { ...s.state.buildings[0]!.pos };
+    expect(s.submit({ type: 'rally' })).toMatchObject({
+      ok: true,
+      events: [{ type: 'rallied', units: 3 }],
+    });
+  });
+
+  it('dropping a squad at night moves its flag there for the next nights', () => {
+    const s = newSession();
+    s.submit({ type: 'buy', slot: 'b1', option: 0 });
+    emptyNight(s, 10_000);
+    for (const u of s.state.units) u.following = true;
+    s.state.king.pos = { x: 20, y: 20 };
+    s.submit({ type: 'rally' });
+    expect(s.state.buildings[0]!.banner).toEqual({ x: 20, y: 20 });
+  });
+});
+
+describe('enemy projectiles', () => {
+  /** An archer 4 m east of the king, ready to shoot; returns the events until its shot lands. */
+  function archerShot(s: ReturnType<typeof newSession>, dodge: boolean) {
+    emptyNight(s, 10_000);
+    const king = s.state.king;
+    // On the west lane, so the archer never leaves it to chase.
+    const at = s.ctx.lanes.get('west')!.points[1]!;
+    king.pos = { x: at.x + 4, y: at.y };
+    const archer = placeEnemy(s, 'skirmisher', at.x, at.y, { cooldown: 0 });
+    const fired = collectUntil(s, () => s.state.projectiles.length > 0, TICK_RATE * 2);
+    expect(fired).toContainEqual({
+      type: 'fired',
+      id: expect.any(Number),
+      attacker: { kind: 'enemy', id: archer.id },
+    });
+    archer.cooldown = 999;
+    if (dodge) s.submit({ type: 'move', x: 0, y: 1 });
+    return collectUntil(s, () => s.state.projectiles.length === 0, TICK_RATE * 2);
+  }
+
+  it('an archer shot lands on a king who stands still', () => {
+    const s = newSession();
+    const events = archerShot(s, false);
+    expect(events).toContainEqual(
+      expect.objectContaining({
+        type: 'hit',
+        target: { kind: 'king' },
+        damage: 6,
+        projectile: true,
+      }),
+    );
+    expect(s.state.king.hp).toBe(s.state.king.maxHp - 6);
+  });
+
+  it('a king who steps aside dodges it', () => {
+    const s = newSession();
+    const events = archerShot(s, true);
+    expect(events.some((e) => e.type === 'hit' && e.target.kind === 'king')).toBe(false);
+    expect(events).toContainEqual(expect.objectContaining({ type: 'missed' }));
+    expect(s.state.king.hp).toBe(s.state.king.maxHp);
+  });
+
+  it('shots in flight vanish at dawn', () => {
+    const s = newSession();
+    emptyNight(s, 0);
+    s.state.projectiles.push({
+      id: 999,
+      attacker: { kind: 'enemy', id: 1 },
+      target: { kind: 'castle' },
+      from: { x: 0, y: 0 },
+      to: { x: 1, y: 1 },
+      damage: 1,
+      flight: 100,
+      ticksLeft: 100,
+    });
+    s.step();
+    expect(s.state.phase).toBe('day');
+    expect(s.state.projectiles).toEqual([]);
   });
 });

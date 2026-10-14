@@ -8,7 +8,8 @@
 import { secondsToTicks } from '../constants.ts';
 import { req, type GameContext } from '../context.ts';
 import type { GameEvent } from '../events.ts';
-import type { GameState, NightStats, SpawnOrder } from '../state.ts';
+import type { BuildingState, GameState, NightStats, SpawnOrder } from '../state.ts';
+import type { Vec } from '../vec.ts';
 
 export function newNightStats(night: number): NightStats {
   return { night, income: 0, buildingsLost: 0, enemiesKilled: 0, ticks: 0 };
@@ -25,8 +26,10 @@ export function startNight(state: GameState, ctx: GameContext, events: GameEvent
     const spawns = req(ctx.buildings, b.type).spawns;
     if (!spawns) continue;
     const def = req(ctx.units, spawns.unit);
-    // The squad guards its rally gate, or the front of the building if it has none.
-    const gate = b.rally ? req(ctx.nodes, b.rally) : { x: b.pos.x, y: b.pos.y - 2 };
+    // A squad whose flag the king carries starts the night following him.
+    const following = b.carried && state.king.alive;
+    b.carried = false;
+    const gate = guardSpot(ctx, b);
     for (let i = 0; i < spawns.count; i++) {
       const id = state.nextId++;
       // Spread the squad in a short row across the gate.
@@ -40,13 +43,22 @@ export function startNight(state: GameState, ctx: GameContext, events: GameEvent
         hp: def.hp,
         maxHp: def.hp,
         cooldown: 0,
-        following: false,
+        following,
         target: null,
       });
       events.push({ type: 'unitSpawned', id, unit: def.id });
     }
   }
   events.push({ type: 'nightStarted', night: state.day });
+}
+
+/**
+ * Where a military building's squad stands guard: its planted flag, else its rally gate, else
+ * the front of the building.
+ */
+export function guardSpot(ctx: GameContext, b: BuildingState): Vec {
+  if (b.banner) return b.banner;
+  return b.rally ? req(ctx.nodes, b.rally) : { x: b.pos.x, y: b.pos.y - 2 };
 }
 
 export function buildSpawnQueue(ctx: GameContext, night: number): SpawnOrder[] {
@@ -92,6 +104,7 @@ function dawn(state: GameState, ctx: GameContext, events: GameEvent[]): void {
     b.cooldown = 0;
   }
   state.units = [];
+  state.projectiles = [];
   state.castle.hp = state.castle.maxHp;
   state.castle.cooldown = 0;
   const king = state.king;

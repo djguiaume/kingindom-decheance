@@ -116,6 +116,18 @@
                   "air"
                 ]
               }
+            },
+            "projectile": {
+              "type": "object",
+              "properties": {
+                "speed": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                }
+              },
+              "required": [
+                "speed"
+              ]
             }
           },
           "required": [

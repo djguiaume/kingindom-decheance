@@ -64,14 +64,44 @@ steering, hand-made maps) and the prototype design (corpus 11), and are easy to 
   A boss bar shows at the top while it lives. Night 6 swaps the west brutes for the warlord
   (with them, the balanced bot won under a third of runs).
 - **Rally (night)**: F or the Rally button. Footmen within 6 m of the king follow him; pressing
-  again drops them where he stands and they guard that spot until dawn. If the king falls,
-  followers stay where they are.
+  again drops them where he stands. If the king falls, followers stay where they are. Extended
+  after the second playtest (flags, see below).
 - **Edge arrows** (view-only, `apps/game/src/game/indicators.ts`): tonight's spawns by day;
   by night the castle and buildings hit in the last 2 s, the boss, then the largest enemy
   groups; at most 6. They keep out of the joystick corner and the button column. On-screen
   spawns glow by day.
-- **Waves panel**: Tab or the wave chip, and in the pause menu.
+- **Waves panel**: Tab or the night track (trimmed after the second playtest, see below).
 - Not built: the finale drums (there is no audio yet); tapping an arrow does nothing.
+
+## Second playtest fixes (2026-10-14)
+
+- **Building info**: every buy button shows what the building is for (`description` in
+  `buildings.json`) and its numbers; an upgrade shows only what changes
+  ("Damage 8 → 12/s · Range 7 → 8.5"). The title above the buttons lists the current
+  building's numbers. Logic in `apps/game/src/game/buildingInfo.ts`.
+- **Dodgeable enemy shots**: an attack with `projectile: { speed }` no longer hits at once. It
+  fires a shot at the spot where its target stands; the shot lands after its flight time and
+  hits only if the target's edge is still within 0.2 m of that spot (`PROJECTILE_SLACK`).
+  Archers (12 m/s) and catapults (7 m/s, lobbed, with a landing shadow) use it; towers, the
+  king and footmen still hit at once. Shots in flight live in `GameState.projectiles`
+  (state schema 2) and vanish at dawn.
+- **Rally and flags**: each barracks has a flag where its squad stands guard (its gate, or
+  where the king planted it). By day, F / the flag button at a barracks takes its flag and
+  pressing again elsewhere plants it. A flag still carried at nightfall makes the squad start
+  the night following the king. By night, Rally at a barracks calls that whole squad from
+  anywhere, plus every footman within 6 m; dropping them also moves their flag there for the
+  next nights. Choosing a gate (E) takes the flag back to that gate.
+- **Top bar**: a night track (one pip per night, boss night marked, enemies left by night)
+  replaces the day and "Tonight" chips; tapping it or Tab opens the waves panel. A card at
+  dawn shows the night survived, its gold and enemies beaten.
+- **Waves panel**: tonight and the next night by default, every night behind "All nights";
+  no longer in the pause menu.
+- **Edge markers**: one red pin per marker, with the enemy icons (as white silhouettes) and
+  counts inside, like Thronefall; castle, building and boss markers keep their own icons.
+- Balance after dodgeable shots (`pnpm sim`, 200 seeds): balanced ~98%, defensive ~75%,
+  king-only falls night 5, greedy falls night 3. The bots' king never stands still, so it
+  dodges more than a player will. The `defensive-loss` golden moved to seed 6 (seed 4 now
+  wins).
 
 ## Balance (first playtest, 2026-10-13)
 

@@ -5,7 +5,7 @@
  * from the ground, drawn back to front.
  */
 import Phaser from 'phaser';
-import { telegraph, type Ref } from '@kd/core';
+import { guardSpot, telegraph, type Ref } from '@kd/core';
 import { nearbySlotId } from '../stores/hud.ts';
 import { colors } from '../theme.ts';
 import type { CameraView } from './camera.ts';
@@ -29,6 +29,10 @@ export interface ViewOptions {
 
 /** How long the ring of a boss stomp stays visible. */
 const STOMP_MS = 350;
+/** How long the dust of a shot that missed stays visible. */
+const PUFF_MS = 300;
+/** Shots by these enemies are lobbed high, with a shadow where they will land. */
+const LOBBED = new Set(['catapult']);
 
 interface Flash {
   from: { x: number; y: number };
@@ -45,6 +49,9 @@ export class PlayScene extends Phaser.Scene {
   private lastTap = 0;
   private lead = { x: 0, y: 0 };
   private stomps: { at: { x: number; y: number }; radius: number; start: number }[] = [];
+  private puffs: { at: { x: number; y: number }; start: number }[] = [];
+  /** Who fired each shot in flight (the shooter may die before it lands). */
+  private shooters = new Map<number, string>();
 
   constructor(
     private readonly runtime: GameRuntime,
@@ -81,7 +88,20 @@ export class PlayScene extends Phaser.Scene {
             });
           continue;
         }
-        if (e.type !== 'hit') continue;
+        if (e.type === 'fired') {
+          const ref = e.attacker;
+          const enemy =
+            ref.kind === 'enemy' && this.runtime.state.enemies.find((x) => x.id === ref.id);
+          this.shooters.set(e.id, enemy ? enemy.type : '');
+          continue;
+        }
+        if (e.type === 'missed') {
+          this.shooters.delete(e.id);
+          this.puffs.push({ at: this.px(e.at), start: this.time.now });
+          continue;
+        }
+        // A shot that flew has already been drawn in flight.
+        if (e.type !== 'hit' || e.projectile) continue;
         const from = this.refPos(e.attacker);
         const to = this.refPos(e.target);
         if (!from || !to) continue;
@@ -247,8 +267,10 @@ export class PlayScene extends Phaser.Scene {
         state.king.maxHp,
       ]);
     }
+    this.addFlags(items);
     items.sort((a, b) => a.y - b.y);
     for (const item of items) item.draw();
+    this.drawProjectiles();
 
     const now = this.time.now;
     this.stomps = this.stomps.filter((st) => now - st.start < STOMP_MS);
@@ -258,6 +280,12 @@ export class PlayScene extends Phaser.Scene {
       const r = st.radius * SCALE * (0.4 + 0.6 * t);
       g.lineStyle(4, colors.enemies.boss, 1 - t);
       g.strokeEllipse(p.x, p.y, r * 2, r * 2 * SQUASH);
+    }
+    this.puffs = this.puffs.filter((p) => now - p.start < PUFF_MS);
+    for (const p of this.puffs) {
+      const t = (now - p.start) / PUFF_MS;
+      g.fillStyle(0xd8cfb8, 0.6 * (1 - t));
+      g.fillEllipse(p.at.x, p.at.y, SCALE * (0.4 + 0.8 * t), SCALE * (0.4 + 0.8 * t) * SQUASH);
     }
     this.flashes = this.flashes.filter((f) => now - f.start < (f.shot ? SHOT_MS : HIT_FLASH_MS));
     for (const f of this.flashes) {
@@ -279,6 +307,87 @@ export class PlayScene extends Phaser.Scene {
       const tail = SCALE * 0.6;
       g.lineStyle(3, colors.shot, 1);
       g.lineBetween(x - ((bx - ax) / len) * tail, y - ((by - ay) / len) * tail, x, y);
+    }
+  }
+
+  /**
+   * Squad flags (playtest 2): each barracks' flag stands where its squad guards. A flag the
+   * king carries, or whose squad follows him, flies over the king instead.
+   */
+  private addFlags(items: { y: number; draw: () => void }[]): void {
+    const { state, ctx } = this.runtime;
+    let onKing = 0;
+    for (const b of state.buildings) {
+      if (b.destroyed || !ctx.buildings.get(b.type)!.spawns) continue;
+      const following = state.units.some((u) => u.home === b.id && u.following);
+      if (b.carried || following) {
+        onKing++;
+        continue;
+      }
+      const p = this.px(guardSpot(ctx, b));
+      items.push({ y: p.y, draw: () => this.flag(p.x, p.y, 1) });
+    }
+    if (onKing > 0 && state.king.alive) {
+      const k = this.px(this.runtime.drawPos('king', state.king.pos));
+      // Behind the king's shoulder, so it reads as carried.
+      items.push({ y: k.y + 0.01, draw: () => this.flag(k.x - SCALE * 0.5, k.y, 0.8) });
+    }
+  }
+
+  private flag(x: number, y: number, scale: number): void {
+    const g = this.dynamic;
+    const h = SCALE * 1.8 * scale;
+    g.lineStyle(2, 0x5a3b1e, 1);
+    g.lineBetween(x, y, x, y - h);
+    g.fillStyle(colors.buildings.military, 1);
+    g.fillTriangle(
+      x,
+      y - h,
+      x + SCALE * 0.9 * scale,
+      y - h + SCALE * 0.3 * scale,
+      x,
+      y - h + SCALE * 0.6 * scale,
+    );
+    g.fillStyle(0x000000, 0.2);
+    g.fillEllipse(x, y, SCALE * 0.5, SCALE * 0.2);
+  }
+
+  /** Enemy shots in flight: arrows fly flat and fast, catapult stones arc with a landing shadow. */
+  private drawProjectiles(): void {
+    const g = this.dynamic;
+    for (const p of this.runtime.state.projectiles) {
+      const lobbed = LOBBED.has(this.shooters.get(p.id) ?? '');
+      const at = (t: number) => {
+        const ground = this.px({
+          x: p.from.x + (p.to.x - p.from.x) * t,
+          y: p.from.y + (p.to.y - p.from.y) * t,
+        });
+        // Metres above the ground: a stone leaves the arm high and lands on the ground; an
+        // arrow flies at chest height with a slight arc.
+        const lift = lobbed
+          ? 1.5 * (1 - t) + 4 * Math.sin(Math.PI * t)
+          : 0.8 + 0.6 * Math.sin(Math.PI * t);
+        return { x: ground.x, y: ground.y - lift * SCALE };
+      };
+      const t = 1 - p.ticksLeft / p.flight;
+      if (lobbed) {
+        const land = this.px(p.to);
+        g.fillStyle(0x000000, 0.15 + 0.25 * t);
+        g.fillEllipse(land.x, land.y, SCALE * 1.2, SCALE * 1.2 * SQUASH);
+        const s = at(t);
+        g.fillStyle(0x6b6b6b, 1);
+        g.fillCircle(s.x, s.y, SCALE * 0.3);
+        continue;
+      }
+      const head = at(t);
+      const tail = at(Math.max(0, t - 0.15));
+      g.lineStyle(3, colors.enemies.ranged, 1);
+      g.lineBetween(tail.x, tail.y, head.x, head.y);
+    }
+    // Forget shooters of shots that are no longer flying (landed on a target).
+    if (this.shooters.size > this.runtime.state.projectiles.length) {
+      const live = new Set(this.runtime.state.projectiles.map((p) => p.id));
+      for (const id of this.shooters.keys()) if (!live.has(id)) this.shooters.delete(id);
     }
   }
 

@@ -1,6 +1,6 @@
 /** Night simulation rate. Content speaks in seconds; the core in ticks (ADR-002). */
 export const TICK_RATE = 30;
-export const STATE_SCHEMA_VERSION = 1;
+export const STATE_SCHEMA_VERSION = 2;
 
 /** Converts a content duration to a whole number of ticks (at least one for intervals). */
 export function secondsToTicks(seconds: number, min = 0): number {
