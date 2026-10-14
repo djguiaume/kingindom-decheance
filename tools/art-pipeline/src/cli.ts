@@ -12,7 +12,7 @@ import { buildRuntime, type RuntimeIndex } from './atlas.ts';
 import { CATALOG } from './catalog.ts';
 import { buildManifest, loadManifest, selectParts, writeManifest } from './manifest.ts';
 import { createMockScenario } from './mock-scenario.ts';
-import { estimate, generateBatch, paths, type Workspace } from './pipeline.ts';
+import { estimate, generateBatch, generateSelection, paths, type Workspace } from './pipeline.ts';
 import { animationSheet, audit, contactSheet, ensureDir, writeAudit } from './review.ts';
 import { APPROVED_MODEL_ID, ScenarioClient, credentialsFromEnv } from './scenario.ts';
 import { PART_STATES, StatusStore, type PartState } from './status.ts';
@@ -109,13 +109,19 @@ async function main(): Promise<number> {
       return 0;
     }
     case 'generate': {
-      if (!values.approve || !values.budget) {
-        throw new Error('Usage: pnpm art generate --approve <batch token> --budget <approved CU>');
+      const selector = args[0];
+      if (!values.budget || (!selector && !values.approve)) {
+        throw new Error(
+          'Usage: pnpm art generate <selector> --budget <approved CU>  (or --approve <batch token>)',
+        );
       }
       const ws = await workspace();
-      const result = await generateBatch(ws, values.approve, Number(values.budget), {
-        maxAttempts,
-      });
+      const result = values.approve
+        ? await generateBatch(ws, values.approve, Number(values.budget), { maxAttempts })
+        : await generateSelection(ws, selector as string, Number(values.budget), {
+            maxAttempts,
+            redo: values.redo,
+          });
       log(
         `Spent ${result.spentCU} CU. Validated: ${result.done.length}. Failed: ${result.failed.length}.`,
       );

@@ -34,9 +34,7 @@ no pixel is ever cut out of it.
 
 ```sh
 pnpm art plan enemies                 # what is selected and its state
-pnpm art estimate enemies             # dry run: cost per part, nothing charged → prints a batch token
-# → a human approves the token and a budget in CU
-pnpm art generate --approve <token> --budget <CU>
+pnpm art generate enemies --budget <CU>   # generate, never spending past the approved budget
 pnpm art runtime                      # masters → WebP atlases + Phaser JSON
 pnpm art review                       # contact sheet, animation sheet, AUDIT.md
 pnpm art mark catapult_arm.f1 rejected --note "arm mounted on the side"
@@ -52,10 +50,12 @@ Add `--mock` to any command for a free offline run against the in-memory Scenari
 
 ## Spending gates
 
-- `estimate` uses Scenario's `?dryRun=true`: it reports the CU cost without charging.
-- `generate` only runs a batch token produced by `estimate`, and refuses when the estimate is
-  over `--budget` or any prompt changed since the estimate.
-- During a run it stops before any generation that would take spending over the budget.
+- The only approval is the budget: `generate <selector> --budget <CU>` prices each part with
+  Scenario's free `?dryRun=true` (recorded in `art/batches/`) and starts at once. It stops before any
+  generation that would take spending over the budget, so a run may finish only part of the selection.
+- `estimate <selector>` still prints the price on its own when wanted, and
+  `generate --approve <token> --budget <CU>` runs exactly that priced batch, refusing if it no
+  longer fits or a prompt changed.
 - Each part gets at most 3 generations in its life (`--max-attempts`); failed jobs and failed
   validation both count. Validated or approved parts are never regenerated unless `--redo`.
 
