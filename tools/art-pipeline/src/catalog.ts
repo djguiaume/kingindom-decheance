@@ -189,10 +189,11 @@ export const CATALOG: CatalogEntry[] = [
     kind: 'character',
     contentId: 'king',
     subject:
-      'the grey wolf leaping forward in a lunge charge with the panda king leaning in, jaws open',
+      'the panda king (crown, blue cape with gold trim) riding the large grey wolf, firmly seated in the saddle, same rider and wolf as the wolf-rider idle pose; the wolf leaps forward in a lunge charge, jaws open, and the king leans in; rider hands in a grip pose without a weapon. The king is always on the wolf’s back, never missing',
     frames: ['crouched, about to spring', 'fully stretched mid-leap'],
     canvas: [320, 256],
     heightPx: 140,
+    checks: ['The king rides the wolf in both frames.'],
   },
   {
     num: 11,
@@ -274,7 +275,7 @@ export const CATALOG: CatalogEntry[] = [
     'crossbowman',
     'Crossbowman',
     'panda crossbowman: blue quilted coat, steel cap',
-    'heavy crossbow with steel prod and bolt loaded',
+    'hand-held crossbow carried by one soldier: wooden stock, steel prod, bolt loaded; no wheels, no stand, no carriage, not a siege engine',
     [128, 64],
     94,
   ),
@@ -350,7 +351,8 @@ export const CATALOG: CatalogEntry[] = [
     group: 'enemies',
     kind: 'weapon',
     contentId: 'harpy',
-    subject: 'small double-headed axe with a dark bone handle',
+    subject:
+      'small crude double-headed axe with a dark bone handle and red rag wrapping; enemy gear, so no panda emblem, no blue and no gold',
     canvas: [96, 96],
     inferred: 'The sheet shows a double axe beside the harpy at 33-34; read as its weapon layer.',
   },
@@ -362,10 +364,14 @@ export const CATALOG: CatalogEntry[] = [
     kind: 'siege',
     contentId: 'catapult',
     subject:
-      'goblin siege catapult chassis WITHOUT its throwing arm: symmetric rectangular wooden frame on four wheels, two upright A-frame supports on either side of the centre line holding a horizontal axle, crossbar stop, red rag flags; no operator',
+      'goblin siege catapult chassis WITHOUT its throwing arm: symmetric rectangular wooden frame on four wheels, two upright A-frame supports on either side of the centre line holding a horizontal axle, crossbar stop, red rag flags; enemy gear, so no panda emblem, no blue and no gold; no operator',
     canvas: [256, 256],
     heightPx: 120,
-    checks: [siegeCheck, 'The axle hole is empty: the arm is the separate sprite 036.'],
+    checks: [
+      siegeCheck,
+      'The axle hole is empty: the arm is the separate sprite 036.',
+      'No panda emblem: enemy gear.',
+    ],
   },
   {
     num: 36,
@@ -375,17 +381,21 @@ export const CATALOG: CatalogEntry[] = [
     kind: 'siege',
     contentId: 'catapult',
     subject:
-      'the throwing arm of a catapult on its own: one straight timber beam with an axle hub near the lower end and a rope sling or bucket cup with a stone at the top end, shown upright in the cocked position',
+      'the throwing arm of a goblin catapult on its own: one straight rough timber beam bound with rope, an axle hub near the lower end and a wooden bucket cup holding a grey stone at the top end; enemy gear, so no panda emblem, no blue and no gold. Every frame shows the exact same beam, hub and cup; only the angle changes',
     frames: ['cocked: arm pulled back', 'released: arm vertical against the stop'],
     canvas: [128, 256],
-    checks: [siegeCheck, 'The hub lines up with the chassis axle; the pivot is the hub centre.'],
+    checks: [
+      siegeCheck,
+      'The hub lines up with the chassis axle; the pivot is the hub centre.',
+      'Both frames show the same beam and cup.',
+    ],
   },
   ...unit(
     37,
     'warlord',
     'Warlord',
     'big armoured goblin warlord (boss): red cape, horned helmet, spiked dark armour',
-    'huge two-handed battle axe',
+    'huge crude two-handed battle axe of dark iron with red rag wrapping; enemy gear, so no panda emblem, no blue and no gold',
     [192, 96],
     170,
     undefined,
