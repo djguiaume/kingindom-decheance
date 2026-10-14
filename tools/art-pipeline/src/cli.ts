@@ -4,7 +4,7 @@
  * Add `--mock` to any command to run against the in-memory Scenario mock in .art-mock/ (free,
  * offline, never touches art/).
  */
-import { cp, mkdir, readFile, rm } from 'node:fs/promises';
+import { cp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
@@ -14,6 +14,7 @@ import { buildManifest, loadManifest, selectParts, writeManifest } from './manif
 import { createMockScenario } from './mock-scenario.ts';
 import { estimate, generateBatch, generateSelection, paths, type Workspace } from './pipeline.ts';
 import { animationSheet, audit, contactSheet, ensureDir, writeAudit } from './review.ts';
+import { makeSeamless } from './validate.ts';
 import { APPROVED_MODEL_ID, ScenarioClient, credentialsFromEnv } from './scenario.ts';
 import { PART_STATES, StatusStore, type PartState } from './status.ts';
 
@@ -143,6 +144,23 @@ async function main(): Promise<number> {
       log(`${partId} is now ${state}.`);
       return 0;
     }
+    case 'seamless': {
+      // One-off repair for tile masters generated before normalize made tiles seamless.
+      const manifest = await loadManifest(paths(root).manifest);
+      const tiles = selectParts(manifest, args.join(',')).filter(
+        ({ asset }) => asset.kind === 'tile',
+      );
+      if (tiles.length === 0) {
+        log('No tile matches that selector.');
+        return 1;
+      }
+      for (const { part } of tiles) {
+        const file = join(root, part.master);
+        await writeFile(file, await makeSeamless(await readFile(file)));
+        log(`${part.id}: made seamless.`);
+      }
+      return 0;
+    }
     case 'runtime': {
       const manifest = await loadManifest(paths(root).manifest);
       await rm(paths(root).runtime, { recursive: true, force: true });
@@ -171,7 +189,7 @@ async function main(): Promise<number> {
     }
     default:
       log(
-        'Commands: manifest [--check] | plan [selector] | estimate <selector> | generate --approve <token> --budget <CU> | mark <part> <state> | runtime | review | audit. Add --mock for a free offline run.',
+        'Commands: manifest [--check] | plan [selector] | estimate <selector> | generate --approve <token> --budget <CU> | mark <part> <state> | seamless <tiles> | runtime | review | audit. Add --mock for a free offline run.',
       );
       return command === 'help' ? 0 : 1;
   }

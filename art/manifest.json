@@ -2373,6 +2373,7 @@
       "checks": [
         "The same gate in all three views (face-on, side, diagonal); the side and diagonal views are the gate turned, not a new design."
       ],
+      "followFirstFrame": true,
       "parts": [
         {
           "id": "gate_wood.f1",
@@ -2441,6 +2442,7 @@
       "checks": [
         "The same gate in all three views (face-on, side, diagonal); the side and diagonal views are the gate turned, not a new design."
       ],
+      "followFirstFrame": true,
       "parts": [
         {
           "id": "gate_stone.f1",
@@ -2596,6 +2598,7 @@
         "h": 1024
       },
       "checks": [],
+      "noReference": true,
       "parts": [
         {
           "id": "window_glow",
@@ -3606,6 +3609,7 @@
         "h": 1024
       },
       "checks": [],
+      "noReference": true,
       "parts": [
         {
           "id": "path_edge",
@@ -3636,6 +3640,7 @@
         "h": 1024
       },
       "checks": [],
+      "noReference": true,
       "parts": [
         {
           "id": "water_edge",
@@ -3854,6 +3859,7 @@
         "Matches cliff_section; mirrored by the game for the left end."
       ],
       "inferred": "See 106.",
+      "noReference": true,
       "parts": [
         {
           "id": "cliff_end",
@@ -3885,6 +3891,7 @@
       },
       "checks": [],
       "inferred": "Not on the sheet. Variation on top of the grass tile.",
+      "noReference": true,
       "parts": [
         {
           "id": "grass_patch",
@@ -3931,7 +3938,7 @@
       "name": "Bridge",
       "group": "environment",
       "kind": "decal",
-      "subject": "a sturdy wooden footbridge on its own, as it would stand over a river: plank deck with bamboo railings bound in blue rope, a small paper lantern on each end post, short stone footings at both ends; no water, no river banks, no ground around it",
+      "subject": "a sturdy wooden bridge on its own, as it would stand over a river: a broad plank deck wide enough for two pandas to walk side by side (about 3 metres), so it reads wide and solid, never a narrow footbridge; bamboo railings bound in blue rope, a small paper lantern on each end post, short stone footings at both ends; no water, no river banks, no ground around it",
       "canvas": {
         "w": 320,
         "h": 320

@@ -37,6 +37,10 @@ export interface CatalogEntry {
    * "diag" for a diagonal wall; the default view is the wall running across the screen.
    */
   views?: ('side' | 'diag')[];
+  /** Paint without the v1.2 sheet attached (ground decals and lights it filled with figures). */
+  noReference?: true;
+  /** Paint later frames from the first frame's master, so only the pose changes. */
+  followFirstFrame?: true;
 }
 
 const walk4 = [
@@ -620,6 +624,7 @@ export const CATALOG: CatalogEntry[] = [
     frames: ['closed', 'open'],
     canvas: [192, 192],
     views: ['side', 'diag'],
+    followFirstFrame: true,
     checks: [gateCheck],
   },
   {
@@ -633,6 +638,7 @@ export const CATALOG: CatalogEntry[] = [
     frames: ['closed', 'open'],
     canvas: [192, 192],
     views: ['side', 'diag'],
+    followFirstFrame: true,
     checks: [gateCheck],
   },
   {
@@ -660,14 +666,17 @@ export const CATALOG: CatalogEntry[] = [
     'collapsed rubble with broken beams and a torn blue roof',
     [256, 192],
   ),
-  s(
-    69,
-    'window_glow',
-    'Window glow',
-    'overlay',
-    'a small soft warm yellow glow on its own, a blurred rounded square of window light, filling only the middle half of the frame with a wide empty transparent margin all around, fading to fully transparent well before the edges, for night; light only, no building, no wall, no window frame, no lantern',
-    [96, 96],
-  ),
+  {
+    ...s(
+      69,
+      'window_glow',
+      'Window glow',
+      'overlay',
+      'a small soft warm yellow glow on its own, a blurred rounded square of window light, filling only the middle half of the frame with a wide empty transparent margin all around, fading to fully transparent well before the edges, for night; light only, no building, no wall, no window frame, no lantern',
+      [96, 96],
+    ),
+    noReference: true,
+  },
   s(
     70,
     'lantern_glow',
@@ -791,6 +800,7 @@ export const CATALOG: CatalogEntry[] = [
     subject:
       'flat ground texture only, seen straight from above: a soft ragged strip where meadow grass meets packed dirt, fading to transparent on all sides; no buildings, no towers, no objects, no props, nothing standing on it',
     canvas: [128, 128],
+    noReference: true,
   },
   {
     num: 100,
@@ -801,6 +811,7 @@ export const CATALOG: CatalogEntry[] = [
     subject:
       'flat ground texture only, seen straight from above: a soft strip where shallow blue water meets a pebbly grass bank, fading to transparent on all sides; no buildings, no towers, no island, no objects, nothing standing on it',
     canvas: [192, 128],
+    noReference: true,
   },
 
   // 8. Map and UI (101-105).
@@ -855,6 +866,7 @@ export const CATALOG: CatalogEntry[] = [
     heightPx: 150,
     checks: ['Matches cliff_section; mirrored by the game for the left end.'],
     inferred: 'See 106.',
+    noReference: true,
   },
   {
     num: 108,
@@ -866,6 +878,7 @@ export const CATALOG: CatalogEntry[] = [
       'flat decal seen from above: an irregular patch of lusher, slightly darker meadow grass with a few small flowers, ragged soft edges fading to transparent, to break up the ground',
     canvas: [192, 128],
     inferred: 'Not on the sheet. Variation on top of the grass tile.',
+    noReference: true,
   },
   {
     ...t(109, 'tile_water', 'Water tile', 'calm shallow blue-green water with soft ripples'),
@@ -878,7 +891,7 @@ export const CATALOG: CatalogEntry[] = [
     group: 'environment',
     kind: 'decal',
     subject:
-      'a sturdy wooden footbridge on its own, as it would stand over a river: plank deck with bamboo railings bound in blue rope, a small paper lantern on each end post, short stone footings at both ends; no water, no river banks, no ground around it',
+      'a sturdy wooden bridge on its own, as it would stand over a river: a broad plank deck wide enough for two pandas to walk side by side (about 3 metres), so it reads wide and solid, never a narrow footbridge; bamboo railings bound in blue rope, a small paper lantern on each end post, short stone footings at both ends; no water, no river banks, no ground around it',
     canvas: [320, 320],
     views: ['side', 'diag'],
     checks: [
