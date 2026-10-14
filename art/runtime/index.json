@@ -966,18 +966,6 @@
       "num": 68,
       "asset": "ruin"
     },
-    "gate_wood.diag.f1": {
-      "atlas": "structures",
-      "num": 64,
-      "asset": "gate_wood",
-      "contentId": "wall"
-    },
-    "gate_wood.diag.f2": {
-      "atlas": "structures",
-      "num": 64,
-      "asset": "gate_wood",
-      "contentId": "wall"
-    },
     "gate_stone.f2": {
       "atlas": "structures",
       "num": 65,
@@ -1030,6 +1018,18 @@
       "num": 65,
       "asset": "gate_stone",
       "contentId": "stone_wall"
+    },
+    "gate_wood.diag.f1": {
+      "atlas": "structures",
+      "num": 64,
+      "asset": "gate_wood",
+      "contentId": "wall"
+    },
+    "gate_wood.diag.f2": {
+      "atlas": "structures",
+      "num": 64,
+      "asset": "gate_wood",
+      "contentId": "wall"
     },
     "gate_wood.f2": {
       "atlas": "structures",
@@ -1275,15 +1275,15 @@
       "num": 108,
       "asset": "grass_patch"
     },
-    "water_edge": {
-      "atlas": "environment",
-      "num": 100,
-      "asset": "water_edge"
-    },
     "path_edge": {
       "atlas": "environment",
       "num": 99,
       "asset": "path_edge"
+    },
+    "water_edge": {
+      "atlas": "environment",
+      "num": 100,
+      "asset": "water_edge"
     },
     "bamboo_single": {
       "atlas": "environment",
