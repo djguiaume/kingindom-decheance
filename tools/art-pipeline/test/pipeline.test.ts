@@ -112,7 +112,7 @@ describe('budget gates', () => {
   it('stops before a part that would push spending over the budget', async () => {
     // Every image fails validation, so retries eat the budget.
     const { w, state } = await ws({ costPerImage: 5, fixtureFor: () => 'opaque' });
-    const batch = await estimate(w, 'footman,knight');
+    const batch = await estimate(w, 'boulder,coin');
     const run = await generateBatch(w, batch.token, 12);
     expect(run.spentCU).toBeLessThanOrEqual(12);
     expect(state.spent).toBeLessThanOrEqual(12);
@@ -123,26 +123,26 @@ describe('budget gates', () => {
 describe('generation', () => {
   it('limits retries per part and records why each attempt failed', async () => {
     const { w, state } = await ws({ fixtureFor: () => 'cutoff' });
-    const batch = await estimate(w, 'raider');
+    const batch = await estimate(w, 'boulder');
     const run = await generateBatch(w, batch.token, 100, { maxAttempts: 3 });
     expect(state.generations).toHaveLength(3);
-    expect(run.failed).toEqual(['raider']);
-    const st = w.status.get('raider');
+    expect(run.failed).toEqual(['boulder']);
+    const st = w.status.get('boulder');
     expect(st).toMatchObject({ state: 'failed', attempts: 3, costCU: 15 });
     expect(st.issues.map((i) => i.code)).toContain('cutoff');
     // Out of attempts: the next estimate skips it instead of spending again.
-    const again = await estimate(w, 'raider');
+    const again = await estimate(w, 'boulder');
     expect(again.parts).toHaveLength(0);
     expect(again.skipped[0]?.reason).toMatch(/out of attempts/);
   });
 
   it('retries a failed job and keeps the first valid output', async () => {
     const { w, state } = await ws({ failJob: (n) => n === 0 });
-    const batch = await estimate(w, 'raider');
+    const batch = await estimate(w, 'boulder');
     const run = await generateBatch(w, batch.token, 100);
-    expect(run.done).toEqual(['raider']);
+    expect(run.done).toEqual(['boulder']);
     expect(state.generations).toHaveLength(2);
-    expect(w.status.get('raider')).toMatchObject({ state: 'validated', attempts: 2 });
+    expect(w.status.get('boulder')).toMatchObject({ state: 'validated', attempts: 2 });
   });
 
   it('generates each part independently with the approved model, the reference and transparency', async () => {
@@ -165,10 +165,10 @@ describe('generation', () => {
 
   it('skips parts already validated when estimating again', async () => {
     const { w } = await ws();
-    const first = await estimate(w, 'raider');
+    const first = await estimate(w, 'boulder');
     await generateBatch(w, first.token, 100);
-    const second = await estimate(w, 'raider,skirmisher');
-    expect(second.parts.map((p) => p.id)).toEqual(['skirmisher']);
+    const second = await estimate(w, 'boulder,coin');
+    expect(second.parts.map((p) => p.id)).toEqual(['coin']);
   });
 });
 

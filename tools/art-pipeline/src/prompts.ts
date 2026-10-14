@@ -30,7 +30,7 @@ function orientation(asset: Asset): string {
   return '';
 }
 
-function framing(asset: Asset): string {
+function framing(asset: Asset, part: Part): string {
   const rule = KIND_RULES[asset.kind];
   switch (asset.kind) {
     case 'tile':
@@ -45,11 +45,13 @@ function framing(asset: Asset): string {
         ? 'Small contextual decorations attached to it are fine; no wide ground plate or scenery around it.'
         : 'No ground patch, no cast shadow, no scenery, nothing under the feet.';
       const facing =
-        asset.kind === 'character' || asset.kind === 'flyer'
-          ? ' Body turned clearly toward the right (three-quarter side view, looking right), not facing the viewer.'
-          : asset.kind === 'siege'
-            ? ' Facing right.'
-            : '';
+        part.view === 'back'
+          ? ' Seen from behind, walking away up the screen: back turned to the viewer, face hidden, same camera angle.'
+          : asset.kind === 'character' || asset.kind === 'flyer'
+            ? ' Body turned clearly toward the right (three-quarter side view, looking right), not facing the viewer.'
+            : asset.kind === 'siege'
+              ? ' Facing right.'
+              : '';
       return `One single subject, whole (nothing cut off by the frame), centred with margin, on a fully transparent background.${facing} ${ground}`;
     }
   }
@@ -57,11 +59,11 @@ function framing(asset: Asset): string {
 
 export function promptFor(asset: Asset, part: Part): string {
   const pose = part.pose
-    ? ` Animation frame ${part.frame + 1} of ${asset.parts.length}: ${part.pose}.`
+    ? ` Animation frame ${part.frame + 1} of ${asset.parts.filter((p) => p.view === part.view).length}: ${part.pose}.`
     : '';
   return [
     `Game sprite: ${asset.subject}.${pose}`,
-    framing(asset),
+    framing(asset, part),
     STYLE_BIBLE,
     REFERENCE_RULE,
   ].join('\n');

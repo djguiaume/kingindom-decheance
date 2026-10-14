@@ -72,6 +72,40 @@ describe('manifest', () => {
     expect(prompt('footman')).toMatch(/turned clearly toward the right/);
   });
 
+  it('adds back views for the king and every unit body, without changing the front prompts', () => {
+    const back = manifest.assets.flatMap((a) => a.parts.filter((p) => p.view === 'back'));
+    expect(back).toHaveLength(28);
+    expect(new Set(back.map((p) => p.id.split('.')[0]))).toEqual(
+      new Set([
+        'king_roll_idle',
+        'king_roll_walk',
+        'king_wolf_idle',
+        'king_wolf_walk',
+        'king_wolf_run',
+        'footman',
+        'knight',
+        'archer',
+        'crossbowman',
+        'guardian',
+        'monk',
+        'raider',
+        'skirmisher',
+        'brute',
+        'harpy',
+        'warlord',
+        'warlord_bodyguard',
+      ]),
+    );
+    const walk = manifest.assets.find((a) => a.id === 'king_roll_walk')!;
+    const front = walk.parts.find((p) => p.id === 'king_roll_walk.f2')!;
+    const behind = walk.parts.find((p) => p.id === 'king_roll_walk.back.f2')!;
+    expect(promptFor(walk, front)).toMatch(/frame 2 of 4/);
+    expect(promptFor(walk, front)).not.toMatch(/Seen from behind/);
+    expect(promptFor(walk, behind)).toMatch(/frame 2 of 4/);
+    expect(promptFor(walk, behind)).toMatch(/Seen from behind/);
+    expect(behind.master).toBe('art/masters/kings/002_king_roll_walk_back_f2.png');
+  });
+
   it('keeps transparency rules consistent with the kind', () => {
     for (const a of manifest.assets) expect(a.transparent).toBe(KIND_RULES[a.kind].transparent);
   });
