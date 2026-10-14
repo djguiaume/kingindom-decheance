@@ -25,6 +25,7 @@ import { Animator, fallAt, keyOf, STRIDE_M, type Pose } from './animation.ts';
 import { Art, ART_PX_PER_M, CATAPULT_ARM, HAND, loadArt, weaponAngle } from './art.ts';
 import { Painter } from './painter.ts';
 import { bobHeight, shadow, spriteFor } from './sprites.ts';
+import { drawTerrain } from './terrain.ts';
 
 const HIT_FLASH_MS = 160;
 const SHOT_MS = 180;
@@ -213,6 +214,7 @@ export class PlayScene extends Phaser.Scene {
         g.fillCircle(b.x, b.y, SCALE * 0.7);
       }
     }
+    drawTerrain(g, ctx.map);
     for (const lane of ctx.lanes.values()) {
       const s = this.px(lane.points[0]!);
       g.fillStyle(lane.air ? colors.enemies.flyer : colors.enemies.swarm, 0.6);

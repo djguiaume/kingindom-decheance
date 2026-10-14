@@ -4,6 +4,7 @@ import { nextFloat } from '../rng.ts';
 import type { GameState } from '../state.ts';
 import { dist, moveToward, type Vec } from '../vec.ts';
 import { holdAtGate, resolve, wallAt, wallGate } from './targets.ts';
+import { blockByTerrain, walkAim } from './terrain.ts';
 import { blockByWalls, throughGate } from './walls.ts';
 
 /** Stop slightly inside attack range so floating-point rounding never leaves us just outside. */
@@ -28,11 +29,15 @@ export function movementSystem(state: GameState, ctx: GameContext): void {
     // Ground enemies never get past a standing wall, whatever they are chasing.
     const gate = def.flying ? null : wallGate(state, ctx, enemy);
     if (target) {
+      // Round cliffs and water through the passes (flyers go straight).
+      const aim = def.flying
+        ? target.pos
+        : walkAim(ctx.blockers, ctx.ways, enemy.pos, target.pos, def.radius);
       moveToward(
         enemy.pos,
-        target.pos,
+        aim,
         step,
-        def.radius + target.radius + def.attack.range - RANGE_SLACK,
+        aim === target.pos ? def.radius + target.radius + def.attack.range - RANGE_SLACK : 0,
       );
       if (gate) holdAtGate(gate, enemy.pos, def.radius);
       continue;
@@ -64,8 +69,15 @@ export function movementSystem(state: GameState, ctx: GameContext): void {
     const def = req(ctx.units, unit.type);
     const step = perTick(def.speed);
     const target = unit.target && resolve(state, ctx, unit.target);
-    // Footmen go through wall gates on the way (playtest 2).
-    const via = (to: Vec) => throughGate(state, ctx, unit.pos, to, def.radius);
+    // Footmen find their way round cliffs and water, and go through wall gates (playtest 2).
+    const via = (to: Vec) =>
+      throughGate(
+        state,
+        ctx,
+        unit.pos,
+        walkAim(ctx.blockers, ctx.ways, unit.pos, to, def.radius),
+        def.radius,
+      );
     if (target) {
       const aim = via(target.pos);
       const stop = def.radius + target.radius + def.attack.range - RANGE_SLACK;
@@ -103,6 +115,14 @@ export function separationSystem(state: GameState, ctx: GameContext): void {
   separate(air, state);
   // Footmen walk through wall gates, never through the wings.
   for (const u of state.units) blockByWalls(state, ctx, u.pos, req(ctx.units, u.type).radius);
+  // Nobody on the ground walks over cliffs or water.
+  if (ctx.blockers.length > 0) {
+    for (const u of state.units) blockByTerrain(ctx.blockers, u.pos, req(ctx.units, u.type).radius);
+    for (const e of state.enemies) {
+      const def = req(ctx.enemies, e.type);
+      if (!def.flying) blockByTerrain(ctx.blockers, e.pos, def.radius);
+    }
+  }
 }
 
 function separate(bodies: Body[], state: GameState): void {

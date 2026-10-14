@@ -284,6 +284,189 @@
           "groups"
         ]
       }
+    },
+    "terrain": {
+      "default": {
+        "cliffs": [],
+        "water": [],
+        "bridges": [],
+        "props": []
+      },
+      "type": "object",
+      "properties": {
+        "cliffs": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "points": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "array",
+                  "prefixItems": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    }
+                  ],
+                  "items": false,
+                  "minItems": 2,
+                  "maxItems": 2
+                }
+              },
+              "width": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              }
+            },
+            "required": [
+              "points",
+              "width"
+            ]
+          }
+        },
+        "water": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "points": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "array",
+                  "prefixItems": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    }
+                  ],
+                  "items": false,
+                  "minItems": 2,
+                  "maxItems": 2
+                }
+              },
+              "width": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              }
+            },
+            "required": [
+              "points",
+              "width"
+            ]
+          }
+        },
+        "bridges": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "from": {
+                "type": "array",
+                "prefixItems": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ],
+                "items": false,
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "to": {
+                "type": "array",
+                "prefixItems": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ],
+                "items": false,
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "width": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              }
+            },
+            "required": [
+              "from",
+              "to",
+              "width"
+            ]
+          }
+        },
+        "props": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "tree",
+                  "pine",
+                  "bamboo_small",
+                  "bamboo_large",
+                  "bamboo_single",
+                  "rock_small",
+                  "rock_large",
+                  "grass",
+                  "grass_patch",
+                  "flowers",
+                  "shrub",
+                  "lantern_post",
+                  "barrel",
+                  "crate",
+                  "panda_banner"
+                ]
+              },
+              "pos": {
+                "type": "array",
+                "prefixItems": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ],
+                "items": false,
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "scale": {
+                "default": 1,
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "flip": {
+                "default": false,
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "kind",
+              "pos"
+            ]
+          }
+        }
+      }
     }
   },
   "required": [
