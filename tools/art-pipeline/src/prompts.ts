@@ -1,6 +1,6 @@
 /**
  * Prompt for one generation part. Every part is generated on its own; the uploaded v1.2 sheet
- * is attached as a style reference only.
+ * is attached as a style reference only, except for `noReference` assets.
  */
 import { createHash } from 'node:crypto';
 import { KIND_RULES, type Asset, type Part } from './manifest.ts';
@@ -17,6 +17,9 @@ export const STYLE_BIBLE = [
 
 const REFERENCE_RULE =
   'The attached image is the approved v1.2 style reference sheet. Match its art style, palette, proportions and character designs. Do NOT copy, crop or recompose it; paint ONE new isolated subject from scratch.';
+
+const NO_REFERENCE_RULE =
+  'Paint only the subject described above. There is no panda, person, animal, soldier, tower, building, weapon or banner anywhere in the image.';
 
 /** Long thin objects must be painted along their canvas, or they shrink to nothing once fitted. */
 function orientation(asset: Asset): string {
@@ -77,7 +80,7 @@ export function promptFor(asset: Asset, part: Part): string {
     `Game sprite: ${asset.subject}.${pose}`,
     framing(asset, part),
     STYLE_BIBLE,
-    REFERENCE_RULE,
+    asset.noReference ? NO_REFERENCE_RULE : REFERENCE_RULE,
   ].join('\n');
 }
 

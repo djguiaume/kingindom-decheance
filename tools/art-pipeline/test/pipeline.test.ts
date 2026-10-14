@@ -18,7 +18,7 @@ import {
 import { audit, contactSheet, animationSheet } from '../src/review.ts';
 import { APPROVED_MODEL_ID, ScenarioClient, credentialsFromEnv, redact } from '../src/scenario.ts';
 import { StatusStore } from '../src/status.ts';
-import { analyze, normalize } from '../src/validate.ts';
+import { analyze, makeSeamless, normalize } from '../src/validate.ts';
 
 const REPO = join(import.meta.dirname, '../../..');
 const CREDS = { key: 'test-key-abc', secret: 'test-secret-xyz' };
@@ -180,6 +180,18 @@ describe('generation', () => {
     expect(w.status.data.modelId).toBe('model_openai-gpt-image-2-5-flare');
   });
 
+  it('generates ground decals and lights without the reference sheet, so no figures leak in', async () => {
+    const { w, state } = await ws();
+    const batch = await estimate(w, 'grass_patch,window_glow');
+    await generateBatch(w, batch.token, batch.totalCU);
+    expect(state.generations).toHaveLength(2);
+    for (const g of state.generations) {
+      expect(g.body).not.toHaveProperty('referenceImages');
+      expect(g.prompt).toMatch(/no panda, person, animal, soldier, tower/);
+      expect(g.prompt).not.toMatch(/style reference/);
+    }
+  });
+
   it('skips parts already validated when estimating again', async () => {
     const { w } = await ws();
     const first = await estimate(w, 'boulder');
@@ -226,6 +238,29 @@ describe('validation and masters', () => {
     const codes = async (png: Buffer) => (await analyze(png, spear)).issues.map((i) => i.code);
     expect(await codes(await fixturePng(gw, gh, 'good', 1))).toContain('orientation');
     expect(await codes(await fixturePng(gw, gh, 'horizontal', 1))).not.toContain('orientation');
+  });
+
+  it('makes tiles wrap without seams or light and dark bands', async () => {
+    const size = 128;
+    const data = Buffer.alloc(size * size * 3);
+    // A lit top-left corner and a dark bottom-right one, with fine noise: bands at every seam.
+    for (let y = 0; y < size; y++)
+      for (let x = 0; x < size; x++)
+        for (let c = 0; c < 3; c++)
+          data[(y * size + x) * 3 + c] = 60 + x + y / 2 + ((x * 7 + y * 13 + c) % 11);
+    const png = await sharp(data, { raw: { width: size, height: size, channels: 3 } })
+      .png()
+      .toBuffer();
+    const seam = async (b: Buffer) => {
+      const { data: d } = await sharp(b).raw().toBuffer({ resolveWithObject: true });
+      let sum = 0;
+      for (let y = 0; y < size; y++)
+        for (let c = 0; c < 3; c++)
+          sum += Math.abs(d[y * size * 3 + c]! - d[(y * size + size - 1) * 3 + c]!);
+      return sum / (size * 3);
+    };
+    expect(await seam(png)).toBeGreaterThan(100);
+    expect(await seam(await makeSeamless(png))).toBeLessThan(12);
   });
 
   it('requires tiles to be opaque', async () => {

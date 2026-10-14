@@ -227,11 +227,12 @@ export async function normalize(png: Buffer, asset: Asset): Promise<Buffer> {
   const { w: cw, h: ch } = asset.canvas;
   const rule = KIND_RULES[asset.kind];
   if (!rule.transparent) {
-    return sharp(png)
+    const fitted = await sharp(png)
       .resize(cw, ch, { fit: 'cover' })
       .removeAlpha()
       .png({ compressionLevel: 9 })
       .toBuffer();
+    return asset.kind === 'tile' ? makeSeamless(fitted) : fitted;
   }
   const r = await raw(png);
   const bbox = bboxOf(r);
@@ -256,6 +257,47 @@ export async function normalize(png: Buffer, asset: Asset): Promise<Buffer> {
     create: { width: cw, height: ch, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } },
   })
     .composite([{ input: subject, left: Math.max(0, left), top: Math.max(0, top) }])
+    .png({ compressionLevel: 9 })
+    .toBuffer();
+}
+
+/**
+ * Makes an opaque tile wrap without visible seams. Image models paint "seamless" textures with
+ * broad light and dark areas, so a grid of them shows bands at every edge. First the broad
+ * lighting is flattened (divided by a heavy blur, scaled back to the tile's mean colour), then a
+ * band along each edge is cross-faded with the tile shifted by half its size, whose edges wrap
+ * exactly. Apply once per generated tile: it is not idempotent.
+ */
+export async function makeSeamless(png: Buffer, band = 0.15): Promise<Buffer> {
+  const { data, info } = await sharp(png).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+  const { width: w, height: h } = info;
+  const blur = await sharp(data, { raw: { width: w, height: h, channels: 3 } })
+    .blur(Math.max(w, h) / 6)
+    .raw()
+    .toBuffer();
+  const mean = [0, 0, 0];
+  for (let i = 0; i < data.length; i++) mean[i % 3]! += data[i]!;
+  for (let c = 0; c < 3; c++) mean[c]! /= w * h;
+  const flat = new Float32Array(data.length);
+  for (let i = 0; i < data.length; i++) {
+    flat[i] = (data[i]! * mean[i % 3]!) / Math.max(1, blur[i]!);
+  }
+  const out = Buffer.alloc(data.length);
+  const bw = Math.max(1, Math.round(Math.min(w, h) * band));
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const d = Math.min(x, w - 1 - x, y, h - 1 - y);
+      const t = d >= bw ? 0 : 1 - d / bw;
+      const m = t * t * (3 - 2 * t);
+      const i = (y * w + x) * 3;
+      const j = (((y + (h >> 1)) % h) * w + ((x + (w >> 1)) % w)) * 3;
+      for (let c = 0; c < 3; c++) {
+        const v = flat[i + c]! * (1 - m) + flat[j + c]! * m;
+        out[i + c] = Math.max(0, Math.min(255, Math.round(v)));
+      }
+    }
+  }
+  return sharp(out, { raw: { width: w, height: h, channels: 3 } })
     .png({ compressionLevel: 9 })
     .toBuffer();
 }

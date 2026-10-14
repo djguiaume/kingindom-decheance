@@ -204,6 +204,8 @@ export const AssetSchema = z.object({
   generate: Size,
   checks: z.array(z.string()),
   inferred: z.string().optional(),
+  /** Generated without the v1.2 sheet attached, so its characters and towers can't leak in. */
+  noReference: z.literal(true).optional(),
   parts: z.array(PartSchema).min(1),
 });
 export type Asset = z.infer<typeof AssetSchema>;
@@ -235,6 +237,8 @@ export interface CatalogLike {
   back?: boolean;
   /** Also generate every frame in these extra views (gates in walls at other angles). */
   views?: ('side' | 'diag')[];
+  /** Generate without the reference sheet: ground decals and lights it kept turning into figures. */
+  noReference?: true;
 }
 
 /** Scenario output size: square for most, landscape for wide canvases and backdrops. */
@@ -268,6 +272,7 @@ export function buildManifest(catalog: readonly CatalogLike[]): Manifest {
         generate: generationSize(e.canvas),
         checks: e.checks ?? [],
         ...(e.inferred ? { inferred: e.inferred } : {}),
+        ...(e.noReference ? { noReference: true as const } : {}),
         parts: [undefined, ...(e.back ? (['back'] as const) : []), ...(e.views ?? [])].flatMap(
           (view) =>
             frames.map((pose, i) => {

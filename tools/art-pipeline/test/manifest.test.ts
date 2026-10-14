@@ -61,7 +61,7 @@ describe('manifest', () => {
       if (['character', 'flyer', 'siege'].includes(a.kind))
         expect(p, a.id).toMatch(/No ground patch/);
       if (a.kind === 'building') expect(p, a.id).toMatch(/decorations attached to it are fine/);
-      expect(p).toMatch(/Do NOT copy, crop or recompose it/);
+      expect(p).toMatch(a.noReference ? /no panda, person/ : /Do NOT copy, crop or recompose it/);
     }
   });
 

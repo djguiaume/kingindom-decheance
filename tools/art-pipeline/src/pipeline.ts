@@ -47,7 +47,7 @@ export function requestFor(asset: Asset, part: Part, referenceAssetId: string): 
     background: asset.transparent ? 'transparent' : 'opaque',
     quality: 'high',
     numOutputs: 1,
-    referenceAssetId,
+    ...(asset.noReference ? {} : { referenceAssetId }),
   };
 }
 

@@ -2596,6 +2596,7 @@
         "h": 1024
       },
       "checks": [],
+      "noReference": true,
       "parts": [
         {
           "id": "window_glow",
@@ -3606,6 +3607,7 @@
         "h": 1024
       },
       "checks": [],
+      "noReference": true,
       "parts": [
         {
           "id": "path_edge",
@@ -3636,6 +3638,7 @@
         "h": 1024
       },
       "checks": [],
+      "noReference": true,
       "parts": [
         {
           "id": "water_edge",
@@ -3854,6 +3857,7 @@
         "Matches cliff_section; mirrored by the game for the left end."
       ],
       "inferred": "See 106.",
+      "noReference": true,
       "parts": [
         {
           "id": "cliff_end",
@@ -3885,6 +3889,7 @@
       },
       "checks": [],
       "inferred": "Not on the sheet. Variation on top of the grass tile.",
+      "noReference": true,
       "parts": [
         {
           "id": "grass_patch",
