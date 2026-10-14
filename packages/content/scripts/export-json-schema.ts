@@ -9,6 +9,7 @@ import {
   EnemyCatalog,
   GameMap,
   KingSettings,
+  MutatorCatalog,
   UnitCatalog,
   WeaponCatalog,
 } from '../src/schemas.ts';
@@ -24,6 +25,7 @@ const files: Record<string, z.ZodType> = {
   'king.schema.json': KingSettings,
   'map.schema.json': GameMap,
   'castle.schema.json': CastleCatalog,
+  'mutators.schema.json': MutatorCatalog,
 };
 for (const [name, schema] of Object.entries(files)) {
   const json = z.toJSONSchema(schema, { io: 'input' });

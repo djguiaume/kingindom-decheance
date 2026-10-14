@@ -11,6 +11,7 @@ import {
   EnemyCatalog,
   GameMap,
   KingSettings,
+  MutatorCatalog,
   UnitCatalog,
   WeaponCatalog,
   type ContentBundle,
@@ -47,6 +48,7 @@ export function loadContent(raw: RawContent): LoadResult {
   const weapons = parse(WeaponCatalog, raw.weapons, 'weapons.json');
   const king = parse(KingSettings, raw.king, 'king.json');
   const castle = parse(CastleCatalog, raw.castle, 'castle.json');
+  const mutators = parse(MutatorCatalog, raw.mutators, 'mutators.json');
   const maps = raw.maps.map((m, i) => {
     const id =
       m !== null && typeof m === 'object' && 'id' in m && typeof m.id === 'string'
@@ -55,7 +57,7 @@ export function loadContent(raw: RawContent): LoadResult {
     return parse(GameMap, m, `maps/${id}.json`);
   });
 
-  if (errors.length > 0 || !buildings || !units || !enemies || !weapons || !king || !castle) {
+  if (errors.length > 0 || !buildings || !units || !enemies || !weapons || !king || !castle || !mutators) {
     return { ok: false, errors };
   }
 
@@ -66,6 +68,7 @@ export function loadContent(raw: RawContent): LoadResult {
     weapons: weapons.weapons,
     king,
     castle: { levels: castle.levels, perks: castle.perks },
+    mutators: mutators.mutators,
     maps: maps.filter((m) => m !== undefined),
   };
   errors.push(...checkSemantics(bundle));
@@ -180,6 +183,10 @@ export function checkSemantics(bundle: Omit<ContentBundle, 'hash'>): ContentErro
     if (b.castleLevel > topLevel)
       err('buildings.json', `buildings.${i}.castleLevel`, `the castle only has ${topLevel} levels`);
   });
+  unique(
+    'mutators.json',
+    bundle.mutators.map((m) => m.id),
+  );
   // Whether each modifier's stat path reaches a number is checked by the core
   // (checkModifiers), which owns the resolver.
 

@@ -9,6 +9,7 @@ import {
   atCastle,
   GATE_HALF_WIDTH,
   guardSpot,
+  slotClosed,
   telegraph,
   WALL_HALF_SPAN,
   wallLine,
@@ -188,7 +189,7 @@ export class PlayScene extends Phaser.Scene {
       g.fillCircle(s.x, s.y, SCALE * 0.8);
     }
     for (const node of ctx.map.nodes) {
-      if (!node.slot) continue;
+      if (!node.slot || slotClosed(ctx, node.id)) continue;
       const p = this.px({ x: node.pos[0], y: node.pos[1] });
       g.lineStyle(2, colors.slot, 0.9);
       g.strokeEllipse(p.x, p.y, SCALE * 1.8, SCALE * 1.8 * SQUASH);

@@ -4,18 +4,20 @@
  * bean built once at startup.
  *
  * The tunable part (buildings, units, enemies, weapon, king, castle, rules) is the content
- * after the castle level and the perks picked so far (13 §6.2). It is a pure function of
- * (content, run config, castle level, perks, night), all of which are in the state, and is
+ * after the run's mutators, then the castle level and the perks picked so far (13 §6.2). It is
+ * a pure function of (content, run config, castle level, perks, night), all of which are in the state, and is
  * rebuilt by `syncContext` whenever one of them changes. So the rules read plain stats and
  * never check a perk id, and any state, restored or replayed, gets the same context.
  */
 import type {
   Building,
+  BuildingClass,
   CastleLevel,
   ContentBundle,
   Enemy,
   GameMap,
   KingSettings,
+  Mutator,
   Perk,
   Unit,
   Weapon,
@@ -55,8 +57,20 @@ export interface GameContext {
   /** Castle levels above the first, in order (level 2 first). */
   castleLevels: readonly CastleLevel[];
   perks: ReadonlyMap<string, Perk>;
+  /** The run's mutators, from RunConfig, in the order picked. */
+  mutators: readonly Mutator[];
+  /** Building classes no slot may hold this run (No Walls). */
+  closedClasses: ReadonlySet<BuildingClass>;
   /** The content the tunable fields are rebuilt from, and what they were last built for. */
-  base: { bundle: ContentBundle; weapon: Weapon; derivedFor: string };
+  base: {
+    bundle: ContentBundle;
+    weapon: Weapon;
+    derivedFor: string;
+    level: number;
+    perks: readonly string[];
+    /** Rules per night for the current level and perks (wave previews of later nights). */
+    rulesByNight: Map<number, Rules>;
+  };
   nodes: ReadonlyMap<string, Vec>;
   lanes: ReadonlyMap<string, LaneInfo>;
   kingSpawn: Vec;
@@ -68,6 +82,8 @@ export interface RunConfig {
   mapId: string;
   weaponId: string;
   seed: number;
+  /** Mutator ids (13 §3); none when absent. The app checks unlocks before a run starts. */
+  mutatorIds?: string[];
 }
 
 export function createContext(bundle: ContentBundle, config: RunConfig): GameContext {
@@ -75,6 +91,13 @@ export function createContext(bundle: ContentBundle, config: RunConfig): GameCon
   if (!map) throw new Error(`Unknown map "${config.mapId}"`);
   const weapon = bundle.weapons.find((w) => w.id === config.weaponId);
   if (!weapon) throw new Error(`Unknown weapon "${config.weaponId}"`);
+  const mutators = (config.mutatorIds ?? []).map((id) => {
+    const m = bundle.mutators.find((x) => x.id === id);
+    if (!m) throw new Error(`Unknown mutator "${id}"`);
+    return m;
+  });
+  if (new Set(config.mutatorIds).size !== mutators.length)
+    throw new Error('A mutator is picked twice');
 
   const nodes = new Map<string, Vec>(map.nodes.map((n) => [n.id, { x: n.pos[0], y: n.pos[1] }]));
   const at = (id: string): Vec => {
@@ -95,7 +118,9 @@ export function createContext(bundle: ContentBundle, config: RunConfig): GameCon
     rules: { ...BASE_RULES },
     castleLevels: bundle.castle.levels,
     perks: new Map(bundle.castle.perks.map((p) => [p.id, p])),
-    base: { bundle, weapon, derivedFor: '' },
+    mutators,
+    closedClasses: new Set(mutators.flatMap((m) => m.closesClasses)),
+    base: { bundle, weapon, derivedFor: '', level: 1, perks: [], rulesByNight: new Map() },
     nodes,
     lanes: new Map(
       map.lanes.map((l) => [l.id, { id: l.id, air: l.air, nodes: l.path, points: l.path.map(at) }]),
@@ -103,8 +128,12 @@ export function createContext(bundle: ContentBundle, config: RunConfig): GameCon
     kingSpawn: at(map.kingSpawn),
     bounds: { minX: 0, minY: 0, maxX: map.size[0], maxY: map.size[1] },
   };
-  const wrong = checkModifiers(tunablesFor(ctx, 1, [], 1), bundle.castle.perks);
-  if (wrong.length > 0) throw new Error(`Perk stats that reach nothing: ${wrong.join(', ')}`);
+  const wrong = checkModifiers(tunablesFor(ctx, 1, [], 1), [
+    ...bundle.castle.perks,
+    ...bundle.mutators,
+  ]);
+  if (wrong.length > 0)
+    throw new Error(`Perk or mutator stats that reach nothing: ${wrong.join(', ')}`);
   derive(ctx, 1, [], 1);
   return ctx;
 }
@@ -122,7 +151,11 @@ export function syncContext(ctx: GameContext, state: GameState): void {
     derive(ctx, state.castleLevel, state.perks, state.day);
 }
 
-/** The content after `level` and `perks`, on `night`: a fresh copy, the base is untouched. */
+/**
+ * The content after the mutators, `level` and `perks`, on `night`: a fresh copy, the base is
+ * untouched. Mutators come first, so a castle perk that multiplies (Gambler's Oath) applies to
+ * the mutators' summed score bonus.
+ */
 function tunablesFor(
   ctx: GameContext,
   level: number,
@@ -147,6 +180,10 @@ function tunablesFor(
     },
     rules: { ...BASE_RULES },
   });
+  for (const m of ctx.mutators) {
+    t.rules.scoreMultiplier += m.scoreBonus;
+    for (const mod of m.modifiers) applyModifier(t, mod, night);
+  }
   for (const id of perks) {
     for (const m of req(ctx.perks, id).modifiers) applyModifier(t, m, night);
   }
@@ -169,7 +206,23 @@ function derive(ctx: GameContext, level: number, perks: readonly string[], night
     castle: t.castle,
     rules: t.rules,
   });
-  ctx.base.derivedFor = keyOf(level, perks, night);
+  if (ctx.base.level !== level || ctx.base.perks.join(',') !== perks.join(','))
+    ctx.base.rulesByNight.clear();
+  Object.assign(ctx.base, { derivedFor: keyOf(level, perks, night), level, perks: [...perks] });
+  ctx.base.rulesByNight.set(night, t.rules);
+}
+
+/**
+ * The rules on another night with the current castle level and perks: a modifier may be
+ * limited to some nights (Swarm), and the waves panel previews every night.
+ */
+export function rulesOn(ctx: GameContext, night: number): Rules {
+  let rules = ctx.base.rulesByNight.get(night);
+  if (!rules) {
+    rules = tunablesFor(ctx, ctx.base.level, ctx.base.perks, night).rules;
+    ctx.base.rulesByNight.set(night, rules);
+  }
+  return rules;
 }
 
 /** Lookup that fails loudly: content was validated, so a miss is a core bug. */
