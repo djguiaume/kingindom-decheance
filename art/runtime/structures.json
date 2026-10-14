@@ -2,7 +2,7 @@
   "frames": {
     "castle_flag": {
       "frame": {
-        "x": 740,
+        "x": 1170,
         "y": 2,
         "w": 72,
         "h": 166
@@ -52,9 +52,63 @@
       "asset": "construction",
       "num": 67
     },
+    "gate_stone.diag.f1": {
+      "frame": {
+        "x": 1432,
+        "y": 2,
+        "w": 177,
+        "h": 163
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 8,
+        "y": 10,
+        "w": 177,
+        "h": 163
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "gate_stone",
+      "num": 65,
+      "contentId": "stone_wall"
+    },
+    "gate_stone.diag.f2": {
+      "frame": {
+        "x": 1611,
+        "y": 2,
+        "w": 177,
+        "h": 163
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 8,
+        "y": 10,
+        "w": 177,
+        "h": 163
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "gate_stone",
+      "num": 65,
+      "contentId": "stone_wall"
+    },
     "gate_stone.f1": {
       "frame": {
-        "x": 577,
+        "x": 933,
         "y": 2,
         "w": 161,
         "h": 166
@@ -81,7 +135,7 @@
     },
     "gate_stone.f2": {
       "frame": {
-        "x": 406,
+        "x": 762,
         "y": 2,
         "w": 169,
         "h": 166
@@ -106,10 +160,118 @@
       "num": 65,
       "contentId": "stone_wall"
     },
+    "gate_stone.side.f1": {
+      "frame": {
+        "x": 1310,
+        "y": 2,
+        "w": 62,
+        "h": 166
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 65,
+        "y": 7,
+        "w": 62,
+        "h": 166
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "gate_stone",
+      "num": 65,
+      "contentId": "stone_wall"
+    },
+    "gate_stone.side.f2": {
+      "frame": {
+        "x": 1374,
+        "y": 2,
+        "w": 56,
+        "h": 166
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 68,
+        "y": 7,
+        "w": 56,
+        "h": 166
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "gate_stone",
+      "num": 65,
+      "contentId": "stone_wall"
+    },
+    "gate_wood.diag.f1": {
+      "frame": {
+        "x": 406,
+        "y": 2,
+        "w": 177,
+        "h": 166
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 8,
+        "y": 7,
+        "w": 177,
+        "h": 166
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "gate_wood",
+      "num": 64,
+      "contentId": "wall"
+    },
+    "gate_wood.diag.f2": {
+      "frame": {
+        "x": 585,
+        "y": 2,
+        "w": 175,
+        "h": 166
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 9,
+        "y": 7,
+        "w": 175,
+        "h": 166
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "gate_wood",
+      "num": 64,
+      "contentId": "wall"
+    },
     "gate_wood.f1": {
       "frame": {
-        "x": 993,
-        "y": 2,
+        "x": 2,
+        "y": 225,
         "w": 177,
         "h": 150
       },
@@ -135,7 +297,7 @@
     },
     "gate_wood.f2": {
       "frame": {
-        "x": 814,
+        "x": 1790,
         "y": 2,
         "w": 177,
         "h": 151
@@ -160,20 +322,74 @@
       "num": 64,
       "contentId": "wall"
     },
-    "lantern_glow": {
+    "gate_wood.side.f1": {
       "frame": {
-        "x": 1227,
+        "x": 1096,
         "y": 2,
-        "w": 99,
-        "h": 118
+        "w": 72,
+        "h": 166
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 15,
-        "y": 5,
-        "w": 99,
-        "h": 118
+        "x": 60,
+        "y": 7,
+        "w": 72,
+        "h": 166
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "gate_wood",
+      "num": 64,
+      "contentId": "wall"
+    },
+    "gate_wood.side.f2": {
+      "frame": {
+        "x": 1244,
+        "y": 2,
+        "w": 64,
+        "h": 166
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 64,
+        "y": 7,
+        "w": 64,
+        "h": 166
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "gate_wood",
+      "num": 64,
+      "contentId": "wall"
+    },
+    "lantern_glow": {
+      "frame": {
+        "x": 236,
+        "y": 225,
+        "w": 118,
+        "h": 114
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 5,
+        "y": 7,
+        "w": 118,
+        "h": 114
       },
       "sourceSize": {
         "w": 128,
@@ -188,8 +404,8 @@
     },
     "panda_banner": {
       "frame": {
-        "x": 1172,
-        "y": 2,
+        "x": 181,
+        "y": 225,
         "w": 53,
         "h": 138
       },
@@ -240,8 +456,8 @@
     },
     "slot_empty": {
       "frame": {
-        "x": 1356,
-        "y": 2,
+        "x": 384,
+        "y": 225,
         "w": 111,
         "h": 88
       },
@@ -266,8 +482,8 @@
     },
     "stone_wall_post": {
       "frame": {
-        "x": 1518,
-        "y": 2,
+        "x": 546,
+        "y": 225,
         "w": 59,
         "h": 81
       },
@@ -293,8 +509,8 @@
     },
     "wall_post": {
       "frame": {
-        "x": 1328,
-        "y": 2,
+        "x": 356,
+        "y": 225,
         "w": 26,
         "h": 111
       },
@@ -320,8 +536,8 @@
     },
     "window_glow": {
       "frame": {
-        "x": 1469,
-        "y": 2,
+        "x": 497,
+        "y": 225,
         "w": 47,
         "h": 88
       },
@@ -351,8 +567,8 @@
     "image": "structures.webp",
     "format": "RGBA8888",
     "size": {
-      "w": 1579,
-      "h": 225
+      "w": 1969,
+      "h": 377
     },
     "scale": "1"
   }

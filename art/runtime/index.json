@@ -146,10 +146,18 @@
       "frames": [
         "castle_flag",
         "construction",
+        "gate_stone.diag.f1",
+        "gate_stone.diag.f2",
         "gate_stone.f1",
         "gate_stone.f2",
+        "gate_stone.side.f1",
+        "gate_stone.side.f2",
+        "gate_wood.diag.f1",
+        "gate_wood.diag.f2",
         "gate_wood.f1",
         "gate_wood.f2",
+        "gate_wood.side.f1",
+        "gate_wood.side.f2",
         "lantern_glow",
         "panda_banner",
         "ruin",
@@ -207,16 +215,52 @@
         "flowers",
         "grass",
         "lantern_post",
+        "path_edge",
         "pine",
         "rock_large",
         "rock_small",
         "shrub",
-        "tree"
+        "tree",
+        "water_edge"
       ]
     }
   ],
-  "images": [],
+  "images": [
+    {
+      "key": "ground_greyhollow",
+      "image": "ground_greyhollow.webp",
+      "num": 101,
+      "tile": false
+    },
+    {
+      "key": "tile_grass",
+      "image": "tile_grass.webp",
+      "num": 102,
+      "tile": true
+    },
+    {
+      "key": "tile_path",
+      "image": "tile_path.webp",
+      "num": 103,
+      "tile": true
+    }
+  ],
   "frames": {
+    "ground_greyhollow": {
+      "image": "ground_greyhollow.webp",
+      "num": 101,
+      "asset": "ground_greyhollow"
+    },
+    "tile_grass": {
+      "image": "tile_grass.webp",
+      "num": 102,
+      "asset": "tile_grass"
+    },
+    "tile_path": {
+      "image": "tile_path.webp",
+      "num": 103,
+      "asset": "tile_path"
+    },
     "king_portrait": {
       "atlas": "kings",
       "num": 12,
@@ -832,6 +876,12 @@
       "asset": "garrison",
       "contentId": "garrison"
     },
+    "ballista_tower_base": {
+      "atlas": "buildings",
+      "num": 50,
+      "asset": "ballista_tower_base",
+      "contentId": "ballista_tower"
+    },
     "tower": {
       "atlas": "buildings",
       "num": 46,
@@ -861,12 +911,6 @@
       "asset": "manor",
       "contentId": "manor"
     },
-    "ballista_tower_base": {
-      "atlas": "buildings",
-      "num": 50,
-      "asset": "ballista_tower_base",
-      "contentId": "ballista_tower"
-    },
     "ballista_turret": {
       "atlas": "buildings",
       "num": 51,
@@ -883,6 +927,18 @@
       "num": 68,
       "asset": "ruin"
     },
+    "gate_wood.diag.f1": {
+      "atlas": "structures",
+      "num": 64,
+      "asset": "gate_wood",
+      "contentId": "wall"
+    },
+    "gate_wood.diag.f2": {
+      "atlas": "structures",
+      "num": 64,
+      "asset": "gate_wood",
+      "contentId": "wall"
+    },
     "gate_stone.f2": {
       "atlas": "structures",
       "num": 65,
@@ -895,10 +951,46 @@
       "asset": "gate_stone",
       "contentId": "stone_wall"
     },
+    "gate_wood.side.f1": {
+      "atlas": "structures",
+      "num": 64,
+      "asset": "gate_wood",
+      "contentId": "wall"
+    },
     "castle_flag": {
       "atlas": "structures",
       "num": 72,
       "asset": "castle_flag"
+    },
+    "gate_wood.side.f2": {
+      "atlas": "structures",
+      "num": 64,
+      "asset": "gate_wood",
+      "contentId": "wall"
+    },
+    "gate_stone.side.f1": {
+      "atlas": "structures",
+      "num": 65,
+      "asset": "gate_stone",
+      "contentId": "stone_wall"
+    },
+    "gate_stone.side.f2": {
+      "atlas": "structures",
+      "num": 65,
+      "asset": "gate_stone",
+      "contentId": "stone_wall"
+    },
+    "gate_stone.diag.f1": {
+      "atlas": "structures",
+      "num": 65,
+      "asset": "gate_stone",
+      "contentId": "stone_wall"
+    },
+    "gate_stone.diag.f2": {
+      "atlas": "structures",
+      "num": 65,
+      "asset": "gate_stone",
+      "contentId": "stone_wall"
     },
     "gate_wood.f2": {
       "atlas": "structures",
@@ -944,21 +1036,6 @@
       "asset": "stone_wall_post",
       "contentId": "stone_wall"
     },
-    "stomp.f2": {
-      "atlas": "effects",
-      "num": 85,
-      "asset": "stomp"
-    },
-    "stomp.f3": {
-      "atlas": "effects",
-      "num": 85,
-      "asset": "stomp"
-    },
-    "stomp.f1": {
-      "atlas": "effects",
-      "num": 85,
-      "asset": "stomp"
-    },
     "death.f1": {
       "atlas": "effects",
       "num": 83,
@@ -984,30 +1061,40 @@
       "num": 83,
       "asset": "death"
     },
-    "slash.f3": {
+    "stomp.f1": {
+      "atlas": "effects",
+      "num": 85,
+      "asset": "stomp"
+    },
+    "slash.f2": {
       "atlas": "effects",
       "num": 79,
       "asset": "slash"
-    },
-    "charge.f2": {
-      "atlas": "effects",
-      "num": 84,
-      "asset": "charge"
-    },
-    "charge.f1": {
-      "atlas": "effects",
-      "num": 84,
-      "asset": "charge"
-    },
-    "charge.f3": {
-      "atlas": "effects",
-      "num": 84,
-      "asset": "charge"
     },
     "slash.f1": {
       "atlas": "effects",
       "num": 79,
       "asset": "slash"
+    },
+    "stomp.f2": {
+      "atlas": "effects",
+      "num": 85,
+      "asset": "stomp"
+    },
+    "stomp.f3": {
+      "atlas": "effects",
+      "num": 85,
+      "asset": "stomp"
+    },
+    "slash.f3": {
+      "atlas": "effects",
+      "num": 79,
+      "asset": "slash"
+    },
+    "charge.f1": {
+      "atlas": "effects",
+      "num": 84,
+      "asset": "charge"
     },
     "dust.f3": {
       "atlas": "effects",
@@ -1049,10 +1136,10 @@
       "num": 82,
       "asset": "heal"
     },
-    "slash.f2": {
+    "charge.f2": {
       "atlas": "effects",
-      "num": 79,
-      "asset": "slash"
+      "num": 84,
+      "asset": "charge"
     },
     "hit_spark.f3": {
       "atlas": "effects",
@@ -1068,6 +1155,11 @@
       "atlas": "effects",
       "num": 81,
       "asset": "coin"
+    },
+    "charge.f3": {
+      "atlas": "effects",
+      "num": 84,
+      "asset": "charge"
     },
     "ballista_bolt": {
       "atlas": "effects",
@@ -1113,6 +1205,16 @@
       "atlas": "environment",
       "num": 86,
       "asset": "bamboo_small"
+    },
+    "water_edge": {
+      "atlas": "environment",
+      "num": 100,
+      "asset": "water_edge"
+    },
+    "path_edge": {
+      "atlas": "environment",
+      "num": 99,
+      "asset": "path_edge"
     },
     "bamboo_single": {
       "atlas": "environment",

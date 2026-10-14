@@ -28,7 +28,7 @@
     },
     "bamboo_single": {
       "frame": {
-        "x": 813,
+        "x": 960,
         "y": 2,
         "w": 59,
         "h": 92
@@ -80,7 +80,7 @@
     },
     "barrel": {
       "frame": {
-        "x": 946,
+        "x": 1093,
         "y": 2,
         "w": 41,
         "h": 60
@@ -106,7 +106,7 @@
     },
     "crate": {
       "frame": {
-        "x": 989,
+        "x": 1136,
         "y": 2,
         "w": 60,
         "h": 56
@@ -132,7 +132,7 @@
     },
     "flowers": {
       "frame": {
-        "x": 1158,
+        "x": 1305,
         "y": 2,
         "w": 44,
         "h": 40
@@ -158,7 +158,7 @@
     },
     "grass": {
       "frame": {
-        "x": 1051,
+        "x": 1198,
         "y": 2,
         "w": 47,
         "h": 56
@@ -207,6 +207,32 @@
       },
       "asset": "lantern_post",
       "num": 96
+    },
+    "path_edge": {
+      "frame": {
+        "x": 891,
+        "y": 2,
+        "w": 67,
+        "h": 118
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 31,
+        "y": 5,
+        "w": 67,
+        "h": 118
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "asset": "path_edge",
+      "num": 99
     },
     "pine": {
       "frame": {
@@ -262,7 +288,7 @@
     },
     "rock_small": {
       "frame": {
-        "x": 1100,
+        "x": 1247,
         "y": 2,
         "w": 56,
         "h": 50
@@ -288,7 +314,7 @@
     },
     "shrub": {
       "frame": {
-        "x": 874,
+        "x": 1021,
         "y": 2,
         "w": 70,
         "h": 72
@@ -337,6 +363,32 @@
       },
       "asset": "tree",
       "num": 89
+    },
+    "water_edge": {
+      "frame": {
+        "x": 813,
+        "y": 2,
+        "w": 76,
+        "h": 118
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 58,
+        "y": 5,
+        "w": 76,
+        "h": 118
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "asset": "water_edge",
+      "num": 100
     }
   },
   "meta": {
@@ -345,7 +397,7 @@
     "image": "environment.webp",
     "format": "RGBA8888",
     "size": {
-      "w": 1204,
+      "w": 1351,
       "h": 280
     },
     "scale": "1"
