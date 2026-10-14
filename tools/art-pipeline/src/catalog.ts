@@ -430,8 +430,11 @@ export const CATALOG: CatalogEntry[] = [
     40,
     'castle_1',
     'Castle 1',
-    'pagoda keep level 1: wood-and-stone keep, one blue tiled roof, panda banners',
+    'pagoda castle level 1, the first stage of the same castle as levels 2 and 3: a broad, low wood-and-stone keep on a square stone platform with steps, one wide blue tiled pagoda roof, a short wooden palisade around it, panda banners; clearly wider than it is tall, a small castle and not a tower',
     [512, 512],
+    [
+      'Castles 1, 2 and 3 read as one castle growing: same platform and roof style, more tiers each level.',
+    ],
   ),
   b(
     41,
@@ -820,6 +823,50 @@ export const CATALOG: CatalogEntry[] = [
     subject:
       'painted backdrop for the title and map screens: misty bamboo forest, distant blue mountains, a small torii-like gate, lanterns; no characters, no text',
     canvas: [1536, 1024],
+  },
+
+  // Additions beyond the v1.2 sheet (106+), each in the group it belongs to.
+  {
+    num: 106,
+    id: 'cliff_section',
+    name: 'Cliff section',
+    group: 'environment',
+    kind: 'prop',
+    subject:
+      'a straight section of a raised grassy plateau edge seen from the same camera: a grass lip on top and a vertical grey-brown rock cliff face below it, about one storey high, a few tufts and bamboo shoots on the lip; a self-contained chunk with rough ends so pieces can overlap side by side',
+    canvas: [256, 192],
+    heightPx: 150,
+    checks: ['Reads as a drop in height: grass on top, rock face below, lit from the upper left.'],
+    inferred:
+      'Not on the sheet. Lets a map show high ground, e.g. a path winding up between cliffs.',
+  },
+  {
+    num: 107,
+    id: 'cliff_end',
+    name: 'Cliff end',
+    group: 'environment',
+    kind: 'prop',
+    subject:
+      'the rounded end of the same raised grassy plateau edge: grass lip on top, rock cliff face curving back into the ground on the right side where the slope ends; same rock and grass as the cliff section',
+    canvas: [192, 192],
+    heightPx: 150,
+    checks: ['Matches cliff_section; mirrored by the game for the left end.'],
+    inferred: 'See 106.',
+  },
+  {
+    num: 108,
+    id: 'grass_patch',
+    name: 'Grass patch',
+    group: 'environment',
+    kind: 'decal',
+    subject:
+      'flat decal seen from above: an irregular patch of lusher, slightly darker meadow grass with a few small flowers, ragged soft edges fading to transparent, to break up the ground',
+    canvas: [192, 128],
+    inferred: 'Not on the sheet. Variation on top of the grass tile.',
+  },
+  {
+    ...t(109, 'tile_water', 'Water tile', 'calm shallow blue-green water with soft ripples'),
+    inferred: 'Not on the sheet. Fills lakes and rivers; water_edge (100) lines their banks.',
   },
 ];
 
