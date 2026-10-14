@@ -37,6 +37,10 @@ export interface CatalogEntry {
    * "diag" for a diagonal wall; the default view is the wall running across the screen.
    */
   views?: ('side' | 'diag')[];
+  /** Paint without the v1.2 sheet attached (ground decals and lights it filled with figures). */
+  noReference?: true;
+  /** Paint later frames from the first frame's master, so only the pose changes. */
+  followFirstFrame?: true;
 }
 
 const walk4 = [
