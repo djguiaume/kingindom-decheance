@@ -2850,6 +2850,7 @@
     "goldPerNight": [45, 55, 85, 70, 85, 55],
     "buildingsLostPerNight": [0, 0, 0, 2, 4, 8],
     "enemiesKilled": 196,
+    "score": 875,
     "ticks": 7036,
     "finalHash": "092711b7ab288a"
   }

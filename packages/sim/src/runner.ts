@@ -3,7 +3,7 @@
  * The same function will run inside Web Workers and the Node CLI.
  */
 import type { ContentBundle } from '@kd/content';
-import { Session, stateHash, TICK_RATE, type Replay, type RunConfig } from '@kd/core';
+import { scoreOf, Session, stateHash, TICK_RATE, type Replay, type RunConfig } from '@kd/core';
 import { KING_DECISION_TICKS, type Policy } from './policies.ts';
 
 /** Compact result of one run; what batches aggregate (ADR-003). */
@@ -16,6 +16,8 @@ export interface RunSummary {
   goldPerNight: number[];
   buildingsLostPerNight: number[];
   enemiesKilled: number;
+  /** The run's score (13 §2); a timed-out run is scored as lost. */
+  score: number;
   ticks: number;
   finalHash: string;
 }
@@ -68,6 +70,7 @@ export function summarize(session: Session, policyId: string, timedOut = false):
     goldPerNight: s.history.map((h) => h.income),
     buildingsLostPerNight: s.history.map((h) => h.buildingsLost),
     enemiesKilled: s.history.reduce((n, h) => n + h.enemiesKilled, 0),
+    score: scoreOf(s, session.ctx).total,
     ticks: s.tick,
     finalHash: stateHash(s),
   };

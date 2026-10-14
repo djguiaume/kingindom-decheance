@@ -14,6 +14,21 @@ export interface RunRecord {
   score: number;
 }
 
+/** One finished run as the profile keeps it (13 §2.3). */
+export interface RunEntry {
+  mapId: string;
+  score: number;
+  won: boolean;
+  /** Nights held to the dawn. */
+  nights: number;
+  weaponId: string;
+  /** Castle perks picked during the run. */
+  perks: string[];
+  seed: number;
+  /** ISO date and time the run ended. */
+  date: string;
+}
+
 /** The player's profile in this browser. Versioned so later formats can migrate it. */
 export interface Profile {
   schemaVersion: 1;
@@ -21,11 +36,25 @@ export interface Profile {
   level: number;
   /** Ids unlocked by XP. Empty while everything is open. */
   unlocked: string[];
+  /** Best run per map id. */
+  records: Record<string, RunEntry>;
+  /** The last runs, newest first. */
+  recent: RunEntry[];
 }
+
+/** How many past runs the profile keeps. */
+export const RECENT_RUNS = 10;
 
 const KEY = 'kd.profile';
 
-const fresh = (): Profile => ({ schemaVersion: 1, xp: 0, level: 1, unlocked: [] });
+const fresh = (): Profile => ({
+  schemaVersion: 1,
+  xp: 0,
+  level: 1,
+  unlocked: [],
+  records: {},
+  recent: [],
+});
 
 /** Reads the profile, or a fresh one when there is none, it is unreadable or storage is off. */
 export function loadProfile(storage: Pick<Storage, 'getItem'> | null = safeStorage()): Profile {
@@ -55,6 +84,27 @@ export function saveProfile(
  */
 export function isUnlocked(_profile: Profile, _entry: { unlock?: { level: number } }): boolean {
   return true;
+}
+
+/**
+ * Adds a finished run: it joins the recent runs and becomes the map's record when it beats it.
+ * Returns the new profile and the record it had to beat (null on a map's first run).
+ */
+export function recordRun(
+  profile: Profile,
+  run: RunEntry,
+): { profile: Profile; previousBest: RunEntry | null; newBest: boolean } {
+  const previousBest = profile.records[run.mapId] ?? null;
+  const newBest = !previousBest || run.score > previousBest.score;
+  return {
+    profile: {
+      ...profile,
+      records: newBest ? { ...profile.records, [run.mapId]: run } : profile.records,
+      recent: [run, ...profile.recent].slice(0, RECENT_RUNS),
+    },
+    previousBest,
+    newBest,
+  };
 }
 
 /** What a finished run earns. Stage A: no XP and nothing new. */
