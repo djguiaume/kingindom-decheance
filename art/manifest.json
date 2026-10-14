@@ -2368,7 +2368,9 @@
         "w": 1024,
         "h": 1024
       },
-      "checks": [],
+      "checks": [
+        "The same gate in all three views (face-on, side, diagonal); the side and diagonal views are the gate turned, not a new design."
+      ],
       "parts": [
         {
           "id": "gate_wood.f1",
@@ -2381,6 +2383,34 @@
           "frame": 1,
           "pose": "open",
           "master": "art/masters/structures/064_gate_wood_f2.png"
+        },
+        {
+          "id": "gate_wood.side.f1",
+          "frame": 0,
+          "view": "side",
+          "pose": "closed",
+          "master": "art/masters/structures/064_gate_wood_side_f1.png"
+        },
+        {
+          "id": "gate_wood.side.f2",
+          "frame": 1,
+          "view": "side",
+          "pose": "open",
+          "master": "art/masters/structures/064_gate_wood_side_f2.png"
+        },
+        {
+          "id": "gate_wood.diag.f1",
+          "frame": 0,
+          "view": "diag",
+          "pose": "closed",
+          "master": "art/masters/structures/064_gate_wood_diag_f1.png"
+        },
+        {
+          "id": "gate_wood.diag.f2",
+          "frame": 1,
+          "view": "diag",
+          "pose": "open",
+          "master": "art/masters/structures/064_gate_wood_diag_f2.png"
         }
       ]
     },
@@ -2406,7 +2436,9 @@
         "w": 1024,
         "h": 1024
       },
-      "checks": [],
+      "checks": [
+        "The same gate in all three views (face-on, side, diagonal); the side and diagonal views are the gate turned, not a new design."
+      ],
       "parts": [
         {
           "id": "gate_stone.f1",
@@ -2419,6 +2451,34 @@
           "frame": 1,
           "pose": "open",
           "master": "art/masters/structures/065_gate_stone_f2.png"
+        },
+        {
+          "id": "gate_stone.side.f1",
+          "frame": 0,
+          "view": "side",
+          "pose": "closed",
+          "master": "art/masters/structures/065_gate_stone_side_f1.png"
+        },
+        {
+          "id": "gate_stone.side.f2",
+          "frame": 1,
+          "view": "side",
+          "pose": "open",
+          "master": "art/masters/structures/065_gate_stone_side_f2.png"
+        },
+        {
+          "id": "gate_stone.diag.f1",
+          "frame": 0,
+          "view": "diag",
+          "pose": "closed",
+          "master": "art/masters/structures/065_gate_stone_diag_f1.png"
+        },
+        {
+          "id": "gate_stone.diag.f2",
+          "frame": 1,
+          "view": "diag",
+          "pose": "open",
+          "master": "art/masters/structures/065_gate_stone_diag_f2.png"
         }
       ]
     },

@@ -32,6 +32,11 @@ export interface CatalogEntry {
   inferred?: string;
   /** Also generate the view from behind (walking up the screen). */
   back?: boolean;
+  /**
+   * Also generate these views. Gates: "side" when the wall runs up the screen (lane left-right),
+   * "diag" for a diagonal wall; the default view is the wall running across the screen.
+   */
+  views?: ('side' | 'diag')[];
 }
 
 const walk4 = [
@@ -47,6 +52,9 @@ const run4 = [
   'gallop: hind legs pushing off',
 ];
 const burst3 = ['start: small and bright', 'peak: largest and brightest', 'fade: breaking apart'];
+
+const gateCheck =
+  'The same gate in all three views (face-on, side, diagonal); the side and diagonal views are the gate turned, not a new design.';
 
 const siegeCheck =
   'Mechanics: symmetric chassis, throwing arm centred on an axle between two supports; never side-mounted.';
@@ -607,6 +615,8 @@ export const CATALOG: CatalogEntry[] = [
     subject: 'bamboo palisade gate with two doors bound in blue rope',
     frames: ['closed', 'open'],
     canvas: [192, 192],
+    views: ['side', 'diag'],
+    checks: [gateCheck],
   },
   {
     num: 65,
@@ -618,6 +628,8 @@ export const CATALOG: CatalogEntry[] = [
     subject: 'stone gate with a wooden double door and a small blue tiled roof',
     frames: ['closed', 'open'],
     canvas: [192, 192],
+    views: ['side', 'diag'],
+    checks: [gateCheck],
   },
   {
     num: 66,

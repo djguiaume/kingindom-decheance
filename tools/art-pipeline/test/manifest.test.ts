@@ -106,6 +106,25 @@ describe('manifest', () => {
     expect(behind.master).toBe('art/masters/kings/002_king_roll_walk_back_f2.png');
   });
 
+  it('adds side and diagonal views for the gates, keeping the face-on prompts', () => {
+    for (const id of ['gate_wood', 'gate_stone']) {
+      const gate = manifest.assets.find((a) => a.id === id)!;
+      expect(gate.parts.map((p) => p.id)).toEqual([
+        `${id}.f1`,
+        `${id}.f2`,
+        `${id}.side.f1`,
+        `${id}.side.f2`,
+        `${id}.diag.f1`,
+        `${id}.diag.f2`,
+      ]);
+      const [front, , side, , diag] = gate.parts;
+      expect(promptFor(gate, front!)).not.toMatch(/turned/);
+      expect(promptFor(gate, side!)).toMatch(/runs straight up the screen/);
+      expect(promptFor(gate, diag!)).toMatch(/diagonally/);
+      expect(promptFor(gate, side!)).toMatch(/frame 1 of 2/);
+    }
+  });
+
   it('keeps transparency rules consistent with the kind', () => {
     for (const a of manifest.assets) expect(a.transparent).toBe(KIND_RULES[a.kind].transparent);
   });

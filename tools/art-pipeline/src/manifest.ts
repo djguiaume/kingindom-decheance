@@ -162,17 +162,23 @@ export const KIND_RULES: Record<AssetKind, KindRule> = {
   },
 };
 
+export const VIEWS = ['back', 'side', 'diag'] as const;
+
 const Size = z.object({ w: z.number().int().positive(), h: z.number().int().positive() });
 
 export const PartSchema = z.object({
   /**
-   * Stable id: the asset id, plus ".back" for the view from behind and ".f<n>" for animation
-   * frames. Also the atlas frame name.
+   * Stable id: the asset id, plus ".back", ".side" or ".diag" for an extra view and ".f<n>" for
+   * animation frames. Also the atlas frame name.
    */
-  id: z.string().regex(/^[a-z0-9_]+(\.back)?(\.f\d+)?$/),
+  id: z.string().regex(/^[a-z0-9_]+(\.(back|side|diag))?(\.f\d+)?$/),
   frame: z.number().int().nonnegative(),
-  /** "back": seen from behind, walking away (up the screen). Absent: the default right-facing view. */
-  view: z.literal('back').optional(),
+  /**
+   * Absent: the default view (right-facing for characters, face-on for gates). "back": seen from
+   * behind, walking away up the screen. "side" and "diag": a gate in a wall that runs up the
+   * screen, or diagonally (the game mirrors it for the other diagonal).
+   */
+  view: z.enum(VIEWS).optional(),
   /** The pose of this frame, added to the prompt. */
   pose: z.string().optional(),
   /** Committed lossless master, relative to the repo root. */
@@ -226,6 +232,8 @@ export interface CatalogLike {
   inferred?: string;
   /** Also generate every frame seen from behind, for walking up the screen. */
   back?: boolean;
+  /** Also generate every frame in these extra views (gates in walls at other angles). */
+  views?: ('side' | 'diag')[];
 }
 
 /** Scenario output size: square for most, landscape for wide canvases and backdrops. */
@@ -259,18 +267,19 @@ export function buildManifest(catalog: readonly CatalogLike[]): Manifest {
         generate: generationSize(e.canvas),
         checks: e.checks ?? [],
         ...(e.inferred ? { inferred: e.inferred } : {}),
-        parts: [undefined, ...(e.back ? (['back'] as const) : [])].flatMap((view) =>
-          frames.map((pose, i) => {
-            const base = view ? `${e.id}.${view}` : e.id;
-            const id = frames.length > 1 ? `${base}.f${i + 1}` : base;
-            return {
-              id,
-              frame: i,
-              ...(view ? { view } : {}),
-              ...(pose ? { pose } : {}),
-              master: `art/masters/${e.group}/${code}_${id.replaceAll('.', '_')}.png`,
-            };
-          }),
+        parts: [undefined, ...(e.back ? (['back'] as const) : []), ...(e.views ?? [])].flatMap(
+          (view) =>
+            frames.map((pose, i) => {
+              const base = view ? `${e.id}.${view}` : e.id;
+              const id = frames.length > 1 ? `${base}.f${i + 1}` : base;
+              return {
+                id,
+                frame: i,
+                ...(view ? { view } : {}),
+                ...(pose ? { pose } : {}),
+                master: `art/masters/${e.group}/${code}_${id.replaceAll('.', '_')}.png`,
+              };
+            }),
         ),
       };
     });
