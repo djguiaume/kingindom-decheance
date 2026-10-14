@@ -1,0 +1,33 @@
+{
+  "token": "f0807209be",
+  "selector": "gate_wood.side.f2,gate_stone.side.f2",
+  "modelId": "model_openai-gpt-image-2-5-flare",
+  "createdAt": "2026-10-14T19:36:42.539Z",
+  "totalCU": 24,
+  "parts": [
+    {
+      "id": "gate_wood.side.f2",
+      "promptHash": "ca708aa25e9a",
+      "estimateCU": 12
+    },
+    {
+      "id": "gate_stone.side.f2",
+      "promptHash": "775554365f3b",
+      "estimateCU": 12
+    }
+  ],
+  "skipped": [],
+  "redo": true,
+  "runs": [
+    {
+      "at": "2026-10-14T19:37:40.318Z",
+      "budgetCU": 30,
+      "spentCU": 24,
+      "done": [
+        "gate_wood.side.f2",
+        "gate_stone.side.f2"
+      ],
+      "failed": []
+    }
+  ]
+}

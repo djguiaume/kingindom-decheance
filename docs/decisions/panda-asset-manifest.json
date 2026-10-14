@@ -1,0 +1,48 @@
+{
+  "version": "1.2",
+  "status": "concept-review-only",
+  "reference": "Panda Kingdom one-page art concept; not production-ready isolated sprites",
+  "groups": [
+    {
+      "range": "001-014",
+      "name": "kings"
+    },
+    {
+      "range": "015-026",
+      "name": "friendly units"
+    },
+    {
+      "range": "027-039",
+      "name": "enemies"
+    },
+    {
+      "range": "040-061",
+      "name": "buildings"
+    },
+    {
+      "range": "062-072",
+      "name": "structures"
+    },
+    {
+      "range": "073-085",
+      "name": "effects"
+    },
+    {
+      "range": "086-100",
+      "name": "environment"
+    },
+    {
+      "range": "101-105",
+      "name": "map"
+    }
+  ],
+  "requirements": [
+    "105 individually validated logical assets",
+    "transparent backgrounds",
+    "separate moving parts and pivots",
+    "Phaser 4 atlas JSON and WebP",
+    "realistic central-arm catapult",
+    "training dummies at garrison",
+    "actual mobile-scale validation"
+  ]
+}
