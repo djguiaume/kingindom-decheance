@@ -28,9 +28,36 @@ export interface Pose {
   flash: number;
   /** 1 faces right, -1 faces left. */
   facing: 1 | -1;
+  /** Seen from behind: it last walked (or struck) up the screen. */
+  back: boolean;
+  /** Metres walked so far, to pick walk frames. */
+  walked: number;
+  /** Walking right now (not standing still). */
+  moving: boolean;
 }
 
-export const REST: Pose = { bob: 0, lean: 0, swing: 0, flash: 0, facing: 1 };
+export const REST: Pose = {
+  bob: 0,
+  lean: 0,
+  swing: 0,
+  flash: 0,
+  facing: 1,
+  back: false,
+  walked: 0,
+  moving: false,
+};
+
+/** How long after its last step an actor still counts as walking (smooths frame gaps). */
+const MOVING_MS = 120;
+
+/** Whether a step or blow along (dx, dy) turns the actor's back to the viewer. */
+export function seenFromBehind(dx: number, dy: number, was: boolean): boolean {
+  // Mostly up the screen shows the back; mostly down or sideways the front. Near the diagonal
+  // it keeps its view, so walking at 45 degrees does not flicker.
+  if (dy < 0 && -dy > Math.abs(dx) * 1.2) return true;
+  if (dy >= 0 || -dy * 1.2 < Math.abs(dx)) return false;
+  return was;
+}
 
 /** The step bob for `walked` metres: one hop per stride, from 0 (feet down) to 1. */
 export function bobAt(walked: number): number {
@@ -83,6 +110,8 @@ interface Track {
   pos: { x: number; y: number };
   walked: number;
   facing: 1 | -1;
+  back: boolean;
+  lastStep: number;
   swingStart: number;
   flashStart: number;
 }
@@ -124,6 +153,8 @@ export class Animator {
           const target = e.type === 'hit' ? posOf(e.target) : null;
           if (target && Math.abs(target.x - track.pos.x) > 0.05)
             track.facing = target.x < track.pos.x ? -1 : 1;
+          if (target)
+            track.back = seenFromBehind(target.x - track.pos.x, target.y - track.pos.y, track.back);
         }
       }
       if (e.type === 'hit') {
@@ -155,6 +186,8 @@ export class Animator {
         pos: { ...pos },
         walked: 0,
         facing: 1,
+        back: false,
+        lastStep: -Infinity,
         swingStart: -Infinity,
         flashStart: -Infinity,
       };
@@ -168,6 +201,10 @@ export class Animator {
     if (moved < 1) {
       track.walked += moved;
       if (Math.abs(dx) > 0.002) track.facing = dx < 0 ? -1 : 1;
+      if (moved > 0.002) {
+        track.back = seenFromBehind(dx, dy, track.back);
+        track.lastStep = now;
+      }
     }
     // Standing still settles the foot down instead of freezing mid-hop.
     if (moved < 0.001) track.walked = settle(track.walked);
@@ -179,6 +216,9 @@ export class Animator {
       swing,
       flash: flashAt(now - track.flashStart),
       facing: track.facing,
+      back: track.back,
+      walked: track.walked,
+      moving: now - track.lastStep < MOVING_MS,
     };
   }
 
@@ -195,6 +235,8 @@ export class Animator {
         pos: { ...pos },
         walked: 0,
         facing: 1,
+        back: false,
+        lastStep: -Infinity,
         swingStart: -Infinity,
         flashStart: -Infinity,
       });
