@@ -200,6 +200,17 @@ balance are untouched.
   bots rarely have gold left for the branch upgrades, so Knight hall and Crossbow range are not
   measured by them yet.
 
+## Stage A, score (2026-10-14, corpus 13 §2)
+
+- `scoreOf(state, ctx)` in core (`score.ts`): 150 per night held, minus 25 per building lost
+  that night (a night never goes below 0), plus 5 per gold left on a win, then the run's
+  multiplier (Gambler's Oath today, mutators later; floor ×0.5) on a win only. The night the
+  castle fell earns nothing. Computed from state, so bots and players get the same number.
+- **Sim**: every run summary carries `score`; the CLI prints the mean (balanced, 50 runs: 853).
+- **Profile**: best score per map (`records`) and the last 10 runs (`recent`), on the device.
+- **End screen**: a score sheet under the result (nights, losses, gold, bonus, total) and the
+  map best, with "New best!" when beaten.
+
 ## Balance (first playtest, 2026-10-13)
 
 Gold felt scarce in play while the simulator found the game easy (the king alone reached
@@ -236,4 +247,4 @@ recipe for `{ url: 'sfx/….ogg' }` and nothing else changes. Music is three syn
 - Day/night lighting, object pools for effects; the real audio (recorded sounds and music).
 - Web Worker pool and Comlink (ADR-003): the runner is ready to be moved into a worker.
 - Tier 3 nightly balance assertions (ADR-007) and the ECharts dashboard (ADR-005).
-- Starting perks, mutators, research, score (Gambler's Oath already stores its multiplier).
+- Starting perks, mutators, research (Gambler's Oath already stores its multiplier).

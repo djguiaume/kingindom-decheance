@@ -13,6 +13,8 @@ import WavesPanel from '../components/WavesPanel.vue';
 import GameIcon from '../components/GameIcon.vue';
 import { HOLD_BUY_MS, HOLD_NIGHT_MS, type InputHub } from '../game/input/hub.ts';
 import type { GameRuntime } from '../game/runtime.ts';
+import { scoreOf, type ScoreBreakdown } from '@kd/core';
+import { loadProfile, recordRun, saveProfile } from '../progression.ts';
 import { nightPlans, snapshot, useHudStore } from '../stores/hud.ts';
 import { enemyIcon, perkIcon } from '../theme.ts';
 
@@ -39,8 +41,31 @@ function rally(e: PointerEvent) {
   props.hub.rally(e.pointerType === 'mouse' ? 'keyboard' : 'touch');
 }
 
+/** The finished run's score, its line in the profile and the record it had to beat. */
+const result = ref<{ score: ScoreBreakdown; newBest: boolean; best: number | null } | null>(null);
+/** Scores the run once it ends and keeps it in the browser's profile (13 §2.3). */
+function finish(): void {
+  const { state, ctx } = props.runtime;
+  const score = scoreOf(state, ctx);
+  const run = {
+    mapId: state.mapId,
+    score: score.total,
+    won: score.won,
+    nights: score.nightsHeld,
+    weaponId: state.weaponId,
+    perks: [...state.perks],
+    seed: state.seed,
+    date: new Date().toISOString(),
+  };
+  const recorded = recordRun(loadProfile(), run);
+  saveProfile(recorded.profile);
+  result.value = { score, newBest: recorded.newBest, best: recorded.previousBest?.score ?? null };
+}
+
 const refresh = () => {
   store.hud = snapshot(props.runtime.state, props.runtime.ctx);
+  // A restart starts a new run: forget the last one's result.
+  if (result.value && store.hud.phase !== 'won' && store.hud.phase !== 'lost') result.value = null;
   // The picker belongs to the castle by day: walking away or nightfall closes it.
   if (store.pickerOpen && !store.hud.castle?.next) props.hub.closePicker();
 };
@@ -56,7 +81,10 @@ onMounted(() => {
   timer = window.setInterval(refresh, 100);
   unsubscribe = props.runtime.onEvents((events) => {
     // The last dawn ends the run: the outcome screen says it instead.
-    if (events.some((e) => e.type === 'won')) return;
+    if (events.some((e) => e.type === 'won' || e.type === 'lost')) {
+      finish();
+      return;
+    }
     const dawn = events.find((e) => e.type === 'dawn');
     const night = dawn && props.runtime.state.history.at(-1);
     if (!night) return;
@@ -377,6 +405,39 @@ const pct = (v: number, max: number) =>
               : `You held ${Math.max(0, store.hud.day - 1)} night${store.hud.day === 2 ? '' : 's'}.`
           }}
         </p>
+        <dl v-if="result" class="score" data-testid="score">
+          <div>
+            <dt>Nights held</dt>
+            <dd>{{ result.score.nightsHeld }} × 150</dd>
+            <dd>{{ result.score.nightsHeld * 150 }}</dd>
+          </div>
+          <div v-if="result.score.buildingsLost > 0">
+            <dt>Buildings lost</dt>
+            <dd>{{ result.score.buildingsLost }}</dd>
+            <dd class="minus">−{{ result.score.lostPoints }}</dd>
+          </div>
+          <div v-if="result.score.won">
+            <dt>Gold left</dt>
+            <dd>{{ result.score.goldLeft }} × 5</dd>
+            <dd>+{{ result.score.goldPoints }}</dd>
+          </div>
+          <div v-if="result.score.won && result.score.multiplier !== 1">
+            <dt>Score bonus</dt>
+            <dd />
+            <dd>×{{ result.score.multiplier }}</dd>
+          </div>
+          <div v-if="!result.score.won" class="note">
+            <dt>Gold and score bonuses count only on victory</dt>
+          </div>
+          <div class="total">
+            <dt>Score</dt>
+            <dd data-testid="score-total">{{ result.score.total }}</dd>
+          </div>
+        </dl>
+        <p v-if="result?.newBest" class="best" data-testid="new-best">
+          {{ result.best === null ? 'First record on this map' : `New best! (was ${result.best})` }}
+        </p>
+        <p v-else-if="result" class="best">Best on this map: {{ result.best }}</p>
         <button class="primary big" @click="emit('restart')">Play again</button>
       </div>
     </div>
@@ -875,6 +936,57 @@ const pct = (v: number, max: number) =>
 .big {
   min-width: 200px;
   min-height: 48px;
+}
+/* The score breakdown on the end screen (13 §2.2): label, working, points. */
+.score {
+  margin: 4px 0 0;
+  width: min(100%, 340px);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 14px;
+}
+.score div {
+  display: grid;
+  grid-template-columns: 1fr auto 4.5em;
+  gap: 10px;
+  text-align: left;
+}
+.score dt {
+  color: var(--ink);
+}
+.score dd {
+  margin: 0;
+  color: var(--muted);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.score dd:last-child {
+  color: var(--ink);
+  font-weight: 700;
+}
+.score .minus {
+  color: var(--enemy) !important;
+}
+.score .note dt {
+  grid-column: 1 / -1;
+  color: var(--muted);
+  font-size: 12px;
+}
+.score .total {
+  margin-top: 4px;
+  padding-top: 6px;
+  border-top: 1px solid var(--line);
+  grid-template-columns: 1fr auto;
+}
+.score .total dt,
+.score .total dd {
+  font: 600 20px var(--display);
+  color: var(--ink) !important;
+}
+.best {
+  color: var(--gold) !important;
+  font-weight: 700;
 }
 .hint {
   font-size: 12px;

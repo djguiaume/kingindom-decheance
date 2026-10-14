@@ -2,7 +2,7 @@ import { prototypeContent, prototypeRun } from '@kd/content/prototype';
 import { Session } from '@kd/core';
 import { describe, expect, it } from 'vitest';
 import { buildingStats, castleLevelInfo, offerInfo } from '../src/game/buildingInfo.ts';
-import { awardRun, isUnlocked, loadProfile } from '../src/progression.ts';
+import { awardRun, isUnlocked, loadProfile, recordRun, RECENT_RUNS } from '../src/progression.ts';
 
 const ctx = new Session(prototypeContent, { ...prototypeRun, seed: 1 }).ctx;
 
@@ -64,9 +64,42 @@ describe('castle level card', () => {
 describe('progression (all open in Stage A)', () => {
   it('unlocks everything, awards nothing and survives bad storage', () => {
     const profile = loadProfile({ getItem: () => '{not json' });
-    expect(profile).toEqual({ schemaVersion: 1, xp: 0, level: 1, unlocked: [] });
+    expect(profile).toEqual({
+      schemaVersion: 1,
+      xp: 0,
+      level: 1,
+      unlocked: [],
+      records: {},
+      recent: [],
+    });
     expect(isUnlocked(profile, { unlock: { level: 9 } })).toBe(true);
     const run = { mapId: 'greyhollow', won: true, nightsSurvived: 6, score: 0 };
     expect(awardRun(profile, run)).toMatchObject({ xpGained: 0, newUnlocks: [] });
+  });
+
+  it('keeps the best score per map and the last runs', () => {
+    const run = (score: number) => ({
+      mapId: 'greyhollow',
+      score,
+      won: true,
+      nights: 6,
+      weaponId: 'spear',
+      perks: [],
+      seed: 1,
+      date: '2026-10-14T10:00:00.000Z',
+    });
+    let profile = loadProfile(null);
+    const first = recordRun(profile, run(800));
+    expect(first).toMatchObject({ newBest: true, previousBest: null });
+    profile = first.profile;
+    const worse = recordRun(profile, run(500));
+    expect(worse).toMatchObject({ newBest: false, previousBest: { score: 800 } });
+    profile = worse.profile;
+    const better = recordRun(profile, run(1200));
+    expect(better.newBest).toBe(true);
+    expect(better.profile.records.greyhollow?.score).toBe(1200);
+    for (let i = 0; i < 12; i++) profile = recordRun(profile, run(i)).profile;
+    expect(profile.recent).toHaveLength(RECENT_RUNS);
+    expect(profile.recent[0]?.score).toBe(11);
   });
 });

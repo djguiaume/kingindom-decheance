@@ -22,3 +22,4 @@ export {
   type WallLine,
 } from './systems/walls.ts';
 export * from './modifiers.ts';
+export * from './score.ts';

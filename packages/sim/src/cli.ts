@@ -53,7 +53,8 @@ if (values.json) {
   console.log(
     `content ${prototypeContent.hash} · policy ${policy.id}${picks ? ` perks ${picks.join(',')}` : ''}${branches ? ` branches ${branches.join(',')}` : ''} · ${runs} runs in ${elapsed.toFixed(2)}s`,
   );
+  const meanScore = summaries.reduce((n, s) => n + s.score, 0) / runs;
   console.log(
-    `win rate ${((100 * wins) / runs).toFixed(1)}% · mean night reached ${meanNight.toFixed(2)}`,
+    `win rate ${((100 * wins) / runs).toFixed(1)}% · mean night reached ${meanNight.toFixed(2)} · mean score ${meanScore.toFixed(0)}`,
   );
 }
