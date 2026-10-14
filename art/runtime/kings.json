@@ -1,9 +1,90 @@
 {
   "frames": {
-    "king_roll_idle": {
+    "king_crown": {
+      "frame": {
+        "x": 177,
+        "y": 382,
+        "w": 50,
+        "h": 44
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 7,
+        "y": 2,
+        "w": 50,
+        "h": 44
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "asset": "king_crown",
+      "num": 14,
+      "contentId": "king"
+    },
+    "king_portrait": {
       "frame": {
         "x": 2,
         "y": 2,
+        "w": 192,
+        "h": 236
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 32,
+        "y": 10,
+        "w": 192,
+        "h": 236
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "asset": "king_portrait",
+      "num": 12,
+      "contentId": "king"
+    },
+    "king_roll_anticipate": {
+      "frame": {
+        "x": 1688,
+        "y": 240,
+        "w": 126,
+        "h": 110
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 33,
+        "y": 63,
+        "w": 126,
+        "h": 110
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "king_roll_anticipate",
+      "num": 3,
+      "contentId": "king"
+    },
+    "king_roll_idle": {
+      "frame": {
+        "x": 1143,
+        "y": 240,
         "w": 90,
         "h": 125
       },
@@ -26,6 +107,762 @@
       "asset": "king_roll_idle",
       "num": 1,
       "contentId": "king"
+    },
+    "king_roll_impact_fx.f1": {
+      "frame": {
+        "x": 1545,
+        "y": 240,
+        "w": 141,
+        "h": 118
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 26,
+        "y": 5,
+        "w": 141,
+        "h": 118
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "asset": "king_roll_impact_fx",
+      "num": 5,
+      "contentId": "king"
+    },
+    "king_roll_impact_fx.f2": {
+      "frame": {
+        "x": 1235,
+        "y": 240,
+        "w": 161,
+        "h": 118
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 16,
+        "y": 5,
+        "w": 161,
+        "h": 118
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "asset": "king_roll_impact_fx",
+      "num": 5,
+      "contentId": "king"
+    },
+    "king_roll_impact_fx.f3": {
+      "frame": {
+        "x": 1398,
+        "y": 240,
+        "w": 145,
+        "h": 118
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 24,
+        "y": 5,
+        "w": 145,
+        "h": 118
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "asset": "king_roll_impact_fx",
+      "num": 5,
+      "contentId": "king"
+    },
+    "king_roll_roll.f1": {
+      "frame": {
+        "x": 90,
+        "y": 382,
+        "w": 85,
+        "h": 96
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 54,
+        "y": 77,
+        "w": 85,
+        "h": 96
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "king_roll_roll",
+      "num": 4,
+      "contentId": "king"
+    },
+    "king_roll_roll.f2": {
+      "frame": {
+        "x": 2,
+        "y": 382,
+        "w": 86,
+        "h": 96
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 53,
+        "y": 77,
+        "w": 86,
+        "h": 96
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "king_roll_roll",
+      "num": 4,
+      "contentId": "king"
+    },
+    "king_roll_roll.f3": {
+      "frame": {
+        "x": 1816,
+        "y": 240,
+        "w": 95,
+        "h": 96
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 49,
+        "y": 77,
+        "w": 95,
+        "h": 96
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "king_roll_roll",
+      "num": 4,
+      "contentId": "king"
+    },
+    "king_roll_roll.f4": {
+      "frame": {
+        "x": 1913,
+        "y": 240,
+        "w": 91,
+        "h": 96
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 51,
+        "y": 77,
+        "w": 91,
+        "h": 96
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "king_roll_roll",
+      "num": 4,
+      "contentId": "king"
+    },
+    "king_roll_uncurl.f1": {
+      "frame": {
+        "x": 590,
+        "y": 240,
+        "w": 127,
+        "h": 125
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 33,
+        "y": 48,
+        "w": 127,
+        "h": 125
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "king_roll_uncurl",
+      "num": 6,
+      "contentId": "king"
+    },
+    "king_roll_uncurl.f2": {
+      "frame": {
+        "x": 457,
+        "y": 240,
+        "w": 131,
+        "h": 125
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 31,
+        "y": 48,
+        "w": 131,
+        "h": 125
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "king_roll_uncurl",
+      "num": 6,
+      "contentId": "king"
+    },
+    "king_roll_walk.f1": {
+      "frame": {
+        "x": 1049,
+        "y": 240,
+        "w": 92,
+        "h": 125
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 50,
+        "y": 48,
+        "w": 92,
+        "h": 125
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "king_roll_walk",
+      "num": 2,
+      "contentId": "king"
+    },
+    "king_roll_walk.f2": {
+      "frame": {
+        "x": 832,
+        "y": 240,
+        "w": 110,
+        "h": 125
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 41,
+        "y": 48,
+        "w": 110,
+        "h": 125
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "king_roll_walk",
+      "num": 2,
+      "contentId": "king"
+    },
+    "king_roll_walk.f3": {
+      "frame": {
+        "x": 944,
+        "y": 240,
+        "w": 103,
+        "h": 125
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 45,
+        "y": 48,
+        "w": 103,
+        "h": 125
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "king_roll_walk",
+      "num": 2,
+      "contentId": "king"
+    },
+    "king_roll_walk.f4": {
+      "frame": {
+        "x": 719,
+        "y": 240,
+        "w": 111,
+        "h": 125
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 41,
+        "y": 48,
+        "w": 111,
+        "h": 125
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "king_roll_walk",
+      "num": 2,
+      "contentId": "king"
+    },
+    "king_spear": {
+      "frame": {
+        "x": 229,
+        "y": 382,
+        "w": 177,
+        "h": 20
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 8,
+        "y": 14,
+        "w": 177,
+        "h": 20
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "asset": "king_spear",
+      "num": 13,
+      "contentId": "king"
+    },
+    "king_wolf_idle": {
+      "frame": {
+        "x": 507,
+        "y": 2,
+        "w": 140,
+        "h": 150
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 58,
+        "y": 80,
+        "w": 140,
+        "h": 150
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "king_wolf_idle",
+      "num": 7,
+      "contentId": "king"
+    },
+    "king_wolf_impact_fx.f1": {
+      "frame": {
+        "x": 1099,
+        "y": 2,
+        "w": 171,
+        "h": 147
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 11,
+        "y": 7,
+        "w": 171,
+        "h": 147
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 160
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "asset": "king_wolf_impact_fx",
+      "num": 11,
+      "contentId": "king"
+    },
+    "king_wolf_impact_fx.f2": {
+      "frame": {
+        "x": 925,
+        "y": 2,
+        "w": 172,
+        "h": 147
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 10,
+        "y": 7,
+        "w": 172,
+        "h": 147
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 160
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "asset": "king_wolf_impact_fx",
+      "num": 11,
+      "contentId": "king"
+    },
+    "king_wolf_impact_fx.f3": {
+      "frame": {
+        "x": 278,
+        "y": 240,
+        "w": 177,
+        "h": 136
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 8,
+        "y": 12,
+        "w": 177,
+        "h": 136
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 160
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "asset": "king_wolf_impact_fx",
+      "num": 11,
+      "contentId": "king"
+    },
+    "king_wolf_lunge.f1": {
+      "frame": {
+        "x": 144,
+        "y": 240,
+        "w": 132,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 94,
+        "y": 90,
+        "w": 132,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 320,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "king_wolf_lunge",
+      "num": 10,
+      "contentId": "king"
+    },
+    "king_wolf_lunge.f2": {
+      "frame": {
+        "x": 1468,
+        "y": 2,
+        "w": 186,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 67,
+        "y": 90,
+        "w": 186,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 320,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "king_wolf_lunge",
+      "num": 10,
+      "contentId": "king"
+    },
+    "king_wolf_run.f1": {
+      "frame": {
+        "x": 2,
+        "y": 240,
+        "w": 140,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 58,
+        "y": 90,
+        "w": 140,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "king_wolf_run",
+      "num": 9,
+      "contentId": "king"
+    },
+    "king_wolf_run.f2": {
+      "frame": {
+        "x": 1656,
+        "y": 2,
+        "w": 158,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 49,
+        "y": 90,
+        "w": 158,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "king_wolf_run",
+      "num": 9,
+      "contentId": "king"
+    },
+    "king_wolf_run.f3": {
+      "frame": {
+        "x": 1272,
+        "y": 2,
+        "w": 194,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 31,
+        "y": 90,
+        "w": 194,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "king_wolf_run",
+      "num": 9,
+      "contentId": "king"
+    },
+    "king_wolf_run.f4": {
+      "frame": {
+        "x": 1816,
+        "y": 2,
+        "w": 156,
+        "h": 140
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 50,
+        "y": 90,
+        "w": 156,
+        "h": 140
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "king_wolf_run",
+      "num": 9,
+      "contentId": "king"
+    },
+    "king_wolf_walk.f1": {
+      "frame": {
+        "x": 196,
+        "y": 2,
+        "w": 159,
+        "h": 150
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 49,
+        "y": 80,
+        "w": 159,
+        "h": 150
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "king_wolf_walk",
+      "num": 8,
+      "contentId": "king"
+    },
+    "king_wolf_walk.f2": {
+      "frame": {
+        "x": 357,
+        "y": 2,
+        "w": 148,
+        "h": 150
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 54,
+        "y": 80,
+        "w": 148,
+        "h": 150
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "king_wolf_walk",
+      "num": 8,
+      "contentId": "king"
+    },
+    "king_wolf_walk.f3": {
+      "frame": {
+        "x": 649,
+        "y": 2,
+        "w": 139,
+        "h": 150
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 59,
+        "y": 80,
+        "w": 139,
+        "h": 150
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "king_wolf_walk",
+      "num": 8,
+      "contentId": "king"
+    },
+    "king_wolf_walk.f4": {
+      "frame": {
+        "x": 790,
+        "y": 2,
+        "w": 133,
+        "h": 150
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 62,
+        "y": 80,
+        "w": 133,
+        "h": 150
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "king_wolf_walk",
+      "num": 8,
+      "contentId": "king"
     }
   },
   "meta": {
@@ -34,8 +871,8 @@
     "image": "kings.webp",
     "format": "RGBA8888",
     "size": {
-      "w": 94,
-      "h": 129
+      "w": 2006,
+      "h": 480
     },
     "scale": "1"
   }
