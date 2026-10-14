@@ -4,14 +4,14 @@
  * unmount. The canvas fills its container and follows window and orientation changes.
  */
 import Phaser from 'phaser';
-import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useHudStore } from '../stores/hud.ts';
 import { colors } from '../theme.ts';
 import type { CameraView } from './camera.ts';
 import { PlayScene } from './PlayScene.ts';
 import type { GameRuntime } from './runtime.ts';
 
-const props = defineProps<{ runtime: GameRuntime; camera: CameraView }>();
+const props = defineProps<{ runtime: GameRuntime; camera: CameraView; topInset: number }>();
 const store = useHudStore();
 const host = ref<HTMLDivElement>();
 let game: Phaser.Game | null = null;
@@ -26,10 +26,20 @@ onMounted(() => {
       zoomClose: () => store.zoomClose,
       toggleZoom: () => (store.zoomClose = !store.zoomClose),
       camera: props.camera,
+      topInset: () => props.topInset,
     }),
     banner: false,
   });
 });
+
+watch(
+  () => props.topInset,
+  async () => {
+    await nextTick();
+    game?.scale.getParentBounds();
+    game?.scale.refresh();
+  },
+);
 
 onBeforeUnmount(() => {
   game?.destroy(true);
@@ -38,7 +48,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div ref="host" class="game-host" data-testid="game" />
+  <div ref="host" class="game-host" data-testid="game" :style="{ top: `${topInset}px` }" />
 </template>
 
 <style scoped>

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { Art, atlasFiles, RIGS, weaponAngle } from '../src/game/art.ts';
-import { seenFromBehind, STRIDE_M } from '../src/game/animation.ts';
+import { seenFromBehind, STRIDE_M, KING_STRIDE_M } from '../src/game/animation.ts';
 
 const art = new Art([
   ['art:friendly', ['footman', 'footman.back', 'footman_weapon', 'archer', 'archer_weapon']],
@@ -9,6 +9,9 @@ const art = new Art([
     [
       'king_roll_idle',
       'king_roll_idle.back',
+      'king_roll_anticipate',
+      ...[1, 2, 3, 4].map((n) => `king_roll_roll.f${n}`),
+      ...[1, 2].map((n) => `king_roll_uncurl.f${n}`),
       ...[1, 2, 3, 4].map((n) => `king_roll_walk.f${n}`),
       ...[1, 2, 3, 4].map((n) => `king_roll_walk.back.f${n}`),
     ],
@@ -102,5 +105,32 @@ describe('back view', () => {
     expect(seenFromBehind(1, 0, true)).toBe(false);
     expect(seenFromBehind(1, -1, true)).toBe(true);
     expect(seenFromBehind(1, -1, false)).toBe(false);
+  });
+});
+
+describe('king art actions', () => {
+  it('uses the roll sequence during charge, uncurls afterwards, and can fall back without it', () => {
+    expect(art.body('king', still, KING_STRIDE_M, 0, { phase: 'anticipate', elapsed: 0 })).toBe(
+      'king_roll_anticipate',
+    );
+    expect(art.body('king', still, KING_STRIDE_M, 0, { phase: 'roll', elapsed: 120 })).toBe(
+      'king_roll_roll.f3',
+    );
+    expect(art.body('king', still, KING_STRIDE_M, 0, { phase: 'uncurl', elapsed: 100 })).toBe(
+      'king_roll_uncurl.f2',
+    );
+    const old = new Art([['kings', ['king_roll_idle']]]);
+    expect(old.body('king', still, KING_STRIDE_M, 0, { phase: 'roll', elapsed: 60 })).toBe(
+      'king_roll_idle',
+    );
+  });
+
+  it('advances about ten walk frames per second at the current 7 m/s speed', () => {
+    const walk = (seconds: number) =>
+      art.body('king', { ...still, moving: true, walked: 7 * seconds }, KING_STRIDE_M, 0);
+    expect(walk(0)).toBe('king_roll_walk.f1');
+    expect(walk(0.1)).toBe('king_roll_walk.f2');
+    expect(walk(0.2)).toBe('king_roll_walk.f3');
+    expect(walk(0.4)).toBe('king_roll_walk.f1');
   });
 });

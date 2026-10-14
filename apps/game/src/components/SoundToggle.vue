@@ -29,6 +29,7 @@ onBeforeUnmount(() => {
     class="sound panel round"
     :aria-label="muted ? 'Sound off' : 'Sound on'"
     :aria-pressed="!muted"
+    data-battlefield-obstacle
     data-testid="sound"
     :data-muted="muted"
     @click="toggle"

@@ -11,6 +11,7 @@
  * (the feet, or the centre of effects and weapons). Art is painted at 1 m = 64 px.
  */
 import type Phaser from 'phaser';
+import type { KingAction } from './animation.ts';
 
 const files = import.meta.glob(
   ['../../../../art/runtime/*.{json,webp}', '!../../../../art/runtime/index.json'],
@@ -216,7 +217,17 @@ export class Art {
     pose: { back: boolean; walked: number; moving: boolean },
     strideM: number,
     now: number,
+    action: KingAction | null = null,
   ): string | null {
+    if (id === 'king' && action) {
+      const frame =
+        action.phase === 'anticipate'
+          ? this.still('king_roll_anticipate')
+          : action.phase === 'roll'
+            ? this.pick('king_roll_roll', () => Math.floor(action.elapsed / 60))
+            : this.at('king_roll_uncurl', action.elapsed / 160);
+      if (frame) return frame;
+    }
     const step = (n: number) =>
       n === 1 ? 0 : Math.floor((pose.walked / strideM) * FRAMES_PER_STRIDE);
     const flap = (n: number) => {
