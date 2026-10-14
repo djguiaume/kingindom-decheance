@@ -34,7 +34,8 @@ import { Art, ART_PX_PER_M, CATAPULT_ARM, HAND, loadArt, weaponAngle } from './a
 import { Painter } from './painter.ts';
 import { bobHeight, shadow, spriteFor } from './sprites.ts';
 import { drawTerrain } from './terrain.ts';
-import { emptyPlotIds, projectileFrame } from './presentation.ts';
+import { emptyPlotIds, gateIsOpen, projectileFrame } from './presentation.ts';
+import { gatePlacement, gateView, GATE_RIGS, groundOrigin } from './groundRigs.ts';
 
 const HIT_FLASH_MS = 160;
 const SHOT_MS = 180;
@@ -537,10 +538,7 @@ export class PlayScene extends Phaser.Scene {
       x: line.at.x + line.across.x * k + line.along.x * a,
       y: line.at.y + line.across.y * k + line.along.y * a,
     });
-    const near = (p: Vec, r: number) => (p.x - line.at.x) ** 2 + (p.y - line.at.y) ** 2 < r * r;
-    const open =
-      !b.destroyed &&
-      ((state.king.alive && near(state.king.pos, 2.5)) || state.units.some((u) => near(u.pos, 2)));
+    const open = gateIsOpen(line.at, b.destroyed, state.king, state.units);
 
     // Painted walls: a row of stakes (or stone posts) on each wing, and the gate in the view
     // closest to the wall's angle. Each piece is sorted on its own like the slabs.
@@ -559,11 +557,21 @@ export class PlayScene extends Phaser.Scene {
     }
     if (gate) {
       const p = this.px(line.at);
+      const size = this.textures.getFrame(this.art.atlas(gate.frame)!, gate.frame);
+      const placement = gatePlacement(
+        gate.rig,
+        line.across,
+        gate.mirror,
+        2 * GATE_HALF_WIDTH,
+        SCALE,
+        SQUASH,
+      );
       items.push({
         y: p.y,
         draw: () =>
-          this.image(gate.frame, p.x, p.y, ART_SCALE)
-            .setScale(ART_SCALE * (gate.mirror ? -1 : 1), ART_SCALE)
+          this.painter
+            .projectedImage(this.art.atlas(gate.frame)!, gate.frame, p.x, p.y, placement.matrix)
+            .setOrigin(placement.anchor[0] / size.realWidth, placement.anchor[1] / size.realHeight)
             .setAlpha(alpha),
       });
     }
@@ -624,14 +632,12 @@ export class PlayScene extends Phaser.Scene {
     base: string,
     across: Vec,
     open: boolean,
-  ): { frame: string; mirror: boolean } | null {
-    const x = across.x;
-    const y = across.y * SQUASH;
-    const angle = Math.atan2(Math.abs(y), Math.abs(x));
-    const view = angle < Math.PI / 8 ? '' : angle > (3 * Math.PI) / 8 ? '.side' : '.diag';
-    // Frames: .f1 shut, .f2 open.
-    const frame = this.art.at(`${base}${view}`, open ? 0.99 : 0);
-    return frame ? { frame, mirror: view === '.diag' && x * y > 0 } : null;
+  ): { frame: string; mirror: boolean; rig: (typeof GATE_RIGS)[string] } | null {
+    const { view, mirror } = gateView(across, SQUASH);
+    const name = `${base}${view}`;
+    const frame = this.art.at(name, open ? 0.99 : 0);
+    const rig = GATE_RIGS[name];
+    return frame && rig ? { frame, mirror, rig } : null;
   }
 
   /** Fills a polygon with the current fill style. */
@@ -937,7 +943,14 @@ export class PlayScene extends Phaser.Scene {
   ) {
     const frame = this.art.still(id);
     if (frame) {
-      const im = this.image(frame, x, y, ART_SCALE * (id.startsWith('castle') ? 1 : BUILDING_SIZE));
+      const size = this.textures.getFrame(this.art.atlas(frame)!, frame);
+      const origin = groundOrigin(frame, size.realWidth, size.realHeight);
+      const im = this.image(
+        frame,
+        x,
+        y,
+        ART_SCALE * (id.startsWith('castle') ? 1 : BUILDING_SIZE),
+      ).setOrigin(origin[0], origin[1]);
       const hides = king && king.y < y && im.getBounds().contains(king.x, king.y);
       im.setAlpha(hides ? alpha * SEE_THROUGH : alpha);
       if (this.runtime.state.phase === 'night') im.setTint(colors.nightArt);
@@ -955,8 +968,8 @@ export class PlayScene extends Phaser.Scene {
     if (!frame) return s * 3.2;
     const size = this.textures.getFrame(this.art.atlas(frame)!, frame);
     const scale = ART_SCALE * (id.startsWith('castle') ? 1 : BUILDING_SIZE);
-    // The pivot is at 90% of the canvas; the trimmed art ends `y` pixels from the canvas top.
-    const top = size.realHeight * 0.9 - size.y;
+    // Use the same calibrated ground anchor as the image, accounting for atlas trimming.
+    const top = size.realHeight * groundOrigin(frame, size.realWidth, size.realHeight)[1] - size.y;
     return top * scale + 6;
   }
 

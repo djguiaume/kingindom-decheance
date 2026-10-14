@@ -20,3 +20,15 @@ export function emptyPlotIds(
   const occupied = new Set(buildings.map((b) => b.slot));
   return new Set(slots.filter((id) => !occupied.has(id)));
 }
+
+/** Friendly proximity opens the gate from either side, independent of its lane orientation. */
+export function gateIsOpen(
+  at: { x: number; y: number },
+  destroyed: boolean,
+  king: { alive: boolean; pos: { x: number; y: number } },
+  units: readonly { pos: { x: number; y: number } }[],
+): boolean {
+  const near = (p: { x: number; y: number }, radius: number) =>
+    (p.x - at.x) ** 2 + (p.y - at.y) ** 2 < radius * radius;
+  return !destroyed && ((king.alive && near(king.pos, 2.5)) || units.some((u) => near(u.pos, 2)));
+}

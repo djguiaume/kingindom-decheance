@@ -5,10 +5,14 @@
  * frame, so nothing is created once the scene has warmed up. View-only.
  */
 import Phaser from 'phaser';
+import { decomposeAffine, type Affine2D } from './groundRigs.ts';
 
 export class Painter {
   private graphics: Phaser.GameObjects.Graphics[] = [];
   private images: Phaser.GameObjects.Image[] = [];
+  private projected: { parent: Phaser.GameObjects.Container; image: Phaser.GameObjects.Image }[] =
+    [];
+  private usedP = 0;
   private usedG = 0;
   private usedI = 0;
   private depth = 0;
@@ -21,6 +25,7 @@ export class Painter {
   ) {}
 
   begin(): void {
+    this.usedP = 0;
     this.usedG = 0;
     this.usedI = 0;
     this.depth = this.base;
@@ -62,6 +67,39 @@ export class Painter {
       .clearTint();
   }
 
+  /** A calibrated ground-plane projection with upright posts, pooled like ordinary images. */
+  projectedImage(
+    atlas: string,
+    frame: string,
+    x: number,
+    y: number,
+    matrix: Affine2D,
+  ): Phaser.GameObjects.Image {
+    this.open = null;
+    let item = this.projected[this.usedP];
+    if (!item) {
+      const image = this.scene.add.image(0, 0, atlas, frame);
+      const parent = this.scene.add.container(0, 0, [image]);
+      item = { parent, image };
+      this.projected.push(item);
+    } else item.image.setTexture(atlas, frame);
+    this.usedP++;
+    const transform = decomposeAffine(matrix);
+    item.parent
+      .setVisible(true)
+      .setDepth(this.depth++)
+      .setPosition(x, y)
+      .setRotation(transform.outer)
+      .setScale(transform.scaleX, transform.scaleY);
+    return item.image
+      .setVisible(true)
+      .setPosition(0, 0)
+      .setScale(1)
+      .setRotation(transform.inner)
+      .setAlpha(1)
+      .clearTint();
+  }
+
   /** The same frame washed white at `strength`, for a hit flash (placed like `like`). */
   whiteout(like: Phaser.GameObjects.Image, strength: number): void {
     const frame = like.frame;
@@ -77,6 +115,8 @@ export class Painter {
 
   /** Hides what this frame did not use. */
   end(): void {
+    for (let i = this.usedP; i < this.projected.length; i++)
+      this.projected[i]!.parent.setVisible(false);
     for (let i = this.usedG; i < this.graphics.length; i++) {
       const g = this.graphics[i]!;
       if (g.visible) g.clear().setVisible(false);
