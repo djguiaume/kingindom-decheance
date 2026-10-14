@@ -123,7 +123,8 @@ steering, hand-made maps) and the prototype design (corpus 11), and are easy to 
   hug the edge (6 px inside the safe area) and keep clear of the HUD by measuring its panels and
   buttons (`.hud .panel`, `.hud button`, every 250 ms) instead of fixed zones: a pin slides along
   its edge to the nearest free spot, and steps just past a panel only when the whole edge is
-  blocked there. The joystick zone is the bottom-left corner, at most 200 × 160 px. A spawn pin
+  blocked there. There is no joystick zone: the stick floats anywhere on the left, and a fixed
+  zone only pushed left-edge pins off the edge (playtest, 2026-10-14). A spawn pin
   standing over an on-screen spawn is kept inside the screen.
 - **Spawn pin while the spawn is on screen**: by day the pin stands over the spawn, pointing
   down, so the king can walk there and still read what is coming.

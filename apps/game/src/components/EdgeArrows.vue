@@ -8,11 +8,9 @@ import { onBeforeUnmount, onMounted, ref, shallowRef } from 'vue';
 import type { CameraView } from '../game/camera.ts';
 import { buildArrows, pinSize, type Arrow, type ArrowLayout } from '../game/indicators.ts';
 import type { GameRuntime } from '../game/runtime.ts';
-import { useHudStore } from '../stores/hud.ts';
 import GameIcon from './GameIcon.vue';
 
 const props = defineProps<{ runtime: GameRuntime; camera: CameraView }>();
-const store = useHudStore();
 const arrows = shallowRef<Arrow[]>([]);
 const probe = ref<HTMLDivElement>();
 const root = ref<HTMLDivElement>();
@@ -48,7 +46,7 @@ function hudPanels(): ArrowLayout['avoid'] {
   return panels;
 }
 
-function layout(w: number, h: number): ArrowLayout {
+function layout(): ArrowLayout {
   const safe = probe.value ? getComputedStyle(probe.value) : null;
   const px = (v: string | undefined) => Number.parseFloat(v ?? '0') || 0;
   const inset = {
@@ -57,15 +55,9 @@ function layout(w: number, h: number): ArrowLayout {
     bottom: px(safe?.paddingBottom) + EDGE,
     left: px(safe?.paddingLeft) + EDGE,
   };
-  const avoid = [...hudPanels()];
-  // The joystick appears under the left thumb, low on the left.
-  if (store.device === 'touch')
-    avoid.push({
-      left: 0,
-      top: h - Math.min(160, h * 0.45),
-      right: Math.min(200, w * 0.25),
-      bottom: h,
-    });
+  // No zone for the joystick: it floats under the left thumb anywhere on the left side, so a
+  // fixed zone only pushed left-edge pins away from the edge and off their target's line.
+  const avoid = hudPanels();
   return { inset, avoid };
 }
 
@@ -112,14 +104,7 @@ function tick(now: number) {
   const cam = props.camera;
   if (cam.width === 0) return;
   arrows.value = ease(
-    buildArrows(
-      props.runtime.state,
-      props.runtime.ctx,
-      cam,
-      layout(cam.width, cam.height),
-      lastHit,
-      now,
-    ),
+    buildArrows(props.runtime.state, props.runtime.ctx, cam, layout(), lastHit, now),
   );
 }
 
