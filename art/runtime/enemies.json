@@ -29,7 +29,7 @@
     },
     "brute_weapon": {
       "frame": {
-        "x": 2,
+        "x": 219,
         "y": 225,
         "w": 177,
         "h": 58
@@ -353,7 +353,7 @@
     },
     "raider": {
       "frame": {
-        "x": 1806,
+        "x": 1924,
         "y": 2,
         "w": 54,
         "h": 80
@@ -380,8 +380,8 @@
     },
     "raider_weapon": {
       "frame": {
-        "x": 1906,
-        "y": 2,
+        "x": 181,
+        "y": 225,
         "w": 36,
         "h": 59
       },
@@ -407,7 +407,7 @@
     },
     "raider.back": {
       "frame": {
-        "x": 1862,
+        "x": 1980,
         "y": 2,
         "w": 42,
         "h": 80
@@ -540,6 +540,87 @@
       "num": 37,
       "contentId": "warlord"
     },
+    "warlord_bodyguard": {
+      "frame": {
+        "x": 1806,
+        "y": 2,
+        "w": 69,
+        "h": 82
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 46,
+        "y": 62,
+        "w": 69,
+        "h": 82
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 160
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "warlord_bodyguard",
+      "num": 39,
+      "contentId": "warlord"
+    },
+    "warlord_bodyguard.back": {
+      "frame": {
+        "x": 1877,
+        "y": 2,
+        "w": 45,
+        "h": 82
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 58,
+        "y": 62,
+        "w": 45,
+        "h": 82
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 160
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "warlord_bodyguard",
+      "num": 39,
+      "contentId": "warlord"
+    },
+    "warlord_weapon": {
+      "frame": {
+        "x": 2,
+        "y": 225,
+        "w": 177,
+        "h": 72
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 8,
+        "y": 12,
+        "w": 177,
+        "h": 72
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 96
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "asset": "warlord_weapon",
+      "num": 38,
+      "contentId": "warlord"
+    },
     "warlord.back": {
       "frame": {
         "x": 247,
@@ -574,8 +655,8 @@
     "image": "enemies.webp",
     "format": "RGBA8888",
     "size": {
-      "w": 1944,
-      "h": 285
+      "w": 2024,
+      "h": 299
     },
     "scale": "1"
   }

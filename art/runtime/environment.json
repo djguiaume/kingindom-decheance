@@ -1,0 +1,353 @@
+{
+  "frames": {
+    "bamboo_large": {
+      "frame": {
+        "x": 381,
+        "y": 2,
+        "w": 169,
+        "h": 220
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 12,
+        "y": 10,
+        "w": 169,
+        "h": 220
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "bamboo_large",
+      "num": 87
+    },
+    "bamboo_single": {
+      "frame": {
+        "x": 813,
+        "y": 2,
+        "w": 59,
+        "h": 92
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 3,
+        "y": 110,
+        "w": 59,
+        "h": 92
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 224
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "bamboo_single",
+      "num": 88
+    },
+    "bamboo_small": {
+      "frame": {
+        "x": 735,
+        "y": 2,
+        "w": 76,
+        "h": 120
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 10,
+        "y": 24,
+        "w": 76,
+        "h": 120
+      },
+      "sourceSize": {
+        "w": 96,
+        "h": 160
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "bamboo_small",
+      "num": 86
+    },
+    "barrel": {
+      "frame": {
+        "x": 946,
+        "y": 2,
+        "w": 41,
+        "h": 60
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 12,
+        "y": 12,
+        "w": 41,
+        "h": 60
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 80
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "barrel",
+      "num": 97
+    },
+    "crate": {
+      "frame": {
+        "x": 989,
+        "y": 2,
+        "w": 60,
+        "h": 56
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 10,
+        "y": 16,
+        "w": 60,
+        "h": 56
+      },
+      "sourceSize": {
+        "w": 80,
+        "h": 80
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "crate",
+      "num": 98
+    },
+    "flowers": {
+      "frame": {
+        "x": 1158,
+        "y": 2,
+        "w": 44,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 26,
+        "y": 18,
+        "w": 44,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 96,
+        "h": 64
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "flowers",
+      "num": 94
+    },
+    "grass": {
+      "frame": {
+        "x": 1051,
+        "y": 2,
+        "w": 47,
+        "h": 56
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 25,
+        "y": 16,
+        "w": 47,
+        "h": 56
+      },
+      "sourceSize": {
+        "w": 96,
+        "h": 80
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "grass",
+      "num": 93
+    },
+    "lantern_post": {
+      "frame": {
+        "x": 552,
+        "y": 2,
+        "w": 59,
+        "h": 132
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 3,
+        "y": 12,
+        "w": 59,
+        "h": 132
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 160
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "lantern_post",
+      "num": 96
+    },
+    "pine": {
+      "frame": {
+        "x": 240,
+        "y": 2,
+        "w": 139,
+        "h": 249
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 27,
+        "y": 10,
+        "w": 139,
+        "h": 249
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 288
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "pine",
+      "num": 90
+    },
+    "rock_large": {
+      "frame": {
+        "x": 613,
+        "y": 2,
+        "w": 120,
+        "h": 120
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 36,
+        "y": 24,
+        "w": 120,
+        "h": 120
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 160
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "rock_large",
+      "num": 92
+    },
+    "rock_small": {
+      "frame": {
+        "x": 1100,
+        "y": 2,
+        "w": 56,
+        "h": 50
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 20,
+        "y": 22,
+        "w": 56,
+        "h": 50
+      },
+      "sourceSize": {
+        "w": 96,
+        "h": 80
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "rock_small",
+      "num": 91
+    },
+    "shrub": {
+      "frame": {
+        "x": 874,
+        "y": 2,
+        "w": 70,
+        "h": 72
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 29,
+        "y": 14,
+        "w": 70,
+        "h": 72
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 96
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "shrub",
+      "num": 95
+    },
+    "tree": {
+      "frame": {
+        "x": 2,
+        "y": 2,
+        "w": 236,
+        "h": 276
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 10,
+        "y": 12,
+        "w": 236,
+        "h": 276
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 320
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "tree",
+      "num": 89
+    }
+  },
+  "meta": {
+    "app": "@kd/art-pipeline",
+    "version": "1",
+    "image": "environment.webp",
+    "format": "RGBA8888",
+    "size": {
+      "w": 1204,
+      "h": 280
+    },
+    "scale": "1"
+  }
+}

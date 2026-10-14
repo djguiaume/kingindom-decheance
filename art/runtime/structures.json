@@ -1,0 +1,359 @@
+{
+  "frames": {
+    "castle_flag": {
+      "frame": {
+        "x": 740,
+        "y": 2,
+        "w": 72,
+        "h": 166
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 12,
+        "y": 7,
+        "w": 72,
+        "h": 166
+      },
+      "sourceSize": {
+        "w": 96,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "castle_flag",
+      "num": 72
+    },
+    "construction": {
+      "frame": {
+        "x": 2,
+        "y": 2,
+        "w": 215,
+        "h": 221
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 21,
+        "y": 9,
+        "w": 215,
+        "h": 221
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "construction",
+      "num": 67
+    },
+    "gate_stone.f1": {
+      "frame": {
+        "x": 577,
+        "y": 2,
+        "w": 161,
+        "h": 166
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 16,
+        "y": 7,
+        "w": 161,
+        "h": 166
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "gate_stone",
+      "num": 65,
+      "contentId": "stone_wall"
+    },
+    "gate_stone.f2": {
+      "frame": {
+        "x": 406,
+        "y": 2,
+        "w": 169,
+        "h": 166
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 12,
+        "y": 7,
+        "w": 169,
+        "h": 166
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "gate_stone",
+      "num": 65,
+      "contentId": "stone_wall"
+    },
+    "gate_wood.f1": {
+      "frame": {
+        "x": 993,
+        "y": 2,
+        "w": 177,
+        "h": 150
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 8,
+        "y": 23,
+        "w": 177,
+        "h": 150
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "gate_wood",
+      "num": 64,
+      "contentId": "wall"
+    },
+    "gate_wood.f2": {
+      "frame": {
+        "x": 814,
+        "y": 2,
+        "w": 177,
+        "h": 151
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 8,
+        "y": 22,
+        "w": 177,
+        "h": 151
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "gate_wood",
+      "num": 64,
+      "contentId": "wall"
+    },
+    "lantern_glow": {
+      "frame": {
+        "x": 1227,
+        "y": 2,
+        "w": 99,
+        "h": 118
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 15,
+        "y": 5,
+        "w": 99,
+        "h": 118
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "asset": "lantern_glow",
+      "num": 70
+    },
+    "panda_banner": {
+      "frame": {
+        "x": 1172,
+        "y": 2,
+        "w": 53,
+        "h": 138
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 6,
+        "y": 6,
+        "w": 53,
+        "h": 138
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 160
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "panda_banner",
+      "num": 71
+    },
+    "ruin": {
+      "frame": {
+        "x": 219,
+        "y": 2,
+        "w": 185,
+        "h": 166
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 36,
+        "y": 7,
+        "w": 185,
+        "h": 166
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "ruin",
+      "num": 68
+    },
+    "slot_empty": {
+      "frame": {
+        "x": 1356,
+        "y": 2,
+        "w": 111,
+        "h": 88
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 41,
+        "y": 4,
+        "w": 111,
+        "h": 88
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 96
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "asset": "slot_empty",
+      "num": 66
+    },
+    "stone_wall_post": {
+      "frame": {
+        "x": 1518,
+        "y": 2,
+        "w": 59,
+        "h": 81
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 3,
+        "y": 34,
+        "w": 59,
+        "h": 81
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "stone_wall_post",
+      "num": 63,
+      "contentId": "stone_wall"
+    },
+    "wall_post": {
+      "frame": {
+        "x": 1328,
+        "y": 2,
+        "w": 26,
+        "h": 111
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 19,
+        "y": 4,
+        "w": 26,
+        "h": 111
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "wall_post",
+      "num": 62,
+      "contentId": "wall"
+    },
+    "window_glow": {
+      "frame": {
+        "x": 1469,
+        "y": 2,
+        "w": 47,
+        "h": 88
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 25,
+        "y": 4,
+        "w": 47,
+        "h": 88
+      },
+      "sourceSize": {
+        "w": 96,
+        "h": 96
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "asset": "window_glow",
+      "num": 69
+    }
+  },
+  "meta": {
+    "app": "@kd/art-pipeline",
+    "version": "1",
+    "image": "structures.webp",
+    "format": "RGBA8888",
+    "size": {
+      "w": 1579,
+      "h": 225
+    },
+    "scale": "1"
+  }
+}
