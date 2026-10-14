@@ -1,8 +1,8 @@
 <script setup lang="ts">
 /**
- * Press-and-hold button (design 11 §10.3): a ring fills while held and the action fires when it
+ * Press-and-hold button (design 11 §10.3): the button fills while held and the action fires when it
  * is full, so a brush of the thumb never spends gold. Works with touch, mouse and pen (Pointer
- * Events). `externalHolding` lets a keyboard hold show the same ring.
+ * Events). `externalHolding` lets a keyboard hold show the same fill.
  */
 import { onBeforeUnmount, ref } from 'vue';
 
@@ -52,20 +52,20 @@ onBeforeUnmount(cancel);
   touch-action: none;
 }
 .fill {
-  /* A bar filling along the bottom edge while held, in gold (money) or the button's --fill. */
+  /* The whole button fills left to right while held: a wash of gold (money) or the button's
+     --fill, with a solid leading edge so progress reads at a glance. */
   position: absolute;
-  left: 0;
-  right: 0;
+  top: 0;
   bottom: 0;
-  height: 4px;
-  z-index: 1;
-  background: var(--fill, var(--gold));
-  transform: scaleX(0);
-  transform-origin: left;
+  left: 0;
+  width: 0;
+  background: color-mix(in srgb, var(--fill, var(--gold)) 38%, transparent);
+  box-shadow: inset -3px 0 0 var(--fill, var(--gold));
 }
 .holding .fill {
-  transform: scaleX(1);
-  transition: transform var(--hold-ms) linear;
+  /* Width rather than a scale, so the leading edge keeps its thickness. */
+  width: 100%;
+  transition: width var(--hold-ms) linear;
 }
 .content {
   position: relative;
