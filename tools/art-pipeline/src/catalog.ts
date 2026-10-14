@@ -332,6 +332,7 @@ export const CATALOG: CatalogEntry[] = [
   {
     num: 33,
     id: 'harpy',
+    back: true,
     name: 'Harpy',
     group: 'enemies',
     kind: 'flyer',
@@ -393,6 +394,7 @@ export const CATALOG: CatalogEntry[] = [
   {
     num: 39,
     id: 'warlord_bodyguard',
+    back: true,
     name: 'Warlord bodyguard',
     group: 'enemies',
     kind: 'character',
@@ -803,6 +805,7 @@ function unit(
       name,
       group,
       kind: 'character',
+      back: true,
       contentId,
       subject: `${body}; hands in a grip pose without a weapon (the weapon is a separate layer)`,
       canvas,

@@ -72,9 +72,9 @@ describe('manifest', () => {
     expect(prompt('footman')).toMatch(/turned clearly toward the right/);
   });
 
-  it('adds back views for the king only, without changing the front prompts', () => {
+  it('adds back views for the king and every unit body, without changing the front prompts', () => {
     const back = manifest.assets.flatMap((a) => a.parts.filter((p) => p.view === 'back'));
-    expect(back).toHaveLength(14);
+    expect(back).toHaveLength(28);
     expect(new Set(back.map((p) => p.id.split('.')[0]))).toEqual(
       new Set([
         'king_roll_idle',
@@ -82,6 +82,18 @@ describe('manifest', () => {
         'king_wolf_idle',
         'king_wolf_walk',
         'king_wolf_run',
+        'footman',
+        'knight',
+        'archer',
+        'crossbowman',
+        'guardian',
+        'monk',
+        'raider',
+        'skirmisher',
+        'brute',
+        'harpy',
+        'warlord',
+        'warlord_bodyguard',
       ]),
     );
     const walk = manifest.assets.find((a) => a.id === 'king_roll_walk')!;

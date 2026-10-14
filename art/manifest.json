@@ -695,6 +695,12 @@
           "id": "footman",
           "frame": 0,
           "master": "art/masters/friendly/015_footman.png"
+        },
+        {
+          "id": "footman.back",
+          "frame": 0,
+          "view": "back",
+          "master": "art/masters/friendly/015_footman_back.png"
         }
       ]
     },
@@ -758,6 +764,12 @@
           "id": "knight",
           "frame": 0,
           "master": "art/masters/friendly/017_knight.png"
+        },
+        {
+          "id": "knight.back",
+          "frame": 0,
+          "view": "back",
+          "master": "art/masters/friendly/017_knight_back.png"
         }
       ]
     },
@@ -821,6 +833,12 @@
           "id": "archer",
           "frame": 0,
           "master": "art/masters/friendly/019_archer.png"
+        },
+        {
+          "id": "archer.back",
+          "frame": 0,
+          "view": "back",
+          "master": "art/masters/friendly/019_archer_back.png"
         }
       ]
     },
@@ -884,6 +902,12 @@
           "id": "crossbowman",
           "frame": 0,
           "master": "art/masters/friendly/021_crossbowman.png"
+        },
+        {
+          "id": "crossbowman.back",
+          "frame": 0,
+          "view": "back",
+          "master": "art/masters/friendly/021_crossbowman_back.png"
         }
       ]
     },
@@ -948,6 +972,12 @@
           "id": "guardian",
           "frame": 0,
           "master": "art/masters/friendly/023_guardian.png"
+        },
+        {
+          "id": "guardian.back",
+          "frame": 0,
+          "view": "back",
+          "master": "art/masters/friendly/023_guardian_back.png"
         }
       ]
     },
@@ -1013,6 +1043,12 @@
           "id": "monk",
           "frame": 0,
           "master": "art/masters/friendly/025_monk.png"
+        },
+        {
+          "id": "monk.back",
+          "frame": 0,
+          "view": "back",
+          "master": "art/masters/friendly/025_monk_back.png"
         }
       ]
     },
@@ -1077,6 +1113,12 @@
           "id": "raider",
           "frame": 0,
           "master": "art/masters/enemies/027_raider.png"
+        },
+        {
+          "id": "raider.back",
+          "frame": 0,
+          "view": "back",
+          "master": "art/masters/enemies/027_raider_back.png"
         }
       ]
     },
@@ -1140,6 +1182,12 @@
           "id": "skirmisher",
           "frame": 0,
           "master": "art/masters/enemies/029_skirmisher.png"
+        },
+        {
+          "id": "skirmisher.back",
+          "frame": 0,
+          "view": "back",
+          "master": "art/masters/enemies/029_skirmisher_back.png"
         }
       ]
     },
@@ -1203,6 +1251,12 @@
           "id": "brute",
           "frame": 0,
           "master": "art/masters/enemies/031_brute.png"
+        },
+        {
+          "id": "brute.back",
+          "frame": 0,
+          "view": "back",
+          "master": "art/masters/enemies/031_brute_back.png"
         }
       ]
     },
@@ -1279,6 +1333,27 @@
           "frame": 2,
           "pose": "wings down",
           "master": "art/masters/enemies/033_harpy_f3.png"
+        },
+        {
+          "id": "harpy.back.f1",
+          "frame": 0,
+          "view": "back",
+          "pose": "wings up",
+          "master": "art/masters/enemies/033_harpy_back_f1.png"
+        },
+        {
+          "id": "harpy.back.f2",
+          "frame": 1,
+          "view": "back",
+          "pose": "wings level",
+          "master": "art/masters/enemies/033_harpy_back_f2.png"
+        },
+        {
+          "id": "harpy.back.f3",
+          "frame": 2,
+          "view": "back",
+          "pose": "wings down",
+          "master": "art/masters/enemies/033_harpy_back_f3.png"
         }
       ]
     },
@@ -1419,6 +1494,12 @@
           "id": "warlord",
           "frame": 0,
           "master": "art/masters/enemies/037_warlord.png"
+        },
+        {
+          "id": "warlord.back",
+          "frame": 0,
+          "view": "back",
+          "master": "art/masters/enemies/037_warlord_back.png"
         }
       ]
     },
@@ -1483,6 +1564,12 @@
           "id": "warlord_bodyguard",
           "frame": 0,
           "master": "art/masters/enemies/039_warlord_bodyguard.png"
+        },
+        {
+          "id": "warlord_bodyguard.back",
+          "frame": 0,
+          "view": "back",
+          "master": "art/masters/enemies/039_warlord_bodyguard_back.png"
         }
       ]
     },
