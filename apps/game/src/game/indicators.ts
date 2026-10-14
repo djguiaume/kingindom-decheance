@@ -119,14 +119,21 @@ export function enemyGroups(state: GameState, exclude?: (id: number) => boolean)
   return groups;
 }
 
+const dist2 = (a: Vec, b: Vec) => (a.x - b.x) ** 2 + (a.y - b.y) ** 2;
+const clampInside = (p: Vec, r: Rect): Vec => ({
+  x: Math.min(r.right, Math.max(r.left, p.x)),
+  y: Math.min(r.bottom, Math.max(r.top, p.y)),
+});
+
 /** Room for the tip outside the marker body, in CSS px. */
 const TIP = 14;
 
 /**
  * Where an arrow toward a screen point sits: on the inset rectangle (shrunk by half the marker's
  * size, so a wide marker never pokes out of the screen), along the line from the screen centre.
- * If that spot is in an area to avoid, the marker slides along the same screen edge out of it,
- * so it always stays on the edge. Null when the point is on screen.
+ * If that spot covers an area to avoid (a HUD panel, the joystick), the marker slides along the
+ * same screen edge to the nearest free spot; only when the whole edge is blocked there does it
+ * step inwards, just past the panel. Null when the point is on screen.
  */
 export function placeArrow(
   target: Vec,
@@ -136,12 +143,7 @@ export function placeArrow(
 ): { x: number; y: number; angle: number } | null {
   const { width: w, height: h } = view;
   if (target.x >= 0 && target.x <= w && target.y >= 0 && target.y <= h) return null;
-  const inner: Rect = {
-    left: layout.inset.left + half.w,
-    top: layout.inset.top + half.h,
-    right: w - layout.inset.right - half.w,
-    bottom: h - layout.inset.bottom - half.h,
-  };
+  const inner = innerRect(view, layout, half);
   const cx = w / 2;
   const cy = h / 2;
   const dx = target.x - cx;
@@ -150,32 +152,88 @@ export function placeArrow(
   const kx = dx > 0 ? (inner.right - cx) / dx : dx < 0 ? (inner.left - cx) / dx : Infinity;
   const ky = dy > 0 ? (inner.bottom - cy) / dy : dy < 0 ? (inner.top - cy) / dy : Infinity;
   const k = Math.max(0, Math.min(kx, ky));
-  let x = cx + dx * k;
-  let y = cy + dy * k;
+  const at = { x: cx + dx * k, y: cy + dy * k };
   // Which edge it sits on decides the direction it may slide in.
-  const onSide = kx <= ky;
-  for (const r of layout.avoid) {
-    // The marker's box, not just its centre, must stay out of the area.
-    if (x + half.w < r.left || x - half.w > r.right || y + half.h < r.top || y - half.h > r.bottom)
-      continue;
-    if (onSide) {
-      const up = r.top - half.h;
-      const down = r.bottom + half.h;
-      const options = [up, down].filter((v) => v >= inner.top && v <= inner.bottom);
-      const best = options.sort((a, b) => Math.abs(a - y) - Math.abs(b - y))[0];
-      if (best !== undefined) y = best;
-    } else {
-      const left = r.left - half.w;
-      const right = r.right + half.w;
-      const options = [left, right].filter((v) => v >= inner.left && v <= inner.right);
-      const best = options.sort((a, b) => Math.abs(a - x) - Math.abs(b - x))[0];
-      if (best !== undefined) x = best;
-    }
-  }
-  return { x, y, angle };
+  const edge = kx <= ky ? (dx > 0 ? 'right' : 'left') : dy > 0 ? 'bottom' : 'top';
+  return { ...avoidAreas(at, edge, inner, layout.avoid, half), angle };
 }
 
-const dist2 = (a: Vec, b: Vec) => (a.x - b.x) ** 2 + (a.y - b.y) ** 2;
+/** The rectangle a marker's centre may use: the screen minus the insets and half the marker. */
+function innerRect(
+  view: { width: number; height: number },
+  layout: ArrowLayout,
+  half: { w: number; h: number },
+): Rect {
+  return {
+    left: layout.inset.left + half.w,
+    top: layout.inset.top + half.h,
+    right: Math.max(layout.inset.left + half.w, view.width - layout.inset.right - half.w),
+    bottom: Math.max(layout.inset.top + half.h, view.height - layout.inset.bottom - half.h),
+  };
+}
+
+type Edge = 'left' | 'right' | 'top' | 'bottom';
+
+function avoidAreas(
+  at: Vec,
+  edge: Edge,
+  inner: Rect,
+  avoid: Rect[],
+  half: { w: number; h: number },
+): Vec {
+  // The marker's box, not just its centre, must stay out of every area.
+  const hits = (p: Vec) =>
+    avoid.filter(
+      (r) =>
+        p.x + half.w > r.left &&
+        p.x - half.w < r.right &&
+        p.y + half.h > r.top &&
+        p.y - half.h < r.bottom,
+    );
+  if (hits(at).length === 0) return at;
+  const nearest = (options: Vec[]) =>
+    options
+      .filter(
+        (p) =>
+          p.x >= inner.left - 0.5 &&
+          p.x <= inner.right + 0.5 &&
+          p.y >= inner.top - 0.5 &&
+          p.y <= inner.bottom + 0.5 &&
+          hits(p).length === 0,
+      )
+      .sort((a, b) => dist2(a, at) - dist2(b, at))[0];
+  const side = edge === 'left' || edge === 'right';
+  // Slide along the edge: just before or after each area.
+  const slides = avoid.flatMap((r) =>
+    side
+      ? [
+          { x: at.x, y: r.top - half.h },
+          { x: at.x, y: r.bottom + half.h },
+        ]
+      : [
+          { x: r.left - half.w, y: at.y },
+          { x: r.right + half.w, y: at.y },
+        ],
+  );
+  const slid = nearest(slides);
+  if (slid) return slid;
+  // The whole edge is blocked here: step inwards, just past what is in the way.
+  let p = at;
+  for (let i = 0; i < avoid.length; i++) {
+    const r = hits(p)[0];
+    if (!r) return p;
+    p =
+      edge === 'top'
+        ? { x: p.x, y: r.bottom + half.h }
+        : edge === 'bottom'
+          ? { x: p.x, y: r.top - half.h }
+          : edge === 'left'
+            ? { x: r.right + half.w, y: p.y }
+            : { x: r.left - half.w, y: p.y };
+  }
+  return hits(p).length === 0 ? p : at;
+}
+
 const sizeFor = (count: number): 1 | 2 | 3 => (count >= 12 ? 3 : count >= 5 ? 2 : 1);
 /** Every enemy marker is one danger red, like Thronefall's; the icons tell the types apart. */
 const ENEMY_RED = css(ui.enemy);
@@ -215,8 +273,11 @@ export function buildArrows(
       out.push({
         key,
         kind,
-        x: screen.x,
-        y: screen.y - height / 2 - TIP - 6,
+        // Kept inside the screen when the spawn sits near an edge.
+        ...clampInside(
+          { x: screen.x, y: screen.y - height / 2 - TIP - 6 },
+          innerRect(view, layout, { w: width / 2, h: height / 2 }),
+        ),
         angle: Math.PI / 2,
         size,
         color,

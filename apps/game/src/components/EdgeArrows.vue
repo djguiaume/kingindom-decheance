@@ -8,35 +8,56 @@ import { onBeforeUnmount, onMounted, ref, shallowRef } from 'vue';
 import type { CameraView } from '../game/camera.ts';
 import { buildArrows, pinSize, type Arrow, type ArrowLayout } from '../game/indicators.ts';
 import type { GameRuntime } from '../game/runtime.ts';
-import { useHudStore } from '../stores/hud.ts';
 import GameIcon from './GameIcon.vue';
 
 const props = defineProps<{ runtime: GameRuntime; camera: CameraView }>();
-const store = useHudStore();
 const arrows = shallowRef<Arrow[]>([]);
 const probe = ref<HTMLDivElement>();
+const root = ref<HTMLDivElement>();
 const lastHit = new Map<string, number>();
 
-/** Arrows sit 40 CSS px inside the safe area (and below the top bar). */
-const MARGIN = 40;
-const TOP_BAR = 52;
+/** Markers hug the screen edge (inside the safe area), like Thronefall's. */
+const EDGE = 6;
+/** Room kept between a marker and a HUD panel. */
+const GAP = 4;
+/** HUD panels and buttons the markers keep clear of; measured, so they follow the HUD layout. */
+const HUD_SELECTOR = '.hud .panel, .hud button';
 
-function layout(w: number, h: number): ArrowLayout {
+/** How often the HUD panels are measured again: measuring forces a layout, so not every frame. */
+const MEASURE_MS = 250;
+let panels: ArrowLayout['avoid'] = [];
+let measuredAt = -Infinity;
+function hudPanels(): ArrowLayout['avoid'] {
+  const now = performance.now();
+  if (now - measuredAt < MEASURE_MS) return panels;
+  measuredAt = now;
+  const origin = root.value?.getBoundingClientRect() ?? { left: 0, top: 0 };
+  panels = [];
+  for (const el of document.querySelectorAll(HUD_SELECTOR)) {
+    const r = el.getBoundingClientRect();
+    if (r.width === 0 || r.height === 0) continue;
+    panels.push({
+      left: r.left - origin.left - GAP,
+      top: r.top - origin.top - GAP,
+      right: r.right - origin.left + GAP,
+      bottom: r.bottom - origin.top + GAP,
+    });
+  }
+  return panels;
+}
+
+function layout(): ArrowLayout {
   const safe = probe.value ? getComputedStyle(probe.value) : null;
   const px = (v: string | undefined) => Number.parseFloat(v ?? '0') || 0;
   const inset = {
-    top: px(safe?.paddingTop) + MARGIN + TOP_BAR,
-    right: px(safe?.paddingRight) + MARGIN,
-    bottom: px(safe?.paddingBottom) + MARGIN,
-    left: px(safe?.paddingLeft) + MARGIN,
+    top: px(safe?.paddingTop) + EDGE,
+    right: px(safe?.paddingRight) + EDGE,
+    bottom: px(safe?.paddingBottom) + EDGE,
+    left: px(safe?.paddingLeft) + EDGE,
   };
-  // Keep clear of the bottom band and action buttons (corpus 14 §3.1, zones 7 and 8) and, on
-  // touch, the joystick corner.
-  const avoid = [
-    { left: w - 240, top: h - 170, right: w, bottom: h },
-    { left: w * 0.3, top: h - 130, right: w, bottom: h },
-  ];
-  if (store.device === 'touch') avoid.push({ left: 0, top: h - 240, right: 240, bottom: h });
+  // No zone for the joystick: it floats under the left thumb anywhere on the left side, so a
+  // fixed zone only pushed left-edge pins away from the edge and off their target's line.
+  const avoid = hudPanels();
   return { inset, avoid };
 }
 
@@ -83,14 +104,7 @@ function tick(now: number) {
   const cam = props.camera;
   if (cam.width === 0) return;
   arrows.value = ease(
-    buildArrows(
-      props.runtime.state,
-      props.runtime.ctx,
-      cam,
-      layout(cam.width, cam.height),
-      lastHit,
-      now,
-    ),
+    buildArrows(props.runtime.state, props.runtime.ctx, cam, layout(), lastHit, now),
   );
 }
 
@@ -113,7 +127,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="arrows" data-testid="edge-arrows">
+  <div ref="root" class="arrows" data-testid="edge-arrows">
     <div ref="probe" class="probe" />
     <div
       v-for="a in arrows"

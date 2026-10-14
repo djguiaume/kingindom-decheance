@@ -76,6 +76,21 @@ describe('edge arrows', () => {
     expect(at.y).toBe(250);
   });
 
+  it('on the top edge, slides past a HUD panel to the nearest free spot', () => {
+    // Target up and a little left: the spot on the top edge (x ≈ 393) is under a panel, nearer
+    // its right side.
+    const panel = { left: 250, top: 0, right: 450, bottom: 60 };
+    const at = placeArrow({ x: 300, y: -2000 }, view, { ...layout, avoid: [panel] })!;
+    expect(at.y).toBe(40);
+    expect(at.x).toBe(450);
+  });
+
+  it('steps just past the panels when the whole edge is blocked', () => {
+    const bar = { left: 0, top: 0, right: 800, bottom: 60 };
+    const at = placeArrow({ x: 400, y: -2000 }, view, { ...layout, avoid: [bar] })!;
+    expect(at).toMatchObject({ x: 400, y: 60 });
+  });
+
   it('groups enemies of one lane that are close together', () => {
     const s = nightSession();
     enemy(s, 'raider', 'west', 1, 27);
@@ -107,6 +122,14 @@ describe('edge arrows', () => {
     expect(pin).toMatchObject({ key: 'spawn-west', onScreen: true, angle: Math.PI / 2 });
     expect(pin!.x).toBeCloseTo(5 * 32);
     expect(pin!.y).toBeLessThan(5 * 32);
+  });
+
+  it('by day, a spawn on screen at the edge keeps its marker inside the screen', () => {
+    const s = new Session(prototypeContent, { ...prototypeRun, seed: 1 });
+    const spawn = s.ctx.lanes.get('west')!.points[0]!;
+    const [pin] = buildArrows(s.state, s.ctx, camera(spawn.x, spawn.y - 5), layout, new Map(), 0);
+    expect(pin!.onScreen).toBe(true);
+    expect(pin!.x - pin!.width / 2).toBeGreaterThanOrEqual(40);
   });
 
   it('by night: castle under attack first, then the boss, then the biggest groups; at most six', () => {
