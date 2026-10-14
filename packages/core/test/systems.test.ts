@@ -280,3 +280,90 @@ describe('phases', () => {
     expect(s.state.phase).toBe('won');
   });
 });
+
+describe('siege, boss and rally', () => {
+  it('a catapult lobs over a wall at the tower behind it', () => {
+    const s = newSession();
+    s.state.gold = 1000;
+    s.submit({ type: 'buy', slot: 'tw', option: 0 });
+    s.submit({ type: 'buy', slot: 'ww', option: 0 });
+    emptyNight(s, 10_000);
+    benchKing(s);
+    const [tower, wall] = s.state.buildings;
+    const catapult = placeEnemy(s, 'catapult', 12, 27.5, { cooldown: 0, waypoint: 2 });
+    const events = collectUntil(s, () => tower!.hp < tower!.maxHp, TICK_RATE * 10);
+    expect(catapult.target).toEqual({ kind: 'building', id: tower!.id });
+    expect(catapult.pos.x).toBeLessThan(wall!.pos.x);
+    expect(events).toContainEqual(
+      expect.objectContaining({ type: 'hit', attacker: { kind: 'enemy', id: catapult.id } }),
+    );
+  });
+
+  it('the warlord stomps everyone near it every 10 s', () => {
+    const s = newSession();
+    emptyNight(s, 10_000);
+    const king = s.state.king;
+    placeEnemy(s, 'warlord', king.pos.x + 2, king.pos.y, { waypoint: 4 });
+    const stomps = () => s.step().filter((e) => e.type === 'stomp').length;
+    let count = stomps();
+    expect(count).toBe(1);
+    expect(king.hp).toBe(king.maxHp - 20);
+    for (let i = 0; i < TICK_RATE * 10 - 2; i++) count += stomps();
+    expect(count).toBe(1);
+    for (let i = 0; i < 3; i++) count += stomps();
+    expect(count).toBe(2);
+  });
+
+  it('counter bonuses against tanks also apply to the boss', () => {
+    const s = newSession();
+    s.state.gold = 1000;
+    for (let i = 0; i < 3; i++) s.submit({ type: 'buy', slot: 'tw', option: 0 });
+    expect(s.state.buildings[0]!.type).toBe('ballista_tower');
+    emptyNight(s, 10_000);
+    benchKing(s);
+    const warlord = placeEnemy(s, 'warlord', 19, 26, { waypoint: 3 });
+    const events = collectUntil(s, () => warlord.hp < warlord.maxHp, TICK_RATE * 5);
+    expect(events).toContainEqual(
+      expect.objectContaining({ type: 'hit', attacker: { kind: 'building', id: 1 }, damage: 64 }),
+    );
+  });
+
+  it('rally picks up nearby footmen, who follow the king until dropped', () => {
+    const s = newSession();
+    s.submit({ type: 'buy', slot: 'b1', option: 0 });
+    expect(s.submit({ type: 'rally' })).toEqual({ ok: false, reason: 'rally is for the night' });
+    emptyNight(s, 10_000);
+    expect(s.state.units).toHaveLength(3);
+    expect(s.submit({ type: 'rally' })).toMatchObject({
+      ok: true,
+      events: [{ type: 'rallied', units: 3 }],
+    });
+    // The king walks 7 m east and waits; his footmen (slower than him) catch up.
+    s.submit({ type: 'move', x: 1, y: 0 });
+    for (let i = 0; i < TICK_RATE; i++) s.step();
+    s.submit({ type: 'move', x: 0, y: 0 });
+    for (let i = 0; i < TICK_RATE * 4; i++) s.step();
+    const king = s.state.king;
+    for (const u of s.state.units) expect(Math.abs(u.pos.x - king.pos.x)).toBeLessThan(3);
+
+    expect(s.submit({ type: 'rally' })).toMatchObject({
+      ok: true,
+      events: [{ type: 'unitsDropped', units: 3 }],
+    });
+    const dropAt = { ...king.pos };
+    s.submit({ type: 'move', x: -1, y: 0 });
+    for (let i = 0; i < TICK_RATE * 3; i++) s.step();
+    for (const u of s.state.units) {
+      expect(u.following).toBe(false);
+      expect(Math.abs(u.pos.x - dropAt.x)).toBeLessThan(2);
+    }
+  });
+
+  it('rally refuses when no footman is near the king', () => {
+    const s = newSession();
+    s.submit({ type: 'buy', slot: 'b1', option: 0 });
+    emptyNight(s, 10_000);
+    s.state.king.pos = { x: 5, y: 5 };
+    expect(s.submit({ type: 'rally' })).toEqual({ ok: false, reason: 'no footmen near the king' });
+  });
+});

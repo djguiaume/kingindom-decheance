@@ -55,6 +55,24 @@ steering, hand-made maps) and the prototype design (corpus 11), and are easy to 
 - Zoom is double tap or wheel; pinch zoom is not built.
 - Phone smoke tests use a Pixel preset on Chromium; an iPhone/WebKit run is not in CI yet.
 
+## Prototype additions (approved 2026-10-13)
+
+- **Catapult** (siege): out-ranges towers; it is still stopped by a wall but lobs over it at
+  targets behind (the only enemy that ignores the wall gate for targeting).
+- **Warlord** (boss, night 6): Stomp hits every footman and the king within 3 m, then waits
+  10 s; it fires only when someone is in reach. Counter bonuses against tanks apply to it.
+  A boss bar shows at the top while it lives. Night 6 swaps the west brutes for the warlord
+  (with them, the balanced bot won under a third of runs).
+- **Rally (night)**: F or the Rally button. Footmen within 6 m of the king follow him; pressing
+  again drops them where he stands and they guard that spot until dawn. If the king falls,
+  followers stay where they are.
+- **Edge arrows** (view-only, `apps/game/src/game/indicators.ts`): tonight's spawns by day;
+  by night the castle and buildings hit in the last 2 s, the boss, then the largest enemy
+  groups; at most 6. They keep out of the joystick corner and the button column. On-screen
+  spawns glow by day.
+- **Waves panel**: Tab or the wave chip, and in the pause menu.
+- Not built: the finale drums (there is no audio yet); tapping an arrow does nothing.
+
 ## Balance (first playtest, 2026-10-13)
 
 Gold felt scarce in play while the simulator found the game easy (the king alone reached
@@ -67,8 +85,8 @@ mine 25) and stronger waves (+30% enemy HP and +30% enemies per group). Targets,
 | `idle`      | nothing                                          | falls night 3 |
 | `king-only` | no buildings, king fights                        | falls night 5 |
 | `greedy`    | fills slots in map order, idle king              | falls night 3 |
-| `defensive` | towers, walls, barracks first, no early eco      | wins ~35%     |
-| `balanced`  | half its gold into eco on days 1–3, then defends | wins ~85%     |
+| `defensive` | towers, walls, barracks first, no early eco      | wins ~80%     |
+| `balanced`  | half its gold into eco on days 1–3, then defends | wins ~90%     |
 
 So investing in eco pays off, and building nothing loses. Bots are a rough guide: real play
 decides the final numbers.

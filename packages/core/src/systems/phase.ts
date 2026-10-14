@@ -40,6 +40,7 @@ export function startNight(state: GameState, ctx: GameContext, events: GameEvent
         hp: def.hp,
         maxHp: def.hp,
         cooldown: 0,
+        following: false,
         target: null,
       });
       events.push({ type: 'unitSpawned', id, unit: def.id });

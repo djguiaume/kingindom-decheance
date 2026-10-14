@@ -12,6 +12,8 @@ const RANGE_SLACK = 0.05;
  * otherwise never touch the exact point and would mill around it forever.
  */
 const WAYPOINT_RADIUS = 1;
+/** How close rallied units keep to the king. */
+const FOLLOW_GAP = 0.8;
 
 /**
  * Enemies close in on their target, or walk their lane (stopping at standing walls);
@@ -68,6 +70,9 @@ export function movementSystem(state: GameState, ctx: GameContext): void {
         step,
         def.radius + target.radius + def.attack.range - RANGE_SLACK,
       );
+    } else if (unit.following) {
+      // Walk with the king, a step behind him.
+      moveToward(unit.pos, state.king.pos, step, ctx.king.radius + def.radius + FOLLOW_GAP);
     } else {
       moveToward(unit.pos, unit.post, step);
     }

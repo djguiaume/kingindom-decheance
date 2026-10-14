@@ -4,7 +4,7 @@ import type { GameEvent } from './events.ts';
 import { canonicalJson, cyrb53 } from './hash.ts';
 import { seedRng } from './rng.ts';
 import type { GameState } from './state.ts';
-import { combatSystem } from './systems/combat.ts';
+import { combatSystem, stompSystem } from './systems/combat.ts';
 import { deathSystem } from './systems/death.ts';
 import { kingSystem } from './systems/king.ts';
 import { movementSystem, separationSystem } from './systems/movement.ts';
@@ -78,6 +78,7 @@ export function step(state: GameState, ctx: GameContext): GameEvent[] {
   movementSystem(state, ctx);
   separationSystem(state, ctx);
   combatSystem(state, ctx, events);
+  stompSystem(state, ctx, events);
   deathSystem(state, ctx, events);
   phaseSystem(state, ctx, events);
   return events;

@@ -1,3 +1,4 @@
+import { secondsToTicks } from '../constants.ts';
 import { req, type GameContext } from '../context.ts';
 import type { GameEvent } from '../events.ts';
 import { nextRange } from '../rng.ts';
@@ -23,6 +24,7 @@ export function spawnSystem(state: GameState, ctx: GameContext, events: GameEven
       maxHp: def.hp,
       cooldown: 0,
       target: null,
+      abilityCooldown: def.ability ? secondsToTicks(def.ability.cooldown, 1) : 0,
     });
     events.push({ type: 'enemySpawned', id, enemy: order.enemy, lane: order.lane });
   }

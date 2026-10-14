@@ -85,6 +85,20 @@ const castle: Drawer = (g, x, y, s, a) => {
   g.fillTriangle(x, y - s * 2.2, x, y - s * 2.9, x + s * 0.5, y - s * 2.55);
 };
 
+/** A wooden frame on wheels with a throwing arm. */
+const catapult: Drawer = (g, x, y, s, a) => {
+  const c = colors.enemies.siege;
+  g.fillStyle(darker(c, 0.5), a);
+  g.fillCircle(x - s * 0.7, y - s * 0.3, s * 0.35);
+  g.fillCircle(x + s * 0.7, y - s * 0.3, s * 0.35);
+  g.fillStyle(c, a);
+  g.fillRect(x - s, y - s * 0.9, s * 2, s * 0.5);
+  g.lineStyle(Math.max(2, s * 0.2), darker(c), a);
+  g.lineBetween(x - s * 0.4, y - s * 0.7, x + s * 0.6, y - s * 2);
+  g.fillStyle(0x6b6b6b, a);
+  g.fillCircle(x + s * 0.6, y - s * 2, s * 0.3);
+};
+
 const sprites: Record<string, Drawer> = {
   castle,
   king,
@@ -104,6 +118,8 @@ const sprites: Record<string, Drawer> = {
   skirmisher: creature(colors.enemies.ranged, 1.8, 0x3d3d5c),
   brute: creature(colors.enemies.tank, 1.4),
   harpy: flyer,
+  catapult: catapult,
+  warlord: creature(colors.enemies.boss, 1.9, colors.castle),
 };
 
 /** The drawer for a content id, or a neutral fallback so new content is visible at once. */

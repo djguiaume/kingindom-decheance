@@ -37,3 +37,14 @@ export const colors = {
 } as const;
 
 export const css = (color: number): string => `#${color.toString(16).padStart(6, '0')}`;
+
+/** One icon per enemy type for the HUD, the waves panel and edge arrows (placeholder art). */
+export const enemyIcons: Record<string, string> = {
+  raider: '🪓',
+  skirmisher: '🏹',
+  brute: '👹',
+  harpy: '🦅',
+  catapult: '☄️',
+  warlord: '💀',
+};
+export const enemyIcon = (id: string): string => enemyIcons[id] ?? '❓';

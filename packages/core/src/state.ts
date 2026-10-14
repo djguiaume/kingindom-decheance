@@ -68,8 +68,10 @@ export interface UnitState extends Combatant {
   type: string;
   /** The military building this unit belongs to. */
   home: number;
-  /** The spot it guards (around its building's rally gate). */
+  /** The spot it guards (around its building's rally gate, or where the king dropped it). */
   post: Vec;
+  /** At night, rallied units follow the king instead of guarding their post. */
+  following: boolean;
   target: Ref | null;
 }
 
@@ -80,6 +82,8 @@ export interface EnemyState extends Combatant {
   /** Index of the next waypoint in the lane path. */
   waypoint: number;
   target: Ref | null;
+  /** Ticks until its own ability (the boss's stomp) is ready; 0 for enemies without one. */
+  abilityCooldown: number;
 }
 
 export interface SpawnOrder {
