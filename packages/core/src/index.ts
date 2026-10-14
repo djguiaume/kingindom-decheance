@@ -21,3 +21,4 @@ export {
   wallWings,
   type WallLine,
 } from './systems/walls.ts';
+export * from './modifiers.ts';

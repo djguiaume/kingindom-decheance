@@ -6,7 +6,7 @@
  * castle, buildings and king, and fallen units return the next night (design 11 §8.1).
  */
 import { secondsToTicks } from '../constants.ts';
-import { req, type GameContext } from '../context.ts';
+import { req, syncContext, type GameContext } from '../context.ts';
 import type { GameEvent } from '../events.ts';
 import type { BuildingState, GameState, NightStats, SpawnOrder } from '../state.ts';
 import type { Vec } from '../vec.ts';
@@ -88,7 +88,7 @@ export function phaseSystem(state: GameState, ctx: GameContext, events: GameEven
 
 function dawn(state: GameState, ctx: GameContext, events: GameEvent[]): void {
   // Income from the castle, and from eco buildings that survived the night (00 fact sheet).
-  let income = ctx.map.castle.income;
+  let income = ctx.castle.income;
   for (const b of state.buildings) {
     if (!b.destroyed) income += req(ctx.buildings, b.type).income;
   }
@@ -127,6 +127,20 @@ function dawn(state: GameState, ctx: GameContext, events: GameEvent[]): void {
   state.nightTick = 0;
   state.phase = 'day';
   state.current = newNightStats(state.day);
+  // A modifier may be limited to some nights, so the new day can change stats.
+  syncContext(ctx, state);
+  refitHealth(state, ctx);
+}
+
+/**
+ * Sets the castle's, the king's and every building's max HP from the (re-derived) content and
+ * heals them to full. Only called by day, when everything is at full health anyway.
+ */
+export function refitHealth(state: GameState, ctx: GameContext): void {
+  state.castle.maxHp = state.castle.hp = ctx.castle.hp;
+  state.king.maxHp = ctx.king.hp;
+  if (state.king.alive) state.king.hp = state.king.maxHp;
+  for (const b of state.buildings) b.maxHp = b.hp = req(ctx.buildings, b.type).hp;
 }
 
 /** Tonight's wave per lane, for the HUD telegraph (design 11 §8.3). */

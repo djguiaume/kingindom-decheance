@@ -34,6 +34,27 @@ test('desktop: keyboard holds buy and start the night', async ({ page }) => {
   await page.keyboard.up('e');
   await expect(page.getByTestId('gold')).toHaveText('50');
 
+  // Walk up to the castle: its card offers level 2; holding E opens the perk picker.
+  await page.keyboard.down('w');
+  await expect(page.getByTestId('castle-up')).toBeVisible();
+  await page.keyboard.up('w');
+  await page.keyboard.down('e');
+  await page.waitForTimeout(600);
+  await page.keyboard.up('e');
+  await expect(page.getByTestId('perk-picker')).toBeVisible();
+  await expect(page.getByTestId('perk-picker').locator('.perk')).toHaveCount(3);
+  // Choosing needs a selection first; 2 selects the second card, a hold of E confirms.
+  await page.keyboard.press('Digit2');
+  await expect(page.getByTestId('perk-1')).toHaveClass(/picked/);
+  await page.screenshot({ path: 'test-results/desktop-perks.png' });
+  await page.keyboard.down('e');
+  await page.waitForTimeout(600);
+  await page.keyboard.up('e');
+  await expect(page.getByTestId('perk-picker')).toBeHidden();
+  await expect(page.getByTestId('gold')).toHaveText('15');
+  await expect(page.getByTestId('castle-level')).toHaveText('2');
+  await page.screenshot({ path: 'test-results/desktop-castle-2.png' });
+
   // Hold Enter for 1 s to start the night.
   await page.keyboard.press('Enter');
   await expect(page.getByTestId('night')).toContainText('Day 1');

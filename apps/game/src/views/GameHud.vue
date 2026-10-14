@@ -14,7 +14,7 @@ import GameIcon from '../components/GameIcon.vue';
 import { HOLD_BUY_MS, HOLD_NIGHT_MS, type InputHub } from '../game/input/hub.ts';
 import type { GameRuntime } from '../game/runtime.ts';
 import { nightPlans, snapshot, useHudStore } from '../stores/hud.ts';
-import { enemyIcon } from '../theme.ts';
+import { enemyIcon, perkIcon } from '../theme.ts';
 
 const props = defineProps<{ runtime: GameRuntime; hub: InputHub }>();
 const emit = defineEmits<{ restart: []; fullscreen: [] }>();
@@ -41,6 +41,8 @@ function rally(e: PointerEvent) {
 
 const refresh = () => {
   store.hud = snapshot(props.runtime.state, props.runtime.ctx);
+  // The picker belongs to the castle by day: walking away or nightfall closes it.
+  if (store.pickerOpen && !store.hud.castle?.next) props.hub.closePicker();
 };
 
 /** A short card at dawn: the night just held, what it paid, what it cost (playtest 2). */
@@ -104,7 +106,12 @@ const pct = (v: number, max: number) =>
       <span class="gold display" data-testid="gold">{{ store.hud.gold }}</span>
       <span class="health">
         <span class="row" :title="`Castle ${store.hud.castleHp} / ${store.hud.castleMaxHp}`">
-          <GameIcon name="keep" />
+          <GameIcon name="keep" /><small
+            v-if="store.hud.castleLevel > 1"
+            class="lvl"
+            data-testid="castle-level"
+            >{{ store.hud.castleLevel }}</small
+          >
           <span class="bar" data-testid="castle-hp"
             ><i :style="{ width: pct(store.hud.castleHp, store.hud.castleMaxHp) }"
           /></span>
@@ -202,7 +209,7 @@ const pct = (v: number, max: number) =>
           :key="o.option"
           class="card panel"
           :duration="HOLD_BUY_MS"
-          :disabled="!o.affordable"
+          :disabled="!o.affordable || o.needsCastle !== null"
           :external-holding="
             store.keyHold === (store.hud.nearby.rally || o.option === 1 ? 'buy-1' : 'buy-0')
           "
@@ -216,10 +223,44 @@ const pct = (v: number, max: number) =>
               <span class="cost"><i />{{ o.cost }}</span>
               <kbd v-if="!touch">{{ store.hud.nearby.rally || o.option === 1 ? 'R' : 'E' }}</kbd>
             </span>
+            <small v-if="o.needsCastle" class="offer-lock" data-testid="offer-lock"
+              ><GameIcon name="keep" /> Needs castle level {{ o.needsCastle }}</small
+            >
             <small v-if="o.stats" class="offer-stats" data-testid="offer-stats">{{
               o.stats
             }}</small>
             <small class="offer-desc">{{ o.description }}</small>
+          </span>
+        </HoldButton>
+      </div>
+    </div>
+
+    <!-- Zone 7 at the castle: its level, and the next one (13 §1). -->
+    <div v-if="store.hud.phase === 'day' && store.hud.castle" class="band zone">
+      <div class="slot-title" data-testid="slot-title">
+        <strong class="display">Castle · level {{ store.hud.castle.level }}</strong>
+        <small v-if="!store.hud.castle.next">Highest level</small>
+      </div>
+      <div v-if="store.hud.castle.next" class="cards">
+        <HoldButton
+          class="card panel castle-card"
+          :duration="HOLD_BUY_MS"
+          :disabled="!store.hud.castle.next.affordable"
+          :external-holding="store.keyHold === 'buy-0' && !store.pickerOpen"
+          data-testid="castle-up"
+          @confirm="hub.openCastle()"
+        >
+          <span class="offer">
+            <span class="offer-head">
+              <GameIcon name="keep" class="up" />
+              <b class="display">Level {{ store.hud.castle.next.level }}</b>
+              <span class="cost"><i />{{ store.hud.castle.next.cost }}</span>
+              <kbd v-if="!touch">E</kbd>
+            </span>
+            <small class="offer-stats">{{ store.hud.castle.next.stats }}</small>
+            <small class="offer-desc"
+              >{{ store.hud.castle.next.unlocks }} Then pick one perk of three.</small
+            >
           </span>
         </HoldButton>
       </div>
@@ -274,6 +315,52 @@ const pct = (v: number, max: number) =>
       </HoldButton>
     </div>
 
+    <!-- The castle's perk picker: three cards, tap one, then hold Choose (13 §1.1). -->
+    <div
+      v-if="store.pickerOpen && store.hud.castle?.next"
+      class="modal picker"
+      data-testid="perk-picker"
+      @click.self="hub.closePicker()"
+    >
+      <div class="sheet panel">
+        <span class="kicker">Castle level {{ store.hud.castle.next.level }}</span>
+        <h2 class="display">Choose a perk</h2>
+        <p>It lasts for the whole run.</p>
+        <div class="perks">
+          <button
+            v-for="(p, i) in store.hud.castle.next.perks"
+            :key="p.id"
+            class="perk panel"
+            :class="{ picked: store.pick === i }"
+            :aria-pressed="store.pick === i"
+            :data-testid="`perk-${i}`"
+            @click="hub.selectPerk(i)"
+          >
+            <span class="perk-icon"><GameIcon :name="perkIcon(p.id)" /></span>
+            <b class="display">{{ p.name }}</b>
+            <small>{{ p.description }}</small>
+            <kbd v-if="!touch">{{ i + 1 }}</kbd>
+          </button>
+        </div>
+        <div class="picker-actions">
+          <button data-testid="perk-back" @click="hub.closePicker()">
+            Back<kbd v-if="!touch">Esc</kbd>
+          </button>
+          <HoldButton
+            class="primary choose"
+            :duration="HOLD_BUY_MS"
+            :disabled="store.pick === null"
+            :external-holding="store.keyHold === 'buy-0'"
+            data-testid="perk-choose"
+            @confirm="hub.choosePerk()"
+          >
+            Choose<span class="cost"><i />{{ store.hud.castle.next.cost }}</span
+            ><kbd v-if="!touch">hold E</kbd>
+          </HoldButton>
+        </div>
+      </div>
+    </div>
+
     <div
       v-if="store.hud.phase === 'won' || store.hud.phase === 'lost'"
       class="modal"
@@ -297,13 +384,16 @@ const pct = (v: number, max: number) =>
     <div v-else-if="store.paused" class="modal" data-testid="pause-menu">
       <div class="sheet panel">
         <h2 class="display">Paused</h2>
+        <p v-if="store.hud.perks.length > 0" data-testid="perks-taken">
+          Castle perks: {{ store.hud.perks.join(', ') }}
+        </p>
         <button class="primary big" @click="hub.togglePause()">Resume</button>
         <button class="big" @click="emit('fullscreen')">Full screen</button>
         <button class="big" @click="emit('restart')">Restart run</button>
         <p class="hint">
           {{
             keyHint(
-              'WASD/arrows move · Space ability · F rally / flag · hold E/R buy · hold Enter night · Tab waves · Z zoom · M sound',
+              'WASD/arrows move · Space ability · F rally / flag · hold E/R buy · hold E at the castle to grow it · hold Enter night · Tab waves · Z zoom · M sound',
             )
           }}
         </p>
@@ -680,6 +770,82 @@ const pct = (v: number, max: number) =>
 .call-text small {
   font-size: 11px;
   color: var(--muted);
+}
+
+/* Castle */
+.lvl {
+  margin-left: -3px;
+  font: 700 10px var(--display);
+  color: var(--gold);
+}
+.castle-card {
+  width: 220px;
+}
+.offer-lock {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.picker .sheet {
+  max-width: min(94vw, 640px);
+  gap: 8px;
+  padding: 16px 20px;
+}
+.perks {
+  display: flex;
+  gap: 10px;
+  margin: 4px 0;
+}
+.perk {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 10px;
+  min-width: 0;
+  font-weight: 500;
+  text-align: center;
+}
+.perk b {
+  font-size: 16px;
+}
+.perk small {
+  font-size: 12px;
+  line-height: 1.3;
+  color: var(--muted);
+}
+.perk.picked {
+  box-shadow:
+    0 0 0 3px var(--gold),
+    var(--shadow);
+}
+.perk-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 20px;
+  background: var(--linen-deep);
+}
+.perk.picked .perk-icon {
+  background: var(--gold);
+  color: #3b2a05;
+}
+.picker-actions {
+  display: flex;
+  gap: 10px;
+}
+.choose {
+  min-width: 170px;
+}
+.choose .cost {
+  margin-left: 8px;
+  color: var(--linen);
 }
 
 /* Pause and end of run */

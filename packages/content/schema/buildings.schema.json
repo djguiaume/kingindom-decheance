@@ -41,6 +41,12 @@
             "type": "number",
             "minimum": 0
           },
+          "castleLevel": {
+            "default": 1,
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
           "hp": {
             "type": "number",
             "exclusiveMinimum": 0

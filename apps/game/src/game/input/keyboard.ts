@@ -1,7 +1,8 @@
 /**
  * Keyboard adapter (design 11 §10.2). WASD/arrows move in 8 directions, Space uses the ability,
  * hold E / R buys (0.4 s), hold Enter starts the night (1 s), Tab toggles the wave preview,
- * Z zooms, Esc pauses.
+ * Z zooms, Esc pauses. At the castle, hold E opens the perk picker; there 1-3 or the arrows
+ * select a perk, hold E confirms and Esc backs out.
  */
 import { useHudStore } from '../../stores/hud.ts';
 import { HOLD_BUY_MS, HOLD_NIGHT_MS, type InputHub } from './hub.ts';
@@ -53,6 +54,20 @@ export function attachKeyboard(hub: InputHub): () => void {
     if (e.repeat) {
       if (MOVE_KEYS[e.code] || ['Space', 'Tab'].includes(e.code)) e.preventDefault();
       return;
+    }
+    // The castle's perk picker: 1-3 or the arrow keys select, hold E confirms, Esc backs out.
+    if (store.pickerOpen) {
+      const digit = ['Digit1', 'Digit2', 'Digit3'].indexOf(e.code);
+      if (digit >= 0) return hub.selectPerk(digit);
+      if (e.code === 'ArrowLeft' || e.code === 'ArrowUp') {
+        e.preventDefault();
+        return hub.selectPerk(null, -1);
+      }
+      if (e.code === 'ArrowRight' || e.code === 'ArrowDown') {
+        e.preventDefault();
+        return hub.selectPerk(null, 1);
+      }
+      if (e.code === 'Escape') return hub.closePicker();
     }
     if (MOVE_KEYS[e.code]) {
       e.preventDefault();

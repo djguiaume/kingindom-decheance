@@ -1,7 +1,8 @@
 import { prototypeContent, prototypeRun } from '@kd/content/prototype';
 import { Session } from '@kd/core';
 import { describe, expect, it } from 'vitest';
-import { buildingStats, offerInfo } from '../src/game/buildingInfo.ts';
+import { buildingStats, castleLevelInfo, offerInfo } from '../src/game/buildingInfo.ts';
+import { awardRun, isUnlocked, loadProfile } from '../src/progression.ts';
 
 const ctx = new Session(prototypeContent, { ...prototypeRun, seed: 1 }).ctx;
 
@@ -30,5 +31,30 @@ describe('building info on the buy buttons', () => {
 
   it('the current building lists its numbers', () => {
     expect(buildingStats(ctx, 'watchtower')).toBe('Damage 12/s · Range 8.5');
+  });
+});
+
+describe('castle level card', () => {
+  it('shows what the next level changes and unlocks, perks included', () => {
+    const s = new Session(prototypeContent, { ...prototypeRun, seed: 1 });
+    expect(castleLevelInfo(s.ctx, s.state, 2)).toEqual({
+      stats: 'HP 1500 → 2000 · Damage 5 → 8/s · Range 8 → 9',
+      unlocks: 'Unlocks Manor, Watchtower, Stone wall, Garrison.',
+    });
+    s.state.gold = 1000;
+    s.submit({ type: 'chooseCastleLevel', level: 2, perk: 'royal_archers' });
+    expect(castleLevelInfo(s.ctx, s.state, 3).stats).toBe(
+      'HP 2000 → 2500 · Damage 16 → 24/s · Range 12 → 13',
+    );
+  });
+});
+
+describe('progression (all open in Stage A)', () => {
+  it('unlocks everything, awards nothing and survives bad storage', () => {
+    const profile = loadProfile({ getItem: () => '{not json' });
+    expect(profile).toEqual({ schemaVersion: 1, xp: 0, level: 1, unlocked: [] });
+    expect(isUnlocked(profile, { unlock: { level: 9 } })).toBe(true);
+    const run = { mapId: 'greyhollow', won: true, nightsSurvived: 6, score: 0 };
+    expect(awardRun(profile, run)).toMatchObject({ xpGained: 0, newUnlocks: [] });
   });
 });

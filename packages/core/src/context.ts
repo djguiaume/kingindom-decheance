@@ -1,17 +1,35 @@
 /**
  * GameContext: read-only lookups derived from the validated content for one run.
- * It is not part of GameState (it never changes), so snapshots stay small.
- * Comparable to an application-scoped bean built once at startup.
+ * It is not part of GameState, so snapshots stay small. Comparable to an application-scoped
+ * bean built once at startup.
+ *
+ * The tunable part (buildings, units, enemies, weapon, king, castle, rules) is the content
+ * after the castle level and the perks picked so far (13 §6.2). It is a pure function of
+ * (content, run config, castle level, perks, night), all of which are in the state, and is
+ * rebuilt by `syncContext` whenever one of them changes. So the rules read plain stats and
+ * never check a perk id, and any state, restored or replayed, gets the same context.
  */
 import type {
   Building,
+  CastleLevel,
   ContentBundle,
   Enemy,
   GameMap,
   KingSettings,
+  Perk,
   Unit,
   Weapon,
 } from '@kd/content';
+import { clone } from './hash.ts';
+import {
+  applyModifier,
+  BASE_RULES,
+  checkModifiers,
+  type CastleStats,
+  type Rules,
+  type Tunables,
+} from './modifiers.ts';
+import type { GameState } from './state.ts';
 import type { Vec } from './vec.ts';
 
 export interface LaneInfo {
@@ -31,6 +49,14 @@ export interface GameContext {
   buildings: ReadonlyMap<string, Building>;
   units: ReadonlyMap<string, Unit>;
   enemies: ReadonlyMap<string, Enemy>;
+  /** The castle at its current level, after perks. */
+  castle: CastleStats;
+  rules: Rules;
+  /** Castle levels above the first, in order (level 2 first). */
+  castleLevels: readonly CastleLevel[];
+  perks: ReadonlyMap<string, Perk>;
+  /** The content the tunable fields are rebuilt from, and what they were last built for. */
+  base: { bundle: ContentBundle; weapon: Weapon; derivedFor: string };
   nodes: ReadonlyMap<string, Vec>;
   lanes: ReadonlyMap<string, LaneInfo>;
   kingSpawn: Vec;
@@ -57,14 +83,19 @@ export function createContext(bundle: ContentBundle, config: RunConfig): GameCon
     return p;
   };
 
-  return {
+  const ctx: GameContext = {
     contentHash: bundle.hash,
     map,
     weapon,
     king: bundle.king,
-    buildings: new Map(bundle.buildings.map((b) => [b.id, b])),
-    units: new Map(bundle.units.map((u) => [u.id, u])),
-    enemies: new Map(bundle.enemies.map((e) => [e.id, e])),
+    buildings: new Map(),
+    units: new Map(),
+    enemies: new Map(),
+    castle: { hp: 0, radius: 0, income: 0 },
+    rules: { ...BASE_RULES },
+    castleLevels: bundle.castle.levels,
+    perks: new Map(bundle.castle.perks.map((p) => [p.id, p])),
+    base: { bundle, weapon, derivedFor: '' },
     nodes,
     lanes: new Map(
       map.lanes.map((l) => [l.id, { id: l.id, air: l.air, nodes: l.path, points: l.path.map(at) }]),
@@ -72,6 +103,73 @@ export function createContext(bundle: ContentBundle, config: RunConfig): GameCon
     kingSpawn: at(map.kingSpawn),
     bounds: { minX: 0, minY: 0, maxX: map.size[0], maxY: map.size[1] },
   };
+  const wrong = checkModifiers(tunablesFor(ctx, 1, [], 1), bundle.castle.perks);
+  if (wrong.length > 0) throw new Error(`Perk stats that reach nothing: ${wrong.join(', ')}`);
+  derive(ctx, 1, [], 1);
+  return ctx;
+}
+
+const keyOf = (level: number, perks: readonly string[], night: number) =>
+  `${level}|${perks.join(',')}|${night}`;
+
+/**
+ * Brings the tunable fields up to date with the state's castle level, perks and night.
+ * Cheap when nothing changed (one string compare); the core calls it before every tick and
+ * command.
+ */
+export function syncContext(ctx: GameContext, state: GameState): void {
+  if (keyOf(state.castleLevel, state.perks, state.day) !== ctx.base.derivedFor)
+    derive(ctx, state.castleLevel, state.perks, state.day);
+}
+
+/** The content after `level` and `perks`, on `night`: a fresh copy, the base is untouched. */
+function tunablesFor(
+  ctx: GameContext,
+  level: number,
+  perks: readonly string[],
+  night: number,
+): Tunables {
+  const { bundle, weapon } = ctx.base;
+  const mapCastle = ctx.map.castle;
+  const atLevel = level > 1 ? ctx.castleLevels[level - 2] : undefined;
+  const attack = atLevel?.attack ?? mapCastle.attack;
+  const t: Tunables = clone({
+    buildings: bundle.buildings,
+    units: bundle.units,
+    enemies: bundle.enemies,
+    weapon,
+    king: bundle.king,
+    castle: {
+      hp: atLevel?.hp ?? mapCastle.hp,
+      radius: mapCastle.radius,
+      income: mapCastle.income,
+      ...(attack ? { attack } : {}),
+    },
+    rules: { ...BASE_RULES },
+  });
+  for (const id of perks) {
+    for (const m of req(ctx.perks, id).modifiers) applyModifier(t, m, night);
+  }
+  return t;
+}
+
+/** The castle's stats at another level with the run's perks: what buying a level would give. */
+export function castleStatsAt(ctx: GameContext, state: GameState, level: number): CastleStats {
+  return tunablesFor(ctx, level, state.perks, state.day).castle;
+}
+
+function derive(ctx: GameContext, level: number, perks: readonly string[], night: number): void {
+  const t = tunablesFor(ctx, level, perks, night);
+  Object.assign(ctx, {
+    weapon: t.weapon,
+    king: t.king,
+    buildings: new Map(t.buildings.map((b) => [b.id, b])),
+    units: new Map(t.units.map((u) => [u.id, u])),
+    enemies: new Map(t.enemies.map((e) => [e.id, e])),
+    castle: t.castle,
+    rules: t.rules,
+  });
+  ctx.base.derivedFor = keyOf(level, perks, night);
 }
 
 /** Lookup that fails loudly: content was validated, so a miss is a core bug. */

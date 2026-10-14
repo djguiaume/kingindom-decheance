@@ -37,7 +37,7 @@ export function combatSystem(state: GameState, ctx: GameContext, events: GameEve
     }
   }
 
-  const castleAtk = ctx.map.castle.attack;
+  const castleAtk = ctx.castle.attack;
   const castle = state.castle;
   if (castleAtk && castle.hp > 0) {
     tickDown(castle);
@@ -86,13 +86,15 @@ export function combatSystem(state: GameState, ctx: GameContext, events: GameEve
     if (u.cooldown > 0 || !u.target) continue;
     const target = resolve(state, ctx, u.target);
     if (target && gap(u.pos, def.radius, target) <= def.attack.range) {
+      // Units with the king hit harder when a perk says so (rules.rallyDamage).
+      const boost = u.following ? ctx.rules.rallyDamage : 1;
       strike(
         state,
         { kind: 'unit', id: u.id },
         u,
         u.pos,
         def.radius,
-        def.attack,
+        boost === 1 ? def.attack : { ...def.attack, damage: def.attack.damage * boost },
         target,
         enemies,
         events,

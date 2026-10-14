@@ -3,7 +3,7 @@
  * intent into core commands (ADR-009). Adapters never call the core directly, so the rules
  * never know which device was used.
  */
-import type { Command } from '@kd/core';
+import { atCastle, castleOffer, type Command } from '@kd/core';
 import type { GameRuntime } from '../runtime.ts';
 import { nearbySlotId, useHudStore, type Device } from '../../stores/hud.ts';
 
@@ -50,11 +50,18 @@ export class InputHub {
     if (slot) this.send({ type: 'buy', slot, option });
   }
 
-  /** At a military slot, the main action cycles the rally gate (design 11 §10.2). */
+  /**
+   * At a military slot, the main action cycles the rally gate (design 11 §10.2); at the castle
+   * it opens the perk picker, and in the picker it confirms the selected perk.
+   */
   mainAction(): void {
+    if (this.store.pickerOpen) return this.choosePerk();
     const s = this.runtime.state;
     const slot = nearbySlotId(s, this.runtime.ctx);
-    if (!slot) return;
+    if (!slot) {
+      if (atCastle(s, this.runtime.ctx)) this.openCastle();
+      return;
+    }
     const b = s.buildings.find((x) => x.slot === slot);
     const def = b && this.runtime.ctx.buildings.get(b.type);
     if (def?.spawns && b?.rally) this.send({ type: 'cycleRally', slot });
@@ -71,6 +78,37 @@ export class InputHub {
     this.buy(def?.spawns && b?.rally ? 0 : 1);
   }
 
+  /** Opens the castle's perk picker, if its next level exists. Backing out costs nothing. */
+  openCastle(): void {
+    const offer = castleOffer(this.runtime.state, this.runtime.ctx);
+    if (!offer) return this.say('the castle is at its highest level');
+    if (offer.cost > this.runtime.state.gold) return this.say('not enough gold');
+    this.store.pick = null;
+    this.store.pickerOpen = true;
+  }
+
+  closePicker(): void {
+    this.store.pickerOpen = false;
+    this.store.pick = null;
+  }
+
+  /** Selects perk card `index` (0-2), or moves the selection by `step` cards. */
+  selectPerk(index: number | null, step = 0): void {
+    const count = castleOffer(this.runtime.state, this.runtime.ctx)?.perks.length ?? 0;
+    if (count === 0) return;
+    const from = this.store.pick ?? (step > 0 ? -1 : count);
+    this.store.pick = index ?? (from + step + count) % count;
+  }
+
+  /** Buys the castle's next level with the selected perk (after a completed hold). */
+  choosePerk(): void {
+    const offer = castleOffer(this.runtime.state, this.runtime.ctx);
+    const perk = offer && this.store.pick !== null ? offer.perks[this.store.pick] : undefined;
+    if (!offer || !perk) return this.say('pick a perk first');
+    if (this.send({ type: 'chooseCastleLevel', level: offer.level, perk: perk.id }))
+      this.closePicker();
+  }
+
   /** Rally: by night, pick up or drop footmen; by day, take or plant a barracks flag. */
   rally(device: Device): void {
     this.used(device);
@@ -85,13 +123,20 @@ export class InputHub {
     this.store.paused = !this.store.paused;
   }
 
-  private send(command: Command): void {
+  /** Sends a command; true when the core accepted it. */
+  private send(command: Command): boolean {
     const result = this.runtime.submit(command);
     // Movement refusals are silent; the rest is worth a short message, which fades on its own.
-    if (command.type === 'move') return;
-    this.store.message = result.ok ? '' : result.reason;
+    if (command.type === 'move') return result.ok;
+    if (result.ok) this.say('');
+    else this.say(result.reason);
+    return result.ok;
+  }
+
+  /** Shows a short message that fades on its own (an empty one clears it). */
+  private say(text: string): void {
+    this.store.message = text;
     window.clearTimeout(this.messageTimer);
-    if (!result.ok)
-      this.messageTimer = window.setTimeout(() => (this.store.message = ''), MESSAGE_MS);
+    if (text) this.messageTimer = window.setTimeout(() => (this.store.message = ''), MESSAGE_MS);
   }
 }

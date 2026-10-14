@@ -4,7 +4,7 @@
  * Pure functions of the content, so they are testable without a browser.
  */
 import type { Building } from '@kd/content';
-import type { GameContext } from '@kd/core';
+import { castleStatsAt, type GameContext, type GameState } from '@kd/core';
 
 /** The numbers worth showing for one building, by label, in display order. */
 function stats(def: Building, ctx: GameContext): Map<string, Stat> {
@@ -79,4 +79,39 @@ export function offerInfo(ctx: GameContext, from: string | null, to: string): Of
 export function buildingStats(ctx: GameContext, id: string): string {
   const def = ctx.buildings.get(id)!;
   return [...[...stats(def, ctx)].map(([l, s]) => `${l} ${show(s)}`), ...notes(def)].join(' · ');
+}
+
+/**
+ * What the castle's next level changes, for its card (13 §1.4: the castle level is an upgrade
+ * like the others): "HP 1500 → 2000 · Damage 5 → 8/s · Range 8 → 9", and the buildings it
+ * unlocks. Uses the run's perks, so a perk that boosts the castle shows in both numbers.
+ */
+export function castleLevelInfo(
+  ctx: GameContext,
+  state: GameState,
+  level: number,
+): { stats: string; unlocks: string } {
+  const now = ctx.castle;
+  const next = castleStatsAt(ctx, state, level);
+  const parts: string[] = [];
+  const change = (label: string, a: number, b: number, unit = '') => {
+    if (a !== b) parts.push(`${label} ${round(a)} → ${round(b)}${unit}`);
+  };
+  change('HP', now.hp, next.hp);
+  if (now.attack && next.attack) {
+    change(
+      'Damage',
+      now.attack.damage / now.attack.interval,
+      next.attack.damage / next.attack.interval,
+      '/s',
+    );
+    change('Range', now.attack.range, next.attack.range);
+  }
+  const names = [...ctx.buildings.values()]
+    .filter((b) => b.castleLevel === level)
+    .map((b) => b.name);
+  return {
+    stats: parts.join(' · '),
+    unlocks: names.length > 0 ? `Unlocks ${names.join(', ')}.` : '',
+  };
 }

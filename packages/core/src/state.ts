@@ -138,6 +138,10 @@ export interface GameState {
   /** Ticks since the current night began. */
   nightTick: number;
   gold: number;
+  /** The castle's level, 1 at the start; each level is bought by day (13 §1). */
+  castleLevel: number;
+  /** Ids of the perks picked so far, in the order they were picked. */
+  perks: string[];
   nextId: number;
   castle: CastleState;
   king: KingState;

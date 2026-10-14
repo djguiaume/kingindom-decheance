@@ -126,6 +126,37 @@ steering, hand-made maps) and the prototype design (corpus 11), and are easy to 
 - Balance (`pnpm sim`, 200 seeds): balanced ~95%, defensive ~80%. The `defensive-loss` golden
   moved to seed 5.
 
+## Stage A2, castle upgrades (2026-10-14, corpus 13 §1)
+
+- **Castle levels**: `packages/content/data/castle.json` lists levels 2 and 3 (cost, HP, shot)
+  and the perks. The map's castle is level 1. New day command
+  `chooseCastleLevel { level, perk }`: gold only, no night requirement; the pick is logged, so
+  replays stay exact. State gains `castleLevel` and `perks` (state schema 3).
+- **Tiers**: every building has a `castleLevel` (default 1). Manor, watchtower, stone wall and
+  garrison need level 2; ballista and volley towers level 3. `buyOptions` still lists a locked
+  option, with `needsCastle`, so the HUD can show it greyed ("Needs castle level 2").
+- **Perks are data**: a perk is a list of modifiers `{ stat, op, value, nights? }`
+  (`packages/core/src/modifiers.ts`), e.g. `building.class:wall.hp × 1.4` or
+  `rules.rallyReach × 2`. The context's stats are rebuilt from the content, the castle level
+  and the perks whenever one of them (or the night) changes (`syncContext`), so the rules read
+  plain numbers and never check a perk id. A stat path that reaches no number stops the run
+  from starting. Rules that are not a stat (rally reach, damage of soldiers with the king, score
+  multiplier) live in `ctx.rules`.
+- **HUD**: standing at the castle by day shows its card (what the next level changes and
+  unlocks); holding it opens the perk picker (three cards; tap or 1-3 / arrows to select, hold
+  Choose or E, Esc backs out). The treasury shows the castle's level next to its bar; the pause
+  menu lists the perks taken. The castle is drawn bigger at each level: outer towers and
+  banners at level 2, a keep and gold roofs at level 3.
+- **Ready for XP and unlocks** (13 §6.4): weapons and perks accept an optional `unlock` field;
+  `apps/game/src/progression.ts` holds the versioned profile and `isUnlocked` / `awardRun`,
+  which keep everything open and award no XP for now.
+- **Bots** buy level 2 from day 2 and level 3 from day 4 and take the first perk of each level;
+  `pnpm sim --policy balanced --perks 1,2` picks others (indexes per level).
+- **Retune**: nights 4-6 have 15% more raiders and skirmishers. Results (200 seeds): balanced
+  100% with Tithe or Royal Archers, 80% with Commander (the bots never rally, so for them it does
+  nothing), 64% with Gambler's Oath (enemies +20% HP on nights 5-6; its score bonus waits for the
+  score); defensive 45% (no eco no longer wins), king-only falls night 5, greedy night 3.
+
 ## Balance (first playtest, 2026-10-13)
 
 Gold felt scarce in play while the simulator found the game easy (the king alone reached
@@ -162,4 +193,4 @@ recipe for `{ url: 'sfx/….ogg' }` and nothing else changes. Music is three syn
 - Day/night lighting, object pools for effects; the real audio (recorded sounds and music).
 - Web Worker pool and Comlink (ADR-003): the runner is ready to be moved into a worker.
 - Tier 3 nightly balance assertions (ADR-007) and the ECharts dashboard (ADR-005).
-- Perks, mutators, research, score.
+- Starting perks, mutators, research, score (Gambler's Oath already stores its multiplier).

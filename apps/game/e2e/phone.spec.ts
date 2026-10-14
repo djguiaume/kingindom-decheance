@@ -52,6 +52,23 @@ test('phone: hold-to-buy, hold-to-start, joystick and Charge', async ({ page }) 
   await finger.hold(page, card, 600);
   await expect(page.getByTestId('gold')).toHaveText('50');
 
+  // Up the stick to the castle, hold its card, tap a perk and hold Choose.
+  const stick = page.getByTestId('joystick-zone');
+  const from = await finger.down(stick);
+  await finger.move(from.x, from.y - 40);
+  await expect(page.getByTestId('castle-up')).toBeVisible();
+  await finger.up();
+  await finger.hold(page, page.getByTestId('castle-up'), 600);
+  await expect(page.getByTestId('perk-picker')).toBeVisible();
+  await expect(page.getByTestId('perk-choose')).toHaveClass(/disabled/);
+  await finger.down(page.getByTestId('perk-0'));
+  await finger.up();
+  await page.screenshot({ path: 'test-results/phone-perks.png' });
+  await finger.hold(page, page.getByTestId('perk-choose'), 600);
+  await expect(page.getByTestId('perk-picker')).toBeHidden();
+  await expect(page.getByTestId('castle-level')).toHaveText('2');
+  await expect(page.getByTestId('gold')).toHaveText('15');
+
   await finger.hold(page, page.getByTestId('start-night'), 1300);
   await expect(page.getByTestId('night')).toContainText('Night 1');
 

@@ -4,14 +4,16 @@
  * live GameState (that would put proxies on hot simulation data).
  */
 import {
+  atCastle,
   buyOptions,
+  castleOffer,
   militaryAt,
   telegraph,
   type GameContext,
   type GameState,
   type Phase,
 } from '@kd/core';
-import { buildingStats, offerInfo } from '../game/buildingInfo.ts';
+import { buildingStats, castleLevelInfo, offerInfo } from '../game/buildingInfo.ts';
 import { defineStore } from 'pinia';
 import { ref, shallowRef } from 'vue';
 import { dist } from '@kd/core';
@@ -23,9 +25,31 @@ export interface SlotOffer {
   name: string;
   cost: number;
   affordable: boolean;
+  /** Castle level this needs while the castle is lower (shown greyed, 13 §1.1). */
+  needsCastle: number | null;
   /** What the building is for, and its numbers (or what the upgrade changes). */
   description: string;
   stats: string;
+}
+
+export interface PerkCard {
+  id: string;
+  name: string;
+  description: string;
+}
+
+/** By day at the castle: its level and, below the top, what the next level costs and offers. */
+export interface CastleSnap {
+  level: number;
+  next: {
+    level: number;
+    cost: number;
+    affordable: boolean;
+    /** What changes ("HP 1500 → 2000 · …") and which buildings it unlocks. */
+    stats: string;
+    unlocks: string;
+    perks: PerkCard[];
+  } | null;
 }
 
 export interface NearbySlot {
@@ -60,6 +84,11 @@ export interface HudSnapshot {
   abilityCooldown: number;
   abilityName: string | null;
   nearby: NearbySlot | null;
+  /** By day, when the king stands at the castle (and at no plot). */
+  castle: CastleSnap | null;
+  castleLevel: number;
+  /** Names of the perks picked so far. */
+  perks: string[];
   threats: LaneThreat[];
   lastIncome: number | null;
   /** A standing military building (the Rally button shows only then). */
@@ -133,6 +162,20 @@ export function snapshot(state: GameState, ctx: GameContext): HudSnapshot {
       })),
     };
   }
+  let castle: CastleSnap | null = null;
+  if (state.phase === 'day' && !nearby && atCastle(state, ctx)) {
+    const offer = castleOffer(state, ctx);
+    castle = {
+      level: state.castleLevel,
+      next: offer && {
+        level: offer.level,
+        cost: offer.cost,
+        affordable: offer.cost <= state.gold,
+        ...castleLevelInfo(ctx, state, offer.level),
+        perks: offer.perks.map((p) => ({ id: p.id, name: p.name, description: p.description })),
+      },
+    };
+  }
   const threats: LaneThreat[] = [];
   for (const t of telegraph(ctx, state.day)) {
     let lane = threats.find((x) => x.lane === t.lane);
@@ -156,6 +199,9 @@ export function snapshot(state: GameState, ctx: GameContext): HudSnapshot {
     abilityCooldown: ability ? state.king.abilityCooldown / (ability.cooldown * 30) : 0,
     abilityName: ability?.name ?? null,
     nearby,
+    castle,
+    castleLevel: state.castleLevel,
+    perks: state.perks.map((id) => ctx.perks.get(id)?.name ?? id),
     threats,
     lastIncome: state.history.at(-1)?.income ?? null,
     hasBarracks: state.buildings.some((b) => !b.destroyed && !!ctx.buildings.get(b.type)!.spawns),
@@ -189,5 +235,8 @@ export const useHudStore = defineStore('hud', () => {
   const zoomClose = ref(true);
   /** A keyboard hold in progress ("buy-0", "buy-1", "night"), mirrored on the on-screen buttons. */
   const keyHold = ref<string | null>(null);
-  return { hud, message, device, paused, waveOpen, zoomClose, keyHold };
+  /** The castle's perk picker (13 §1.1): open, and which of the three cards is selected. */
+  const pickerOpen = ref(false);
+  const pick = ref<number | null>(null);
+  return { hud, message, device, paused, waveOpen, zoomClose, keyHold, pickerOpen, pick };
 });

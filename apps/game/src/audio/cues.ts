@@ -68,6 +68,7 @@ export function cuesFor(events: readonly GameEvent[], world: World): Cue[] {
         add('build');
         break;
       case 'upgraded':
+      case 'castleUpgraded':
         add('upgrade');
         break;
       case 'nightStarted':
