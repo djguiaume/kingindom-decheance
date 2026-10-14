@@ -2,7 +2,7 @@
   "modelId": "model_openai-gpt-image-2-5-flare",
   "referenceAssetId": "asset_RvvNgxiXxMS5HiHWN85YLtqS",
   "referenceSha256": "1ced3f125f8dd4584f33ed856a41dec5b679d0f7b65d0e95681f59689a4f65d8",
-  "spentCU": 3021,
+  "spentCU": 3195,
   "parts": {
     "archer": {
       "state": "validated",
@@ -361,14 +361,14 @@
     },
     "cliff_end": {
       "state": "validated",
-      "attempts": 1,
-      "promptHash": "c64474710339",
-      "jobId": "job_h3vwshcrygfAHQDuZWuLbJBq",
-      "assetId": "asset_YHbZYteTAzhbhFvwRTXh2W4j",
-      "costCU": 12,
-      "originalSha256": "29e21bce7a297748f3392b96c362d1f2db741edf837cc8c3f593ec120550f995",
+      "attempts": 2,
+      "promptHash": "28f9dd87219b",
+      "jobId": "job_zZPDWq8eNmDAPhfU3njncU3s",
+      "assetId": "asset_dmt5PiKKt5b4qrkQSUD3AqwK",
+      "costCU": 24,
+      "originalSha256": "4a4a3714db81d314840c7340e93527218ddc91a3145a7babb84db76c05ad5d26",
       "issues": [],
-      "updatedAt": "2026-10-14T19:28:38.607Z"
+      "updatedAt": "2026-10-14T19:54:31.466Z"
     },
     "cliff_section": {
       "state": "validated",
@@ -604,14 +604,14 @@
     },
     "gate_stone.diag.f2": {
       "state": "validated",
-      "attempts": 1,
-      "promptHash": "ae5349ef1d3a",
-      "jobId": "job_KZ3igSFEiZgLAdFFX4dZhFzf",
-      "assetId": "asset_45WKyeuPgqu9D2edBcZjrwrw",
-      "costCU": 12,
-      "originalSha256": "62a171a814881d501fef404b567bbd0cee6659e9e897ae96de27f116cee3c97b",
+      "attempts": 2,
+      "promptHash": "35eef3ffa4e1",
+      "jobId": "job_e7J8GnvmP6ZqSFBYY5JvvSME",
+      "assetId": "asset_avbdzmDhJxzPk52PiLz5jhJ1",
+      "costCU": 25,
+      "originalSha256": "7ab291385d553af80b36c6bb0d04ae656255eacf9eea875eea971ba77a919c8f",
       "issues": [],
-      "updatedAt": "2026-10-14T19:06:13.566Z"
+      "updatedAt": "2026-10-14T19:51:39.380Z"
     },
     "gate_stone.f1": {
       "state": "validated",
@@ -626,14 +626,14 @@
     },
     "gate_stone.f2": {
       "state": "validated",
-      "attempts": 2,
-      "promptHash": "fef13f53418b",
-      "jobId": "job_z8NSSXSd4ceg2fRxzbbYevvM",
-      "assetId": "asset_g9Ci6gnCp7r35NvhMn6saZoK",
-      "costCU": 24,
-      "originalSha256": "4914ccdffefe9627ebb3e22fa2c7ef5ba0ac3baf1673f37af5bdfa25539712c7",
+      "attempts": 3,
+      "promptHash": "de97aff80ff3",
+      "jobId": "job_RfjRjmKThtuPU2toXWa7WSkg",
+      "assetId": "asset_W8528wieprJmD9SLUcYAQs2D",
+      "costCU": 37,
+      "originalSha256": "578e4fbb91593f0d2421cc9f2aacab7db3dbe47ba6d42e704b163fa725c201f5",
       "issues": [],
-      "updatedAt": "2026-10-14T16:53:41.012Z"
+      "updatedAt": "2026-10-14T19:50:40.459Z"
     },
     "gate_stone.side.f1": {
       "state": "validated",
@@ -648,14 +648,14 @@
     },
     "gate_stone.side.f2": {
       "state": "validated",
-      "attempts": 2,
-      "promptHash": "775554365f3b",
-      "jobId": "job_KLDgKaBc9GMvD225qB5nFnMR",
-      "assetId": "asset_UxdrDtYWShQB5Gj5TM4AUFCn",
-      "costCU": 24,
-      "originalSha256": "448e28b6c11b9925777b9658cc9d16cfe855616c877c4940277fd3dd7fe4b945",
+      "attempts": 3,
+      "promptHash": "aa3fedddf08b",
+      "jobId": "job_KyAHogZwHyY4Lh6rDjLNkVN5",
+      "assetId": "asset_CkBUANxRCxRumZ6QMAoNqgei",
+      "costCU": 37,
+      "originalSha256": "10857b53c235a0821130a13a1b7c4cf9d67d5dfc0c7be2583a99ebf7a6f5241e",
       "issues": [],
-      "updatedAt": "2026-10-14T19:37:40.316Z"
+      "updatedAt": "2026-10-14T19:51:06.655Z"
     },
     "gate_wood.diag.f1": {
       "state": "validated",
@@ -670,14 +670,14 @@
     },
     "gate_wood.diag.f2": {
       "state": "validated",
-      "attempts": 3,
-      "promptHash": "05a4e4c49711",
-      "jobId": "job_9XGfEViDkbaNUEazCBXTWaVo",
-      "assetId": "asset_gwAxakdJW3LUnadxMZks4BXs",
-      "costCU": 36,
-      "originalSha256": "1c4b129fc19cee4346fd79c96b444a34af74d2fcd3af126c0fa93d50c1022aac",
+      "attempts": 4,
+      "promptHash": "4c19ab05e82b",
+      "jobId": "job_z7SF1Matkq1SzZ1b44Uj7kUj",
+      "assetId": "asset_aXe1A4MPHuPUiRNAUNkwMLy1",
+      "costCU": 49,
+      "originalSha256": "86cf3ece7a10c98240c6d3e9cac1f0d7633728c20e22cb839c17b4d7208867bb",
       "issues": [],
-      "updatedAt": "2026-10-14T19:34:38.174Z"
+      "updatedAt": "2026-10-14T19:50:07.467Z"
     },
     "gate_wood.f1": {
       "state": "validated",
@@ -692,14 +692,14 @@
     },
     "gate_wood.f2": {
       "state": "validated",
-      "attempts": 1,
-      "promptHash": "0f8a7d8bf151",
-      "jobId": "job_8FQeNv9mPWU7nPCZ5XinCP4g",
-      "assetId": "asset_PicHarJ2YqvhzPdm3W7yCrxL",
-      "costCU": 12,
-      "originalSha256": "d17fb331f947ee3b6de8401252203c42599b4656266cc4edacc9b41d0413e67a",
+      "attempts": 2,
+      "promptHash": "e975482ff313",
+      "jobId": "job_vJ1LKvCuZZ3ButAWYhwubyyz",
+      "assetId": "asset_AJbJyGc95F5fkKC1DRfe2giZ",
+      "costCU": 25,
+      "originalSha256": "caeee31342964eaac93a7f7f7212f4f44968434c4aca0342215d009dcdcd2dee",
       "issues": [],
-      "updatedAt": "2026-10-14T16:52:02.239Z"
+      "updatedAt": "2026-10-14T19:49:09.327Z"
     },
     "gate_wood.side.f1": {
       "state": "validated",
@@ -714,14 +714,14 @@
     },
     "gate_wood.side.f2": {
       "state": "validated",
-      "attempts": 2,
-      "promptHash": "ca708aa25e9a",
-      "jobId": "job_2kLRsukTSEdjkhxHSf1gWF2a",
-      "assetId": "asset_nuTe3Dd8Esi3sX5Z8Q1JQZfB",
-      "costCU": 24,
-      "originalSha256": "0be2bd17fe177785352ee3cb60b34cab79b8a33822dc3107f75e73ae83ea10b8",
+      "attempts": 3,
+      "promptHash": "c14cc92c953e",
+      "jobId": "job_nDEV17x36RREMcsXUT3XThxw",
+      "assetId": "asset_XcpsDZufhN3Lq7AWRVErAquP",
+      "costCU": 37,
+      "originalSha256": "ad75c8c523b04c524c7ab855f9e4cf9d35ee9af93298492f625a96c9f496e4ec",
       "issues": [],
-      "updatedAt": "2026-10-14T19:37:11.650Z"
+      "updatedAt": "2026-10-14T19:49:41.611Z"
     },
     "gold_mine": {
       "state": "validated",
@@ -747,14 +747,14 @@
     },
     "grass_patch": {
       "state": "validated",
-      "attempts": 1,
-      "promptHash": "3a12aa52e926",
-      "jobId": "job_hmq8vavQkwWt8VMBJDJNAxEC",
-      "assetId": "asset_MvU7y7Mf22YPtDEeAE1nkPCb",
-      "costCU": 13,
-      "originalSha256": "3cb5b8fcf2a6b96798862871e19a84012dfdd4be3e93a17bafcaf260a3a06305",
+      "attempts": 2,
+      "promptHash": "63910eb047f4",
+      "jobId": "job_o7DNqe4G6xNmFekrkBhe8Hy2",
+      "assetId": "asset_WLWhAhALkHWQgMZu1RYmaNbq",
+      "costCU": 25,
+      "originalSha256": "e06df5d5ce085480d0a30f07c767497f8a75c373d960e3b3c8c464188e4acf98",
       "issues": [],
-      "updatedAt": "2026-10-14T19:29:04.386Z"
+      "updatedAt": "2026-10-14T19:54:53.784Z"
     },
     "ground_greyhollow": {
       "state": "validated",
@@ -1652,14 +1652,14 @@
     },
     "path_edge": {
       "state": "validated",
-      "attempts": 2,
-      "promptHash": "33d3c08a701e",
-      "jobId": "job_RrGzykP3pxiQyrhHo1aaAiBi",
-      "assetId": "asset_rmo2426rX3jimZ7cyL4WXYsw",
-      "costCU": 24,
-      "originalSha256": "8342dae722f64f4c393c6407a86533fe488937ceadc8cf193079bd0b3b205bcc",
+      "attempts": 3,
+      "promptHash": "4953906ef5bf",
+      "jobId": "job_FS66zAMhBcgM6pFXbtgDjHhM",
+      "assetId": "asset_vxRxnWcXjDGHHjzieHEyARkU",
+      "costCU": 36,
+      "originalSha256": "14a2a7d83a87fb60c6496c6c004d17c7ce44c83fb265cb0fcff44e0302c76879",
       "issues": [],
-      "updatedAt": "2026-10-14T19:35:13.363Z"
+      "updatedAt": "2026-10-14T19:53:18.294Z"
     },
     "pine": {
       "state": "validated",
@@ -2049,25 +2049,25 @@
     },
     "water_edge": {
       "state": "validated",
-      "attempts": 2,
-      "promptHash": "18bbe188f7ef",
-      "jobId": "job_fkZPHjuziWsMgoMRtvEBSVE3",
-      "assetId": "asset_raRd4LrrArXC7j5Ep3HHz85S",
-      "costCU": 26,
-      "originalSha256": "9663b414273f6cbd8c7a77e34826fa6a03495e1f7707b7f54fbbf28018957607",
+      "attempts": 4,
+      "promptHash": "05ead7209b26",
+      "jobId": "job_NJHsozyzTVannM41knuLwx2M",
+      "assetId": "asset_Awy2Nd75t4JUzpGvBMy3FsvD",
+      "costCU": 50,
+      "originalSha256": "f97f01b645afa7b00f5484f062e3e2705a8b57b32b20510c0c84c54566b1cfdc",
       "issues": [],
-      "updatedAt": "2026-10-14T19:35:48.532Z"
+      "updatedAt": "2026-10-14T19:54:06.196Z"
     },
     "window_glow": {
       "state": "validated",
-      "attempts": 7,
-      "promptHash": "05ddfa4a05f9",
-      "jobId": "job_GUyEp5Mohmp7MXKXDdEpgQy4",
-      "assetId": "asset_VoXkxD2VPfQKkRaB72WgoTze",
-      "costCU": 84,
-      "originalSha256": "dcb5485a286d78b8d80f0f3eacab1f997e90678b1cbce29b7de9ec8fe353072a",
+      "attempts": 10,
+      "promptHash": "5ece28391d79",
+      "jobId": "job_mkqyPqTM4B33JCg2of2cin5T",
+      "assetId": "asset_BwLUZ8G2GtkbQvrpxPjdPMyA",
+      "costCU": 120,
+      "originalSha256": "c26e9061fbc4c7225411f141127bf81783ca222095ba957b7fee1fa868efb46f",
       "issues": [],
-      "updatedAt": "2026-10-14T19:25:57.056Z"
+      "updatedAt": "2026-10-14T19:52:55.679Z"
     }
   }
 }
