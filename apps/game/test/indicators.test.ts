@@ -124,12 +124,15 @@ describe('edge arrows', () => {
     expect(pin!.y).toBeLessThan(5 * 32);
   });
 
-  it('by day, a spawn on screen at the edge keeps its marker inside the screen', () => {
+  it('by day, a spawn just on screen at the edge keeps an edge marker', () => {
     const s = new Session(prototypeContent, { ...prototypeRun, seed: 1 });
     const spawn = s.ctx.lanes.get('west')!.points[0]!;
     const [pin] = buildArrows(s.state, s.ctx, camera(spawn.x, spawn.y - 5), layout, new Map(), 0);
-    expect(pin!.onScreen).toBe(true);
-    expect(pin!.x - pin!.width / 2).toBeGreaterThanOrEqual(40);
+    // Just on screen at the left edge: an edge marker like any other, pointing left at the
+    // spawn's height, not one standing over it pushed inwards.
+    expect(pin!.onScreen).toBe(false);
+    expect(Math.abs(pin!.angle)).toBeGreaterThan(2.9);
+    expect(pin!.x).toBe(40 + pin!.width / 2 + 14);
   });
 
   it('by night: castle under attack first, then the boss, then the biggest groups; at most six', () => {

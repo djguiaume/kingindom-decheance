@@ -125,7 +125,8 @@ steering, hand-made maps) and the prototype design (corpus 11), and are easy to 
   its edge to the nearest free spot, and steps just past a panel only when the whole edge is
   blocked there. There is no joystick zone: the stick floats anywhere on the left, and a fixed
   zone only pushed left-edge pins off the edge (playtest, 2026-10-14). A spawn pin
-  standing over an on-screen spawn is kept inside the screen.
+  stands over an on-screen spawn only when it fits there; a spawn just on screen at an edge
+  keeps an ordinary edge pin, so left-edge spawns look like the other edges.
 - **Spawn pin while the spawn is on screen**: by day the pin stands over the spawn, pointing
   down, so the king can walk there and still read what is coming.
 - **Readable attacks**: melee hits draw a short slash on the target instead of a white line
