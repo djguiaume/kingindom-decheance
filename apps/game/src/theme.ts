@@ -1,3 +1,5 @@
+import type { IconId } from './icons.ts';
+
 /**
  * Colour tokens shared by the Phaser view and the Vue HUD (ADR-005: defined once).
  * One colour per enemy archetype and per building class, for readability (ADR-004).
@@ -38,13 +40,29 @@ export const colors = {
 
 export const css = (color: number): string => `#${color.toString(16).padStart(6, '0')}`;
 
-/** One icon per enemy type for the HUD, the waves panel and edge arrows (placeholder art). */
-export const enemyIcons: Record<string, string> = {
-  raider: '🪓',
-  skirmisher: '🏹',
-  brute: '👹',
-  harpy: '🦅',
-  catapult: '☄️',
-  warlord: '💀',
+/**
+ * UI identity tokens, direction A "Linen and ink" (corpus 14 §2.1, chosen 2026-10-14).
+ * Red is for enemies, gold for money, blue for night: nothing else uses those three.
+ * style.css mirrors these as CSS custom properties for the Vue HUD.
+ */
+export const ui = {
+  linen: 0xf4efe4,
+  linenDeep: 0xe7e0d1,
+  ink: 0x24272c,
+  muted: 0x6c6f72,
+  gold: 0xc99a1e,
+  enemy: 0xc4412f,
+  night: 0x34507a,
+  moss: 0x5d7a4c,
+} as const;
+
+/** One glyph per enemy type, from the game's icon set (icons.ts), for the HUD, waves and pins. */
+export const enemyIcons: Record<string, IconId> = {
+  raider: 'axe',
+  skirmisher: 'bow',
+  brute: 'club',
+  harpy: 'wing',
+  catapult: 'boulder',
+  warlord: 'helm',
 };
-export const enemyIcon = (id: string): string => enemyIcons[id] ?? '❓';
+export const enemyIcon = (id: string): IconId => enemyIcons[id] ?? 'skull';

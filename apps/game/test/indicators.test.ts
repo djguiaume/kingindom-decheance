@@ -82,7 +82,7 @@ describe('edge arrows', () => {
     const s = new Session(prototypeContent, { ...prototypeRun, seed: 1 });
     const arrows = buildArrows(s.state, s.ctx, camera(20, 20), layout, new Map(), 0);
     expect(arrows.map((a) => a.key)).toEqual(['spawn-west']);
-    expect(arrows[0]!.label).toBe('🪓8');
+    expect(arrows[0]!.label).toBe('axe8');
   });
 
   it('by night: castle under attack first, then the boss, then the biggest groups; at most six', () => {
@@ -94,7 +94,7 @@ describe('edge arrows', () => {
     const arrows = buildArrows(s.state, s.ctx, cam, layout, new Map([['castle', 1000]]), 1500);
     expect(arrows).toHaveLength(MAX_ARROWS);
     expect(arrows.map((a) => a.kind).slice(0, 3)).toEqual(['castle', 'boss', 'group']);
-    expect(arrows[2]!.label).toBe('🪓4');
+    expect(arrows[2]!.label).toBe('axe4');
     // An old hit no longer counts as an attack.
     const later = buildArrows(s.state, s.ctx, cam, layout, new Map([['castle', 1000]]), 4000);
     expect(later[0]!.kind).toBe('boss');

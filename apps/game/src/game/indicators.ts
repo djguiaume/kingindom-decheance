@@ -4,7 +4,8 @@
  * browser. View-only: nothing here reaches the core.
  */
 import { req, telegraph, type GameContext, type GameState, type Vec } from '@kd/core';
-import { colors, css, enemyIcon } from '../theme.ts';
+import type { IconId } from '../icons.ts';
+import { colors, css, enemyIcon, ui } from '../theme.ts';
 
 export interface Projection {
   toScreen(p: Vec): Vec;
@@ -38,10 +39,10 @@ export interface Arrow {
   /** 1 small, 2 medium, 3 large. */
   size: 1 | 2 | 3;
   color: string;
-  /** Plain-text form of `parts`, e.g. "🪓8 🏹3". */
+  /** Plain-text form of `parts`, e.g. "axe8 bow3". */
   label: string;
   /** What the marker shows inside: an icon with an optional count, per enemy type. */
-  parts: { icon: string; count: number | null }[];
+  parts: { icon: IconId; count: number | null }[];
 }
 
 export const MAX_ARROWS = 6;
@@ -142,7 +143,7 @@ export function placeArrow(
 
 const sizeFor = (count: number): 1 | 2 | 3 => (count >= 12 ? 3 : count >= 5 ? 2 : 1);
 /** Every enemy marker is one danger red, like Thronefall's; the icons tell the types apart. */
-const ENEMY_RED = css(0xc73a3a);
+const ENEMY_RED = css(ui.enemy);
 const BOSS_RED = css(colors.enemies.boss);
 const ALERT_RED = css(0xff4d4d);
 
@@ -194,7 +195,7 @@ export function buildArrows(
 
   const recent = (key: string) => now - (lastHit.get(key) ?? -Infinity) < UNDER_ATTACK_MS;
   if (recent('castle'))
-    add('castle', 'castle', state.castle.pos, 3, ALERT_RED, [{ icon: '🏰', count: null }]);
+    add('castle', 'castle', state.castle.pos, 3, ALERT_RED, [{ icon: 'keep', count: null }]);
 
   const bosses = state.enemies.filter((e) => req(ctx.enemies, e.type).archetype === 'boss');
   for (const b of bosses)
@@ -204,7 +205,7 @@ export function buildArrows(
     .filter((b) => !b.destroyed && recent(`b${b.id}`))
     .sort((a, b) => (lastHit.get(`b${b.id}`) ?? 0) - (lastHit.get(`b${a.id}`) ?? 0));
   for (const b of hitBuildings)
-    add(`b${b.id}`, 'building', b.pos, 2, ALERT_RED, [{ icon: '⚠', count: null }]);
+    add(`b${b.id}`, 'building', b.pos, 2, ALERT_RED, [{ icon: 'house', count: null }]);
 
   const bossIds = new Set(bosses.map((b) => b.id));
   const groups = enemyGroups(state, (id) => bossIds.has(id)).sort((a, b) => b.count - a.count);
