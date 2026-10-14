@@ -192,6 +192,14 @@ describe('validation and masters', () => {
     expect(await codes(Buffer.from('not an image'))).toContain('decode');
   });
 
+  it('rejects a long weapon painted tilted, accepts it laid along its canvas', async () => {
+    const spear = asset(m, 'footman_weapon');
+    const { w: gw, h: gh } = spear.generate;
+    const codes = async (png: Buffer) => (await analyze(png, spear)).issues.map((i) => i.code);
+    expect(await codes(await fixturePng(gw, gh, 'good', 1))).toContain('orientation');
+    expect(await codes(await fixturePng(gw, gh, 'horizontal', 1))).not.toContain('orientation');
+  });
+
   it('requires tiles to be opaque', async () => {
     const opaque = await analyze(
       await fixturePng(tile.generate.w, tile.generate.h, 'good', 1, false),

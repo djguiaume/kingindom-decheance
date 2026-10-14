@@ -6,7 +6,8 @@
 import sharp from 'sharp';
 import type { FetchLike } from './scenario.ts';
 
-export type Fixture = 'good' | 'opaque' | 'cutoff' | 'tiny';
+/** 'good' follows the prompt's layout; 'horizontal' and 'upright' are long weapons laid out as asked. */
+export type Fixture = 'good' | 'horizontal' | 'upright' | 'opaque' | 'cutoff' | 'tiny';
 
 export interface MockOptions {
   /** CU per image the dry run reports. */
@@ -45,8 +46,12 @@ export async function fixturePng(
       ? `<rect x="${w * 0.4}" y="${h * 0.2}" width="${w * 0.7}" height="${h * 0.6}" fill="${color}"/>`
       : kind === 'tiny'
         ? `<circle cx="${w / 2}" cy="${h / 2}" r="3" fill="${color}"/>`
-        : `<ellipse cx="${w / 2}" cy="${h * 0.55}" rx="${w * 0.22}" ry="${h * 0.3}" fill="${color}" stroke="#3b2a1a" stroke-width="${Math.max(2, w / 200)}"/>` +
-          `<circle cx="${w / 2}" cy="${h * 0.25}" r="${Math.min(w, h) * 0.12}" fill="#f4f1ea" stroke="#3b2a1a" stroke-width="${Math.max(2, w / 200)}"/>`;
+        : kind === 'horizontal'
+          ? `<rect x="${w * 0.1}" y="${h * 0.47}" width="${w * 0.8}" height="${h * 0.06}" fill="${color}"/>`
+          : kind === 'upright'
+            ? `<rect x="${w * 0.47}" y="${h * 0.1}" width="${w * 0.06}" height="${h * 0.8}" fill="${color}"/>`
+            : `<ellipse cx="${w / 2}" cy="${h * 0.55}" rx="${w * 0.22}" ry="${h * 0.3}" fill="${color}" stroke="#3b2a1a" stroke-width="${Math.max(2, w / 200)}"/>` +
+              `<circle cx="${w / 2}" cy="${h * 0.25}" r="${Math.min(w, h) * 0.12}" fill="#f4f1ea" stroke="#3b2a1a" stroke-width="${Math.max(2, w / 200)}"/>`;
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}">${bg}${shape}</svg>`;
   return sharp(Buffer.from(svg)).ensureAlpha().png().toBuffer();
 }
@@ -105,7 +110,12 @@ export function createMockScenario(opts: MockOptions = {}): { fetch: FetchLike; 
       const prompt = String(body.prompt ?? '');
       state.generations.push({ prompt, body });
       const jobId = `job_${nextId++}`;
-      const fixture = opts.fixtureFor?.(idx, prompt) ?? 'good';
+      const layout: Fixture = /perfectly horizontal/.test(prompt)
+        ? 'horizontal'
+        : /perfectly upright/.test(prompt)
+          ? 'upright'
+          : 'good';
+      const fixture = opts.fixtureFor?.(idx, prompt) ?? layout;
       const ids: string[] = [];
       for (let i = 0; i < n; i++) {
         const id = `asset_${nextId++}`;

@@ -18,6 +18,18 @@ export const STYLE_BIBLE = [
 const REFERENCE_RULE =
   'The attached image is the approved v1.2 style reference sheet. Match its art style, palette, proportions and character designs. Do NOT copy, crop or recompose it; paint ONE new isolated subject from scratch.';
 
+/** Long thin objects must be painted along their canvas, or they shrink to nothing once fitted. */
+function orientation(asset: Asset): string {
+  const { w, h } = asset.canvas;
+  if (w >= h * 2) {
+    return ' Lay it out perfectly horizontal, long axis left to right, tip or head pointing right, filling the width. Not tilted or diagonal.';
+  }
+  if (h >= w * 2) {
+    return ' Stand it perfectly upright, long axis vertical, filling the height. Not tilted or diagonal.';
+  }
+  return '';
+}
+
 function framing(asset: Asset): string {
   const rule = KIND_RULES[asset.kind];
   switch (asset.kind) {
@@ -26,14 +38,18 @@ function framing(asset: Asset): string {
     case 'background':
       return 'Fill the whole frame edge to edge. Opaque painted scene.';
     case 'weapon':
-      return 'Show the object alone, whole and centred, nobody holding it, on a fully transparent background.';
+    case 'projectile':
+      return `Show the object alone, whole and centred, nobody holding it, on a fully transparent background.${orientation(asset)}`;
     default: {
       const ground = rule.groundAllowed
         ? 'Small contextual decorations attached to it are fine; no wide ground plate or scenery around it.'
         : 'No ground patch, no cast shadow, no scenery, nothing under the feet.';
-      const facing = ['character', 'flyer', 'siege', 'projectile'].includes(asset.kind)
-        ? ' Facing right.'
-        : '';
+      const facing =
+        asset.kind === 'character' || asset.kind === 'flyer'
+          ? ' Body turned clearly toward the right (three-quarter side view, looking right), not facing the viewer.'
+          : asset.kind === 'siege'
+            ? ' Facing right.'
+            : '';
       return `One single subject, whole (nothing cut off by the frame), centred with margin, on a fully transparent background.${facing} ${ground}`;
     }
   }

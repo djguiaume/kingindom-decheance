@@ -173,6 +173,18 @@ export async function analyze(png: Buffer, asset: Asset): Promise<Analysis> {
       add('error', 'cutoff', 'Subject touches the image edge: it may be cut off.');
     }
     if (bbox.w * bbox.h < r.width * r.height * 0.01) add('error', 'tiny', 'Subject is too small.');
+    // A long weapon painted diagonally or the wrong way round ends up tiny on its slim canvas.
+    if (asset.kind === 'weapon' || asset.kind === 'projectile') {
+      const want = asset.canvas.w / asset.canvas.h;
+      const got = bbox.w / bbox.h;
+      if ((want >= 2 && got < want / 2.5) || (want <= 0.5 && got > want * 2.5)) {
+        add(
+          'error',
+          'orientation',
+          `Shape ${bbox.w}x${bbox.h} does not fit its ${asset.canvas.w}x${asset.canvas.h} canvas: tilted or turned?`,
+        );
+      }
+    }
   }
   if (!rule.multiBlob && bbox) {
     const blobs = countBlobs(r);
