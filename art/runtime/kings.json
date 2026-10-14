@@ -1,0 +1,42 @@
+{
+  "frames": {
+    "king_roll_idle": {
+      "frame": {
+        "x": 2,
+        "y": 2,
+        "w": 90,
+        "h": 125
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 51,
+        "y": 48,
+        "w": 90,
+        "h": 125
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "king_roll_idle",
+      "num": 1,
+      "contentId": "king"
+    }
+  },
+  "meta": {
+    "app": "@kd/art-pipeline",
+    "version": "1",
+    "image": "kings.webp",
+    "format": "RGBA8888",
+    "size": {
+      "w": 94,
+      "h": 129
+    },
+    "scale": "1"
+  }
+}

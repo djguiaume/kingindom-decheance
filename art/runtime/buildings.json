@@ -1,0 +1,42 @@
+{
+  "frames": {
+    "house": {
+      "frame": {
+        "x": 2,
+        "y": 2,
+        "w": 194,
+        "h": 221
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 31,
+        "y": 9,
+        "w": 194,
+        "h": 221
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "house",
+      "num": 43,
+      "contentId": "house"
+    }
+  },
+  "meta": {
+    "app": "@kd/art-pipeline",
+    "version": "1",
+    "image": "buildings.webp",
+    "format": "RGBA8888",
+    "size": {
+      "w": 198,
+      "h": 225
+    },
+    "scale": "1"
+  }
+}
