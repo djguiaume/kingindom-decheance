@@ -180,6 +180,26 @@ balance are untouched.
   drawers: the flash re-draws it with every colour replaced by white).
 - Death fall: a dead footman or enemy tips over backwards where it died, then fades (0.6 s).
 
+## Stage A2, new units (2026-10-14, corpus 11 §12.2)
+
+- **Barracks branches** (castle level 2, exclusive): Garrison (5 footmen) or Knight hall
+  (3 knights: 150 HP, 12 dmg / 1.2 s, speed 3, `armor` 0.3 so they take 30% less damage).
+  `armor` is a new unit field applied wherever a unit is hit.
+- **Archery range** (45 gold, first tier): 3 archers (40 HP, 7 dmg / 1.2 s, range 6, hit flyers;
+  arrows are projectiles). Branches (castle level 2, exclusive): Marksmen (5 archers) or
+  Crossbow range (3 crossbowmen: 18 dmg / 2 s, range 7.5, ×1.5 vs brutes and the Warlord).
+  Archers never come from the barracks line. Squads answer Rally and flags like footmen.
+- **Map**: two archery range plots on Greyhollow, one behind each side gate (`r_w`, `r_e`).
+- **View**: friendly arrows are pale so they never read as shots to dodge; long building names
+  wrap on the buy card.
+- **Bots**: balanced now buys one soldiers' building a day from day 2; `--branches` makes
+  balanced or defensive prefer an upgrade branch (e.g. `knight_hall,crossbow_range`).
+- **Retune**: night 6 raiders and skirmishers +15%. Results (200 seeds): balanced 93.5% (Tithe
+  and Fortress), 99% with Hero King, 76% with Royal Archers, 40% with Commander (bots never
+  rally), 16% with Gambler's Oath; defensive 20%, greedy falls night 3, king-only night 5. The
+  bots rarely have gold left for the branch upgrades, so Knight hall and Crossbow range are not
+  measured by them yet.
+
 ## Balance (first playtest, 2026-10-13)
 
 Gold felt scarce in play while the simulator found the game easy (the king alone reached

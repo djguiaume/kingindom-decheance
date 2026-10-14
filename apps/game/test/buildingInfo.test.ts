@@ -29,6 +29,17 @@ describe('building info on the buy buttons', () => {
     expect(offerInfo(ctx, 'house', 'manor').stats).toBe('Gold a dawn +10 → +20');
   });
 
+  it('military buildings describe their soldiers', () => {
+    const show = (from: string | null, to: string) => offerInfo(ctx, from, to).stats;
+    expect(show(null, 'archery_range')).toBe('Archers 3 · shoot 6 m · hit flyers');
+    expect(show('barracks', 'knight_hall')).toBe('Knights 3 · take 30% less damage');
+    expect(show('barracks', 'garrison')).toBe('Footmen 3 → 5');
+    expect(show('archery_range', 'marksmen')).toBe('Archers 3 → 5');
+    expect(show('archery_range', 'crossbow_range')).toBe(
+      'Crossbowmen 3 · shoot 7.5 m · ×1.5 vs brutes',
+    );
+  });
+
   it('the current building lists its numbers', () => {
     expect(buildingStats(ctx, 'watchtower')).toBe('Damage 12/s · Range 8.5');
   });
@@ -39,7 +50,8 @@ describe('castle level card', () => {
     const s = new Session(prototypeContent, { ...prototypeRun, seed: 1 });
     expect(castleLevelInfo(s.ctx, s.state, 2)).toEqual({
       stats: 'HP 1500 → 2000 · Damage 5 → 8/s · Range 8 → 9',
-      unlocks: 'Unlocks Manor, Watchtower, Stone wall, Garrison.',
+      unlocks:
+        'Unlocks Manor, Watchtower, Stone wall, Garrison, Knight hall, Marksmen, Crossbow range.',
     });
     s.state.gold = 1000;
     s.submit({ type: 'chooseCastleLevel', level: 2, perk: 'royal_archers' });

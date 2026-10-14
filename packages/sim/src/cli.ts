@@ -19,16 +19,19 @@ const { values } = parseArgs({
     json: { type: 'boolean', default: false },
     /** Castle perk picks for balanced/defensive, e.g. "1,2" (indexes per level). */
     perks: { type: 'string' },
+    /** Upgrade branches balanced/defensive prefer, e.g. "knight_hall,crossbow_range". */
+    branches: { type: 'string' },
   },
 });
 
 const picks = values.perks?.split(',').map(Number);
+const branches = values.branches?.split(',');
 const makers: Record<string, typeof makeBalanced> = {
   balanced: makeBalanced,
   defensive: makeDefensive,
 };
 const maker = makers[values.policy];
-const policy = picks && maker ? maker(picks) : policies[values.policy];
+const policy = (picks || branches) && maker ? maker(picks, branches) : policies[values.policy];
 if (!policy)
   throw new Error(`Unknown policy "${values.policy}". Known: ${Object.keys(policies).join(', ')}`);
 const runs = Number(values.runs);
@@ -48,7 +51,7 @@ if (values.json) {
   const wins = summaries.filter((s) => s.outcome === 'won').length;
   const meanNight = summaries.reduce((n, s) => n + s.nightReached, 0) / runs;
   console.log(
-    `content ${prototypeContent.hash} · policy ${policy.id}${picks ? ` perks ${picks.join(',')}` : ''} · ${runs} runs in ${elapsed.toFixed(2)}s`,
+    `content ${prototypeContent.hash} · policy ${policy.id}${picks ? ` perks ${picks.join(',')}` : ''}${branches ? ` branches ${branches.join(',')}` : ''} · ${runs} runs in ${elapsed.toFixed(2)}s`,
   );
   console.log(
     `win rate ${((100 * wins) / runs).toFixed(1)}% · mean night reached ${meanNight.toFixed(2)}`,
