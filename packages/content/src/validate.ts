@@ -7,6 +7,7 @@
 import type { z } from 'zod';
 import {
   BuildingCatalog,
+  CastleCatalog,
   EnemyCatalog,
   GameMap,
   KingSettings,
@@ -45,6 +46,7 @@ export function loadContent(raw: RawContent): LoadResult {
   const enemies = parse(EnemyCatalog, raw.enemies, 'enemies.json');
   const weapons = parse(WeaponCatalog, raw.weapons, 'weapons.json');
   const king = parse(KingSettings, raw.king, 'king.json');
+  const castle = parse(CastleCatalog, raw.castle, 'castle.json');
   const maps = raw.maps.map((m, i) => {
     const id =
       m !== null && typeof m === 'object' && 'id' in m && typeof m.id === 'string'
@@ -53,7 +55,7 @@ export function loadContent(raw: RawContent): LoadResult {
     return parse(GameMap, m, `maps/${id}.json`);
   });
 
-  if (errors.length > 0 || !buildings || !units || !enemies || !weapons || !king) {
+  if (errors.length > 0 || !buildings || !units || !enemies || !weapons || !king || !castle) {
     return { ok: false, errors };
   }
 
@@ -63,6 +65,7 @@ export function loadContent(raw: RawContent): LoadResult {
     enemies: enemies.enemies,
     weapons: weapons.weapons,
     king,
+    castle: { levels: castle.levels, perks: castle.perks },
     maps: maps.filter((m) => m !== undefined),
   };
   errors.push(...checkSemantics(bundle));
@@ -159,6 +162,26 @@ export function checkSemantics(bundle: Omit<ContentBundle, 'hash'>): ContentErro
       break;
     }
   }
+
+  // Castle levels: numbered 2, 3, … in order; each offers existing perks; buildings ask for a
+  // level that exists.
+  const perkIds = unique(
+    'castle.json',
+    bundle.castle.perks.map((p) => p.id),
+  );
+  bundle.castle.levels.forEach((l, i) => {
+    if (l.level !== i + 2) err('castle.json', `levels.${i}.level`, `expected level ${i + 2}`);
+    l.perks.forEach((p, j) => {
+      if (!perkIds.has(p)) err('castle.json', `levels.${i}.perks.${j}`, `unknown perk "${p}"`);
+    });
+  });
+  const topLevel = bundle.castle.levels.length + 1;
+  bundle.buildings.forEach((b, i) => {
+    if (b.castleLevel > topLevel)
+      err('buildings.json', `buildings.${i}.castleLevel`, `the castle only has ${topLevel} levels`);
+  });
+  // Whether each modifier's stat path reaches a number is checked by the core
+  // (checkModifiers), which owns the resolver.
 
   for (const map of bundle.maps) {
     const file = `maps/${map.id}.json`;

@@ -5,7 +5,7 @@
  */
 import { parseArgs } from 'node:util';
 import { prototypeContent, prototypeRun } from '@kd/content/prototype';
-import { policies } from './policies.ts';
+import { makeBalanced, makeDefensive, policies } from './policies.ts';
 import { runHeadless } from './runner.ts';
 
 const { values } = parseArgs({
@@ -17,10 +17,18 @@ const { values } = parseArgs({
     runs: { type: 'string', default: '100' },
     seed: { type: 'string', default: '1' },
     json: { type: 'boolean', default: false },
+    /** Castle perk picks for balanced/defensive, e.g. "1,2" (indexes per level). */
+    perks: { type: 'string' },
   },
 });
 
-const policy = policies[values.policy];
+const picks = values.perks?.split(',').map(Number);
+const makers: Record<string, typeof makeBalanced> = {
+  balanced: makeBalanced,
+  defensive: makeDefensive,
+};
+const maker = makers[values.policy];
+const policy = picks && maker ? maker(picks) : policies[values.policy];
 if (!policy)
   throw new Error(`Unknown policy "${values.policy}". Known: ${Object.keys(policies).join(', ')}`);
 const runs = Number(values.runs);
@@ -40,7 +48,7 @@ if (values.json) {
   const wins = summaries.filter((s) => s.outcome === 'won').length;
   const meanNight = summaries.reduce((n, s) => n + s.nightReached, 0) / runs;
   console.log(
-    `content ${prototypeContent.hash} · policy ${policy.id} · ${runs} runs in ${elapsed.toFixed(2)}s`,
+    `content ${prototypeContent.hash} · policy ${policy.id}${picks ? ` perks ${picks.join(',')}` : ''} · ${runs} runs in ${elapsed.toFixed(2)}s`,
   );
   console.log(
     `win rate ${((100 * wins) / runs).toFixed(1)}% · mean night reached ${meanNight.toFixed(2)}`,

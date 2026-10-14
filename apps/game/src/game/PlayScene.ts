@@ -6,6 +6,7 @@
  */
 import Phaser from 'phaser';
 import {
+  atCastle,
   GATE_HALF_WIDTH,
   guardSpot,
   telegraph,
@@ -230,6 +231,12 @@ export class PlayScene extends Phaser.Scene {
         g.lineStyle(2, colors.buildings.tower, 0.5);
         g.strokeEllipse(p.x, p.y, r * 2, r * 2 * SQUASH);
       }
+    } else if (state.phase === 'day' && atCastle(state, ctx) && ctx.castle.attack) {
+      // At the castle: the reach of its shot, which grows with its level and perks.
+      const p = this.px(state.castle.pos);
+      const r = (ctx.castle.attack.range + ctx.castle.radius) * SCALE;
+      g.lineStyle(2, colors.buildings.tower, 0.5);
+      g.strokeEllipse(p.x, p.y, r * 2, r * 2 * SQUASH);
     }
 
     // Everything that stands up is drawn back to front (painter's order by ground y).
@@ -278,7 +285,15 @@ export class PlayScene extends Phaser.Scene {
       });
     };
 
-    add(state.castle.pos, state.castle.radius, 'castle', 1, [state.castle.hp, state.castle.maxHp]);
+    // The castle is drawn bigger at each level (13 §1.1); its footprint in the rules is the same.
+    const level = state.castleLevel;
+    add(
+      state.castle.pos,
+      state.castle.radius * (1 + 0.15 * (level - 1)),
+      level > 1 ? `castle_${level}` : 'castle',
+      1,
+      [state.castle.hp, state.castle.maxHp],
+    );
     for (const b of state.buildings) {
       const def = ctx.buildings.get(b.type)!;
       if (def.class === 'wall' && this.addWall(items, b)) continue;

@@ -9,6 +9,7 @@ import type { Vec } from './vec.ts';
 export type GameEvent =
   | { type: 'built'; slot: string; building: string; id: number }
   | { type: 'upgraded'; slot: string; from: string; to: string; id: number }
+  | { type: 'castleUpgraded'; level: number; perk: string }
   | { type: 'nightStarted'; night: number }
   | { type: 'enemySpawned'; id: number; enemy: string; lane: string }
   | { type: 'unitSpawned'; id: number; unit: string }

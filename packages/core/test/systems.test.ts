@@ -134,6 +134,7 @@ describe('combat', () => {
   it('the volley tower hits up to three enemies per shot', () => {
     const s = newSession();
     s.state.gold = 1000;
+    s.state.castleLevel = 3; // every tier unlocked
     s.submit({ type: 'buy', slot: 'tw', option: 0 });
     s.submit({ type: 'buy', slot: 'tw', option: 0 });
     s.submit({ type: 'buy', slot: 'tw', option: 1 });
@@ -146,6 +147,7 @@ describe('combat', () => {
   it('the ballista deals its bonus against tanks', () => {
     const s = newSession();
     s.state.gold = 1000;
+    s.state.castleLevel = 3; // every tier unlocked
     s.submit({ type: 'buy', slot: 'tw', option: 0 });
     s.submit({ type: 'buy', slot: 'tw', option: 0 });
     s.submit({ type: 'buy', slot: 'tw', option: 0 });
@@ -318,6 +320,7 @@ describe('siege, boss and rally', () => {
   it('counter bonuses against tanks also apply to the boss', () => {
     const s = newSession();
     s.state.gold = 1000;
+    s.state.castleLevel = 3; // every tier unlocked
     for (let i = 0; i < 3; i++) s.submit({ type: 'buy', slot: 'tw', option: 0 });
     expect(s.state.buildings[0]!.type).toBe('ballista_tower');
     emptyNight(s, 10_000);

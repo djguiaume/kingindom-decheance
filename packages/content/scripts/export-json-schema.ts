@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { z } from 'zod';
 import {
   BuildingCatalog,
+  CastleCatalog,
   EnemyCatalog,
   GameMap,
   KingSettings,
@@ -22,6 +23,7 @@ const files: Record<string, z.ZodType> = {
   'weapons.schema.json': WeaponCatalog,
   'king.schema.json': KingSettings,
   'map.schema.json': GameMap,
+  'castle.schema.json': CastleCatalog,
 };
 for (const [name, schema] of Object.entries(files)) {
   const json = z.toJSONSchema(schema, { io: 'input' });

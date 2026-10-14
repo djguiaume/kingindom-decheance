@@ -61,6 +61,32 @@ export const Attack = z.object({
 
 export const BuildingClass = z.enum(['eco', 'tower', 'wall', 'military']);
 
+/**
+ * When a catalogue entry becomes available through XP levels (13 §6.4). Absent means available
+ * from the start, which is every entry in Stage A; the app's progression service decides.
+ */
+export const Unlock = z.object({ level: z.number().int().positive() });
+
+/**
+ * One stat change, the shape shared by castle perks and later starting perks, mutators and
+ * weapons (13 §6.2). `stat` is a path into the content:
+ *   building|unit|enemy . (* | id | class:<class or archetype>) . field[.field]
+ *   king|weapon|castle|rules . field[.field]
+ * e.g. "building.class:wall.hp", "castle.attack.range", "enemy.*.hp", "rules.rallyReach".
+ * `nights` limits it to those nights (the run's day number).
+ */
+export const Modifier = z.object({
+  stat: z
+    .string()
+    .regex(
+      /^((building|unit|enemy)\.(\*|class:[a-z]+|[a-z0-9][a-z0-9_-]*)|king|weapon|castle|rules)(\.[a-zA-Z]+)+$/,
+      'stat is kind.selector.field (building, unit, enemy) or kind.field (king, weapon, castle, rules)',
+    ),
+  op: z.enum(['add', 'mul']),
+  value: z.number(),
+  nights: z.array(z.number().int().positive()).optional(),
+});
+
 export const Upgrade = z.object({
   to: Id,
   cost: NonNegative,
@@ -75,6 +101,8 @@ export const Building = z.object({
   description: z.string().default(''),
   class: BuildingClass,
   cost: NonNegative,
+  /** Castle level needed to build it or upgrade into it: its tier (13 §1.1). */
+  castleLevel: z.number().int().positive().default(1),
   hp: Positive,
   /** Gold paid at dawn if the building survived the night. */
   income: NonNegative.default(0),
@@ -159,6 +187,30 @@ export const Weapon = z.object({
   name: z.string(),
   attack: Attack,
   ability: Ability.optional(),
+  unlock: Unlock.optional(),
+});
+
+/** A perk: a named bundle of modifiers. Castle perks are picked when the castle levels up. */
+export const Perk = z.object({
+  id: Id,
+  name: z.string(),
+  /** One line saying exactly what changes, shown on the perk card. */
+  description: z.string(),
+  modifiers: z.array(Modifier).min(1),
+  unlock: Unlock.optional(),
+});
+
+/**
+ * A castle level above the first (the map's castle is level 1). Each is bought with gold by
+ * day, makes the castle stronger, unlocks buildings of its tier and offers a pick of one perk.
+ */
+export const CastleLevel = z.object({
+  level: z.number().int().min(2),
+  cost: Positive,
+  hp: Positive,
+  attack: Attack.optional(),
+  /** Perk ids offered when buying this level; the player picks one. */
+  perks: z.array(Id).min(1),
 });
 
 /** King settings shared by every weapon. */
@@ -240,6 +292,11 @@ export const BuildingCatalog = z.object({ ...Meta, buildings: z.array(Building) 
 export const UnitCatalog = z.object({ ...Meta, units: z.array(Unit) });
 export const EnemyCatalog = z.object({ ...Meta, enemies: z.array(Enemy) });
 export const WeaponCatalog = z.object({ ...Meta, weapons: z.array(Weapon) });
+export const CastleCatalog = z.object({
+  ...Meta,
+  levels: z.array(CastleLevel),
+  perks: z.array(Perk),
+});
 
 export type TargetLayer = z.infer<typeof TargetLayer>;
 export type TargetCategory = z.infer<typeof TargetCategory>;
@@ -250,6 +307,11 @@ export type Unit = z.infer<typeof Unit>;
 export type Enemy = z.infer<typeof Enemy>;
 export type EnemyArchetype = z.infer<typeof EnemyArchetype>;
 export type Weapon = z.infer<typeof Weapon>;
+export type Unlock = z.infer<typeof Unlock>;
+export type Modifier = z.infer<typeof Modifier>;
+export type Perk = z.infer<typeof Perk>;
+export type CastleLevel = z.infer<typeof CastleLevel>;
+export type CastleCatalog = z.infer<typeof CastleCatalog>;
 export type Ability = z.infer<typeof Ability>;
 export type KingSettings = z.infer<typeof KingSettings>;
 export type MapNode = z.infer<typeof MapNode>;
@@ -264,6 +326,7 @@ export interface ContentBundle {
   enemies: Enemy[];
   weapons: Weapon[];
   king: KingSettings;
+  castle: { levels: CastleLevel[]; perks: Perk[] };
   maps: GameMap[];
   /** Stable hash of the validated content, recorded in every run (ADR-006). */
   hash: string;
@@ -276,5 +339,6 @@ export interface RawContent {
   enemies: unknown;
   weapons: unknown;
   king: unknown;
+  castle: unknown;
   maps: unknown[];
 }

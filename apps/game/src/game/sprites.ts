@@ -164,12 +164,37 @@ const king: Drawer = (g, x, y, s, a, pose = REST) => {
   g.fillCircle(hx + Math.cos(angle) * ahead, hy + Math.sin(angle) * ahead, Math.max(1.5, s * 0.14));
 };
 
-const castle: Drawer = (g, x, y, s, a) => {
-  block(0xd9c48a, 1.4)(g, x, y, s, a);
-  for (const dx of [-s, s]) block(0xcbb57a, 2.2, 0x3b6db3)(g, x + dx * 0.9, y, s * 0.35, a);
-  g.fillStyle(colors.castle, a);
-  g.fillTriangle(x, y - s * 2.2, x, y - s * 2.9, x + s * 0.5, y - s * 2.55);
-};
+/**
+ * The castle grows with its level (13 §1.1): level 2 adds two outer towers with blue banners,
+ * level 3 a tall central keep and gold roofs. The scene also draws it larger at each level.
+ */
+function castleAt(level: number): Drawer {
+  const roof = level >= 3 ? colors.castle : 0x3b6db3;
+  return (g, x, y, s, a) => {
+    if (level >= 2) {
+      for (const dx of [-1.55, 1.55]) {
+        block(0xc2ac70, 1.8, roof)(g, x + dx * s, y - s * 0.15, s * 0.3, a);
+        // A banner hanging from the outer tower.
+        g.fillStyle(0x34507a, a);
+        g.fillRect(x + dx * s - s * 0.12, y - s * 0.62, s * 0.24, s * 0.3);
+        g.fillTriangle(
+          x + dx * s - s * 0.12,
+          y - s * 0.32,
+          x + dx * s + s * 0.12,
+          y - s * 0.32,
+          x + dx * s,
+          y - s * 0.2,
+        );
+      }
+    }
+    block(0xd9c48a, 1.4)(g, x, y, s, a);
+    if (level >= 3) block(0xcbb57a, 2.7, colors.castle)(g, x, y - s * 0.1, s * 0.5, a);
+    for (const dx of [-s, s]) block(0xcbb57a, 2.2, roof)(g, x + dx * 0.9, y, s * 0.35, a);
+    const top = level >= 3 ? 3.3 : 2.2;
+    g.fillStyle(colors.castle, a);
+    g.fillTriangle(x, y - s * top, x, y - s * (top + 0.7), x + s * 0.5, y - s * (top + 0.35));
+  };
+}
 
 /** A wooden frame on wheels with a throwing arm. */
 const catapult: Drawer = (g, x, y, s, a, pose = REST) => {
@@ -192,7 +217,9 @@ const catapult: Drawer = (g, x, y, s, a, pose = REST) => {
 };
 
 const sprites: Record<string, Drawer> = {
-  castle,
+  castle: castleAt(1),
+  castle_2: castleAt(2),
+  castle_3: castleAt(3),
   king,
   house: block(colors.buildings.eco, 1.1, 0xb5523b),
   manor: block(colors.buildings.eco, 1.4, 0x8e3b2b),

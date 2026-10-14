@@ -1,5 +1,5 @@
 import { STATE_SCHEMA_VERSION } from './constants.ts';
-import type { GameContext, RunConfig } from './context.ts';
+import { syncContext, type GameContext, type RunConfig } from './context.ts';
 import type { GameEvent } from './events.ts';
 import { canonicalJson, cyrb53 } from './hash.ts';
 import { seedRng } from './rng.ts';
@@ -29,12 +29,14 @@ export function createGame(ctx: GameContext, config: RunConfig): GameState {
     tick: 0,
     nightTick: 0,
     gold: map.startingGold,
+    castleLevel: 1,
+    perks: [],
     nextId: 1,
     castle: {
       pos: { ...castlePos },
-      hp: map.castle.hp,
-      maxHp: map.castle.hp,
-      radius: map.castle.radius,
+      hp: ctx.castle.hp,
+      maxHp: ctx.castle.hp,
+      radius: ctx.castle.radius,
       cooldown: 0,
     },
     king: {
@@ -70,6 +72,7 @@ export function createGame(ctx: GameContext, config: RunConfig): GameState {
 export function step(state: GameState, ctx: GameContext): GameEvent[] {
   if (state.phase === 'won' || state.phase === 'lost') return [];
   const events: GameEvent[] = [];
+  syncContext(ctx, state);
   state.tick++;
   kingSystem(state, ctx, events);
   if (state.phase !== 'night') return events;

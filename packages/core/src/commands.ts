@@ -4,15 +4,20 @@
  * reproducible from its command log.
  * Comparable to a command bus in front of a domain model: validate, then apply, or refuse.
  */
-import { req, type GameContext } from './context.ts';
+import type { CastleLevel, Perk } from '@kd/content';
+import { BASE_RULES } from './modifiers.ts';
+import { req, syncContext, type GameContext } from './context.ts';
 import type { GameEvent } from './events.ts';
 import type { BuildingState, GameState } from './state.ts';
 import { startDash } from './systems/king.ts';
-import { startNight } from './systems/phase.ts';
+import { refitHealth, startNight } from './systems/phase.ts';
 import { dist } from './vec.ts';
 
-/** Footmen within this many metres of the king answer a rally (design 11 §6). */
-export const RALLY_REACH = 6;
+/**
+ * Footmen within this many metres of the king answer a rally (design 11 §6). Perks can change
+ * it for a run: the live value is `ctx.rules.rallyReach`.
+ */
+export const RALLY_REACH = BASE_RULES.rallyReach;
 /** Flags planted together stand this far apart. */
 const FLAG_GAP = 1.2;
 
@@ -31,6 +36,11 @@ export type Command =
   /** Day: end the day and start the night. */
   | { type: 'startNight' }
   /**
+   * Day: buy the castle's next level and pick one of its perks (13 §1). Gold only, no night
+   * requirement; the pick is final for the run and is logged, so replays stay exact.
+   */
+  | { type: 'chooseCastleLevel'; level: number; perk: string }
+  /**
    * Rally (design 11 §6, playtest 2).
    * Night: with no unit following, the king's own barracks squad (when he stands at one) and
    * every footman within RALLY_REACH start following him; otherwise the followers stop where
@@ -48,12 +58,47 @@ export interface BuyOption {
   kind: 'build' | 'upgrade';
   building: string;
   cost: number;
+  /** The castle level this needs, while the castle is below it; null when it can be bought. */
+  needsCastle: number | null;
+}
+
+/** The castle's next level and its perk choices, or null at the top level. */
+export interface CastleOffer {
+  level: number;
+  cost: number;
+  perks: Perk[];
+  def: CastleLevel;
+}
+
+export function castleOffer(state: GameState, ctx: GameContext): CastleOffer | null {
+  const def = ctx.castleLevels[state.castleLevel - 1];
+  if (!def) return null;
+  return {
+    level: def.level,
+    cost: def.cost,
+    perks: def.perks.map((id) => req(ctx.perks, id)),
+    def,
+  };
+}
+
+/** True when the living king stands at the castle (the reach used for buying at a slot). */
+export function atCastle(state: GameState, ctx: GameContext): boolean {
+  const king = state.king;
+  return (
+    king.alive &&
+    dist(king.pos, state.castle.pos) <= ctx.king.buildReach + ctx.king.radius + ctx.castle.radius
+  );
 }
 
 /** What `buy` would offer at a slot: its building options if empty, else the upgrades. */
 export function buyOptions(state: GameState, ctx: GameContext, slot: string): BuyOption[] {
   const node = ctx.map.nodes.find((n) => n.id === slot);
   if (!node?.slot) return [];
+  // A building of a higher tier than the castle shows, but cannot be bought yet (13 §1.1).
+  const needs = (id: string) => {
+    const tier = req(ctx.buildings, id).castleLevel;
+    return tier > state.castleLevel ? tier : null;
+  };
   const built = state.buildings.find((b) => b.slot === slot);
   if (!built) {
     return node.slot.options.map((id, option) => ({
@@ -61,6 +106,7 @@ export function buyOptions(state: GameState, ctx: GameContext, slot: string): Bu
       kind: 'build' as const,
       building: id,
       cost: req(ctx.buildings, id).cost,
+      needsCastle: needs(id),
     }));
   }
   return req(ctx.buildings, built.type).upgrades.map((u, option) => ({
@@ -68,6 +114,7 @@ export function buyOptions(state: GameState, ctx: GameContext, slot: string): Bu
     kind: 'upgrade' as const,
     building: u.to,
     cost: u.cost,
+    needsCastle: needs(u.to),
   }));
 }
 
@@ -76,6 +123,7 @@ const fail = (reason: string): CommandResult => ({ ok: false, reason });
 /** Validates and applies one command. A refused command leaves the state untouched. */
 export function applyCommand(state: GameState, ctx: GameContext, cmd: Command): CommandResult {
   if (state.phase === 'won' || state.phase === 'lost') return fail('the run is over');
+  syncContext(ctx, state);
   const events: GameEvent[] = [];
   const king = state.king;
 
@@ -109,6 +157,7 @@ export function applyCommand(state: GameState, ctx: GameContext, cmd: Command): 
       if (!node?.slot) return fail(`"${cmd.slot}" is not a building slot`);
       const offer = buyOptions(state, ctx, cmd.slot).find((o) => o.option === cmd.option);
       if (!offer) return fail('nothing to buy with that option here');
+      if (offer.needsCastle) return fail(`needs castle level ${offer.needsCastle}`);
       if (state.gold < offer.cost) return fail('not enough gold');
       const def = req(ctx.buildings, offer.building);
       state.gold -= offer.cost;
@@ -153,6 +202,22 @@ export function applyCommand(state: GameState, ctx: GameContext, cmd: Command): 
     case 'rally': {
       if (!king.alive) return fail('the king is down');
       return state.phase === 'day' ? dayRally(state, ctx) : nightRally(state, ctx);
+    }
+
+    case 'chooseCastleLevel': {
+      if (state.phase !== 'day') return fail('the castle grows by day');
+      const offer = castleOffer(state, ctx);
+      if (!offer) return fail('the castle is at its highest level');
+      if (cmd.level !== offer.level) return fail(`the next castle level is ${offer.level}`);
+      if (!offer.def.perks.includes(cmd.perk)) return fail('that perk is not offered here');
+      if (state.gold < offer.cost) return fail('not enough gold');
+      state.gold -= offer.cost;
+      state.castleLevel = offer.level;
+      state.perks.push(cmd.perk);
+      syncContext(ctx, state);
+      refitHealth(state, ctx);
+      events.push({ type: 'castleUpgraded', level: offer.level, perk: cmd.perk });
+      return { ok: true, events };
     }
 
     case 'startNight': {
@@ -225,7 +290,7 @@ function nightRally(state: GameState, ctx: GameContext): CommandResult {
   }
   const at = militaryAt(state, ctx);
   const grabbed = state.units.filter(
-    (u) => (at && u.home === at.id) || dist(u.pos, king.pos) <= RALLY_REACH,
+    (u) => (at && u.home === at.id) || dist(u.pos, king.pos) <= ctx.rules.rallyReach,
   );
   if (grabbed.length === 0) return fail('no footmen near the king');
   for (const u of grabbed) u.following = true;

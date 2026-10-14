@@ -42,6 +42,7 @@ describe('day commands', () => {
   it('upgrades follow the upgrade graph, so the T3 branches exclude each other', () => {
     const s = newSession();
     s.state.gold = 1000;
+    s.state.castleLevel = 3; // every tier unlocked
     s.submit({ type: 'buy', slot: 'tw', option: 0 });
     expect(s.submit({ type: 'buy', slot: 'tw', option: 0 }).ok).toBe(true);
     expect(s.submit({ type: 'buy', slot: 'tw', option: 0 }).ok).toBe(true);
@@ -126,6 +127,7 @@ describe('king commands', () => {
   it('buy lists building options on an empty slot and upgrades on a built one', () => {
     const s = newSession();
     s.state.gold = 1000;
+    s.state.castleLevel = 3; // every tier unlocked
     s.submit({ type: 'buy', slot: 'tw', option: 0 });
     s.submit({ type: 'buy', slot: 'tw', option: 0 });
     expect(buyOptions(s.state, s.ctx, 'tw').map((o) => o.building)).toEqual([
@@ -133,7 +135,7 @@ describe('king commands', () => {
       'volley_tower',
     ]);
     expect(buyOptions(s.state, s.ctx, 'h1')).toEqual([
-      { option: 0, kind: 'build', building: 'house', cost: 15 },
+      { option: 0, kind: 'build', building: 'house', cost: 15, needsCastle: null },
     ]);
   });
 });

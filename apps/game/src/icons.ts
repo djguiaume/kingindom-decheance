@@ -29,6 +29,7 @@ export const icons = {
   mute: '<path d="M4 9h4l5-4v14l-5-4H4z"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M16 9l5 6M21 9l-5 6"/>',
   up: '<path d="M12 4l7 8h-4.5v8h-5v-8H5z"/>',
   alert: '<path d="M12 2l10 18H2zm-1 7v6h2V9zm0 8v2h2v-2z"/>',
+  dice: '<path fill-rule="evenodd" d="M6 3h12a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3zm2 3.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm4 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm4 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z"/>',
   turn: '<path d="M12 4a8 8 0 1 1-7.4 5H2l3.5-4.5L9 9H6.8A6 6 0 1 0 12 6z"/>',
 } as const;
 

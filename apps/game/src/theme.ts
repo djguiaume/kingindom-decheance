@@ -66,3 +66,14 @@ export const enemyIcons: Record<string, IconId> = {
   warlord: 'helm',
 };
 export const enemyIcon = (id: string): IconId => enemyIcons[id] ?? 'skull';
+
+/** One glyph per castle perk (perk cards, pause menu). Unknown perks fall back to the keep. */
+export const perkIcons: Record<string, IconId> = {
+  tithe: 'house',
+  royal_archers: 'bow',
+  commander: 'flag',
+  fortress: 'wall',
+  hero_king: 'crown',
+  gamblers_oath: 'dice',
+};
+export const perkIcon = (id: string): IconId => perkIcons[id] ?? 'keep';

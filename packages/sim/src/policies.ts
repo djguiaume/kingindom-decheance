@@ -2,7 +2,15 @@
  * Bot policies (08 §6.1) decide the day's commands. These are deliberately naive stand-ins
  * to exercise the runner; the real baselines come with the balancing simulator (ADR-001).
  */
-import { buyOptions, throughGate, type Command, type GameContext, type GameState } from '@kd/core';
+import {
+  buyOptions,
+  castleOffer,
+  throughGate,
+  type BuyOption,
+  type Command,
+  type GameContext,
+  type GameState,
+} from '@kd/core';
 
 export interface Policy {
   id: string;
@@ -56,6 +64,30 @@ export function chaseNearestEnemy(state: GameState, ctx: GameContext): Command[]
   return commands;
 }
 
+/** What can be bought at a slot now: options the castle level does not lock. */
+function offers(state: GameState, ctx: GameContext, slot: string): BuyOption[] {
+  return buyOptions(state, ctx, slot).filter((o) => o.needsCastle === null);
+}
+
+/**
+ * Buys the castle's next level if `gold` allows and the day has come, picking the perk at
+ * `picks[level - 2]` (default the first). Returns the gold left.
+ */
+function buyCastle(
+  state: GameState,
+  ctx: GameContext,
+  gold: number,
+  fromDay: Record<number, number>,
+  picks: readonly number[],
+  commands: Command[],
+): number {
+  const offer = castleOffer(state, ctx);
+  if (!offer || offer.cost > gold || state.day < (fromDay[offer.level] ?? Infinity)) return gold;
+  const perk = offer.perks[picks[offer.level - 2] ?? 0] ?? offer.perks[0]!;
+  commands.push({ type: 'chooseCastleLevel', level: offer.level, perk: perk.id });
+  return gold - offer.cost;
+}
+
 /** Builds nothing. Useful as a lower bound. */
 export const idlePolicy: Policy = {
   id: 'idle',
@@ -70,7 +102,7 @@ export const greedyPolicy: Policy = {
     let gold = state.gold;
     for (const node of ctx.map.nodes) {
       if (!node.slot || state.buildings.some((b) => b.slot === node.id)) continue;
-      const offer = buyOptions(state, ctx, node.id).find((o) => o.cost <= gold);
+      const offer = offers(state, ctx, node.id).find((o) => o.cost <= gold);
       if (!offer) continue;
       gold -= offer.cost;
       commands.push({ type: 'buy', slot: node.id, option: offer.option });
@@ -92,7 +124,7 @@ function buyClass(
   for (const node of ctx.map.nodes) {
     if (!node.slot || state.buildings.some((b) => b.slot === node.id)) continue;
     if (commands.some((c) => c.type === 'buy' && c.slot === node.id)) continue;
-    const offer = buyOptions(state, ctx, node.id).find(
+    const offer = offers(state, ctx, node.id).find(
       (o) => ctx.buildings.get(o.building)?.class === cls && o.cost <= budget,
     );
     if (!offer) continue;
@@ -108,7 +140,7 @@ function defend(state: GameState, ctx: GameContext, gold: number, commands: Comm
     gold = buyClass(state, ctx, cls, gold, commands);
   }
   for (const b of state.buildings) {
-    const offer = buyOptions(state, ctx, b.slot).find((o) => o.cost <= gold);
+    const offer = offers(state, ctx, b.slot).find((o) => o.cost <= gold);
     if (!offer) continue;
     gold -= offer.cost;
     commands.push({ type: 'buy', slot: b.slot, option: offer.option });
@@ -116,38 +148,58 @@ function defend(state: GameState, ctx: GameContext, gold: number, commands: Comm
 }
 
 /**
- * Like greedy, but buys towers, then walls, then military, then eco, and upgrades with
- * leftovers. At night the king chases the nearest enemy.
+ * Castle perk picks by level, as indexes into each level's three perks: `[0, 2]` takes the
+ * first perk at level 2 and the third at level 3. Bots take the first ones by default; the
+ * CLI's `--perks` measures the others (13 §6.3).
  */
-export const defensivePolicy: Policy = {
-  id: 'defensive',
-  day(state, ctx) {
-    const commands: Command[] = [];
-    defend(state, ctx, state.gold, commands);
-    return commands;
-  },
-  night: chaseNearestEnemy,
-};
+export type PerkPicks = readonly number[];
+
+/** The day from which a bot buys each castle level (when it has the gold). */
+const CASTLE_DAYS: Record<number, number> = { 2: 2, 3: 4 };
+
+/**
+ * Like greedy, but buys towers, then walls, then military, then eco, and upgrades with
+ * leftovers. It buys castle levels from day 2 and day 4. At night the king chases the nearest
+ * enemy.
+ */
+export function makeDefensive(picks: PerkPicks = []): Policy {
+  return {
+    id: 'defensive',
+    day(state, ctx) {
+      const commands: Command[] = [];
+      const gold = buyCastle(state, ctx, state.gold, CASTLE_DAYS, picks, commands);
+      defend(state, ctx, gold, commands);
+      return commands;
+    },
+    night: chaseNearestEnemy,
+  };
+}
 
 /**
  * A rough stand-in for a sensible player: invests up to half its gold in eco buildings on the
- * first three days, then spends like `defensive`. The balance target is that this bot usually
- * wins while the others do not.
+ * first three days, buys castle levels from day 2 and day 4, then spends like `defensive`.
+ * The balance target is that this bot usually wins while the others do not.
  */
-export const balancedPolicy: Policy = {
-  id: 'balanced',
-  day(state, ctx) {
-    const commands: Command[] = [];
-    let gold = state.gold;
-    if (state.day <= 3) {
-      const ecoBudget = Math.floor(gold / 2);
-      gold -= ecoBudget - buyClass(state, ctx, 'eco', ecoBudget, commands);
-    }
-    defend(state, ctx, gold, commands);
-    return commands;
-  },
-  night: chaseNearestEnemy,
-};
+export function makeBalanced(picks: PerkPicks = []): Policy {
+  return {
+    id: 'balanced',
+    day(state, ctx) {
+      const commands: Command[] = [];
+      let gold = state.gold;
+      if (state.day <= 3) {
+        const ecoBudget = Math.floor(gold / 2);
+        gold -= ecoBudget - buyClass(state, ctx, 'eco', ecoBudget, commands);
+      }
+      gold = buyCastle(state, ctx, gold, CASTLE_DAYS, picks, commands);
+      defend(state, ctx, gold, commands);
+      return commands;
+    },
+    night: chaseNearestEnemy,
+  };
+}
+
+export const defensivePolicy = makeDefensive();
+export const balancedPolicy = makeBalanced();
 
 /** Builds nothing; the king fights alone. Measures what the king can hold by himself. */
 export const kingOnlyPolicy: Policy = {
