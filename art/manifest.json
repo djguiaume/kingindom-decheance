@@ -1898,7 +1898,7 @@
       "group": "buildings",
       "kind": "building",
       "contentId": "ballista_tower",
-      "subject": "the same ballista tower as 048 but with an EMPTY top platform (a pivot mount only, no ballista)",
+      "subject": "the same square wood-and-stone ballista tower as 048, standing on the ground, with an EMPTY flat top platform holding only a round pivot mount (no ballista on it); no wheels, not a cart or wagon",
       "canvas": {
         "w": 256,
         "h": 320
@@ -1930,7 +1930,7 @@
       "group": "buildings",
       "kind": "weapon",
       "contentId": "ballista_tower",
-      "subject": "a large ballista on its own, seen in the same 3/4 view: two bow limbs, taut string, central rail with a bolt, small turntable mount, pointing right",
+      "subject": "the ballista weapon head that sits on top of a tower, on its own, seen in the same 3/4 view: a big crossbow-like frame with two bow limbs, a taut string and a central rail with a bolt, on a small round turntable, pointing right; no wheels, no carriage, no throwing arm, no tower and nothing under it",
       "canvas": {
         "w": 192,
         "h": 128
@@ -2519,7 +2519,7 @@
       "name": "Window glow",
       "group": "structures",
       "kind": "overlay",
-      "subject": "warm yellow glowing window light, soft edges, for night",
+      "subject": "a soft warm yellow glow on its own: a blurred rectangle of window light fading to transparent at the edges, for night; light only, no building, no wall, no window frame, no lantern",
       "canvas": {
         "w": 96,
         "h": 96
@@ -2549,7 +2549,7 @@
       "name": "Lantern glow",
       "group": "structures",
       "kind": "overlay",
-      "subject": "warm orange round lantern light halo, soft edges, for night",
+      "subject": "a soft warm orange round halo of light on its own, bright in the centre and fading to transparent at the edges, for night; light only, no lantern, no building, no object",
       "canvas": {
         "w": 128,
         "h": 128
@@ -2729,7 +2729,7 @@
       "name": "Boulder",
       "group": "effects",
       "kind": "projectile",
-      "subject": "round catapult boulder",
+      "subject": "round grey catapult boulder bound with rough rope; enemy ammunition, so no panda emblem, no blue and no gold",
       "canvas": {
         "w": 48,
         "h": 48
@@ -2845,7 +2845,7 @@
       "name": "Slash",
       "group": "effects",
       "kind": "effect",
-      "subject": "curved light-blue sword slash arc",
+      "subject": "a curved light-blue sword slash arc on its own: the swoosh of light only, no sword, no character, nobody making it",
       "canvas": {
         "w": 96,
         "h": 96
@@ -3040,7 +3040,7 @@
       "name": "Charge",
       "group": "effects",
       "kind": "effect",
-      "subject": "blue and violet speed streaks pointing right",
+      "subject": "blue and violet speed streaks pointing right on their own: motion lines only, no character, no rider, no animal",
       "canvas": {
         "w": 128,
         "h": 64
@@ -3083,7 +3083,7 @@
       "name": "Stomp",
       "group": "effects",
       "kind": "effect",
-      "subject": "ground stomp burst with flying dirt and a gold flash",
+      "subject": "a ground stomp shockwave on its own: a low ring of flying dirt clods and a gold flash, no character, nobody stomping",
       "canvas": {
         "w": 128,
         "h": 96
