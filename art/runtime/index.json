@@ -10,6 +10,7 @@
         "king_portrait",
         "king_roll_anticipate",
         "king_roll_idle",
+        "king_roll_idle.back",
         "king_roll_impact_fx.f1",
         "king_roll_impact_fx.f2",
         "king_roll_impact_fx.f3",
@@ -19,21 +20,34 @@
         "king_roll_roll.f4",
         "king_roll_uncurl.f1",
         "king_roll_uncurl.f2",
+        "king_roll_walk.back.f1",
+        "king_roll_walk.back.f2",
+        "king_roll_walk.back.f3",
+        "king_roll_walk.back.f4",
         "king_roll_walk.f1",
         "king_roll_walk.f2",
         "king_roll_walk.f3",
         "king_roll_walk.f4",
         "king_spear",
         "king_wolf_idle",
+        "king_wolf_idle.back",
         "king_wolf_impact_fx.f1",
         "king_wolf_impact_fx.f2",
         "king_wolf_impact_fx.f3",
         "king_wolf_lunge.f1",
         "king_wolf_lunge.f2",
+        "king_wolf_run.back.f1",
+        "king_wolf_run.back.f2",
+        "king_wolf_run.back.f3",
+        "king_wolf_run.back.f4",
         "king_wolf_run.f1",
         "king_wolf_run.f2",
         "king_wolf_run.f3",
         "king_wolf_run.f4",
+        "king_wolf_walk.back.f1",
+        "king_wolf_walk.back.f2",
+        "king_wolf_walk.back.f3",
+        "king_wolf_walk.back.f4",
         "king_wolf_walk.f1",
         "king_wolf_walk.f2",
         "king_wolf_walk.f3",
@@ -47,16 +61,22 @@
       "frames": [
         "archer",
         "archer_weapon",
+        "archer.back",
         "crossbowman",
         "crossbowman_weapon",
+        "crossbowman.back",
         "footman",
         "footman_weapon",
+        "footman.back",
         "guardian",
         "guardian_weapon",
+        "guardian.back",
         "knight",
         "knight_weapon",
+        "knight.back",
         "monk",
-        "monk_weapon"
+        "monk_weapon",
+        "monk.back"
       ]
     },
     {
@@ -66,17 +86,25 @@
       "frames": [
         "brute",
         "brute_weapon",
+        "brute.back",
         "catapult_arm.f1",
         "catapult_arm.f2",
         "catapult_chassis",
         "harpy_weapon",
+        "harpy.back.f1",
+        "harpy.back.f2",
+        "harpy.back.f3",
         "harpy.f1",
         "harpy.f2",
         "harpy.f3",
         "raider",
         "raider_weapon",
+        "raider.back",
         "skirmisher",
-        "skirmisher_weapon"
+        "skirmisher_weapon",
+        "skirmisher.back",
+        "warlord",
+        "warlord.back"
       ]
     },
     {
@@ -126,6 +154,36 @@
       "asset": "king_wolf_walk",
       "contentId": "king"
     },
+    "king_wolf_walk.back.f2": {
+      "atlas": "kings",
+      "num": 8,
+      "asset": "king_wolf_walk",
+      "contentId": "king"
+    },
+    "king_wolf_idle.back": {
+      "atlas": "kings",
+      "num": 7,
+      "asset": "king_wolf_idle",
+      "contentId": "king"
+    },
+    "king_wolf_walk.back.f3": {
+      "atlas": "kings",
+      "num": 8,
+      "asset": "king_wolf_walk",
+      "contentId": "king"
+    },
+    "king_wolf_walk.back.f4": {
+      "atlas": "kings",
+      "num": 8,
+      "asset": "king_wolf_walk",
+      "contentId": "king"
+    },
+    "king_wolf_walk.back.f1": {
+      "atlas": "kings",
+      "num": 8,
+      "asset": "king_wolf_walk",
+      "contentId": "king"
+    },
     "king_wolf_impact_fx.f2": {
       "atlas": "kings",
       "num": 11,
@@ -142,6 +200,12 @@
       "atlas": "kings",
       "num": 9,
       "asset": "king_wolf_run",
+      "contentId": "king"
+    },
+    "king_wolf_lunge.f1": {
+      "atlas": "kings",
+      "num": 10,
+      "asset": "king_wolf_lunge",
       "contentId": "king"
     },
     "king_wolf_lunge.f2": {
@@ -168,10 +232,28 @@
       "asset": "king_wolf_run",
       "contentId": "king"
     },
-    "king_wolf_lunge.f1": {
+    "king_wolf_run.back.f3": {
       "atlas": "kings",
-      "num": 10,
-      "asset": "king_wolf_lunge",
+      "num": 9,
+      "asset": "king_wolf_run",
+      "contentId": "king"
+    },
+    "king_wolf_run.back.f2": {
+      "atlas": "kings",
+      "num": 9,
+      "asset": "king_wolf_run",
+      "contentId": "king"
+    },
+    "king_wolf_run.back.f4": {
+      "atlas": "kings",
+      "num": 9,
+      "asset": "king_wolf_run",
+      "contentId": "king"
+    },
+    "king_wolf_run.back.f1": {
+      "atlas": "kings",
+      "num": 9,
+      "asset": "king_wolf_run",
       "contentId": "king"
     },
     "king_wolf_impact_fx.f3": {
@@ -220,6 +302,36 @@
       "atlas": "kings",
       "num": 1,
       "asset": "king_roll_idle",
+      "contentId": "king"
+    },
+    "king_roll_walk.back.f1": {
+      "atlas": "kings",
+      "num": 2,
+      "asset": "king_roll_walk",
+      "contentId": "king"
+    },
+    "king_roll_walk.back.f2": {
+      "atlas": "kings",
+      "num": 2,
+      "asset": "king_roll_walk",
+      "contentId": "king"
+    },
+    "king_roll_idle.back": {
+      "atlas": "kings",
+      "num": 1,
+      "asset": "king_roll_idle",
+      "contentId": "king"
+    },
+    "king_roll_walk.back.f3": {
+      "atlas": "kings",
+      "num": 2,
+      "asset": "king_roll_walk",
+      "contentId": "king"
+    },
+    "king_roll_walk.back.f4": {
+      "atlas": "kings",
+      "num": 2,
+      "asset": "king_roll_walk",
       "contentId": "king"
     },
     "king_roll_impact_fx.f2": {
@@ -300,7 +412,19 @@
       "asset": "guardian",
       "contentId": "guardian"
     },
+    "guardian.back": {
+      "atlas": "friendly",
+      "num": 23,
+      "asset": "guardian",
+      "contentId": "guardian"
+    },
     "knight": {
+      "atlas": "friendly",
+      "num": 17,
+      "asset": "knight",
+      "contentId": "knight"
+    },
+    "knight.back": {
       "atlas": "friendly",
       "num": 17,
       "asset": "knight",
@@ -312,7 +436,19 @@
       "asset": "monk",
       "contentId": "monk"
     },
+    "monk.back": {
+      "atlas": "friendly",
+      "num": 25,
+      "asset": "monk",
+      "contentId": "monk"
+    },
     "footman": {
+      "atlas": "friendly",
+      "num": 15,
+      "asset": "footman",
+      "contentId": "footman"
+    },
+    "footman.back": {
       "atlas": "friendly",
       "num": 15,
       "asset": "footman",
@@ -324,7 +460,19 @@
       "asset": "crossbowman",
       "contentId": "crossbowman"
     },
+    "crossbowman.back": {
+      "atlas": "friendly",
+      "num": 21,
+      "asset": "crossbowman",
+      "contentId": "crossbowman"
+    },
     "archer": {
+      "atlas": "friendly",
+      "num": 19,
+      "asset": "archer",
+      "contentId": "archer"
+    },
+    "archer.back": {
       "atlas": "friendly",
       "num": 19,
       "asset": "archer",
@@ -360,6 +508,18 @@
       "asset": "catapult_arm",
       "contentId": "catapult"
     },
+    "warlord": {
+      "atlas": "enemies",
+      "num": 37,
+      "asset": "warlord",
+      "contentId": "warlord"
+    },
+    "warlord.back": {
+      "atlas": "enemies",
+      "num": 37,
+      "asset": "warlord",
+      "contentId": "warlord"
+    },
     "catapult_arm.f1": {
       "atlas": "enemies",
       "num": 36,
@@ -367,6 +527,12 @@
       "contentId": "catapult"
     },
     "brute": {
+      "atlas": "enemies",
+      "num": 31,
+      "asset": "brute",
+      "contentId": "brute"
+    },
+    "brute.back": {
       "atlas": "enemies",
       "num": 31,
       "asset": "brute",
@@ -384,6 +550,12 @@
       "asset": "skirmisher_weapon",
       "contentId": "skirmisher"
     },
+    "harpy.back.f2": {
+      "atlas": "enemies",
+      "num": 33,
+      "asset": "harpy",
+      "contentId": "harpy"
+    },
     "harpy.f1": {
       "atlas": "enemies",
       "num": 33,
@@ -391,6 +563,18 @@
       "contentId": "harpy"
     },
     "harpy.f3": {
+      "atlas": "enemies",
+      "num": 33,
+      "asset": "harpy",
+      "contentId": "harpy"
+    },
+    "harpy.back.f1": {
+      "atlas": "enemies",
+      "num": 33,
+      "asset": "harpy",
+      "contentId": "harpy"
+    },
+    "harpy.back.f3": {
       "atlas": "enemies",
       "num": 33,
       "asset": "harpy",
@@ -414,7 +598,19 @@
       "asset": "skirmisher",
       "contentId": "skirmisher"
     },
+    "skirmisher.back": {
+      "atlas": "enemies",
+      "num": 29,
+      "asset": "skirmisher",
+      "contentId": "skirmisher"
+    },
     "raider": {
+      "atlas": "enemies",
+      "num": 27,
+      "asset": "raider",
+      "contentId": "raider"
+    },
+    "raider.back": {
       "atlas": "enemies",
       "num": 27,
       "asset": "raider",

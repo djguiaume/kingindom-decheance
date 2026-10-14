@@ -2,7 +2,7 @@
   "modelId": "model_openai-gpt-image-2-5-flare",
   "referenceAssetId": "asset_RvvNgxiXxMS5HiHWN85YLtqS",
   "referenceSha256": "1ced3f125f8dd4584f33ed856a41dec5b679d0f7b65d0e95681f59689a4f65d8",
-  "spentCU": 774,
+  "spentCU": 1245,
   "parts": {
     "archer": {
       "state": "validated",
@@ -26,6 +26,17 @@
       "issues": [],
       "updatedAt": "2026-10-14T15:40:48.202Z"
     },
+    "archer.back": {
+      "state": "validated",
+      "attempts": 1,
+      "costCU": 12,
+      "issues": [],
+      "promptHash": "aa88c13f6afd",
+      "updatedAt": "2026-10-14T16:18:50.175Z",
+      "jobId": "job_HesYhSmmeZ217QMzMcQ6MhhW",
+      "assetId": "asset_twjQWxr3CQne6LTMKTut4KC4",
+      "originalSha256": "ab8d30095131e43aebfd34fd0731fe27d62a5c82c0e8da9beb80a22ab0b061ae"
+    },
     "brute": {
       "state": "validated",
       "attempts": 1,
@@ -48,41 +59,52 @@
       "issues": [],
       "updatedAt": "2026-10-14T15:46:34.976Z"
     },
-    "catapult_arm.f1": {
-      "state": "rejected",
+    "brute.back": {
+      "state": "validated",
       "attempts": 1,
-      "promptHash": "9272a95cd1bb",
-      "jobId": "job_k8QTWNB98eE4PbyheDgSmM32",
-      "assetId": "asset_yQbvfs2bevcUAqFo96vwSEdc",
-      "costCU": 13,
-      "originalSha256": "830ae862f4b59d506ff15663e1ab04374d06061cf7f84f2cb48afa0566f2d831",
+      "costCU": 12,
+      "issues": [],
+      "promptHash": "1cfd0a84da31",
+      "updatedAt": "2026-10-14T16:22:48.210Z",
+      "jobId": "job_xQn5Rnwd3joedrpCupKznEQr",
+      "assetId": "asset_x8ergsCZecGC5HFZr5pMufww",
+      "originalSha256": "5f7de7875d9f995a0de668afac6c1c248269d5f662f1e624246cd9ea7f6f21ef"
+    },
+    "catapult_arm.f1": {
+      "state": "validated",
+      "attempts": 2,
+      "promptHash": "968db64081fd",
+      "jobId": "job_RXjcUgVnX2GfJLAaL8GeDayx",
+      "assetId": "asset_s7UP9FW3pDCtV11m7QA5rQue",
+      "costCU": 26,
+      "originalSha256": "d8e3d595b5a2747726e800de6fc2ec58e6138ee8751f0d5bfbc0e12b7ecf32dd",
       "issues": [],
       "note": "visual review 2026-10-14: prompt fixed in PR #25",
-      "updatedAt": "2026-10-14T15:56:07.343Z"
+      "updatedAt": "2026-10-14T16:26:28.095Z"
     },
     "catapult_arm.f2": {
-      "state": "rejected",
-      "attempts": 1,
-      "promptHash": "579f01245fe3",
-      "jobId": "job_AFixdBSp3WCgaMp64ZyavBAg",
-      "assetId": "asset_sbphfSXJBoUvSo7G2od5Mehw",
-      "costCU": 13,
-      "originalSha256": "eb6bab42bfff7585ec16670c86b7126ba73f13bca73a1767c71f2a0918931fff",
-      "issues": [],
-      "updatedAt": "2026-10-14T15:56:09.020Z",
-      "note": "visual review 2026-10-14: prompt fixed in PR #25"
-    },
-    "catapult_chassis": {
-      "state": "rejected",
-      "attempts": 1,
-      "promptHash": "c6a3d30e83c5",
-      "jobId": "job_bPCN3jvKNrdrLLBJ8pUBmhEL",
-      "assetId": "asset_aHyNKkYZvppfAWrUoKigoRF9",
-      "costCU": 12,
-      "originalSha256": "69fb41d4edca9714cea58d7c0c0b158bfb5f58415d50d0db47b06bfe1833cedf",
+      "state": "validated",
+      "attempts": 2,
+      "promptHash": "a9943a045917",
+      "jobId": "job_ZS6JHj4aRbD82TTbxmA5B8j6",
+      "assetId": "asset_m4FzyH1WhwxWFmGr1sV9A24Q",
+      "costCU": 26,
+      "originalSha256": "a22e6a88e3acd046081a097553b7aeb2ed7c94c8f407a62f2a3981fd14502037",
       "issues": [],
       "note": "visual review 2026-10-14: prompt fixed in PR #25",
-      "updatedAt": "2026-10-14T15:56:00.937Z"
+      "updatedAt": "2026-10-14T16:26:57.057Z"
+    },
+    "catapult_chassis": {
+      "state": "validated",
+      "attempts": 2,
+      "promptHash": "5164fc07c832",
+      "jobId": "job_uvCafgR2224f3rX2aDGuf99Q",
+      "assetId": "asset_htJp2EPQ8FXNQzGWM8wMezYj",
+      "costCU": 24,
+      "originalSha256": "5cbc1848ca4b553c0ece3dfdbfaa748ee489c690ac3a6b4132aa58a11e889a0c",
+      "issues": [],
+      "note": "visual review 2026-10-14: prompt fixed in PR #25",
+      "updatedAt": "2026-10-14T16:25:42.716Z"
     },
     "crossbowman": {
       "state": "validated",
@@ -96,16 +118,27 @@
       "updatedAt": "2026-10-14T15:41:17.618Z"
     },
     "crossbowman_weapon": {
-      "state": "rejected",
-      "attempts": 1,
-      "promptHash": "3d1dcde5c339",
-      "jobId": "job_CmJGJ8ChJzaenSanFW5tgQgJ",
-      "assetId": "asset_XFRqM8h5FNK4oVDfvybmNarF",
-      "costCU": 13,
-      "originalSha256": "08ff0349ec1dc23c109fce0a15dc66e1da6b0f0fbceae049efd7bbb786195641",
+      "state": "validated",
+      "attempts": 2,
+      "promptHash": "71fba56c9138",
+      "jobId": "job_X815ms2GEio8fWC62E6pSVEZ",
+      "assetId": "asset_notrrfTPEPxMuZXVq1489h1e",
+      "costCU": 26,
+      "originalSha256": "dcbc5e968b7b96798f014c899cf1756d2c44153d9f4a76106b05a17bd2dda8ae",
       "issues": [],
       "note": "visual review 2026-10-14: prompt fixed in PR #25",
-      "updatedAt": "2026-10-14T15:56:02.649Z"
+      "updatedAt": "2026-10-14T16:19:45.328Z"
+    },
+    "crossbowman.back": {
+      "state": "validated",
+      "attempts": 1,
+      "costCU": 12,
+      "issues": [],
+      "promptHash": "77568276249a",
+      "updatedAt": "2026-10-14T16:19:16.272Z",
+      "jobId": "job_mJ8M1CRCU4t3Zppkirs3QnJV",
+      "assetId": "asset_QDTn8QXPJBVUgQUfkpaZXe92",
+      "originalSha256": "3fdb05641c3acfde791c404c9c1ea18a53aa50be0b27aabd64eb537c9edf1be3"
     },
     "footman": {
       "state": "validated",
@@ -129,6 +162,17 @@
       "issues": [],
       "updatedAt": "2026-10-14T14:39:39.300Z"
     },
+    "footman.back": {
+      "state": "validated",
+      "attempts": 1,
+      "costCU": 12,
+      "issues": [],
+      "promptHash": "5b730de2b0a7",
+      "updatedAt": "2026-10-14T16:17:51.202Z",
+      "jobId": "job_GZb2YysVZ42KeK6swojQvPDc",
+      "assetId": "asset_3Y9mzqY2NjVHLfuM4h96Heej",
+      "originalSha256": "f99db08c80dcb157c0d5a195d1cb0fa2183dff82864af9bf470cc18c5b0db1e9"
+    },
     "guardian": {
       "state": "validated",
       "attempts": 1,
@@ -151,17 +195,61 @@
       "issues": [],
       "updatedAt": "2026-10-14T15:43:39.144Z"
     },
-    "harpy_weapon": {
-      "state": "rejected",
+    "guardian.back": {
+      "state": "validated",
       "attempts": 1,
-      "promptHash": "3946e8f33434",
-      "jobId": "job_71HiRYLCR2HY5mG6shoiZYG4",
-      "assetId": "asset_RJrYzfNoXDLpD4eqxPoTiVhi",
       "costCU": 12,
-      "originalSha256": "59377236cccafbbe3f677a502440e047817a387a7c6e788960e56d44ae755409",
+      "issues": [],
+      "promptHash": "3766bc66a7e6",
+      "updatedAt": "2026-10-14T16:20:14.380Z",
+      "jobId": "job_PcmjLsEXN4kBCiWEpvAsgkmd",
+      "assetId": "asset_HTsoqXuydAn37shX7Nwn13sG",
+      "originalSha256": "7677c7c4b470d6f91af3b2a5604d0647cf9cf015a03fdd16a301a2cf1f8a34df"
+    },
+    "harpy_weapon": {
+      "state": "validated",
+      "attempts": 2,
+      "promptHash": "10f2c509f56d",
+      "jobId": "job_MRVe6eTxpP5q5zyPD5hYP4DU",
+      "assetId": "asset_UdCteWoBEkcasci26k5ecRfn",
+      "costCU": 24,
+      "originalSha256": "29698d436cfb765f71f2067975f1ec9ab3be281a840192316103bf926e24ee81",
       "issues": [],
       "note": "visual review 2026-10-14: prompt fixed in PR #25",
-      "updatedAt": "2026-10-14T15:55:59.229Z"
+      "updatedAt": "2026-10-14T16:24:50.266Z"
+    },
+    "harpy.back.f1": {
+      "state": "validated",
+      "attempts": 1,
+      "costCU": 12,
+      "issues": [],
+      "promptHash": "8285263bb789",
+      "updatedAt": "2026-10-14T16:23:20.575Z",
+      "jobId": "job_KNPwXWrv76VuYnwA4Kv7cLxw",
+      "assetId": "asset_eFtqiKhk27N8vzidh4wNcnFm",
+      "originalSha256": "7a24c9c14f761157c35ae6914c229f51635aa92c3b1cc0620328e58de27a1a69"
+    },
+    "harpy.back.f2": {
+      "state": "validated",
+      "attempts": 1,
+      "costCU": 12,
+      "issues": [],
+      "promptHash": "a4732923ae2e",
+      "updatedAt": "2026-10-14T16:23:52.457Z",
+      "jobId": "job_WVEjG1BDuGNHBVf4jopNLmzF",
+      "assetId": "asset_cM3quuGgG2KoX4iSckwvXPcz",
+      "originalSha256": "3dc07027f86102cdbc17195dea0878e8df00570ee1bbd8971e63fdb7eac173bc"
+    },
+    "harpy.back.f3": {
+      "state": "validated",
+      "attempts": 1,
+      "costCU": 12,
+      "issues": [],
+      "promptHash": "23378c8f46f5",
+      "updatedAt": "2026-10-14T16:24:21.129Z",
+      "jobId": "job_rsNDszNYdyQLxRbP5z4gs68B",
+      "assetId": "asset_esG5RRuuEsTzqXNXBQSxgkVC",
+      "originalSha256": "82e906873c02b079fb0d3b86ca43ca83b63c05960755cda2796c36e8bc18796f"
     },
     "harpy.f1": {
       "state": "validated",
@@ -250,6 +338,17 @@
       "originalSha256": "52edd2877e9257e2951c1f81dca38bf8f11cd12ce394915e7c79e7c446aa9bd7",
       "issues": [],
       "updatedAt": "2026-10-14T14:38:34.287Z"
+    },
+    "king_roll_idle.back": {
+      "state": "validated",
+      "attempts": 1,
+      "costCU": 12,
+      "issues": [],
+      "promptHash": "5f26675eacf1",
+      "updatedAt": "2026-10-14T16:09:04.871Z",
+      "jobId": "job_1oFyfiTXT58aUeUVwdSsweZy",
+      "assetId": "asset_jq1uNJqEQCffHzSnKijwpn8S",
+      "originalSha256": "3027a751e3be13899711525fe5fd2210594440626029f9f63d461d4232f7ff87"
     },
     "king_roll_impact_fx.f1": {
       "state": "validated",
@@ -350,6 +449,50 @@
       "issues": [],
       "updatedAt": "2026-10-14T15:28:25.635Z"
     },
+    "king_roll_walk.back.f1": {
+      "state": "validated",
+      "attempts": 1,
+      "costCU": 12,
+      "issues": [],
+      "promptHash": "c15a44724556",
+      "updatedAt": "2026-10-14T16:09:36.970Z",
+      "jobId": "job_WqRLu51v25aWcjKBeeDpBDpT",
+      "assetId": "asset_4vcTKB4F6Ft3dVzunKSj4UwB",
+      "originalSha256": "7ea3b9d0c7154b1bbc5290c89771f203b12b572ff37804a9693b36a3785aebbe"
+    },
+    "king_roll_walk.back.f2": {
+      "state": "validated",
+      "attempts": 1,
+      "costCU": 12,
+      "issues": [],
+      "promptHash": "10b79bb028f9",
+      "updatedAt": "2026-10-14T16:10:05.672Z",
+      "jobId": "job_NCttWGZmUYRSmHaxrBKqq7Fr",
+      "assetId": "asset_AAsbDxYVL9mFVKRDmEie72v3",
+      "originalSha256": "7f46121d325390dc9d72079316b8574ac01c95db9b99b60a46835f472d0f7b7a"
+    },
+    "king_roll_walk.back.f3": {
+      "state": "validated",
+      "attempts": 1,
+      "costCU": 12,
+      "issues": [],
+      "promptHash": "10995f248026",
+      "updatedAt": "2026-10-14T16:10:34.668Z",
+      "jobId": "job_LC6tqDPsWi8rQQgrAZeqGkAC",
+      "assetId": "asset_anQzLpPRPw51c3dJrjRp4zjP",
+      "originalSha256": "01f21871922faba5e1dfd3a95e1c1c32df519c31938b6f5cc2db71a54f2a8a89"
+    },
+    "king_roll_walk.back.f4": {
+      "state": "validated",
+      "attempts": 1,
+      "costCU": 12,
+      "issues": [],
+      "promptHash": "ddec87e6ee91",
+      "updatedAt": "2026-10-14T16:11:04.277Z",
+      "jobId": "job_k43den4bXYBRvRRp9cVoPByN",
+      "assetId": "asset_aQeJpkmY5SVFCQkitxPXLn9A",
+      "originalSha256": "d131e1477f359cf5d955ac15d948cfc7d1582ddc2bb7ddd4628d7f03aa33513d"
+    },
     "king_roll_walk.f1": {
       "state": "validated",
       "attempts": 1,
@@ -416,6 +559,17 @@
       "issues": [],
       "updatedAt": "2026-10-14T15:28:58.511Z"
     },
+    "king_wolf_idle.back": {
+      "state": "validated",
+      "attempts": 1,
+      "costCU": 12,
+      "issues": [],
+      "promptHash": "210ec6997b4f",
+      "updatedAt": "2026-10-14T16:11:37.169Z",
+      "jobId": "job_AkXcMKv9PaQrRz8ioqgDohT2",
+      "assetId": "asset_FQNgv151TsxTxNTmMadN2s3T",
+      "originalSha256": "bbcf9ee185ea9f8add3ca261c41532d8b8e5510df7285e7899e07981862e1b45"
+    },
     "king_wolf_impact_fx.f1": {
       "state": "validated",
       "attempts": 1,
@@ -450,28 +604,72 @@
       "updatedAt": "2026-10-14T15:37:34.189Z"
     },
     "king_wolf_lunge.f1": {
-      "state": "rejected",
-      "attempts": 1,
-      "promptHash": "65a3f6ee0cbd",
-      "jobId": "job_EEU648urCsFo6kgqgj1vegFD",
-      "assetId": "asset_rG7RUDA1z6vzdcxnTFJgn8iB",
-      "costCU": 12,
-      "originalSha256": "71e472f47d93aede086f8011a69ee06d5b867911799cecb47e67012ca3bdcbfa",
+      "state": "validated",
+      "attempts": 2,
+      "promptHash": "6d7319726e91",
+      "jobId": "job_2CS9SUAZfQAWv2STCnzn9C5Q",
+      "assetId": "asset_C2LSXRSvZCuNBrwPADDVBj6E",
+      "costCU": 24,
+      "originalSha256": "e27c6558fbc5511d2b3bdc67a05a01dec2e137948576658c1d09da2ac9f64617",
       "issues": [],
       "note": "visual review 2026-10-14: prompt fixed in PR #25",
-      "updatedAt": "2026-10-14T15:56:04.275Z"
+      "updatedAt": "2026-10-14T16:16:52.486Z"
     },
     "king_wolf_lunge.f2": {
-      "state": "rejected",
-      "attempts": 2,
-      "promptHash": "c9df383877f7",
-      "jobId": "job_9WQ66qdRwGxa9Jzp2XgKSTcw",
-      "assetId": "asset_im9LsyNWm26eeuru8EVw5LrP",
-      "costCU": 24,
-      "originalSha256": "c9f79af736eeae1ee835c1a07bdc50839fbb1351b25dafe7c5d9a30e2e260d24",
+      "state": "validated",
+      "attempts": 3,
+      "promptHash": "4ecc666f08c3",
+      "jobId": "job_9aCvntdTsZDna4Wqad7gxJ5b",
+      "assetId": "asset_nMqb8HtyVKHv7vXjat1Yyeim",
+      "costCU": 36,
+      "originalSha256": "c3faa386bf73f9b5530be7297a6ac02e5019add6567babd2f746decd99a6330e",
       "issues": [],
       "note": "visual review 2026-10-14: prompt fixed in PR #25",
-      "updatedAt": "2026-10-14T15:56:05.786Z"
+      "updatedAt": "2026-10-14T16:17:25.278Z"
+    },
+    "king_wolf_run.back.f1": {
+      "state": "validated",
+      "attempts": 1,
+      "costCU": 12,
+      "issues": [],
+      "promptHash": "940716e3e0b1",
+      "updatedAt": "2026-10-14T16:14:53.108Z",
+      "jobId": "job_nXfSkDMAaqqJ8wnoU4uguDvF",
+      "assetId": "asset_fTxkH1g8vuGncyhkgpE75WCP",
+      "originalSha256": "5672ee412a18d63a46732d211324d4a75f907fffcaeb6482bd9350a6d59885f9"
+    },
+    "king_wolf_run.back.f2": {
+      "state": "validated",
+      "attempts": 1,
+      "costCU": 12,
+      "issues": [],
+      "promptHash": "10d0c798c597",
+      "updatedAt": "2026-10-14T16:15:22.247Z",
+      "jobId": "job_Kc6c2PtTwNhxoV4taej1591Y",
+      "assetId": "asset_QtW4QGWSx1A44WAKMiKFxRYz",
+      "originalSha256": "3b7773e3f3eec4a597c51a2dfdb9a46cc816d99e671b83195c86dafe56fe9b37"
+    },
+    "king_wolf_run.back.f3": {
+      "state": "validated",
+      "attempts": 1,
+      "costCU": 12,
+      "issues": [],
+      "promptHash": "3022b4d1cf78",
+      "updatedAt": "2026-10-14T16:15:51.562Z",
+      "jobId": "job_FFmdHy5pZfCGfrdNB7PxmCHE",
+      "assetId": "asset_e3Hyf969L1N27F7wJtkYPpT2",
+      "originalSha256": "1f70d1940d4be2efcf673d1d3ef940312e66ac7634c0c15e2cf60a5f59c5589b"
+    },
+    "king_wolf_run.back.f4": {
+      "state": "validated",
+      "attempts": 1,
+      "costCU": 12,
+      "issues": [],
+      "promptHash": "3b5c393414db",
+      "updatedAt": "2026-10-14T16:16:20.399Z",
+      "jobId": "job_sQU1G2mPJYcYLS8T9Le6LizM",
+      "assetId": "asset_FceoDmUU7dxJA6qm9DrDrcTY",
+      "originalSha256": "8cb1d836b415af4c7c47405f81bd3252f76c4c74ddf0f6eda8c8ee2a8f4d3895"
     },
     "king_wolf_run.f1": {
       "state": "validated",
@@ -516,6 +714,50 @@
       "originalSha256": "cfd48e2caf2d2a37ef6cb01b8cc968ce46b50afe9581fea54b3d5f5e6ac4d2c3",
       "issues": [],
       "updatedAt": "2026-10-14T15:33:27.765Z"
+    },
+    "king_wolf_walk.back.f1": {
+      "state": "validated",
+      "attempts": 2,
+      "costCU": 24,
+      "issues": [],
+      "promptHash": "9a67d2143621",
+      "updatedAt": "2026-10-14T16:12:42.625Z",
+      "jobId": "job_isA57R7DPAicsfJRaf5RmCom",
+      "assetId": "asset_DNLNXLNT6oDYYW4s2QYuc998",
+      "originalSha256": "4b7d6a5ac11d67628660f3d8bd1a28604d60551f492481eaf54a4f44cadc252e"
+    },
+    "king_wolf_walk.back.f2": {
+      "state": "validated",
+      "attempts": 1,
+      "costCU": 12,
+      "issues": [],
+      "promptHash": "54ce6ad37074",
+      "updatedAt": "2026-10-14T16:13:14.945Z",
+      "jobId": "job_VARP6U89rHn3V4ATFCqqtgFZ",
+      "assetId": "asset_NTKCkZ55BarJc6BAuxAvFqwN",
+      "originalSha256": "dc969e4b3bfa754bd2785ad29bd00b6038905e5129f97b1a775ef03bb53b5bac"
+    },
+    "king_wolf_walk.back.f3": {
+      "state": "validated",
+      "attempts": 1,
+      "costCU": 12,
+      "issues": [],
+      "promptHash": "9eac4ac2e961",
+      "updatedAt": "2026-10-14T16:13:47.138Z",
+      "jobId": "job_CYG7aWjTK35atWaubUafcmBn",
+      "assetId": "asset_ZJXj7q8WxMtFJRE1UvwJ3d83",
+      "originalSha256": "117e10e6cc65b28c91eada9dc8b0d2595ee8bede5d96de7fa860ec59557d0a6e"
+    },
+    "king_wolf_walk.back.f4": {
+      "state": "validated",
+      "attempts": 1,
+      "costCU": 12,
+      "issues": [],
+      "promptHash": "679fec10c37d",
+      "updatedAt": "2026-10-14T16:14:19.270Z",
+      "jobId": "job_S7PXeQx1ADDQ8WhAmsUqJ6pg",
+      "assetId": "asset_8uJvFwPHZUnDNpnJVxpmVoej",
+      "originalSha256": "f15ff5b385d0e90207b8a169413b4bc01eadb7fd3f70b1d3d657d4fd47b46e7b"
     },
     "king_wolf_walk.f1": {
       "state": "validated",
@@ -583,6 +825,17 @@
       "issues": [],
       "updatedAt": "2026-10-14T15:39:48.792Z"
     },
+    "knight.back": {
+      "state": "validated",
+      "attempts": 1,
+      "costCU": 12,
+      "issues": [],
+      "promptHash": "ca9dd264179e",
+      "updatedAt": "2026-10-14T16:18:20.629Z",
+      "jobId": "job_Hb2rR5r5jejkz8rRDwgYhktr",
+      "assetId": "asset_szsksrVQKaT9q69VCRXbEx2V",
+      "originalSha256": "03eea74e1975e8f7f2126baca4e77375a9627512f6ecaf8c65a48aab1e6b27c6"
+    },
     "monk": {
       "state": "validated",
       "attempts": 1,
@@ -604,6 +857,17 @@
       "originalSha256": "644c1ef00e4e1fe3287cf48c679eeda018728c5e4875933d41233edb587ba2a0",
       "issues": [],
       "updatedAt": "2026-10-14T15:44:34.599Z"
+    },
+    "monk.back": {
+      "state": "validated",
+      "attempts": 2,
+      "costCU": 24,
+      "issues": [],
+      "promptHash": "327b2e2d1451",
+      "updatedAt": "2026-10-14T16:21:21.785Z",
+      "jobId": "job_kgS43Q3C1nnyMecmHzBkT4wZ",
+      "assetId": "asset_3crwDy14vu5MSRTzdVtXtGeJ",
+      "originalSha256": "fdaf90f92af6d6da00d9b5bb579c1ac7fd70cefd642a9f951e336d3ed3cc18e6"
     },
     "raider": {
       "state": "validated",
@@ -627,6 +891,17 @@
       "issues": [],
       "updatedAt": "2026-10-14T14:40:34.229Z"
     },
+    "raider.back": {
+      "state": "validated",
+      "attempts": 1,
+      "costCU": 12,
+      "issues": [],
+      "promptHash": "6c6b2d0dd001",
+      "updatedAt": "2026-10-14T16:21:53.663Z",
+      "jobId": "job_m4ZwmuqdpHNL7fTNWB5TxosX",
+      "assetId": "asset_p2qVH1jdw7THjteTC13CPU7E",
+      "originalSha256": "19905d3b65d62a8fe2b7d1cac64db791f28f8841f8fbf2146ded2f312f90fa90"
+    },
     "skirmisher": {
       "state": "validated",
       "attempts": 1,
@@ -648,6 +923,39 @@
       "originalSha256": "bffafd6acffd8584a5aec74ae202a4ee3641441faa3c9ff09d5fd65b5e3a0f6e",
       "issues": [],
       "updatedAt": "2026-10-14T15:45:36.666Z"
+    },
+    "skirmisher.back": {
+      "state": "validated",
+      "attempts": 1,
+      "costCU": 12,
+      "issues": [],
+      "promptHash": "193bca89a4c2",
+      "updatedAt": "2026-10-14T16:22:19.235Z",
+      "jobId": "job_Wftw79FJLJYCmxXDgvUZweQo",
+      "assetId": "asset_PQtVbbZPE9pSFXtRVot3gdRp",
+      "originalSha256": "e445ad15bfb52cfef679f85d8c8123580774d833e700c6d1f3e15c0d9c9d795c"
+    },
+    "warlord": {
+      "state": "validated",
+      "attempts": 2,
+      "costCU": 24,
+      "issues": [],
+      "promptHash": "85c82ef431c3",
+      "updatedAt": "2026-10-14T16:27:58.456Z",
+      "jobId": "job_mdCjMKCokJNYjWkvyFx44Bqv",
+      "assetId": "asset_qhczVvRytiFJjJgSMkFza1yF",
+      "originalSha256": "d0b6d1fc962e46de13bd6d15ce4ceff084d05fdada0494b9f9081d8ea0f302f7"
+    },
+    "warlord.back": {
+      "state": "validated",
+      "attempts": 2,
+      "costCU": 24,
+      "issues": [],
+      "promptHash": "c9d0abc2ec32",
+      "updatedAt": "2026-10-14T16:29:08.985Z",
+      "jobId": "job_TUSjWLKD88BzGeyixrAagCfJ",
+      "assetId": "asset_LGNNW1cwgHcRfuqTkWz54JSa",
+      "originalSha256": "ceb9c42315ad7371326abee485b15996a6ed343a77fd862aeb7a4c729d5f56c0"
     }
   }
 }
