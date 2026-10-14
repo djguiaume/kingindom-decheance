@@ -615,7 +615,8 @@ export const CATALOG: CatalogEntry[] = [
     group: 'structures',
     kind: 'structure',
     contentId: 'wall',
-    subject: 'bamboo palisade gate with two doors bound in blue rope',
+    subject:
+      'bamboo palisade gate with two doors bound in blue rope, flanked by two small square bamboo towers with blue pagoda roofs, one on each side of the doors, in every view',
     frames: ['closed', 'open'],
     canvas: [192, 192],
     views: ['side', 'diag'],
@@ -664,7 +665,7 @@ export const CATALOG: CatalogEntry[] = [
     'window_glow',
     'Window glow',
     'overlay',
-    'a soft warm yellow glow on its own: a blurred rectangle of window light fading to transparent at the edges, for night; light only, no building, no wall, no window frame, no lantern',
+    'a small soft warm yellow glow on its own, a blurred rounded square of window light, filling only the middle half of the frame with a wide empty transparent margin all around, fading to fully transparent well before the edges, for night; light only, no building, no wall, no window frame, no lantern',
     [96, 96],
   ),
   s(
@@ -787,7 +788,8 @@ export const CATALOG: CatalogEntry[] = [
     name: 'Path edge',
     group: 'environment',
     kind: 'decal',
-    subject: 'flat decal: soft edge where meadow grass meets a packed dirt path, seen from above',
+    subject:
+      'flat ground texture only, seen straight from above: a soft ragged strip where meadow grass meets packed dirt, fading to transparent on all sides; no buildings, no towers, no objects, no props, nothing standing on it',
     canvas: [128, 128],
   },
   {
@@ -796,7 +798,8 @@ export const CATALOG: CatalogEntry[] = [
     name: 'Water edge',
     group: 'environment',
     kind: 'decal',
-    subject: 'flat decal: shallow blue water meeting rocky grass bank, seen from above',
+    subject:
+      'flat ground texture only, seen straight from above: a soft strip where shallow blue water meets a pebbly grass bank, fading to transparent on all sides; no buildings, no towers, no island, no objects, nothing standing on it',
     canvas: [192, 128],
   },
 
@@ -867,6 +870,22 @@ export const CATALOG: CatalogEntry[] = [
   {
     ...t(109, 'tile_water', 'Water tile', 'calm shallow blue-green water with soft ripples'),
     inferred: 'Not on the sheet. Fills lakes and rivers; water_edge (100) lines their banks.',
+  },
+  {
+    num: 110,
+    id: 'bridge',
+    name: 'Bridge',
+    group: 'environment',
+    kind: 'decal',
+    subject:
+      'a sturdy wooden footbridge on its own, as it would stand over a river: plank deck with bamboo railings bound in blue rope, a small paper lantern on each end post, short stone footings at both ends; no water, no river banks, no ground around it',
+    canvas: [320, 320],
+    views: ['side', 'diag'],
+    checks: [
+      'The same bridge in all three views; deck wide enough for a path, ends left open for the path to join.',
+    ],
+    inferred:
+      'Not on the sheet. The reworked Greyhollow map crosses its river with bridges; the game picks the view closest to the bridge angle and stretches it to the river width.',
   },
 ];
 
@@ -1006,7 +1025,7 @@ function t(num: number, id: string, name: string, subject: string): CatalogEntry
     name,
     group: 'map',
     kind: 'tile',
-    subject: `seamless square ground tile: ${subject}, calm and low contrast, no props`,
+    subject: `seamless square ground texture tile seen straight from above: ${subject}, calm and low contrast, filling the whole square; texture only, no objects, no props, no buildings, no fire, no banners, nothing standing on it`,
     canvas: [512, 512],
   };
 }

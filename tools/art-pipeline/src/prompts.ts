@@ -44,18 +44,26 @@ function framing(asset: Asset, part: Part): string {
       const ground = rule.groundAllowed
         ? 'Small contextual decorations attached to it are fine; no wide ground plate or scenery around it.'
         : 'No ground patch, no cast shadow, no scenery, nothing under the feet.';
+      const gate = asset.id.startsWith('gate_');
+      const turnable = asset.parts.some((p) => p.view === 'side');
       const facing =
         part.view === 'back'
           ? ' Seen from behind, walking away up the screen: back turned to the viewer, face hidden, same camera angle.'
           : part.view === 'side'
-            ? ' Same camera angle, but the gate is turned 90 degrees: its wall line runs straight up the screen, away from the viewer, so the gateway is seen from its side, doors edge-on.'
+            ? gate
+              ? ' Same camera angle, but the gate is turned 90 degrees: its wall line runs straight up the screen, away from the viewer, so the gateway is seen from its side, doors edge-on.'
+              : ' Same camera angle, but turned 90 degrees: its length runs straight up the screen, away from the viewer.'
             : part.view === 'diag'
-              ? ' Same camera angle, but the gate is turned 45 degrees: its wall line runs diagonally from bottom-left to top-right, so the gateway is seen at an angle.'
-              : asset.kind === 'character' || asset.kind === 'flyer'
-                ? ' Body turned clearly toward the right (three-quarter side view, looking right), not facing the viewer.'
-                : asset.kind === 'siege'
-                  ? ' Facing right.'
-                  : '';
+              ? gate
+                ? ' Same camera angle, but the gate is turned 45 degrees: its wall line runs diagonally from bottom-left to top-right, so the gateway is seen at an angle.'
+                : ' Same camera angle, but turned 45 degrees: its length runs diagonally from bottom-left to top-right.'
+              : turnable && !gate
+                ? ' Its length runs straight left to right across the frame.'
+                : asset.kind === 'character' || asset.kind === 'flyer'
+                  ? ' Body turned clearly toward the right (three-quarter side view, looking right), not facing the viewer.'
+                  : asset.kind === 'siege'
+                    ? ' Facing right.'
+                    : '';
       return `One single subject, whole (nothing cut off by the frame), centred with margin, on a fully transparent background.${facing} ${ground}`;
     }
   }
