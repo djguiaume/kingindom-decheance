@@ -10,6 +10,7 @@
         "king_portrait",
         "king_roll_anticipate",
         "king_roll_idle",
+        "king_roll_idle.back",
         "king_roll_impact_fx.f1",
         "king_roll_impact_fx.f2",
         "king_roll_impact_fx.f3",
@@ -19,21 +20,34 @@
         "king_roll_roll.f4",
         "king_roll_uncurl.f1",
         "king_roll_uncurl.f2",
+        "king_roll_walk.back.f1",
+        "king_roll_walk.back.f2",
+        "king_roll_walk.back.f3",
+        "king_roll_walk.back.f4",
         "king_roll_walk.f1",
         "king_roll_walk.f2",
         "king_roll_walk.f3",
         "king_roll_walk.f4",
         "king_spear",
         "king_wolf_idle",
+        "king_wolf_idle.back",
         "king_wolf_impact_fx.f1",
         "king_wolf_impact_fx.f2",
         "king_wolf_impact_fx.f3",
         "king_wolf_lunge.f1",
         "king_wolf_lunge.f2",
+        "king_wolf_run.back.f1",
+        "king_wolf_run.back.f2",
+        "king_wolf_run.back.f3",
+        "king_wolf_run.back.f4",
         "king_wolf_run.f1",
         "king_wolf_run.f2",
         "king_wolf_run.f3",
         "king_wolf_run.f4",
+        "king_wolf_walk.back.f1",
+        "king_wolf_walk.back.f2",
+        "king_wolf_walk.back.f3",
+        "king_wolf_walk.back.f4",
         "king_wolf_walk.f1",
         "king_wolf_walk.f2",
         "king_wolf_walk.f3",
@@ -47,16 +61,22 @@
       "frames": [
         "archer",
         "archer_weapon",
+        "archer.back",
         "crossbowman",
         "crossbowman_weapon",
+        "crossbowman.back",
         "footman",
         "footman_weapon",
+        "footman.back",
         "guardian",
         "guardian_weapon",
+        "guardian.back",
         "knight",
         "knight_weapon",
+        "knight.back",
         "monk",
-        "monk_weapon"
+        "monk_weapon",
+        "monk.back"
       ]
     },
     {
@@ -66,17 +86,28 @@
       "frames": [
         "brute",
         "brute_weapon",
+        "brute.back",
         "catapult_arm.f1",
         "catapult_arm.f2",
         "catapult_chassis",
         "harpy_weapon",
+        "harpy.back.f1",
+        "harpy.back.f2",
+        "harpy.back.f3",
         "harpy.f1",
         "harpy.f2",
         "harpy.f3",
         "raider",
         "raider_weapon",
+        "raider.back",
         "skirmisher",
-        "skirmisher_weapon"
+        "skirmisher_weapon",
+        "skirmisher.back",
+        "warlord",
+        "warlord_bodyguard",
+        "warlord_bodyguard.back",
+        "warlord_weapon",
+        "warlord.back"
       ]
     },
     {
@@ -84,7 +115,103 @@
       "image": "buildings.webp",
       "json": "buildings.json",
       "frames": [
-        "house"
+        "archery_range",
+        "ballista_tower",
+        "ballista_tower_base",
+        "ballista_turret",
+        "barracks",
+        "castle_1",
+        "castle_2",
+        "castle_3",
+        "crossbow_range",
+        "garrison",
+        "gold_mine",
+        "guardian_bastion",
+        "guardian_lodge",
+        "house",
+        "knight_hall",
+        "manor",
+        "marksmen",
+        "monastery",
+        "monk_sanctuary",
+        "tower",
+        "volley_tower",
+        "watchtower"
+      ]
+    },
+    {
+      "key": "structures",
+      "image": "structures.webp",
+      "json": "structures.json",
+      "frames": [
+        "castle_flag",
+        "construction",
+        "gate_stone.f1",
+        "gate_stone.f2",
+        "gate_wood.f1",
+        "gate_wood.f2",
+        "lantern_glow",
+        "panda_banner",
+        "ruin",
+        "slot_empty",
+        "stone_wall_post",
+        "wall_post",
+        "window_glow"
+      ]
+    },
+    {
+      "key": "effects",
+      "image": "effects.webp",
+      "json": "effects.json",
+      "frames": [
+        "arrow",
+        "ballista_bolt",
+        "bolt",
+        "boulder",
+        "charge.f1",
+        "charge.f2",
+        "charge.f3",
+        "coin",
+        "death.f1",
+        "death.f2",
+        "death.f3",
+        "death.f4",
+        "dust.f1",
+        "dust.f2",
+        "dust.f3",
+        "heal.f1",
+        "heal.f2",
+        "heal.f3",
+        "hit_spark.f1",
+        "hit_spark.f2",
+        "hit_spark.f3",
+        "shield_fx",
+        "slash.f1",
+        "slash.f2",
+        "slash.f3",
+        "stomp.f1",
+        "stomp.f2",
+        "stomp.f3"
+      ]
+    },
+    {
+      "key": "environment",
+      "image": "environment.webp",
+      "json": "environment.json",
+      "frames": [
+        "bamboo_large",
+        "bamboo_single",
+        "bamboo_small",
+        "barrel",
+        "crate",
+        "flowers",
+        "grass",
+        "lantern_post",
+        "pine",
+        "rock_large",
+        "rock_small",
+        "shrub",
+        "tree"
       ]
     }
   ],
@@ -126,6 +253,36 @@
       "asset": "king_wolf_walk",
       "contentId": "king"
     },
+    "king_wolf_walk.back.f2": {
+      "atlas": "kings",
+      "num": 8,
+      "asset": "king_wolf_walk",
+      "contentId": "king"
+    },
+    "king_wolf_idle.back": {
+      "atlas": "kings",
+      "num": 7,
+      "asset": "king_wolf_idle",
+      "contentId": "king"
+    },
+    "king_wolf_walk.back.f3": {
+      "atlas": "kings",
+      "num": 8,
+      "asset": "king_wolf_walk",
+      "contentId": "king"
+    },
+    "king_wolf_walk.back.f4": {
+      "atlas": "kings",
+      "num": 8,
+      "asset": "king_wolf_walk",
+      "contentId": "king"
+    },
+    "king_wolf_walk.back.f1": {
+      "atlas": "kings",
+      "num": 8,
+      "asset": "king_wolf_walk",
+      "contentId": "king"
+    },
     "king_wolf_impact_fx.f2": {
       "atlas": "kings",
       "num": 11,
@@ -142,6 +299,12 @@
       "atlas": "kings",
       "num": 9,
       "asset": "king_wolf_run",
+      "contentId": "king"
+    },
+    "king_wolf_lunge.f1": {
+      "atlas": "kings",
+      "num": 10,
+      "asset": "king_wolf_lunge",
       "contentId": "king"
     },
     "king_wolf_lunge.f2": {
@@ -168,10 +331,28 @@
       "asset": "king_wolf_run",
       "contentId": "king"
     },
-    "king_wolf_lunge.f1": {
+    "king_wolf_run.back.f3": {
       "atlas": "kings",
-      "num": 10,
-      "asset": "king_wolf_lunge",
+      "num": 9,
+      "asset": "king_wolf_run",
+      "contentId": "king"
+    },
+    "king_wolf_run.back.f2": {
+      "atlas": "kings",
+      "num": 9,
+      "asset": "king_wolf_run",
+      "contentId": "king"
+    },
+    "king_wolf_run.back.f4": {
+      "atlas": "kings",
+      "num": 9,
+      "asset": "king_wolf_run",
+      "contentId": "king"
+    },
+    "king_wolf_run.back.f1": {
+      "atlas": "kings",
+      "num": 9,
+      "asset": "king_wolf_run",
       "contentId": "king"
     },
     "king_wolf_impact_fx.f3": {
@@ -220,6 +401,36 @@
       "atlas": "kings",
       "num": 1,
       "asset": "king_roll_idle",
+      "contentId": "king"
+    },
+    "king_roll_walk.back.f1": {
+      "atlas": "kings",
+      "num": 2,
+      "asset": "king_roll_walk",
+      "contentId": "king"
+    },
+    "king_roll_walk.back.f2": {
+      "atlas": "kings",
+      "num": 2,
+      "asset": "king_roll_walk",
+      "contentId": "king"
+    },
+    "king_roll_idle.back": {
+      "atlas": "kings",
+      "num": 1,
+      "asset": "king_roll_idle",
+      "contentId": "king"
+    },
+    "king_roll_walk.back.f3": {
+      "atlas": "kings",
+      "num": 2,
+      "asset": "king_roll_walk",
+      "contentId": "king"
+    },
+    "king_roll_walk.back.f4": {
+      "atlas": "kings",
+      "num": 2,
+      "asset": "king_roll_walk",
       "contentId": "king"
     },
     "king_roll_impact_fx.f2": {
@@ -300,7 +511,19 @@
       "asset": "guardian",
       "contentId": "guardian"
     },
+    "guardian.back": {
+      "atlas": "friendly",
+      "num": 23,
+      "asset": "guardian",
+      "contentId": "guardian"
+    },
     "knight": {
+      "atlas": "friendly",
+      "num": 17,
+      "asset": "knight",
+      "contentId": "knight"
+    },
+    "knight.back": {
       "atlas": "friendly",
       "num": 17,
       "asset": "knight",
@@ -312,7 +535,19 @@
       "asset": "monk",
       "contentId": "monk"
     },
+    "monk.back": {
+      "atlas": "friendly",
+      "num": 25,
+      "asset": "monk",
+      "contentId": "monk"
+    },
     "footman": {
+      "atlas": "friendly",
+      "num": 15,
+      "asset": "footman",
+      "contentId": "footman"
+    },
+    "footman.back": {
       "atlas": "friendly",
       "num": 15,
       "asset": "footman",
@@ -324,7 +559,19 @@
       "asset": "crossbowman",
       "contentId": "crossbowman"
     },
+    "crossbowman.back": {
+      "atlas": "friendly",
+      "num": 21,
+      "asset": "crossbowman",
+      "contentId": "crossbowman"
+    },
     "archer": {
+      "atlas": "friendly",
+      "num": 19,
+      "asset": "archer",
+      "contentId": "archer"
+    },
+    "archer.back": {
       "atlas": "friendly",
       "num": 19,
       "asset": "archer",
@@ -360,6 +607,18 @@
       "asset": "catapult_arm",
       "contentId": "catapult"
     },
+    "warlord": {
+      "atlas": "enemies",
+      "num": 37,
+      "asset": "warlord",
+      "contentId": "warlord"
+    },
+    "warlord.back": {
+      "atlas": "enemies",
+      "num": 37,
+      "asset": "warlord",
+      "contentId": "warlord"
+    },
     "catapult_arm.f1": {
       "atlas": "enemies",
       "num": 36,
@@ -367,6 +626,12 @@
       "contentId": "catapult"
     },
     "brute": {
+      "atlas": "enemies",
+      "num": 31,
+      "asset": "brute",
+      "contentId": "brute"
+    },
+    "brute.back": {
       "atlas": "enemies",
       "num": 31,
       "asset": "brute",
@@ -384,6 +649,12 @@
       "asset": "skirmisher_weapon",
       "contentId": "skirmisher"
     },
+    "harpy.back.f2": {
+      "atlas": "enemies",
+      "num": 33,
+      "asset": "harpy",
+      "contentId": "harpy"
+    },
     "harpy.f1": {
       "atlas": "enemies",
       "num": 33,
@@ -391,6 +662,18 @@
       "contentId": "harpy"
     },
     "harpy.f3": {
+      "atlas": "enemies",
+      "num": 33,
+      "asset": "harpy",
+      "contentId": "harpy"
+    },
+    "harpy.back.f1": {
+      "atlas": "enemies",
+      "num": 33,
+      "asset": "harpy",
+      "contentId": "harpy"
+    },
+    "harpy.back.f3": {
       "atlas": "enemies",
       "num": 33,
       "asset": "harpy",
@@ -414,11 +697,41 @@
       "asset": "skirmisher",
       "contentId": "skirmisher"
     },
+    "skirmisher.back": {
+      "atlas": "enemies",
+      "num": 29,
+      "asset": "skirmisher",
+      "contentId": "skirmisher"
+    },
+    "warlord_bodyguard": {
+      "atlas": "enemies",
+      "num": 39,
+      "asset": "warlord_bodyguard",
+      "contentId": "warlord"
+    },
+    "warlord_bodyguard.back": {
+      "atlas": "enemies",
+      "num": 39,
+      "asset": "warlord_bodyguard",
+      "contentId": "warlord"
+    },
     "raider": {
       "atlas": "enemies",
       "num": 27,
       "asset": "raider",
       "contentId": "raider"
+    },
+    "raider.back": {
+      "atlas": "enemies",
+      "num": 27,
+      "asset": "raider",
+      "contentId": "raider"
+    },
+    "warlord_weapon": {
+      "atlas": "enemies",
+      "num": 38,
+      "asset": "warlord_weapon",
+      "contentId": "warlord"
     },
     "raider_weapon": {
       "atlas": "enemies",
@@ -432,11 +745,409 @@
       "asset": "brute_weapon",
       "contentId": "brute"
     },
+    "castle_2": {
+      "atlas": "buildings",
+      "num": 41,
+      "asset": "castle_2",
+      "contentId": "castle"
+    },
+    "castle_3": {
+      "atlas": "buildings",
+      "num": 42,
+      "asset": "castle_3",
+      "contentId": "castle"
+    },
+    "castle_1": {
+      "atlas": "buildings",
+      "num": 40,
+      "asset": "castle_1",
+      "contentId": "castle"
+    },
+    "barracks": {
+      "atlas": "buildings",
+      "num": 52,
+      "asset": "barracks",
+      "contentId": "barracks"
+    },
+    "guardian_lodge": {
+      "atlas": "buildings",
+      "num": 58,
+      "asset": "guardian_lodge"
+    },
+    "knight_hall": {
+      "atlas": "buildings",
+      "num": 54,
+      "asset": "knight_hall",
+      "contentId": "knight_hall"
+    },
+    "crossbow_range": {
+      "atlas": "buildings",
+      "num": 57,
+      "asset": "crossbow_range",
+      "contentId": "crossbow_range"
+    },
+    "guardian_bastion": {
+      "atlas": "buildings",
+      "num": 59,
+      "asset": "guardian_bastion"
+    },
+    "archery_range": {
+      "atlas": "buildings",
+      "num": 55,
+      "asset": "archery_range",
+      "contentId": "archery_range"
+    },
+    "monastery": {
+      "atlas": "buildings",
+      "num": 61,
+      "asset": "monastery"
+    },
+    "marksmen": {
+      "atlas": "buildings",
+      "num": 56,
+      "asset": "marksmen",
+      "contentId": "marksmen"
+    },
+    "ballista_tower": {
+      "atlas": "buildings",
+      "num": 48,
+      "asset": "ballista_tower",
+      "contentId": "ballista_tower"
+    },
+    "volley_tower": {
+      "atlas": "buildings",
+      "num": 49,
+      "asset": "volley_tower",
+      "contentId": "volley_tower"
+    },
+    "watchtower": {
+      "atlas": "buildings",
+      "num": 47,
+      "asset": "watchtower",
+      "contentId": "watchtower"
+    },
+    "garrison": {
+      "atlas": "buildings",
+      "num": 53,
+      "asset": "garrison",
+      "contentId": "garrison"
+    },
+    "tower": {
+      "atlas": "buildings",
+      "num": 46,
+      "asset": "tower",
+      "contentId": "tower"
+    },
+    "monk_sanctuary": {
+      "atlas": "buildings",
+      "num": 60,
+      "asset": "monk_sanctuary"
+    },
+    "gold_mine": {
+      "atlas": "buildings",
+      "num": 45,
+      "asset": "gold_mine",
+      "contentId": "gold_mine"
+    },
     "house": {
       "atlas": "buildings",
       "num": 43,
       "asset": "house",
       "contentId": "house"
+    },
+    "manor": {
+      "atlas": "buildings",
+      "num": 44,
+      "asset": "manor",
+      "contentId": "manor"
+    },
+    "ballista_tower_base": {
+      "atlas": "buildings",
+      "num": 50,
+      "asset": "ballista_tower_base",
+      "contentId": "ballista_tower"
+    },
+    "ballista_turret": {
+      "atlas": "buildings",
+      "num": 51,
+      "asset": "ballista_turret",
+      "contentId": "ballista_tower"
+    },
+    "construction": {
+      "atlas": "structures",
+      "num": 67,
+      "asset": "construction"
+    },
+    "ruin": {
+      "atlas": "structures",
+      "num": 68,
+      "asset": "ruin"
+    },
+    "gate_stone.f2": {
+      "atlas": "structures",
+      "num": 65,
+      "asset": "gate_stone",
+      "contentId": "stone_wall"
+    },
+    "gate_stone.f1": {
+      "atlas": "structures",
+      "num": 65,
+      "asset": "gate_stone",
+      "contentId": "stone_wall"
+    },
+    "castle_flag": {
+      "atlas": "structures",
+      "num": 72,
+      "asset": "castle_flag"
+    },
+    "gate_wood.f2": {
+      "atlas": "structures",
+      "num": 64,
+      "asset": "gate_wood",
+      "contentId": "wall"
+    },
+    "gate_wood.f1": {
+      "atlas": "structures",
+      "num": 64,
+      "asset": "gate_wood",
+      "contentId": "wall"
+    },
+    "panda_banner": {
+      "atlas": "structures",
+      "num": 71,
+      "asset": "panda_banner"
+    },
+    "lantern_glow": {
+      "atlas": "structures",
+      "num": 70,
+      "asset": "lantern_glow"
+    },
+    "wall_post": {
+      "atlas": "structures",
+      "num": 62,
+      "asset": "wall_post",
+      "contentId": "wall"
+    },
+    "slot_empty": {
+      "atlas": "structures",
+      "num": 66,
+      "asset": "slot_empty"
+    },
+    "window_glow": {
+      "atlas": "structures",
+      "num": 69,
+      "asset": "window_glow"
+    },
+    "stone_wall_post": {
+      "atlas": "structures",
+      "num": 63,
+      "asset": "stone_wall_post",
+      "contentId": "stone_wall"
+    },
+    "stomp.f2": {
+      "atlas": "effects",
+      "num": 85,
+      "asset": "stomp"
+    },
+    "stomp.f3": {
+      "atlas": "effects",
+      "num": 85,
+      "asset": "stomp"
+    },
+    "stomp.f1": {
+      "atlas": "effects",
+      "num": 85,
+      "asset": "stomp"
+    },
+    "death.f1": {
+      "atlas": "effects",
+      "num": 83,
+      "asset": "death"
+    },
+    "shield_fx": {
+      "atlas": "effects",
+      "num": 80,
+      "asset": "shield_fx"
+    },
+    "death.f3": {
+      "atlas": "effects",
+      "num": 83,
+      "asset": "death"
+    },
+    "death.f4": {
+      "atlas": "effects",
+      "num": 83,
+      "asset": "death"
+    },
+    "death.f2": {
+      "atlas": "effects",
+      "num": 83,
+      "asset": "death"
+    },
+    "slash.f3": {
+      "atlas": "effects",
+      "num": 79,
+      "asset": "slash"
+    },
+    "charge.f2": {
+      "atlas": "effects",
+      "num": 84,
+      "asset": "charge"
+    },
+    "charge.f1": {
+      "atlas": "effects",
+      "num": 84,
+      "asset": "charge"
+    },
+    "charge.f3": {
+      "atlas": "effects",
+      "num": 84,
+      "asset": "charge"
+    },
+    "slash.f1": {
+      "atlas": "effects",
+      "num": 79,
+      "asset": "slash"
+    },
+    "dust.f3": {
+      "atlas": "effects",
+      "num": 78,
+      "asset": "dust"
+    },
+    "dust.f1": {
+      "atlas": "effects",
+      "num": 78,
+      "asset": "dust"
+    },
+    "dust.f2": {
+      "atlas": "effects",
+      "num": 78,
+      "asset": "dust"
+    },
+    "hit_spark.f1": {
+      "atlas": "effects",
+      "num": 77,
+      "asset": "hit_spark"
+    },
+    "hit_spark.f2": {
+      "atlas": "effects",
+      "num": 77,
+      "asset": "hit_spark"
+    },
+    "heal.f1": {
+      "atlas": "effects",
+      "num": 82,
+      "asset": "heal"
+    },
+    "heal.f2": {
+      "atlas": "effects",
+      "num": 82,
+      "asset": "heal"
+    },
+    "heal.f3": {
+      "atlas": "effects",
+      "num": 82,
+      "asset": "heal"
+    },
+    "slash.f2": {
+      "atlas": "effects",
+      "num": 79,
+      "asset": "slash"
+    },
+    "hit_spark.f3": {
+      "atlas": "effects",
+      "num": 77,
+      "asset": "hit_spark"
+    },
+    "boulder": {
+      "atlas": "effects",
+      "num": 76,
+      "asset": "boulder"
+    },
+    "coin": {
+      "atlas": "effects",
+      "num": 81,
+      "asset": "coin"
+    },
+    "ballista_bolt": {
+      "atlas": "effects",
+      "num": 75,
+      "asset": "ballista_bolt"
+    },
+    "arrow": {
+      "atlas": "effects",
+      "num": 73,
+      "asset": "arrow"
+    },
+    "bolt": {
+      "atlas": "effects",
+      "num": 74,
+      "asset": "bolt"
+    },
+    "tree": {
+      "atlas": "environment",
+      "num": 89,
+      "asset": "tree"
+    },
+    "pine": {
+      "atlas": "environment",
+      "num": 90,
+      "asset": "pine"
+    },
+    "bamboo_large": {
+      "atlas": "environment",
+      "num": 87,
+      "asset": "bamboo_large"
+    },
+    "lantern_post": {
+      "atlas": "environment",
+      "num": 96,
+      "asset": "lantern_post"
+    },
+    "rock_large": {
+      "atlas": "environment",
+      "num": 92,
+      "asset": "rock_large"
+    },
+    "bamboo_small": {
+      "atlas": "environment",
+      "num": 86,
+      "asset": "bamboo_small"
+    },
+    "bamboo_single": {
+      "atlas": "environment",
+      "num": 88,
+      "asset": "bamboo_single"
+    },
+    "shrub": {
+      "atlas": "environment",
+      "num": 95,
+      "asset": "shrub"
+    },
+    "barrel": {
+      "atlas": "environment",
+      "num": 97,
+      "asset": "barrel"
+    },
+    "crate": {
+      "atlas": "environment",
+      "num": 98,
+      "asset": "crate"
+    },
+    "grass": {
+      "atlas": "environment",
+      "num": 93,
+      "asset": "grass"
+    },
+    "rock_small": {
+      "atlas": "environment",
+      "num": 91,
+      "asset": "rock_small"
+    },
+    "flowers": {
+      "atlas": "environment",
+      "num": 94,
+      "asset": "flowers"
     }
   }
 }

@@ -2,7 +2,7 @@
   "frames": {
     "archer": {
       "frame": {
-        "x": 415,
+        "x": 729,
         "y": 2,
         "w": 67,
         "h": 92
@@ -54,9 +54,36 @@
       "num": 20,
       "contentId": "archer"
     },
+    "archer.back": {
+      "frame": {
+        "x": 798,
+        "y": 2,
+        "w": 54,
+        "h": 92
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 53,
+        "y": 52,
+        "w": 54,
+        "h": 92
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 160
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "archer",
+      "num": 19,
+      "contentId": "archer"
+    },
     "crossbowman": {
       "frame": {
-        "x": 354,
+        "x": 616,
         "y": 2,
         "w": 59,
         "h": 94
@@ -83,18 +110,18 @@
     },
     "crossbowman_weapon": {
       "frame": {
-        "x": 484,
+        "x": 854,
         "y": 2,
-        "w": 112,
-        "h": 59
+        "w": 118,
+        "h": 54
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 8,
-        "y": 3,
-        "w": 112,
-        "h": 59
+        "x": 5,
+        "y": 5,
+        "w": 118,
+        "h": 54
       },
       "sourceSize": {
         "w": 128,
@@ -108,9 +135,36 @@
       "num": 22,
       "contentId": "crossbowman"
     },
+    "crossbowman.back": {
+      "frame": {
+        "x": 677,
+        "y": 2,
+        "w": 50,
+        "h": 94
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 55,
+        "y": 50,
+        "w": 50,
+        "h": 94
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 160
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "crossbowman",
+      "num": 21,
+      "contentId": "crossbowman"
+    },
     "footman": {
       "frame": {
-        "x": 274,
+        "x": 470,
         "y": 2,
         "w": 78,
         "h": 96
@@ -137,7 +191,7 @@
     },
     "footman_weapon": {
       "frame": {
-        "x": 598,
+        "x": 974,
         "y": 2,
         "w": 29,
         "h": 44
@@ -160,6 +214,33 @@
       },
       "asset": "footman_weapon",
       "num": 16,
+      "contentId": "footman"
+    },
+    "footman.back": {
+      "frame": {
+        "x": 550,
+        "y": 2,
+        "w": 64,
+        "h": 96
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 48,
+        "y": 48,
+        "w": 64,
+        "h": 96
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 160
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "footman",
+      "num": 15,
       "contentId": "footman"
     },
     "guardian": {
@@ -191,7 +272,7 @@
     },
     "guardian_weapon": {
       "frame": {
-        "x": 778,
+        "x": 1154,
         "y": 2,
         "w": 147,
         "h": 20
@@ -216,9 +297,36 @@
       "num": 24,
       "contentId": "guardian"
     },
-    "knight": {
+    "guardian.back": {
       "frame": {
         "x": 136,
+        "y": 2,
+        "w": 74,
+        "h": 104
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 43,
+        "y": 40,
+        "w": 74,
+        "h": 104
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 160
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "guardian",
+      "num": 23,
+      "contentId": "guardian"
+    },
+    "knight": {
+      "frame": {
+        "x": 212,
         "y": 2,
         "w": 69,
         "h": 104
@@ -245,7 +353,7 @@
     },
     "knight_weapon": {
       "frame": {
-        "x": 629,
+        "x": 1005,
         "y": 2,
         "w": 147,
         "h": 32
@@ -270,9 +378,36 @@
       "num": 18,
       "contentId": "knight"
     },
+    "knight.back": {
+      "frame": {
+        "x": 283,
+        "y": 2,
+        "w": 56,
+        "h": 104
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 52,
+        "y": 40,
+        "w": 56,
+        "h": 104
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 160
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "knight",
+      "num": 17,
+      "contentId": "knight"
+    },
     "monk": {
       "frame": {
-        "x": 207,
+        "x": 341,
         "y": 2,
         "w": 65,
         "h": 98
@@ -323,6 +458,33 @@
       "asset": "monk_weapon",
       "num": 26,
       "contentId": "monk"
+    },
+    "monk.back": {
+      "frame": {
+        "x": 408,
+        "y": 2,
+        "w": 60,
+        "h": 98
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 50,
+        "y": 46,
+        "w": 60,
+        "h": 98
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 160
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "monk",
+      "num": 25,
+      "contentId": "monk"
     }
   },
   "meta": {
@@ -331,7 +493,7 @@
     "image": "friendly.webp",
     "format": "RGBA8888",
     "size": {
-      "w": 927,
+      "w": 1303,
       "h": 181
     },
     "scale": "1"
