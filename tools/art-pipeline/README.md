@@ -39,7 +39,15 @@ pnpm art runtime                      # masters → WebP atlases + Phaser JSON
 pnpm art review                       # contact sheet, animation sheet, AUDIT.md
 pnpm art mark catapult_arm.f1 rejected --note "arm mounted on the side"
 pnpm art audit                        # exit 1 until every asset is complete
+pnpm art seamless tile_stone          # one-off: make an older tile master wrap cleanly
 ```
+
+Every part is painted from scratch with the v1.2 sheet attached as a style reference, with two
+exceptions set in the catalog. `noReference` assets (ground decals, the window glow, the cliff end)
+are painted without the sheet, because it kept pulling pandas and towers into them.
+`followFirstFrame` assets (the gates) paint each later frame from the first frame's master in the
+same view, so the open gate is the closed gate with its doors moved. Opaque tiles are made seamless
+when normalised: broad lighting is flattened and the edges cross-faded with a half-offset copy.
 
 Selectors: `all`, a group (`kings`, `friendly`, `enemies`, `buildings`, `structures`,
 `effects`, `environment`, `map`), an asset id or number (`catapult_arm`, `36`), a range
