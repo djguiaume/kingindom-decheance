@@ -81,7 +81,7 @@ async function main(): Promise<number> {
         return 0;
       }
       await writeManifest(paths(REPO).manifest, buildManifest(CATALOG));
-      log('Wrote art/manifest.json (105 assets).');
+      log(`Wrote art/manifest.json (${buildManifest(CATALOG).assets.length} assets).`);
       return 0;
     }
     case 'plan': {
@@ -166,7 +166,7 @@ async function main(): Promise<number> {
       const result = audit(root, manifest, status.data, await readIndex());
       await writeAudit(join(dir, 'AUDIT.md'), manifest, result);
       const done = result.rows.filter((r) => r.problems.length === 0).length;
-      log(`Audit: ${done}/105 logical assets complete.`);
+      log(`Audit: ${done}/${manifest.assets.length} logical assets complete.`);
       return command === 'audit' && !result.complete ? 1 : 0;
     }
     default:

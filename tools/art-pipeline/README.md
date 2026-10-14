@@ -13,7 +13,7 @@ no pixel is ever cut out of it.
 | Path                                   | What                                                                          | Committed |
 | -------------------------------------- | ----------------------------------------------------------------------------- | --------- |
 | `art/reference/panda-kingdom-v1.2.png` | Approved style reference                                                      | yes       |
-| `art/manifest.json`                    | 105 assets → 143 generation parts (generated from `src/catalog.ts`)           | yes       |
+| `art/manifest.json`                    | 105 sheet assets + additions (106+), generated from `src/catalog.ts`          | yes       |
 | `art/status.json`                      | Per-part state, attempts, Scenario job/asset ids, CU spent, validation issues | yes       |
 | `art/batches/<token>.json`             | Each dry-run estimate and the runs made against it                            | yes       |
 | `art/.cache/originals/`                | Raw Scenario downloads (large; sha256 kept in status)                         | no        |
@@ -38,7 +38,7 @@ pnpm art generate enemies --budget <CU>   # generate, never spending past the ap
 pnpm art runtime                      # masters → WebP atlases + Phaser JSON
 pnpm art review                       # contact sheet, animation sheet, AUDIT.md
 pnpm art mark catapult_arm.f1 rejected --note "arm mounted on the side"
-pnpm art audit                        # exit 1 until all 105 assets are complete
+pnpm art audit                        # exit 1 until every asset is complete
 ```
 
 Selectors: `all`, a group (`kings`, `friendly`, `enemies`, `buildings`, `structures`,

@@ -187,7 +187,7 @@ export const PartSchema = z.object({
 export type Part = z.infer<typeof PartSchema>;
 
 export const AssetSchema = z.object({
-  num: z.number().int().min(1).max(105),
+  num: z.number().int().min(1),
   /** Zero-padded number as on the sheet, e.g. "035". */
   code: z.string().regex(/^\d{3}$/),
   id: z.string().regex(/^[a-z0-9_]+$/),
@@ -213,7 +213,8 @@ export const ManifestSchema = z.object({
   reference: z.string(),
   scale: z.literal('1 m = 64 px'),
   facing: z.literal('right'),
-  assets: z.array(AssetSchema).length(105),
+  /** The 105 assets of the v1.2 sheet, then additions numbered from 106. */
+  assets: z.array(AssetSchema).min(105),
 });
 export type Manifest = z.infer<typeof ManifestSchema>;
 

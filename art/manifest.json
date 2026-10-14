@@ -1585,7 +1585,7 @@
       "group": "buildings",
       "kind": "building",
       "contentId": "castle",
-      "subject": "pagoda keep level 1: wood-and-stone keep, one blue tiled roof, panda banners",
+      "subject": "pagoda castle level 1, the first stage of the same castle as levels 2 and 3: a broad, low wood-and-stone keep on a square stone platform with steps, one wide blue tiled pagoda roof, a short wooden palisade around it, panda banners; clearly wider than it is tall, a small castle and not a tower",
       "canvas": {
         "w": 512,
         "h": 512
@@ -1599,7 +1599,9 @@
         "w": 1024,
         "h": 1024
       },
-      "checks": [],
+      "checks": [
+        "Castles 1, 2 and 3 read as one castle growing: same platform and roof style, more tiers each level."
+      ],
       "parts": [
         {
           "id": "castle_1",
@@ -3789,6 +3791,136 @@
           "id": "map_background",
           "frame": 0,
           "master": "art/masters/map/105_map_background.png"
+        }
+      ]
+    },
+    {
+      "num": 106,
+      "code": "106",
+      "id": "cliff_section",
+      "name": "Cliff section",
+      "group": "environment",
+      "kind": "prop",
+      "subject": "a straight section of a raised grassy plateau edge seen from the same camera: a grass lip on top and a vertical grey-brown rock cliff face below it, about one storey high, a few tufts and bamboo shoots on the lip; a self-contained chunk with rough ends so pieces can overlap side by side",
+      "canvas": {
+        "w": 256,
+        "h": 192
+      },
+      "heightPx": 150,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [
+        "Reads as a drop in height: grass on top, rock face below, lit from the upper left."
+      ],
+      "inferred": "Not on the sheet. Lets a map show high ground, e.g. a path winding up between cliffs.",
+      "parts": [
+        {
+          "id": "cliff_section",
+          "frame": 0,
+          "master": "art/masters/environment/106_cliff_section.png"
+        }
+      ]
+    },
+    {
+      "num": 107,
+      "code": "107",
+      "id": "cliff_end",
+      "name": "Cliff end",
+      "group": "environment",
+      "kind": "prop",
+      "subject": "the rounded end of the same raised grassy plateau edge: grass lip on top, rock cliff face curving back into the ground on the right side where the slope ends; same rock and grass as the cliff section",
+      "canvas": {
+        "w": 192,
+        "h": 192
+      },
+      "heightPx": 150,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [
+        "Matches cliff_section; mirrored by the game for the left end."
+      ],
+      "inferred": "See 106.",
+      "parts": [
+        {
+          "id": "cliff_end",
+          "frame": 0,
+          "master": "art/masters/environment/107_cliff_end.png"
+        }
+      ]
+    },
+    {
+      "num": 108,
+      "code": "108",
+      "id": "grass_patch",
+      "name": "Grass patch",
+      "group": "environment",
+      "kind": "decal",
+      "subject": "flat decal seen from above: an irregular patch of lusher, slightly darker meadow grass with a few small flowers, ragged soft edges fading to transparent, to break up the ground",
+      "canvas": {
+        "w": 192,
+        "h": 128
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1536,
+        "h": 1024
+      },
+      "checks": [],
+      "inferred": "Not on the sheet. Variation on top of the grass tile.",
+      "parts": [
+        {
+          "id": "grass_patch",
+          "frame": 0,
+          "master": "art/masters/environment/108_grass_patch.png"
+        }
+      ]
+    },
+    {
+      "num": 109,
+      "code": "109",
+      "id": "tile_water",
+      "name": "Water tile",
+      "group": "map",
+      "kind": "tile",
+      "subject": "seamless square ground tile: calm shallow blue-green water with soft ripples, calm and low contrast, no props",
+      "canvas": {
+        "w": 512,
+        "h": 512
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": false,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "inferred": "Not on the sheet. Fills lakes and rivers; water_edge (100) lines their banks.",
+      "parts": [
+        {
+          "id": "tile_water",
+          "frame": 0,
+          "master": "art/masters/map/109_tile_water.png"
         }
       ]
     }

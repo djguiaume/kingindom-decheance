@@ -9,16 +9,20 @@ const REPO = join(import.meta.dirname, '../../..');
 const manifest = buildManifest(CATALOG);
 
 describe('manifest', () => {
-  it('has exactly the 105 numbered assets of the v1.2 sheet, ids unique', () => {
-    expect(manifest.assets.map((a) => a.num)).toEqual(Array.from({ length: 105 }, (_, i) => i + 1));
-    expect(new Set(manifest.assets.map((a) => a.id)).size).toBe(105);
+  it('has the 105 numbered assets of the v1.2 sheet then numbered additions, ids unique', () => {
+    const n = manifest.assets.length;
+    expect(n).toBeGreaterThanOrEqual(105);
+    expect(manifest.assets.map((a) => a.num)).toEqual(Array.from({ length: n }, (_, i) => i + 1));
+    expect(new Set(manifest.assets.map((a) => a.id)).size).toBe(n);
+    for (const a of manifest.assets.filter((x) => x.num > 105))
+      expect(a.inferred, a.id).toBeTruthy();
     const parts = manifest.assets.flatMap((a) => a.parts);
     expect(new Set(parts.map((p) => p.id)).size).toBe(parts.length);
     expect(new Set(parts.map((p) => p.master)).size).toBe(parts.length);
   });
 
-  it('puts every asset in the group range printed on the sheet', () => {
-    for (const a of manifest.assets) {
+  it('puts every sheet asset in the group range printed on the sheet', () => {
+    for (const a of manifest.assets.filter((x) => x.num <= 105)) {
       const [lo, hi] = GROUP_RANGES[a.group];
       expect(a.num, a.id).toBeGreaterThanOrEqual(lo);
       expect(a.num, a.id).toBeLessThanOrEqual(hi);
@@ -141,7 +145,7 @@ describe('manifest', () => {
       'catapult_arm.f2',
     ]);
     expect(selectParts(manifest, 'king_roll_walk.f2')).toHaveLength(1);
-    expect(selectParts(manifest, 'map')).toHaveLength(5);
+    expect(selectParts(manifest, 'map')).toHaveLength(6);
     expect(() => selectParts(manifest, 'dragons')).toThrow(/matches no asset/);
   });
 });
