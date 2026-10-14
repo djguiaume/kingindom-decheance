@@ -10,9 +10,12 @@ import { nearbySlotId, useHudStore, type Device } from '../../stores/hud.ts';
 /** Hold durations from design 11 §10 (hold-to-confirm on every device). */
 export const HOLD_BUY_MS = 400;
 export const HOLD_NIGHT_MS = 1000;
+/** How long a refusal ("ability is not ready") stays on screen. */
+export const MESSAGE_MS = 1500;
 
 export class InputHub {
   private lastMove = { x: 0, y: 0 };
+  private messageTimer: number | undefined;
   private readonly store = useHudStore();
 
   constructor(private readonly runtime: GameRuntime) {}
@@ -84,7 +87,11 @@ export class InputHub {
 
   private send(command: Command): void {
     const result = this.runtime.submit(command);
-    // Movement refusals are silent; the rest is worth a short message.
-    if (command.type !== 'move') this.store.message = result.ok ? '' : result.reason;
+    // Movement refusals are silent; the rest is worth a short message, which fades on its own.
+    if (command.type === 'move') return;
+    this.store.message = result.ok ? '' : result.reason;
+    window.clearTimeout(this.messageTimer);
+    if (!result.ok)
+      this.messageTimer = window.setTimeout(() => (this.store.message = ''), MESSAGE_MS);
   }
 }

@@ -63,6 +63,19 @@ describe('edge arrows', () => {
     expect(at.y).toBe(150);
   });
 
+  it('keeps a wide marker inside the screen', () => {
+    const at = placeArrow({ x: 2000, y: 200 }, view, layout, { w: 70, h: 20 })!;
+    expect(at.x).toBe(800 - 40 - 70);
+  });
+
+  it('slides along its own edge out of an area, never inwards', () => {
+    // A joystick corner on the left: a marker on the left edge moves up, staying on the edge.
+    const avoid = { left: 0, top: 250, right: 240, bottom: 400 };
+    const at = placeArrow({ x: -2000, y: 900 }, view, { ...layout, avoid: [avoid] })!;
+    expect(at.x).toBe(40);
+    expect(at.y).toBe(250);
+  });
+
   it('groups enemies of one lane that are close together', () => {
     const s = nightSession();
     enemy(s, 'raider', 'west', 1, 27);
@@ -83,6 +96,17 @@ describe('edge arrows', () => {
     const arrows = buildArrows(s.state, s.ctx, camera(20, 20), layout, new Map(), 0);
     expect(arrows.map((a) => a.key)).toEqual(['spawn-west']);
     expect(arrows[0]!.label).toBe('🪓8');
+    expect(arrows[0]!.onScreen).toBe(false);
+  });
+
+  it('by day, a spawn on screen keeps its marker, standing over it', () => {
+    const s = new Session(prototypeContent, { ...prototypeRun, seed: 1 });
+    const spawn = s.ctx.lanes.get('west')!.points[0]!;
+    const cam = camera(spawn.x - 5, spawn.y - 5);
+    const [pin] = buildArrows(s.state, s.ctx, cam, layout, new Map(), 0);
+    expect(pin).toMatchObject({ key: 'spawn-west', onScreen: true, angle: Math.PI / 2 });
+    expect(pin!.x).toBeCloseTo(5 * 32);
+    expect(pin!.y).toBeLessThan(5 * 32);
   });
 
   it('by night: castle under attack first, then the boss, then the biggest groups; at most six', () => {

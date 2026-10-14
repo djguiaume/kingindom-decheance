@@ -22,7 +22,7 @@ import { SCALE, SQUASH } from './camera.ts';
 import type { GameRuntime } from './runtime.ts';
 import { shadow, spriteFor } from './sprites.ts';
 
-const HIT_FLASH_MS = 90;
+const HIT_FLASH_MS = 160;
 const SHOT_MS = 180;
 const DOUBLE_TAP_MS = 300;
 /** How far the camera looks ahead of a moving king, and how quickly it gets there. */
@@ -38,6 +38,8 @@ export interface ViewOptions {
 
 /** How long the ring of a boss stomp stays visible. */
 const STOMP_MS = 350;
+/** Length of a drawn arrow, in ticks of its flight (it looks about 1 m long at archer speed). */
+const ARROW_LENGTH = 4;
 /** How long the dust of a shot that missed stays visible. */
 const PUFF_MS = 300;
 /** Shots by these enemies are lobbed high, with a shadow where they will land. */
@@ -300,8 +302,17 @@ export class PlayScene extends Phaser.Scene {
     this.flashes = this.flashes.filter((f) => now - f.start < (f.shot ? SHOT_MS : HIT_FLASH_MS));
     for (const f of this.flashes) {
       if (!f.shot) {
-        g.lineStyle(3, colors.hit, 0.85);
-        g.lineBetween(f.from.x, f.from.y - SCALE * 0.6, f.to.x, f.to.y - SCALE * 0.6);
+        // A melee blow: a short slash on the one hit, not a line from the attacker (which read
+        // as a projectile that could not be dodged).
+        const t = (now - f.start) / HIT_FLASH_MS;
+        const cx = f.to.x;
+        const cy = f.to.y - SCALE * 0.7;
+        const r = SCALE * 0.45;
+        const dir = Math.atan2(f.to.y - f.from.y, f.to.x - f.from.x);
+        g.lineStyle(3, colors.hit, 0.9 * (1 - t));
+        g.beginPath();
+        g.arc(cx, cy, r, dir - 1.1, dir + 1.1);
+        g.strokePath();
         continue;
       }
       // A bolt flies from the top of the tower to the target. The damage is already dealt in
@@ -526,10 +537,29 @@ export class PlayScene extends Phaser.Scene {
         g.fillCircle(s.x, s.y, SCALE * 0.3);
         continue;
       }
+      // An arrow: a dark shaft with a head, and its shadow on the ground below, so the player
+      // sees where it is going and can step aside.
+      const ground = this.px({
+        x: p.from.x + (p.to.x - p.from.x) * t,
+        y: p.from.y + (p.to.y - p.from.y) * t,
+      });
+      g.fillStyle(0x000000, 0.3);
+      g.fillEllipse(ground.x, ground.y, SCALE * 0.35, SCALE * 0.18);
       const head = at(t);
-      const tail = at(Math.max(0, t - 0.15));
-      g.lineStyle(3, colors.enemies.ranged, 1);
+      const tail = at(Math.max(0, t - ARROW_LENGTH / Math.max(1, p.flight)));
+      g.lineStyle(4, 0x3a2a1a, 1);
       g.lineBetween(tail.x, tail.y, head.x, head.y);
+      const a = Math.atan2(head.y - tail.y, head.x - tail.x);
+      const hs = SCALE * 0.3;
+      g.fillStyle(0xf2f2f2, 1);
+      g.fillTriangle(
+        head.x + Math.cos(a) * hs,
+        head.y + Math.sin(a) * hs,
+        head.x + Math.cos(a + 2.5) * hs * 0.7,
+        head.y + Math.sin(a + 2.5) * hs * 0.7,
+        head.x + Math.cos(a - 2.5) * hs * 0.7,
+        head.y + Math.sin(a - 2.5) * hs * 0.7,
+      );
     }
     // Forget shooters of shots that are no longer flying (landed on a target).
     if (this.shooters.size > this.runtime.state.projectiles.length) {

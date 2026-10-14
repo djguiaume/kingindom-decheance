@@ -2,7 +2,7 @@
   "name": "greedy-loss",
   "why": "eco-first with an idle king falls on night 3 (pass and flyers open)",
   "replay": {
-    "contentHash": "1528d0219487f5",
+    "contentHash": "07886efd09db77",
     "config": {
       "mapId": "greyhollow",
       "weaponId": "spear",
@@ -118,7 +118,7 @@
     ]
   },
   "expected": {
-    "contentHash": "1528d0219487f5",
+    "contentHash": "07886efd09db77",
     "policy": "greedy",
     "config": {
       "mapId": "greyhollow",
@@ -129,8 +129,8 @@
     "nightReached": 3,
     "goldPerNight": [55, 70, 0],
     "buildingsLostPerNight": [1, 4, 7],
-    "enemiesKilled": 36,
-    "ticks": 6478,
-    "finalHash": "1a850d30dd7ca6"
+    "enemiesKilled": 37,
+    "ticks": 6481,
+    "finalHash": "1552abca0e91a1"
   }
 }

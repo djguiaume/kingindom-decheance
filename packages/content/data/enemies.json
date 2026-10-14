@@ -26,7 +26,7 @@
         "interval": 1.5,
         "range": 5,
         "targets": ["ground"],
-        "projectile": { "speed": 12 }
+        "projectile": { "speed": 8 }
       },
       "targetPriority": ["unit", "king", "tower", "wall", "castle"]
     },

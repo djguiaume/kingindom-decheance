@@ -40,7 +40,7 @@ export const GOLDEN_CASES: GoldenCase[] = [
     name: 'defensive-loss',
     why: 'defences only, no eco: a seed where night 6 breaks through',
     policy: 'defensive',
-    seed: 6,
+    seed: 5,
   },
   {
     name: 'greedy-loss',

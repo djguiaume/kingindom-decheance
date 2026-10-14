@@ -6,7 +6,7 @@
  */
 import { onBeforeUnmount, onMounted, ref, shallowRef } from 'vue';
 import type { CameraView } from '../game/camera.ts';
-import { buildArrows, type Arrow, type ArrowLayout } from '../game/indicators.ts';
+import { buildArrows, pinSize, type Arrow, type ArrowLayout } from '../game/indicators.ts';
 import type { GameRuntime } from '../game/runtime.ts';
 import { useHudStore } from '../stores/hud.ts';
 
@@ -35,20 +35,9 @@ function layout(w: number, h: number): ArrowLayout {
   return { inset, avoid };
 }
 
-/**
- * Marker body size per arrow size, in CSS px: a red pill sized to its icons and counts, so the
- * tip can sit on its edge (one shape, like a map pin).
- */
-const HEIGHT = { 1: 30, 2: 36, 3: 44 } as const;
+/** Marker body and tip styles; the size comes from `pinSize` so placement and drawing agree. */
 function pin(a: Arrow) {
-  const h = HEIGHT[a.size];
-  const font = Math.round(h * 0.45);
-  const partW = (p: Arrow['parts'][number]) =>
-    font * 1.3 + (p.count === null ? 0 : String(p.count).length * font * 0.62);
-  const w = Math.max(
-    h,
-    a.parts.reduce((n, p) => n + partW(p), 0) + (a.parts.length - 1) * 6 + h * 0.6,
-  );
+  const { width: w, height: h, font } = pinSize(a.size, a.parts);
   // The tip sits on the body's edge in the arrow's direction (an ellipse is close enough to the
   // pill for the tip to overlap it, as it is the same colour).
   const tx = Math.cos(a.angle) * (w / 2 - 2);
@@ -59,6 +48,27 @@ function pin(a: Arrow) {
   };
 }
 
+/**
+ * Markers ease toward their new spot instead of jumping: the camera moves every frame and a
+ * marker can slide out of an area to avoid, and both read as jitter when applied at once.
+ */
+const EASE = 0.45;
+const shown = new Map<string, { x: number; y: number }>();
+function ease(next: Arrow[]): Arrow[] {
+  const keep = new Set<string>();
+  const out = next.map((a) => {
+    keep.add(a.key);
+    const prev = shown.get(a.key);
+    const at = prev
+      ? { x: prev.x + (a.x - prev.x) * EASE, y: prev.y + (a.y - prev.y) * EASE }
+      : { x: a.x, y: a.y };
+    shown.set(a.key, at);
+    return { ...a, ...at };
+  });
+  for (const key of shown.keys()) if (!keep.has(key)) shown.delete(key);
+  return out;
+}
+
 let frame = 0;
 let last = 0;
 function tick(now: number) {
@@ -67,13 +77,15 @@ function tick(now: number) {
   last = now;
   const cam = props.camera;
   if (cam.width === 0) return;
-  arrows.value = buildArrows(
-    props.runtime.state,
-    props.runtime.ctx,
-    cam,
-    layout(cam.width, cam.height),
-    lastHit,
-    now,
+  arrows.value = ease(
+    buildArrows(
+      props.runtime.state,
+      props.runtime.ctx,
+      cam,
+      layout(cam.width, cam.height),
+      lastHit,
+      now,
+    ),
   );
 }
 
@@ -102,7 +114,7 @@ onBeforeUnmount(() => {
       v-for="a in arrows"
       :key="a.key"
       class="arrow"
-      :class="[a.kind, `s${a.size}`]"
+      :class="[a.kind, `s${a.size}`, { here: a.onScreen }]"
       :data-kind="a.kind"
       :style="{ left: `${a.x}px`, top: `${a.y}px`, '--c': a.color }"
     >
@@ -134,6 +146,10 @@ onBeforeUnmount(() => {
   position: absolute;
   width: 0;
   height: 0;
+  /* Glide between the ~15 updates a second instead of stepping. */
+  transition:
+    left 66ms linear,
+    top 66ms linear;
 }
 .body {
   position: absolute;
