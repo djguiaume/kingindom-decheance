@@ -187,6 +187,17 @@ describe('generation', () => {
     const second = await estimate(w, 'boulder,coin');
     expect(second.parts.map((p) => p.id)).toEqual(['coin']);
   });
+
+  it('regenerates validated parts once under --redo, and charges for them', async () => {
+    const { w, state } = await ws({ costPerImage: 5 });
+    await generateSelection(w, 'boulder', 100);
+    const first = w.status.get('boulder').assetId;
+    const run = await generateSelection(w, 'boulder', 100, { redo: true });
+    expect(run.done).toEqual(['boulder']);
+    expect(run.spentCU).toBe(5);
+    expect(state.spent).toBe(10);
+    expect(w.status.get('boulder').assetId).not.toBe(first);
+  });
 });
 
 describe('validation and masters', () => {

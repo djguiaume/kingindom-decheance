@@ -80,6 +80,8 @@ export interface Batch {
   parts: BatchPart[];
   /** Parts skipped because they are already validated or approved, or out of attempts. */
   skipped: { id: string; reason: string }[];
+  /** Estimated with --redo: validated or approved parts are generated again, once. */
+  redo?: boolean;
   runs: {
     at: string;
     budgetCU: number;
@@ -125,6 +127,7 @@ export async function estimate(
     totalCU: parts.reduce((a, p) => a + p.estimateCU, 0),
     parts,
     skipped,
+    ...(opts.redo ? { redo: true } : {}),
     runs: [],
   };
   const file = join(paths(ws.root).batches, `${batch.token}.json`);
@@ -182,12 +185,15 @@ export async function generateBatch(
   const dir = paths(ws.root);
   await mkdir(dir.originals, { recursive: true });
   const result: RunResult = { spentCU: 0, done: [], failed: [] };
+  // Under --redo a part's earlier validation does not count: only a generation in this run does.
+  const generated = new Set<string>();
 
   outer: for (const p of batch.parts) {
     const { asset, part } = byId.get(p.id) as { asset: Asset; part: Part };
     for (;;) {
       const st = ws.status.get(p.id);
-      if (st.state === 'validated' || st.state === 'approved') {
+      const kept = !batch.redo || generated.has(p.id);
+      if (kept && (st.state === 'validated' || st.state === 'approved')) {
         result.done.push(p.id);
         break;
       }
@@ -199,6 +205,7 @@ export async function generateBatch(
         result.stoppedFor = `budget: ${result.spentCU} CU spent, ${p.id} needs ${p.estimateCU} more of ${budgetCU}`;
         break outer;
       }
+      generated.add(p.id);
       ws.status.update(p.id, {
         state: 'generating',
         attempts: st.attempts + 1,
