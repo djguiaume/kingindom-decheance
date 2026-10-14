@@ -47,11 +47,15 @@ function framing(asset: Asset, part: Part): string {
       const facing =
         part.view === 'back'
           ? ' Seen from behind, walking away up the screen: back turned to the viewer, face hidden, same camera angle.'
-          : asset.kind === 'character' || asset.kind === 'flyer'
-            ? ' Body turned clearly toward the right (three-quarter side view, looking right), not facing the viewer.'
-            : asset.kind === 'siege'
-              ? ' Facing right.'
-              : '';
+          : part.view === 'side'
+            ? ' Same camera angle, but the gate is turned 90 degrees: its wall line runs straight up the screen, away from the viewer, so the gateway is seen from its side, doors edge-on.'
+            : part.view === 'diag'
+              ? ' Same camera angle, but the gate is turned 45 degrees: its wall line runs diagonally from bottom-left to top-right, so the gateway is seen at an angle.'
+              : asset.kind === 'character' || asset.kind === 'flyer'
+                ? ' Body turned clearly toward the right (three-quarter side view, looking right), not facing the viewer.'
+                : asset.kind === 'siege'
+                  ? ' Facing right.'
+                  : '';
       return `One single subject, whole (nothing cut off by the frame), centred with margin, on a fully transparent background.${facing} ${ground}`;
     }
   }

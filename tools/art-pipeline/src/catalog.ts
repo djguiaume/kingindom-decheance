@@ -32,6 +32,11 @@ export interface CatalogEntry {
   inferred?: string;
   /** Also generate the view from behind (walking up the screen). */
   back?: boolean;
+  /**
+   * Also generate these views. Gates: "side" when the wall runs up the screen (lane left-right),
+   * "diag" for a diagonal wall; the default view is the wall running across the screen.
+   */
+  views?: ('side' | 'diag')[];
 }
 
 const walk4 = [
@@ -47,6 +52,9 @@ const run4 = [
   'gallop: hind legs pushing off',
 ];
 const burst3 = ['start: small and bright', 'peak: largest and brightest', 'fade: breaking apart'];
+
+const gateCheck =
+  'The same gate in all three views (face-on, side, diagonal); the side and diagonal views are the gate turned, not a new design.';
 
 const siegeCheck =
   'Mechanics: symmetric chassis, throwing arm centred on an axle between two supports; never side-mounted.';
@@ -482,7 +490,7 @@ export const CATALOG: CatalogEntry[] = [
     50,
     'ballista_tower_base',
     'Ballista tower base',
-    'the same ballista tower as 048 but with an EMPTY top platform (a pivot mount only, no ballista)',
+    'the same square wood-and-stone ballista tower as 048, standing on the ground, with an EMPTY flat top platform holding only a round pivot mount (no ballista on it); no wheels, not a cart or wagon',
     [256, 320],
     undefined,
     '50-51 are not on the sheet. Read as the ballista tower split into base and turret so the weapon can aim.',
@@ -495,7 +503,7 @@ export const CATALOG: CatalogEntry[] = [
     kind: 'weapon',
     contentId: 'ballista_tower',
     subject:
-      'a large ballista on its own, seen in the same 3/4 view: two bow limbs, taut string, central rail with a bolt, small turntable mount, pointing right',
+      'the ballista weapon head that sits on top of a tower, on its own, seen in the same 3/4 view: a big crossbow-like frame with two bow limbs, a taut string and a central rail with a bolt, on a small round turntable, pointing right; no wheels, no carriage, no throwing arm, no tower and nothing under it',
     canvas: [192, 128],
     checks: ['Ballista: two bow arms, a taut string, a central firing rail and a bolt.'],
     inferred: 'See 050.',
@@ -607,6 +615,8 @@ export const CATALOG: CatalogEntry[] = [
     subject: 'bamboo palisade gate with two doors bound in blue rope',
     frames: ['closed', 'open'],
     canvas: [192, 192],
+    views: ['side', 'diag'],
+    checks: [gateCheck],
   },
   {
     num: 65,
@@ -618,6 +628,8 @@ export const CATALOG: CatalogEntry[] = [
     subject: 'stone gate with a wooden double door and a small blue tiled roof',
     frames: ['closed', 'open'],
     canvas: [192, 192],
+    views: ['side', 'diag'],
+    checks: [gateCheck],
   },
   {
     num: 66,
@@ -649,7 +661,7 @@ export const CATALOG: CatalogEntry[] = [
     'window_glow',
     'Window glow',
     'overlay',
-    'warm yellow glowing window light, soft edges, for night',
+    'a soft warm yellow glow on its own: a blurred rectangle of window light fading to transparent at the edges, for night; light only, no building, no wall, no window frame, no lantern',
     [96, 96],
   ),
   s(
@@ -657,7 +669,7 @@ export const CATALOG: CatalogEntry[] = [
     'lantern_glow',
     'Lantern glow',
     'overlay',
-    'warm orange round lantern light halo, soft edges, for night',
+    'a soft warm orange round halo of light on its own, bright in the centre and fading to transparent at the edges, for night; light only, no lantern, no building, no object',
     [128, 128],
   ),
   s(
@@ -688,10 +700,25 @@ export const CATALOG: CatalogEntry[] = [
     'large ballista bolt pointing right',
     [96, 24],
   ),
-  fx(76, 'boulder', 'Boulder', 'projectile', 'round catapult boulder', [48, 48]),
+  fx(
+    76,
+    'boulder',
+    'Boulder',
+    'projectile',
+    'round grey catapult boulder bound with rough rope; enemy ammunition, so no panda emblem, no blue and no gold',
+    [48, 48],
+  ),
   fx(77, 'hit_spark', 'Hit spark', 'effect', 'golden star-shaped impact flash', [64, 64], burst3),
   fx(78, 'dust', 'Dust', 'effect', 'soft beige dust cloud', [128, 64], burst3),
-  fx(79, 'slash', 'Slash', 'effect', 'curved light-blue sword slash arc', [96, 96], burst3),
+  fx(
+    79,
+    'slash',
+    'Slash',
+    'effect',
+    'a curved light-blue sword slash arc on its own: the swoosh of light only, no sword, no character, nobody making it',
+    [96, 96],
+    burst3,
+  ),
   fx(
     80,
     'shield_fx',
@@ -716,7 +743,7 @@ export const CATALOG: CatalogEntry[] = [
     'charge',
     'Charge',
     'effect',
-    'blue and violet speed streaks pointing right',
+    'blue and violet speed streaks pointing right on their own: motion lines only, no character, no rider, no animal',
     [128, 64],
     burst3,
   ),
@@ -725,7 +752,7 @@ export const CATALOG: CatalogEntry[] = [
     'stomp',
     'Stomp',
     'effect',
-    'ground stomp burst with flying dirt and a gold flash',
+    'a ground stomp shockwave on its own: a low ring of flying dirt clods and a gold flash, no character, nobody stomping',
     [128, 96],
     burst3,
   ),
