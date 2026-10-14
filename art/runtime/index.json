@@ -211,9 +211,15 @@
         "bamboo_single",
         "bamboo_small",
         "barrel",
+        "bridge",
+        "bridge.diag",
+        "bridge.side",
+        "cliff_end",
+        "cliff_section",
         "crate",
         "flowers",
         "grass",
+        "grass_patch",
         "lantern_post",
         "path_edge",
         "pine",
@@ -243,6 +249,24 @@
       "image": "tile_path.webp",
       "num": 103,
       "tile": true
+    },
+    {
+      "key": "tile_stone",
+      "image": "tile_stone.webp",
+      "num": 104,
+      "tile": true
+    },
+    {
+      "key": "map_background",
+      "image": "map_background.webp",
+      "num": 105,
+      "tile": false
+    },
+    {
+      "key": "tile_water",
+      "image": "tile_water.webp",
+      "num": 109,
+      "tile": true
     }
   ],
   "frames": {
@@ -260,6 +284,21 @@
       "image": "tile_path.webp",
       "num": 103,
       "asset": "tile_path"
+    },
+    "tile_stone": {
+      "image": "tile_stone.webp",
+      "num": 104,
+      "asset": "tile_stone"
+    },
+    "map_background": {
+      "image": "map_background.webp",
+      "num": 105,
+      "asset": "map_background"
+    },
+    "tile_water": {
+      "image": "tile_water.webp",
+      "num": 109,
+      "asset": "tile_water"
     },
     "king_portrait": {
       "atlas": "kings",
@@ -1176,10 +1215,20 @@
       "num": 74,
       "asset": "bolt"
     },
+    "bridge.side": {
+      "atlas": "environment",
+      "num": 110,
+      "asset": "bridge"
+    },
     "tree": {
       "atlas": "environment",
       "num": 89,
       "asset": "tree"
+    },
+    "bridge.diag": {
+      "atlas": "environment",
+      "num": 110,
+      "asset": "bridge"
     },
     "pine": {
       "atlas": "environment",
@@ -1190,6 +1239,21 @@
       "atlas": "environment",
       "num": 87,
       "asset": "bamboo_large"
+    },
+    "bridge": {
+      "atlas": "environment",
+      "num": 110,
+      "asset": "bridge"
+    },
+    "cliff_section": {
+      "atlas": "environment",
+      "num": 106,
+      "asset": "cliff_section"
+    },
+    "cliff_end": {
+      "atlas": "environment",
+      "num": 107,
+      "asset": "cliff_end"
     },
     "lantern_post": {
       "atlas": "environment",
@@ -1205,6 +1269,11 @@
       "atlas": "environment",
       "num": 86,
       "asset": "bamboo_small"
+    },
+    "grass_patch": {
+      "atlas": "environment",
+      "num": 108,
+      "asset": "grass_patch"
     },
     "water_edge": {
       "atlas": "environment",

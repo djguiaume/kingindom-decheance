@@ -482,7 +482,7 @@
     },
     "stone_wall_post": {
       "frame": {
-        "x": 546,
+        "x": 583,
         "y": 225,
         "w": 59,
         "h": 81
@@ -538,15 +538,15 @@
       "frame": {
         "x": 497,
         "y": 225,
-        "w": 47,
+        "w": 84,
         "h": 88
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 25,
+        "x": 6,
         "y": 4,
-        "w": 47,
+        "w": 84,
         "h": 88
       },
       "sourceSize": {
