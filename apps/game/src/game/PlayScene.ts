@@ -5,7 +5,16 @@
  * from the ground, drawn back to front.
  */
 import Phaser from 'phaser';
-import { telegraph, type Ref } from '@kd/core';
+import {
+  GATE_HALF_WIDTH,
+  guardSpot,
+  telegraph,
+  WALL_HALF_SPAN,
+  wallLine,
+  type BuildingState,
+  type Ref,
+  type Vec,
+} from '@kd/core';
 import { nearbySlotId } from '../stores/hud.ts';
 import { colors } from '../theme.ts';
 import type { CameraView } from './camera.ts';
@@ -29,6 +38,10 @@ export interface ViewOptions {
 
 /** How long the ring of a boss stomp stays visible. */
 const STOMP_MS = 350;
+/** How long the dust of a shot that missed stays visible. */
+const PUFF_MS = 300;
+/** Shots by these enemies are lobbed high, with a shadow where they will land. */
+const LOBBED = new Set(['catapult']);
 
 interface Flash {
   from: { x: number; y: number };
@@ -45,6 +58,9 @@ export class PlayScene extends Phaser.Scene {
   private lastTap = 0;
   private lead = { x: 0, y: 0 };
   private stomps: { at: { x: number; y: number }; radius: number; start: number }[] = [];
+  private puffs: { at: { x: number; y: number }; start: number }[] = [];
+  /** Who fired each shot in flight (the shooter may die before it lands). */
+  private shooters = new Map<number, string>();
 
   constructor(
     private readonly runtime: GameRuntime,
@@ -81,7 +97,20 @@ export class PlayScene extends Phaser.Scene {
             });
           continue;
         }
-        if (e.type !== 'hit') continue;
+        if (e.type === 'fired') {
+          const ref = e.attacker;
+          const enemy =
+            ref.kind === 'enemy' && this.runtime.state.enemies.find((x) => x.id === ref.id);
+          this.shooters.set(e.id, enemy ? enemy.type : '');
+          continue;
+        }
+        if (e.type === 'missed') {
+          this.shooters.delete(e.id);
+          this.puffs.push({ at: this.px(e.at), start: this.time.now });
+          continue;
+        }
+        // A shot that flew has already been drawn in flight.
+        if (e.type !== 'hit' || e.projectile) continue;
         const from = this.refPos(e.attacker);
         const to = this.refPos(e.target);
         if (!from || !to) continue;
@@ -221,6 +250,7 @@ export class PlayScene extends Phaser.Scene {
     add(state.castle.pos, state.castle.radius, 'castle', 1, [state.castle.hp, state.castle.maxHp]);
     for (const b of state.buildings) {
       const def = ctx.buildings.get(b.type)!;
+      if (def.class === 'wall' && this.addWall(items, b)) continue;
       add(
         b.pos,
         def.radius,
@@ -247,8 +277,10 @@ export class PlayScene extends Phaser.Scene {
         state.king.maxHp,
       ]);
     }
+    this.addFlags(items);
     items.sort((a, b) => a.y - b.y);
     for (const item of items) item.draw();
+    this.drawProjectiles();
 
     const now = this.time.now;
     this.stomps = this.stomps.filter((st) => now - st.start < STOMP_MS);
@@ -258,6 +290,12 @@ export class PlayScene extends Phaser.Scene {
       const r = st.radius * SCALE * (0.4 + 0.6 * t);
       g.lineStyle(4, colors.enemies.boss, 1 - t);
       g.strokeEllipse(p.x, p.y, r * 2, r * 2 * SQUASH);
+    }
+    this.puffs = this.puffs.filter((p) => now - p.start < PUFF_MS);
+    for (const p of this.puffs) {
+      const t = (now - p.start) / PUFF_MS;
+      g.fillStyle(0xd8cfb8, 0.6 * (1 - t));
+      g.fillEllipse(p.at.x, p.at.y, SCALE * (0.4 + 0.8 * t), SCALE * (0.4 + 0.8 * t) * SQUASH);
     }
     this.flashes = this.flashes.filter((f) => now - f.start < (f.shot ? SHOT_MS : HIT_FLASH_MS));
     for (const f of this.flashes) {
@@ -279,6 +317,224 @@ export class PlayScene extends Phaser.Scene {
       const tail = SCALE * 0.6;
       g.lineStyle(3, colors.shot, 1);
       g.lineBetween(x - ((bx - ax) / len) * tail, y - ((by - ay) / len) * tail, x, y);
+    }
+  }
+
+  /**
+   * A wall across its lane (playtest 2, like Thronefall): two wings and a gate in the middle
+   * that opens while the king or a footman is near it. Drawn in short pieces so units and
+   * enemies on either side sort correctly in front of or behind it. False if the slot is not on
+   * a lane (then the plain sprite is drawn).
+   */
+  private addWall(items: { y: number; draw: () => void }[], b: BuildingState): boolean {
+    const { state, ctx } = this.runtime;
+    const line = wallLine(ctx, b.slot);
+    if (!line) return false;
+    const stone = b.type === 'stone_wall';
+    const height = (stone ? 1.6 : 1.4) * SCALE;
+    const color = stone ? 0x9a9a9a : 0x9b6a3c;
+    const alpha = b.destroyed ? 0.3 : 1;
+    const at = (k: number, a = 0): Vec => ({
+      x: line.at.x + line.across.x * k + line.along.x * a,
+      y: line.at.y + line.across.y * k + line.along.y * a,
+    });
+    const near = (p: Vec, r: number) => (p.x - line.at.x) ** 2 + (p.y - line.at.y) ** 2 < r * r;
+    const open =
+      !b.destroyed &&
+      ((state.king.alive && near(state.king.pos, 2.5)) || state.units.some((u) => near(u.pos, 2)));
+
+    const PIECES = 4;
+    for (const sign of [-1, 1]) {
+      for (let i = 0; i < PIECES; i++) {
+        const k0 = sign * (GATE_HALF_WIDTH + ((WALL_HALF_SPAN - GATE_HALF_WIDTH) * i) / PIECES);
+        const k1 =
+          sign * (GATE_HALF_WIDTH + ((WALL_HALF_SPAN - GATE_HALF_WIDTH) * (i + 1)) / PIECES);
+        const a = this.px(at(k0));
+        const c = this.px(at(k1));
+        items.push({
+          y: (a.y + c.y) / 2,
+          draw: () => this.slab(at(k0), at(k1), height, color, alpha, stone),
+        });
+      }
+      // Gate posts, a little taller than the wall.
+      const post = at(sign * GATE_HALF_WIDTH);
+      items.push({
+        y: this.px(post).y + 0.01,
+        draw: () =>
+          this.slab(
+            at(sign * (GATE_HALF_WIDTH - 0.25)),
+            at(sign * (GATE_HALF_WIDTH + 0.25)),
+            height * 1.25,
+            stone ? 0x7d7d7d : 0x7a5230,
+            alpha,
+            false,
+          ),
+      });
+      // Gate leaves: across the gap when shut, swung in towards the castle when open.
+      const hinge = at(sign * (GATE_HALF_WIDTH - 0.25));
+      const tip = open ? at(sign * (GATE_HALF_WIDTH - 0.25), GATE_HALF_WIDTH * 0.85) : at(0);
+      items.push({
+        y: (this.px(hinge).y + this.px(tip).y) / 2,
+        draw: () => this.slab(hinge, tip, height * 0.9, 0x6b4423, alpha, false, 0.15),
+      });
+    }
+    if (!b.destroyed && b.hp < b.maxHp) {
+      const p = this.px(line.at);
+      items.push({
+        y: p.y + 0.02,
+        draw: () => this.hpBar(p.x, p.y - height * 1.5, SCALE, b.hp, b.maxHp),
+      });
+    }
+    return true;
+  }
+
+  /** Fills a polygon with the current fill style. */
+  private quad(points: { x: number; y: number }[]): void {
+    const g = this.dynamic;
+    g.beginPath();
+    g.moveTo(points[0]!.x, points[0]!.y);
+    for (const p of points.slice(1)) g.lineTo(p.x, p.y);
+    g.closePath();
+    g.fillPath();
+  }
+
+  /**
+   * An upright box standing on the ground segment a→b, `thickness` metres either side of it:
+   * the sides that face the viewer, then a lighter top (a cheap 3/4 view of a block).
+   */
+  private slab(
+    a: Vec,
+    b: Vec,
+    height: number,
+    color: number,
+    alpha: number,
+    battlements: boolean,
+    thickness = 0.5,
+  ): void {
+    const g = this.dynamic;
+    const dx = b.x - a.x;
+    const dy = b.y - a.y;
+    const len = Math.sqrt(dx * dx + dy * dy) || 1;
+    const n = { x: (-dy / len) * thickness, y: (dx / len) * thickness };
+    // Footprint corners in order around the box.
+    const foot = [
+      { x: a.x + n.x, y: a.y + n.y },
+      { x: b.x + n.x, y: b.y + n.y },
+      { x: b.x - n.x, y: b.y - n.y },
+      { x: a.x - n.x, y: a.y - n.y },
+    ].map((p) => this.px(p));
+    const up = (p: { x: number; y: number }) => ({ x: p.x, y: p.y - height });
+    g.fillStyle(0x000000, 0.18 * alpha);
+    this.quad(foot.map((p) => ({ x: p.x + 3, y: p.y + 3 })));
+    // A side faces the viewer when the ground below it is lower on screen than the box centre.
+    const cy = foot.reduce((t, p) => t + p.y, 0) / 4;
+    for (let i = 0; i < 4; i++) {
+      const p = foot[i]!;
+      const q = foot[(i + 1) % 4]!;
+      if ((p.y + q.y) / 2 < cy - 0.01) continue;
+      g.fillStyle(darken(color, Math.abs(p.x - q.x) > Math.abs(p.y - q.y) ? 0.75 : 0.6), alpha);
+      this.quad([p, q, up(q), up(p)]);
+    }
+    g.fillStyle(color, alpha);
+    this.quad(foot.map(up));
+    if (battlements) {
+      g.fillStyle(darken(color, 0.85), alpha);
+      for (let f = 0.15; f < 1; f += 0.35) {
+        const x =
+          (foot[0]!.x +
+            (foot[1]!.x - foot[0]!.x) * f +
+            foot[3]!.x +
+            (foot[2]!.x - foot[3]!.x) * f) /
+          2;
+        const y =
+          (foot[0]!.y +
+            (foot[1]!.y - foot[0]!.y) * f +
+            foot[3]!.y +
+            (foot[2]!.y - foot[3]!.y) * f) /
+          2;
+        g.fillRect(x - SCALE * 0.2, y - height - SCALE * 0.3, SCALE * 0.4, SCALE * 0.3);
+      }
+    }
+  }
+
+  /**
+   * Squad flags (playtest 2): each barracks' flag stands where its squad guards. A flag the
+   * king carries, or whose squad follows him, flies over the king instead.
+   */
+  private addFlags(items: { y: number; draw: () => void }[]): void {
+    const { state, ctx } = this.runtime;
+    let onKing = 0;
+    for (const b of state.buildings) {
+      if (b.destroyed || !ctx.buildings.get(b.type)!.spawns) continue;
+      const following = state.units.some((u) => u.home === b.id && u.following);
+      if (b.carried || following) {
+        onKing++;
+        continue;
+      }
+      const p = this.px(guardSpot(ctx, b));
+      items.push({ y: p.y, draw: () => this.flag(p.x, p.y, 1) });
+    }
+    if (onKing > 0 && state.king.alive) {
+      const k = this.px(this.runtime.drawPos('king', state.king.pos));
+      // Behind the king's shoulder, so it reads as carried.
+      items.push({ y: k.y + 0.01, draw: () => this.flag(k.x - SCALE * 0.5, k.y, 0.8) });
+    }
+  }
+
+  private flag(x: number, y: number, scale: number): void {
+    const g = this.dynamic;
+    const h = SCALE * 1.8 * scale;
+    g.lineStyle(2, 0x5a3b1e, 1);
+    g.lineBetween(x, y, x, y - h);
+    g.fillStyle(colors.buildings.military, 1);
+    g.fillTriangle(
+      x,
+      y - h,
+      x + SCALE * 0.9 * scale,
+      y - h + SCALE * 0.3 * scale,
+      x,
+      y - h + SCALE * 0.6 * scale,
+    );
+    g.fillStyle(0x000000, 0.2);
+    g.fillEllipse(x, y, SCALE * 0.5, SCALE * 0.2);
+  }
+
+  /** Enemy shots in flight: arrows fly flat and fast, catapult stones arc with a landing shadow. */
+  private drawProjectiles(): void {
+    const g = this.dynamic;
+    for (const p of this.runtime.state.projectiles) {
+      const lobbed = LOBBED.has(this.shooters.get(p.id) ?? '');
+      const at = (t: number) => {
+        const ground = this.px({
+          x: p.from.x + (p.to.x - p.from.x) * t,
+          y: p.from.y + (p.to.y - p.from.y) * t,
+        });
+        // Metres above the ground: a stone leaves the arm high and lands on the ground; an
+        // arrow flies at chest height with a slight arc.
+        const lift = lobbed
+          ? 1.5 * (1 - t) + 4 * Math.sin(Math.PI * t)
+          : 0.8 + 0.6 * Math.sin(Math.PI * t);
+        return { x: ground.x, y: ground.y - lift * SCALE };
+      };
+      const t = 1 - p.ticksLeft / p.flight;
+      if (lobbed) {
+        const land = this.px(p.to);
+        g.fillStyle(0x000000, 0.15 + 0.25 * t);
+        g.fillEllipse(land.x, land.y, SCALE * 1.2, SCALE * 1.2 * SQUASH);
+        const s = at(t);
+        g.fillStyle(0x6b6b6b, 1);
+        g.fillCircle(s.x, s.y, SCALE * 0.3);
+        continue;
+      }
+      const head = at(t);
+      const tail = at(Math.max(0, t - 0.15));
+      g.lineStyle(3, colors.enemies.ranged, 1);
+      g.lineBetween(tail.x, tail.y, head.x, head.y);
+    }
+    // Forget shooters of shots that are no longer flying (landed on a target).
+    if (this.shooters.size > this.runtime.state.projectiles.length) {
+      const live = new Set(this.runtime.state.projectiles.map((p) => p.id));
+      for (const id of this.shooters.keys()) if (!live.has(id)) this.shooters.delete(id);
     }
   }
 
@@ -308,3 +564,8 @@ export class PlayScene extends Phaser.Scene {
     }
   }
 }
+
+const darken = (c: number, f = 0.7) =>
+  (Math.round(((c >> 16) & 255) * f) << 16) |
+  (Math.round(((c >> 8) & 255) * f) << 8) |
+  Math.round((c & 255) * f);

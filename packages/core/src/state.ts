@@ -61,6 +61,13 @@ export interface BuildingState extends Combatant {
   destroyed: boolean;
   /** Military buildings: the rally gate node its squad guards. */
   rally: string | null;
+  /**
+   * Military buildings: where the king planted the squad's flag. Overrides the rally gate;
+   * null means the squad guards its gate.
+   */
+  banner: Vec | null;
+  /** By day, the king carries this squad's flag; it is planted where he next rallies. */
+  carried: boolean;
 }
 
 export interface UnitState extends Combatant {
@@ -84,6 +91,20 @@ export interface EnemyState extends Combatant {
   target: Ref | null;
   /** Ticks until its own ability (the boss's stomp) is ready; 0 for enemies without one. */
   abilityCooldown: number;
+}
+
+/** A shot in flight: it lands where its target stood when it was fired (dodgeable). */
+export interface ProjectileState {
+  id: number;
+  attacker: Ref;
+  target: Ref;
+  from: Vec;
+  to: Vec;
+  /** Damage it deals if it lands on its target. */
+  damage: number;
+  /** Total flight time, and what is left of it, in ticks. */
+  flight: number;
+  ticksLeft: number;
 }
 
 export interface SpawnOrder {
@@ -123,6 +144,7 @@ export interface GameState {
   buildings: BuildingState[];
   units: UnitState[];
   enemies: EnemyState[];
+  projectiles: ProjectileState[];
   spawnQueue: SpawnOrder[];
   history: NightStats[];
   current: NightStats;

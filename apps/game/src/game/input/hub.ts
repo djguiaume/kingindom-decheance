@@ -68,7 +68,7 @@ export class InputHub {
     this.buy(def?.spawns && b?.rally ? 0 : 1);
   }
 
-  /** Night: pick up the footmen near the king, or drop the ones following him. */
+  /** Rally: by night, pick up or drop footmen; by day, take or plant a barracks flag. */
   rally(device: Device): void {
     this.used(device);
     this.send({ type: 'rally' });

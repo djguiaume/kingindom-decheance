@@ -4,13 +4,15 @@
  * equally usable with a mouse. It reads HUD snapshots and sends intents through the InputHub;
  * it never touches the live game state.
  */
-import { computed, onBeforeUnmount, onMounted } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import HoldButton from '../components/HoldButton.vue';
+import NightTrack from '../components/NightTrack.vue';
 import VirtualJoystick from '../components/VirtualJoystick.vue';
 import WavesPanel from '../components/WavesPanel.vue';
 import { HOLD_BUY_MS, HOLD_NIGHT_MS, type InputHub } from '../game/input/hub.ts';
 import type { GameRuntime } from '../game/runtime.ts';
 import { nightPlans, snapshot, useHudStore } from '../stores/hud.ts';
+import { enemyIcon } from '../theme.ts';
 
 const props = defineProps<{ runtime: GameRuntime; hub: InputHub }>();
 const emit = defineEmits<{ restart: []; fullscreen: [] }>();
@@ -28,6 +30,9 @@ function charge(e: PointerEvent) {
 }
 
 const plans = nightPlans(props.runtime.ctx);
+const bosses = Object.fromEntries(
+  plans.filter((p) => p.boss).map((p) => [p.night, enemyIcon(p.boss!)]),
+);
 function rally(e: PointerEvent) {
   props.hub.rally(e.pointerType === 'mouse' ? 'keyboard' : 'touch');
 }
@@ -35,17 +40,50 @@ function rally(e: PointerEvent) {
 const refresh = () => {
   store.hud = snapshot(props.runtime.state, props.runtime.ctx);
 };
+
+/** A short card at dawn: the night just held, what it paid, what it cost (playtest 2). */
+const DAWN_CARD_MS = 3000;
+const dawnCard = ref<{ night: number; income: number; killed: number; lost: number } | null>(null);
+let dawnTimer: number | undefined;
 let timer: number | undefined;
+let unsubscribe = () => {};
 onMounted(() => {
   refresh();
   timer = window.setInterval(refresh, 100);
+  unsubscribe = props.runtime.onEvents((events) => {
+    // The last dawn ends the run: the outcome screen says it instead.
+    if (events.some((e) => e.type === 'won')) return;
+    const dawn = events.find((e) => e.type === 'dawn');
+    const night = dawn && props.runtime.state.history.at(-1);
+    if (!night) return;
+    dawnCard.value = {
+      night: night.night,
+      income: night.income,
+      killed: night.enemiesKilled,
+      lost: night.buildingsLost,
+    };
+    window.clearTimeout(dawnTimer);
+    dawnTimer = window.setTimeout(() => (dawnCard.value = null), DAWN_CARD_MS);
+  });
 });
-onBeforeUnmount(() => window.clearInterval(timer));
+onBeforeUnmount(() => {
+  window.clearInterval(timer);
+  window.clearTimeout(dawnTimer);
+  unsubscribe();
+});
 
-const laneLabel: Record<string, string> = { west: 'W', east: 'E', north: 'N', air: 'air' };
-const waveSummary = computed(() =>
-  (store.hud?.threats ?? []).map((t) => `${laneLabel[t.lane] ?? t.lane} ${t.total}`).join(' · '),
-);
+const rallyLabel = computed(() => {
+  const h = store.hud;
+  if (!h) return '';
+  if (h.phase === 'night') return h.followers > 0 ? `Drop ${h.followers}` : 'Rally';
+  return h.flagHere ? 'Take flag' : 'Plant flag';
+});
+const showRally = computed(() => {
+  const h = store.hud;
+  if (!h) return false;
+  if (h.phase === 'night') return h.hasBarracks;
+  return h.phase === 'day' && (h.flagHere || h.flagsCarried > 0);
+});
 const cooldownStyle = computed(() => ({
   background: `conic-gradient(rgba(0,0,0,0.55) ${(store.hud?.abilityCooldown ?? 0) * 360}deg, transparent 0)`,
 }));
@@ -60,16 +98,14 @@ const cooldownStyle = computed(() => ({
         II
       </button>
       <span class="chip" data-testid="gold">🪙 {{ store.hud.gold }}</span>
-      <span class="chip" data-testid="night">
-        {{ store.hud.phase === 'night' ? 'Night' : 'Day' }} {{ store.hud.day }}/{{
-          store.hud.nights
-        }}
-      </span>
-      <button class="chip wave" data-testid="wave" @click="store.waveOpen = !store.waveOpen">
-        {{ store.hud.phase === 'night' ? 'Left' : 'Tonight' }}:
-        {{ store.hud.phase === 'night' ? store.hud.enemiesLeft : waveSummary }}
-        <small v-if="!touch">Tab</small>
-      </button>
+      <NightTrack
+        :day="store.hud.day"
+        :nights="store.hud.nights"
+        :phase="store.hud.phase"
+        :bosses="bosses"
+        :enemies-left="store.hud.enemiesLeft"
+        @click="store.waveOpen = !store.waveOpen"
+      />
       <span class="chip">🏰 {{ store.hud.castleHp }}</span>
       <span class="chip" :class="{ warn: !store.hud.kingAlive }">
         {{
@@ -93,9 +129,20 @@ const cooldownStyle = computed(() => ({
 
     <p v-if="store.message" class="toast">{{ store.message }}</p>
 
+    <div v-if="dawnCard" class="dawn-card" data-testid="dawn-card">
+      <strong>Night {{ dawnCard.night }} survived</strong>
+      <span>+{{ dawnCard.income }} 🪙 · {{ dawnCard.killed }} enemies beaten</span>
+      <span v-if="dawnCard.lost > 0" class="warn"
+        >{{ dawnCard.lost }} building{{ dawnCard.lost > 1 ? 's' : '' }} lost (rebuilt free)</span
+      >
+    </div>
+
     <div class="right">
       <template v-if="store.hud.phase === 'day' && store.hud.nearby">
-        <div class="slot-title">{{ store.hud.nearby.current ?? 'Empty plot' }}</div>
+        <div class="slot-title" data-testid="slot-title">
+          <strong>{{ store.hud.nearby.current ?? 'Empty plot' }}</strong>
+          <small v-if="store.hud.nearby.currentStats">{{ store.hud.nearby.currentStats }}</small>
+        </div>
         <HoldButton
           v-if="store.hud.nearby.rally"
           :duration="HOLD_BUY_MS"
@@ -117,18 +164,27 @@ const cooldownStyle = computed(() => ({
           :data-testid="`buy-${o.option}`"
           @confirm="hub.buy(o.option)"
         >
-          {{ o.kind === 'upgrade' ? '↑ ' : '' }}{{ o.name }} · {{ o.cost }}🪙
-          <kbd v-if="!touch">{{ store.hud.nearby.rally || o.option === 1 ? 'R' : 'E' }}</kbd>
+          <span class="offer">
+            <span class="offer-head">
+              {{ o.kind === 'upgrade' ? '↑ ' : '' }}{{ o.name }} · {{ o.cost }}🪙
+              <kbd v-if="!touch">{{ store.hud.nearby.rally || o.option === 1 ? 'R' : 'E' }}</kbd>
+            </span>
+            <small v-if="o.stats" class="offer-stats" data-testid="offer-stats">{{
+              o.stats
+            }}</small>
+            <small class="offer-desc">{{ o.description }}</small>
+          </span>
         </HoldButton>
       </template>
 
       <button
-        v-if="store.hud.phase === 'night' && store.hud.hasBarracks"
+        v-if="showRally"
         class="rally-btn"
-        data-testid="rally-night"
+        :data-testid="store.hud.phase === 'night' ? 'rally-night' : 'rally-day'"
         @pointerdown.prevent="rally"
       >
-        {{ store.hud.followers > 0 ? `Drop ${store.hud.followers}` : 'Rally' }}
+        <span class="flag" aria-hidden="true">⚑</span>
+        {{ rallyLabel }}
         <kbd v-if="!touch">F</kbd>
       </button>
 
@@ -170,11 +226,10 @@ const cooldownStyle = computed(() => ({
       <button class="primary big" @click="hub.togglePause()">Resume</button>
       <button class="big" @click="emit('fullscreen')">Full screen</button>
       <button class="big" @click="emit('restart')">Restart run</button>
-      <WavesPanel :plans="plans" :tonight="store.hud.day" />
       <p class="hint">
         {{
           keyHint(
-            'WASD/arrows move · Space ability · F rally · hold E/R buy · hold Enter night · Tab waves · Z zoom',
+            'WASD/arrows move · Space ability · F rally / flag · hold E/R buy · hold Enter night · Tab waves · Z zoom',
           )
         }}
       </p>
@@ -254,19 +309,78 @@ const cooldownStyle = computed(() => ({
   background: rgba(20, 26, 40, 0.75);
   padding: 4px 10px;
   border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  max-width: 260px;
+}
+.slot-title small {
+  opacity: 0.8;
+  font-size: 0.75em;
 }
 .card {
-  min-width: 180px;
+  width: 260px;
   text-align: left;
 }
+.offer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+.offer-head {
+  font-weight: 700;
+}
+.offer-stats {
+  font-size: 0.75em;
+  color: #ffe9a3;
+}
+.offer-desc {
+  font-size: 0.72em;
+  opacity: 0.75;
+  line-height: 1.2;
+}
 .rally-btn {
-  width: 56px;
-  height: 56px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
   font-weight: 700;
-  font-size: 12px;
+  font-size: 11px;
+  line-height: 1.1;
   touch-action: none;
   margin-right: 8px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+}
+.rally-btn .flag {
+  font-size: 18px;
+  color: #e8c547;
+}
+.dawn-card {
+  position: absolute;
+  top: 22%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(20, 26, 40, 0.9);
+  border: 2px solid #e8c547;
+  border-radius: 10px;
+  padding: 10px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  animation: rise 0.3s ease-out;
+}
+.dawn-card strong {
+  font-size: 1.2em;
+  color: #e8c547;
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 8px);
+  }
 }
 .boss-bar {
   position: absolute;

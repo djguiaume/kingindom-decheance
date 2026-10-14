@@ -1,7 +1,7 @@
 {
   "$schema": "../schema/enemies.schema.json",
   "schemaVersion": 1,
-  "notes": "Prototype design 11 §7. aggroRange 3 and leash 5 are schema defaults (§8.2). HP raised 30% after the first playtest (catapult and warlord too). Catapults lob over walls at what is behind them; the warlord's bonus lookups count it as a tank.",
+  "notes": "Prototype design 11 §7. aggroRange 3 and leash 5 are schema defaults (§8.2). HP raised 30% after the first playtest (catapult and warlord too). Catapults lob over walls at what is behind them; the warlord's bonus lookups count it as a tank. Archer arrows and catapult stones are projectiles that a moving target can dodge (playtest 2).",
   "enemies": [
     {
       "id": "raider",
@@ -21,7 +21,13 @@
       "speed": 2.2,
       "radius": 0.4,
       "aggroRange": 5,
-      "attack": { "damage": 6, "interval": 1.5, "range": 5, "targets": ["ground"] },
+      "attack": {
+        "damage": 6,
+        "interval": 1.5,
+        "range": 5,
+        "targets": ["ground"],
+        "projectile": { "speed": 12 }
+      },
       "targetPriority": ["unit", "king", "tower", "wall", "castle"]
     },
     {
@@ -53,7 +59,13 @@
       "speed": 1.4,
       "radius": 0.8,
       "aggroRange": 9,
-      "attack": { "damage": 30, "interval": 3, "range": 9, "targets": ["ground"] },
+      "attack": {
+        "damage": 30,
+        "interval": 3,
+        "range": 9,
+        "targets": ["ground"],
+        "projectile": { "speed": 7 }
+      },
       "targetPriority": ["tower", "wall", "eco", "castle"]
     },
     {

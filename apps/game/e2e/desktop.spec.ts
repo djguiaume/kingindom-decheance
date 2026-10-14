@@ -10,10 +10,18 @@ test('desktop: keyboard holds buy and start the night', async ({ page }) => {
 
   // Tonight's spawn is off-screen: an edge arrow points at it.
   await expect(page.locator('[data-kind="spawn"]')).toHaveCount(1);
-  // Tab opens the waves panel with all six nights, tonight highlighted, boss night marked.
+  // The marker is one red pin with the enemy icons and counts inside it.
+  await expect(page.locator('[data-kind="spawn"] .part')).not.toHaveCount(0);
+  // The night track shows one pip per night, the boss night marked.
+  await expect(page.getByTestId('night').locator('[data-pip]')).toHaveCount(6);
+  // The buy button says what the building does.
+  await expect(page.getByTestId('offer-stats').first()).not.toBeEmpty();
+  // Tab opens the waves panel: tonight and the next night, then every night on request.
   await page.keyboard.press('Tab');
-  await expect(page.getByTestId('waves-panel').locator('[data-night]')).toHaveCount(6);
+  await expect(page.getByTestId('waves-panel').locator('[data-night]')).toHaveCount(2);
   await expect(page.locator('[data-night="1"]')).toHaveClass(/tonight/);
+  await page.getByTestId('waves-all').click();
+  await expect(page.getByTestId('waves-panel').locator('[data-night]')).toHaveCount(6);
   await expect(page.locator('[data-night="6"] .boss')).toBeVisible();
   await page.screenshot({ path: 'test-results/desktop-waves.png' });
   await page.keyboard.press('Tab');

@@ -6,13 +6,15 @@
  */
 import { req, type GameContext } from './context.ts';
 import type { GameEvent } from './events.ts';
-import type { GameState } from './state.ts';
+import type { BuildingState, GameState } from './state.ts';
 import { startDash } from './systems/king.ts';
 import { startNight } from './systems/phase.ts';
 import { dist } from './vec.ts';
 
 /** Footmen within this many metres of the king answer a rally (design 11 §6). */
 export const RALLY_REACH = 6;
+/** Flags planted together stand this far apart. */
+const FLAG_GAP = 1.2;
 
 export type Command =
   /** Day or night: where the king walks; a vector of length 0–1 (analog), held until changed. */
@@ -29,8 +31,12 @@ export type Command =
   /** Day: end the day and start the night. */
   | { type: 'startNight' }
   /**
-   * Night: rally. With no unit following, every footman within reach of the king starts
-   * following him; otherwise the followers stop where the king stands and guard that spot.
+   * Rally (design 11 §6, playtest 2).
+   * Night: with no unit following, the king's own barracks squad (when he stands at one) and
+   * every footman within RALLY_REACH start following him; otherwise the followers stop where
+   * the king stands, guard that spot, and their flag moves there for the next nights.
+   * Day: at a barracks, the king takes its flag; elsewhere he plants the flags he carries.
+   * A squad whose flag he still carries at nightfall starts the night following him.
    */
   | { type: 'rally' };
 
@@ -118,6 +124,8 @@ export function applyCommand(state: GameState, ctx: GameContext, cmd: Command): 
           cooldown: 0,
           destroyed: false,
           rally: node.slot.rally?.[0] ?? null,
+          banner: null,
+          carried: false,
         });
         events.push({ type: 'built', slot: cmd.slot, building: def.id, id });
       } else {
@@ -136,28 +144,15 @@ export function applyCommand(state: GameState, ctx: GameContext, cmd: Command): 
       if (!b || !req(ctx.buildings, b.type).spawns || gates.length === 0)
         return fail('no military building with rally gates on this slot');
       b.rally = gates[(gates.indexOf(b.rally ?? '') + 1) % gates.length]!;
+      // Choosing a gate takes the squad's flag back from wherever it was planted.
+      b.banner = null;
+      b.carried = false;
       return { ok: true, events };
     }
 
     case 'rally': {
-      if (state.phase !== 'night') return fail('rally is for the night');
       if (!king.alive) return fail('the king is down');
-      const followers = state.units.filter((u) => u.following);
-      if (followers.length > 0) {
-        followers.forEach((u, i) => {
-          u.following = false;
-          // Spread the squad in a short row where the king stands.
-          const r = req(ctx.units, u.type).radius;
-          u.post = { x: king.pos.x + (i - (followers.length - 1) / 2) * r * 2.5, y: king.pos.y };
-        });
-        events.push({ type: 'unitsDropped', units: followers.length });
-        return { ok: true, events };
-      }
-      const near = state.units.filter((u) => dist(u.pos, king.pos) <= RALLY_REACH);
-      if (near.length === 0) return fail('no footmen near the king');
-      for (const u of near) u.following = true;
-      events.push({ type: 'rallied', units: near.length });
-      return { ok: true, events };
+      return state.phase === 'day' ? dayRally(state, ctx) : nightRally(state, ctx);
     }
 
     case 'startNight': {
@@ -166,4 +161,74 @@ export function applyCommand(state: GameState, ctx: GameContext, cmd: Command): 
       return { ok: true, events };
     }
   }
+}
+
+/**
+ * The standing military building the king is at, if any: the same reach as for buying at its
+ * slot, so the HUD and the rules agree on "at a barracks".
+ */
+export function militaryAt(state: GameState, ctx: GameContext): BuildingState | null {
+  const king = state.king;
+  if (!king.alive) return null;
+  let best: BuildingState | null = null;
+  let bestD = ctx.king.buildReach + ctx.king.radius;
+  for (const b of state.buildings) {
+    if (b.destroyed || !req(ctx.buildings, b.type).spawns) continue;
+    const d = dist(king.pos, b.pos);
+    if (d <= bestD) {
+      best = b;
+      bestD = d;
+    }
+  }
+  return best;
+}
+
+function dayRally(state: GameState, ctx: GameContext): CommandResult {
+  const events: GameEvent[] = [];
+  const king = state.king;
+  const at = militaryAt(state, ctx);
+  if (at && !at.carried) {
+    at.carried = true;
+    events.push({ type: 'flagTaken', building: at.id });
+    return { ok: true, events };
+  }
+  const carried = state.buildings.filter((b) => b.carried);
+  if (carried.length === 0) return fail('stand at a barracks to take its flag');
+  // Several flags planted together stand one behind the other, so the squads do not overlap.
+  carried.forEach((b, i) => {
+    b.carried = false;
+    b.banner = { x: king.pos.x, y: king.pos.y + i * FLAG_GAP };
+  });
+  events.push({ type: 'flagPlanted', buildings: carried.length });
+  return { ok: true, events };
+}
+
+function nightRally(state: GameState, ctx: GameContext): CommandResult {
+  const events: GameEvent[] = [];
+  const king = state.king;
+  const followers = state.units.filter((u) => u.following);
+  if (followers.length > 0) {
+    followers.forEach((u, i) => {
+      u.following = false;
+      // Spread the squad in a short row where the king stands.
+      const r = req(ctx.units, u.type).radius;
+      u.post = { x: king.pos.x + (i - (followers.length - 1) / 2) * r * 2.5, y: king.pos.y };
+    });
+    // Their flags move here too, so they guard this spot again on the next nights.
+    const homes = [...new Set(followers.map((u) => u.home))];
+    homes.forEach((id, i) => {
+      const b = state.buildings.find((x) => x.id === id);
+      if (b) b.banner = { x: king.pos.x, y: king.pos.y + i * FLAG_GAP };
+    });
+    events.push({ type: 'unitsDropped', units: followers.length });
+    return { ok: true, events };
+  }
+  const at = militaryAt(state, ctx);
+  const grabbed = state.units.filter(
+    (u) => (at && u.home === at.id) || dist(u.pos, king.pos) <= RALLY_REACH,
+  );
+  if (grabbed.length === 0) return fail('no footmen near the king');
+  for (const u of grabbed) u.following = true;
+  events.push({ type: 'rallied', units: grabbed.length });
+  return { ok: true, events };
 }

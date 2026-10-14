@@ -9,4 +9,15 @@ export * from './rng.ts';
 export * from './vec.ts';
 export { canonicalJson, clone, cyrb53 } from './hash.ts';
 export { effectivePriority } from './systems/targeting.ts';
-export { buildSpawnQueue, telegraph } from './systems/phase.ts';
+export { buildSpawnQueue, guardSpot, telegraph } from './systems/phase.ts';
+export { PROJECTILE_SLACK } from './systems/combat.ts';
+export {
+  GATE_HALF_WIDTH,
+  WALL_HALF_SPAN,
+  WALL_HALF_THICKNESS,
+  standingWalls,
+  throughGate,
+  wallLine,
+  wallWings,
+  type WallLine,
+} from './systems/walls.ts';

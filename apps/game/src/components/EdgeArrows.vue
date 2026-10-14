@@ -35,6 +35,30 @@ function layout(w: number, h: number): ArrowLayout {
   return { inset, avoid };
 }
 
+/**
+ * Marker body size per arrow size, in CSS px: a red pill sized to its icons and counts, so the
+ * tip can sit on its edge (one shape, like a map pin).
+ */
+const HEIGHT = { 1: 30, 2: 36, 3: 44 } as const;
+function pin(a: Arrow) {
+  const h = HEIGHT[a.size];
+  const font = Math.round(h * 0.45);
+  const partW = (p: Arrow['parts'][number]) =>
+    font * 1.3 + (p.count === null ? 0 : String(p.count).length * font * 0.62);
+  const w = Math.max(
+    h,
+    a.parts.reduce((n, p) => n + partW(p), 0) + (a.parts.length - 1) * 6 + h * 0.6,
+  );
+  // The tip sits on the body's edge in the arrow's direction (an ellipse is close enough to the
+  // pill for the tip to overlap it, as it is the same colour).
+  const tx = Math.cos(a.angle) * (w / 2 - 2);
+  const ty = Math.sin(a.angle) * (h / 2 - 2);
+  return {
+    body: { width: `${w}px`, height: `${h}px`, fontSize: `${font}px` },
+    tip: { transform: `translate(${tx}px, ${ty}px) rotate(${a.angle}rad)` },
+  };
+}
+
 let frame = 0;
 let last = 0;
 function tick(now: number) {
@@ -82,8 +106,13 @@ onBeforeUnmount(() => {
       :data-kind="a.kind"
       :style="{ left: `${a.x}px`, top: `${a.y}px`, '--c': a.color }"
     >
-      <span class="tip" :style="{ transform: `rotate(${a.angle}rad)` }" />
-      <span class="label">{{ a.label }}</span>
+      <span class="tip" :style="pin(a).tip" />
+      <span class="body" :style="pin(a).body">
+        <span v-for="(p, i) in a.parts" :key="i" class="part"
+          ><span class="icon">{{ p.icon }}</span
+          ><b v-if="p.count !== null">{{ p.count }}</b></span
+        >
+      </span>
     </div>
   </div>
 </template>
@@ -103,52 +132,62 @@ onBeforeUnmount(() => {
 }
 .arrow {
   position: absolute;
+  width: 0;
+  height: 0;
+}
+.body {
+  position: absolute;
   transform: translate(-50%, -50%);
-  display: grid;
-  place-items: center;
-  --r: 18px;
-  width: calc(var(--r) * 2);
-  height: calc(var(--r) * 2);
-  border-radius: 50%;
-  background: rgba(20, 26, 40, 0.8);
-  border: 3px solid var(--c);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 999px;
+  background: var(--c);
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  color: #fff;
+  white-space: nowrap;
 }
-.arrow.s2 {
-  --r: 22px;
+.part {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
 }
-.arrow.s3 {
-  --r: 27px;
+.icon {
+  /* Emoji placeholders drawn as white silhouettes until the art pass brings real icons. */
+  filter: brightness(0) invert(1);
+}
+.part b {
+  font-weight: 800;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
 }
 .tip {
   position: absolute;
-  inset: 0;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  transform-origin: 0 0;
 }
 .tip::after {
-  /* A triangle just outside the disc, pointing at the target. */
+  /* A triangle pointing at the target, its base hidden under the body's edge. */
   content: '';
   position: absolute;
-  left: calc(100% + 1px);
-  top: 50%;
-  border-left: 12px solid var(--c);
-  border-top: 8px solid transparent;
-  border-bottom: 8px solid transparent;
-  transform: translateY(-50%);
+  left: -2px;
+  top: -9px;
+  border-left: 14px solid var(--c);
+  border-top: 9px solid transparent;
+  border-bottom: 9px solid transparent;
 }
-.label {
-  font-size: 14px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-.spawn .label {
-  position: absolute;
-  top: calc(100% + 4px);
-  background: rgba(20, 26, 40, 0.8);
-  padding: 2px 6px;
-  border-radius: 6px;
-}
-.castle,
-.building {
+.castle .body,
+.building .body {
   animation: pulse 0.8s ease-in-out infinite alternate;
+}
+.castle .icon,
+.building .icon,
+.boss .icon {
+  filter: none;
 }
 @keyframes pulse {
   to {

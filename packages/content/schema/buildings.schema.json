@@ -24,6 +24,10 @@
           "name": {
             "type": "string"
           },
+          "description": {
+            "default": "",
+            "type": "string"
+          },
           "class": {
             "type": "string",
             "enum": [
@@ -132,6 +136,18 @@
                     "air"
                   ]
                 }
+              },
+              "projectile": {
+                "type": "object",
+                "properties": {
+                  "speed": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  }
+                },
+                "required": [
+                  "speed"
+                ]
               }
             },
             "required": [
