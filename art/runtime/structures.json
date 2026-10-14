@@ -81,7 +81,7 @@
     },
     "gate_stone.diag.f2": {
       "frame": {
-        "x": 1790,
+        "x": 1611,
         "y": 2,
         "w": 177,
         "h": 147
@@ -243,18 +243,18 @@
     },
     "gate_wood.diag.f2": {
       "frame": {
-        "x": 1432,
+        "x": 1790,
         "y": 2,
         "w": 177,
-        "h": 154
+        "h": 145
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
         "x": 8,
-        "y": 19,
+        "y": 28,
         "w": 177,
-        "h": 154
+        "h": 145
       },
       "sourceSize": {
         "w": 192,
@@ -270,7 +270,7 @@
     },
     "gate_wood.f1": {
       "frame": {
-        "x": 1611,
+        "x": 1432,
         "y": 2,
         "w": 177,
         "h": 150

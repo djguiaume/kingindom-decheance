@@ -1019,12 +1019,6 @@
       "asset": "gate_wood",
       "contentId": "wall"
     },
-    "gate_wood.diag.f2": {
-      "atlas": "structures",
-      "num": 64,
-      "asset": "gate_wood",
-      "contentId": "wall"
-    },
     "gate_wood.f1": {
       "atlas": "structures",
       "num": 64,
@@ -1036,6 +1030,12 @@
       "num": 65,
       "asset": "gate_stone",
       "contentId": "stone_wall"
+    },
+    "gate_wood.diag.f2": {
+      "atlas": "structures",
+      "num": 64,
+      "asset": "gate_wood",
+      "contentId": "wall"
     },
     "panda_banner": {
       "atlas": "structures",

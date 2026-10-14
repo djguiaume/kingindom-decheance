@@ -2,7 +2,7 @@
   "modelId": "model_openai-gpt-image-2-5-flare",
   "referenceAssetId": "asset_RvvNgxiXxMS5HiHWN85YLtqS",
   "referenceSha256": "1ced3f125f8dd4584f33ed856a41dec5b679d0f7b65d0e95681f59689a4f65d8",
-  "spentCU": 3195,
+  "spentCU": 3269,
   "parts": {
     "archer": {
       "state": "validated",
@@ -182,36 +182,42 @@
     },
     "bridge": {
       "state": "validated",
-      "attempts": 1,
-      "promptHash": "21e74b4bb16d",
-      "jobId": "job_cLnHgYeqzxE1JJ3StJcdb8ht",
-      "assetId": "asset_jxEejkRGJf8Xd8Kd1WWoLQLj",
-      "costCU": 12,
-      "originalSha256": "e8ee45a90571cd22ddd31382bd4b0c9884a979ea4b4eeb8ece875b01303719f7",
+      "attempts": 2,
+      "promptHash": "39b9d2443d8d",
+      "jobId": "job_wzXu3CxL4UGTFM1Yip5fHxHq",
+      "assetId": "asset_eumuZCxKXZWsKmyPv7wbPuDL",
+      "costCU": 24,
+      "originalSha256": "48302309d54e1017ca029d3c5163a0a0afe1cd1d8eb61f38a9e995716db0a7a2",
       "issues": [],
-      "updatedAt": "2026-10-14T19:30:08.704Z"
+      "updatedAt": "2026-10-14T20:27:53.648Z"
     },
     "bridge.diag": {
-      "state": "validated",
-      "attempts": 1,
-      "promptHash": "604e6b7d1d55",
-      "jobId": "job_NgNxGQzsGUWVWJHzAcoaAzTd",
-      "assetId": "asset_ep5QMuLGnvh3UwyxTCDLqkdK",
-      "costCU": 12,
-      "originalSha256": "8c193717b4d7ad00fd96036003d6fca2de4c5cf3502aa86c9ba491a81c88efe8",
-      "issues": [],
-      "updatedAt": "2026-10-14T19:31:04.458Z"
+      "state": "failed",
+      "attempts": 2,
+      "promptHash": "440c428a06f6",
+      "jobId": "job_9XR2pXFiMfMJCh7iAjW472XT",
+      "assetId": "asset_2PAMNkUQFpamxKuRFda4f8R4",
+      "costCU": 24,
+      "originalSha256": "9aaf921f3445aa2d4eb6ce5fab490764774c425f19bfeef8ce6c273c45490fcd",
+      "issues": [
+        {
+          "level": "error",
+          "code": "background",
+          "message": "Corners are not transparent (painted background or checkerboard)."
+        }
+      ],
+      "updatedAt": "2026-10-14T20:28:48.231Z"
     },
     "bridge.side": {
       "state": "validated",
-      "attempts": 1,
-      "promptHash": "2967a126dbe8",
-      "jobId": "job_N4hi1zwgfSkPmQV9JVyJULnu",
-      "assetId": "asset_wANKgPqpkGjBigCPnNiAbwwx",
-      "costCU": 12,
-      "originalSha256": "ecafbf83e7309849f135cd89cfa1f4d15ea8619e90da070b42fbea572ea20c5d",
+      "attempts": 2,
+      "promptHash": "2eaf87ca2183",
+      "jobId": "job_AsWusPrH2eVJh3ecYSZiPo7c",
+      "assetId": "asset_xMF28yVukivJxwJpLZskKZiL",
+      "costCU": 24,
+      "originalSha256": "7d78682dd5e6d3dbce2c25d23b644462dc99f0fbe440589e5893a2a403816855",
       "issues": [],
-      "updatedAt": "2026-10-14T19:30:34.689Z"
+      "updatedAt": "2026-10-14T20:28:19.203Z"
     },
     "brute": {
       "state": "validated",
@@ -670,14 +676,14 @@
     },
     "gate_wood.diag.f2": {
       "state": "validated",
-      "attempts": 4,
-      "promptHash": "4c19ab05e82b",
-      "jobId": "job_z7SF1Matkq1SzZ1b44Uj7kUj",
-      "assetId": "asset_aXe1A4MPHuPUiRNAUNkwMLy1",
-      "costCU": 49,
-      "originalSha256": "86cf3ece7a10c98240c6d3e9cac1f0d7633728c20e22cb839c17b4d7208867bb",
+      "attempts": 6,
+      "promptHash": "7450e3de2d58",
+      "jobId": "job_DeCXeTag913S95c6SoLQWPXF",
+      "assetId": "asset_au5Up8643Ugs6VZ6MUCZ8Z36",
+      "costCU": 75,
+      "originalSha256": "7f1fb26489beeb6761be77a62c195fd6738e45a3486cf94d21cb3aae2b1a791e",
       "issues": [],
-      "updatedAt": "2026-10-14T19:50:07.467Z"
+      "updatedAt": "2026-10-14T20:26:59.313Z"
     },
     "gate_wood.f1": {
       "state": "validated",
@@ -747,14 +753,14 @@
     },
     "grass_patch": {
       "state": "validated",
-      "attempts": 2,
-      "promptHash": "63910eb047f4",
-      "jobId": "job_o7DNqe4G6xNmFekrkBhe8Hy2",
-      "assetId": "asset_WLWhAhALkHWQgMZu1RYmaNbq",
-      "costCU": 25,
-      "originalSha256": "e06df5d5ce085480d0a30f07c767497f8a75c373d960e3b3c8c464188e4acf98",
+      "attempts": 3,
+      "promptHash": "788cdeb45c45",
+      "jobId": "job_6zqpt7N7T1o8er4V868KPw1E",
+      "assetId": "asset_E8FhgAVGgMW13eyiqGtwGGQA",
+      "costCU": 37,
+      "originalSha256": "d261bae43bae60ef0666c71f4beae53e395a7250a818cab02cb0c2e786fea88a",
       "issues": [],
-      "updatedAt": "2026-10-14T19:54:53.784Z"
+      "updatedAt": "2026-10-14T20:27:21.189Z"
     },
     "ground_greyhollow": {
       "state": "validated",
