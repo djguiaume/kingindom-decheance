@@ -51,7 +51,7 @@ function framing(asset: Asset, part: Part): string {
           ? ' Seen from behind, walking away up the screen: back turned to the viewer, face hidden, same camera angle.'
           : part.view === 'side'
             ? gate
-              ? ' Same camera angle, but the gate is turned 90 degrees: its wall line runs straight up the screen, away from the viewer, so the gateway is seen from its side, doors edge-on.'
+              ? ` Same camera angle, but the gate is turned 90 degrees: its wall line runs straight up the screen, away from the viewer, so the gateway is seen from its side, doors edge-on.${part.pose === 'open' ? ' Open like a real double gate: the far door is hinged on the upper post and the near door on the lower post, and both swing the SAME way, to the right of the wall line, ending parallel to each other and square to the wall, so the gateway between the posts is completely clear. The doors never point up or down along the wall and never cross the opening.' : ''}`
               : ' Same camera angle, but turned 90 degrees: its length runs straight up the screen, away from the viewer.'
             : part.view === 'diag'
               ? gate
