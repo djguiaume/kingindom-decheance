@@ -38,6 +38,15 @@ const CLIFF_HEIGHT = 1.3;
 
 const px = (p: Pt) => ({ x: p[0] * SCALE, y: p[1] * SCALE * SQUASH });
 
+/** Fills a four-cornered shape in the current fill style. */
+function fillQuad(g: Graphics, q: readonly { x: number; y: number }[]) {
+  g.beginPath();
+  g.moveTo(q[0]!.x, q[0]!.y);
+  for (const p of q.slice(1)) g.lineTo(p.x, p.y);
+  g.closePath();
+  g.fillPath();
+}
+
 /**
  * A strip `width` metres wide along a polyline, with round joints and ends, lifted `lift` pixels
  * up. Shaped in world metres, then squashed, so it covers exactly the ground the core blocks.
@@ -52,10 +61,12 @@ function band(g: Graphics, points: readonly Pt[], width: number, color: number, 
     const len = Math.hypot(bx - ax, by - ay) || 1;
     const nx = (-(by - ay) / len) * r;
     const ny = ((bx - ax) / len) * r;
-    g.fillPoints(
-      [at(ax + nx, ay + ny), at(bx + nx, by + ny), at(bx - nx, by - ny), at(ax - nx, ay - ny)],
-      true,
-    );
+    fillQuad(g, [
+      at(ax + nx, ay + ny),
+      at(bx + nx, by + ny),
+      at(bx - nx, by - ny),
+      at(ax - nx, ay - ny),
+    ]);
   }
   for (const [x, y] of points) {
     const c = at(x, y);
@@ -105,15 +116,12 @@ function drawBridge(g: Graphics, from: Pt, to: Pt, width: number) {
   const l = half(-1);
   const r = half(1);
   g.fillStyle(tint.wood, 1);
-  g.fillPoints(
-    [
-      { x: a.x + l.x, y: a.y + l.y },
-      { x: b.x + l.x, y: b.y + l.y },
-      { x: b.x + r.x, y: b.y + r.y },
-      { x: a.x + r.x, y: a.y + r.y },
-    ],
-    true,
-  );
+  fillQuad(g, [
+    { x: a.x + l.x, y: a.y + l.y },
+    { x: b.x + l.x, y: b.y + l.y },
+    { x: b.x + r.x, y: b.y + r.y },
+    { x: a.x + r.x, y: a.y + r.y },
+  ]);
   // Planks across the deck.
   g.lineStyle(1.5, tint.woodDark, 0.7);
   const planks = Math.floor(len / 9);
