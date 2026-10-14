@@ -23,3 +23,13 @@ export {
 } from './systems/walls.ts';
 export * from './modifiers.ts';
 export * from './score.ts';
+export {
+  blockByTerrain,
+  segmentDistance,
+  terrainBlockers,
+  walkAim,
+  walkable,
+  wayGraph,
+  type Capsule,
+  type WayGraph,
+} from './systems/terrain.ts';

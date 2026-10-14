@@ -1,7 +1,7 @@
 {
   "$schema": "../../schema/map.schema.json",
   "schemaVersion": 1,
-  "notes": "Greyhollow, prototype design 11 §2 and §8.3. Wall slots double as lane waypoints. Tuned after the first playtest (2026-10-13): more gold (start 75, castle 25 a dawn) and 30% more enemies per group. Night 6: the warlord replaces the west brutes. Stage A2 (castle levels unlock tiers): raiders and skirmishers on nights 4-6 +15%, so castle upgrades do not make the late nights easy. With the new units, night 6 raiders and skirmishers +15% more. Two archery range slots, one behind each side gate (11 §12.2).",
+  "notes": "Greyhollow, prototype design 11 §2 and §8.3, reworked 2026-10-14 to be believable: the castle sits in a hollow ringed by cliffs; the west, north and east roads enter through three passes the walls seal. Both gold mines lie outside the rim. A river runs down the east side, crossed by one bridge; a lake lies south-west. Cliffs and water block walking for everyone on the ground. Wall slots double as lane waypoints; the o_* nodes outside the rim only help bodies find their way round it. Tuned after the first playtest (2026-10-13): more gold (start 75, castle 25 a dawn) and 30% more enemies per group. Night 6: the warlord replaces the west brutes. Stage A2: raiders and skirmishers on nights 4-6 +15%, night 6 +15% more. The cliffs make walls seal their pass, so nights 5-6 raiders and skirmishers +10% (balanced bot back near 90%). Two archery range slots, one behind each side gate (11 §12.2).",
   "id": "greyhollow",
   "name": "Greyhollow",
   "size": [64, 48],
@@ -34,8 +34,12 @@
       "pos": [0, 27]
     },
     {
+      "id": "w0",
+      "pos": [5, 23]
+    },
+    {
       "id": "w1",
-      "pos": [9, 28]
+      "pos": [10, 27]
     },
     {
       "id": "ww",
@@ -69,7 +73,11 @@
     },
     {
       "id": "sp_n",
-      "pos": [31, 0]
+      "pos": [34, 0]
+    },
+    {
+      "id": "n0",
+      "pos": [31, 3]
     },
     {
       "id": "wn",
@@ -137,21 +145,21 @@
     },
     {
       "id": "te",
-      "pos": [47, 16],
+      "pos": [43, 17.5],
       "slot": {
         "options": ["tower"]
       }
     },
     {
       "id": "tn",
-      "pos": [34, 9],
+      "pos": [35, 11],
       "slot": {
         "options": ["tower"]
       }
     },
     {
       "id": "tm",
-      "pos": [53, 11],
+      "pos": [52, 12.5],
       "slot": {
         "options": ["tower"]
       }
@@ -198,12 +206,32 @@
     {
       "id": "gate_n",
       "pos": [32, 13]
+    },
+    {
+      "id": "o_nw",
+      "pos": [13, 9]
+    },
+    {
+      "id": "o_sw",
+      "pos": [15, 38]
+    },
+    {
+      "id": "o_s",
+      "pos": [32, 43.5]
+    },
+    {
+      "id": "o_se",
+      "pos": [51.5, 36]
+    },
+    {
+      "id": "o_ne",
+      "pos": [49, 4]
     }
   ],
   "lanes": [
     {
       "id": "west",
-      "path": ["sp_w", "w1", "ww", "w3", "castle"]
+      "path": ["sp_w", "w0", "w1", "ww", "w3", "castle"]
     },
     {
       "id": "east",
@@ -211,7 +239,7 @@
     },
     {
       "id": "north",
-      "path": ["sp_n", "wn", "n2", "castle"]
+      "path": ["sp_n", "n0", "wn", "n2", "castle"]
     },
     {
       "id": "air",
@@ -330,21 +358,21 @@
         {
           "lane": "west",
           "enemy": "raider",
-          "count": 12,
+          "count": 13,
           "delay": 0,
           "interval": 1.2
         },
         {
           "lane": "west",
           "enemy": "skirmisher",
-          "count": 5,
+          "count": 6,
           "delay": 6,
           "interval": 2
         },
         {
           "lane": "east",
           "enemy": "raider",
-          "count": 15,
+          "count": 17,
           "delay": 2,
           "interval": 1.2
         },
@@ -358,7 +386,7 @@
         {
           "lane": "north",
           "enemy": "raider",
-          "count": 9,
+          "count": 10,
           "delay": 4,
           "interval": 1.3
         },
@@ -384,7 +412,7 @@
         {
           "lane": "west",
           "enemy": "raider",
-          "count": 21,
+          "count": 23,
           "delay": 0,
           "interval": 1
         },
@@ -398,14 +426,14 @@
         {
           "lane": "east",
           "enemy": "raider",
-          "count": 17,
+          "count": 19,
           "delay": 2,
           "interval": 1.2
         },
         {
           "lane": "east",
           "enemy": "skirmisher",
-          "count": 7,
+          "count": 8,
           "delay": 6,
           "interval": 2
         },
@@ -419,7 +447,7 @@
         {
           "lane": "north",
           "enemy": "skirmisher",
-          "count": 7,
+          "count": 8,
           "delay": 4,
           "interval": 2
         },
@@ -446,5 +474,1196 @@
         }
       ]
     }
-  ]
+  ],
+  "terrain": {
+    "cliffs": [
+      {
+        "points": [
+          [16.4, 21.5],
+          [16.5, 15],
+          [21, 10],
+          [26.5, 8]
+        ],
+        "width": 2
+      },
+      {
+        "points": [
+          [35.5, 8],
+          [41, 7],
+          [45, 10],
+          [45.2, 15.9]
+        ],
+        "width": 2
+      },
+      {
+        "points": [
+          [48.8, 24.1],
+          [50, 30],
+          [46, 37],
+          [38, 40],
+          [28, 40],
+          [20, 37],
+          [17.6, 30.5]
+        ],
+        "width": 2
+      }
+    ],
+    "water": [
+      {
+        "points": [
+          [58, 0],
+          [56, 10],
+          [57.5, 18],
+          [55, 28],
+          [56, 38],
+          [54, 48]
+        ],
+        "width": 4
+      },
+      {
+        "points": [
+          [5.5, 41],
+          [10.5, 41]
+        ],
+        "width": 7.6
+      }
+    ],
+    "bridges": [
+      {
+        "from": [61.2, 18.6],
+        "to": [54.9, 17.2],
+        "width": 3.5
+      }
+    ],
+    "props": [
+      {
+        "kind": "bamboo_large",
+        "pos": [9.1, 5.7],
+        "scale": 1.02,
+        "flip": false
+      },
+      {
+        "kind": "bamboo_small",
+        "pos": [4.8, 9.4],
+        "scale": 0.9,
+        "flip": false
+      },
+      {
+        "kind": "bamboo_small",
+        "pos": [11.7, 10.8],
+        "scale": 0.93,
+        "flip": false
+      },
+      {
+        "kind": "bamboo_single",
+        "pos": [9.5, 20.6],
+        "scale": 1.03,
+        "flip": false
+      },
+      {
+        "kind": "bamboo_single",
+        "pos": [4.8, 7.7],
+        "scale": 1.0,
+        "flip": true
+      },
+      {
+        "kind": "bamboo_large",
+        "pos": [9.4, 6.9],
+        "scale": 0.98,
+        "flip": true
+      },
+      {
+        "kind": "bamboo_large",
+        "pos": [5.4, 10.1],
+        "scale": 0.89,
+        "flip": true
+      },
+      {
+        "kind": "bamboo_single",
+        "pos": [2.1, 20.2],
+        "scale": 0.9,
+        "flip": false
+      },
+      {
+        "kind": "bamboo_large",
+        "pos": [1.7, 3.2],
+        "scale": 0.95,
+        "flip": false
+      },
+      {
+        "kind": "bamboo_large",
+        "pos": [12.9, 7.8],
+        "scale": 0.88,
+        "flip": false
+      },
+      {
+        "kind": "bamboo_single",
+        "pos": [9.9, 17.4],
+        "scale": 0.85,
+        "flip": true
+      },
+      {
+        "kind": "bamboo_single",
+        "pos": [12.4, 3.3],
+        "scale": 0.85,
+        "flip": false
+      },
+      {
+        "kind": "bamboo_large",
+        "pos": [7.6, 15.4],
+        "scale": 1.14,
+        "flip": true
+      },
+      {
+        "kind": "bamboo_large",
+        "pos": [3.6, 4.7],
+        "scale": 1.1,
+        "flip": false
+      },
+      {
+        "kind": "bamboo_large",
+        "pos": [2.1, 6.8],
+        "scale": 1.2,
+        "flip": false
+      },
+      {
+        "kind": "bamboo_large",
+        "pos": [10.6, 13.9],
+        "scale": 0.9,
+        "flip": true
+      },
+      {
+        "kind": "bamboo_single",
+        "pos": [6.6, 11.3],
+        "scale": 1.13,
+        "flip": false
+      },
+      {
+        "kind": "bamboo_single",
+        "pos": [11.5, 20.9],
+        "scale": 1.13,
+        "flip": true
+      },
+      {
+        "kind": "bamboo_small",
+        "pos": [1.9, 17.1],
+        "scale": 1.02,
+        "flip": true
+      },
+      {
+        "kind": "bamboo_large",
+        "pos": [12.9, 10.5],
+        "scale": 0.95,
+        "flip": true
+      },
+      {
+        "kind": "bamboo_single",
+        "pos": [8.3, 9.8],
+        "scale": 1.0,
+        "flip": true
+      },
+      {
+        "kind": "bamboo_large",
+        "pos": [12.2, 6.7],
+        "scale": 0.87,
+        "flip": true
+      },
+      {
+        "kind": "bamboo_single",
+        "pos": [5.6, 9.0],
+        "scale": 0.89,
+        "flip": false
+      },
+      {
+        "kind": "bamboo_large",
+        "pos": [10.4, 6.1],
+        "scale": 1.0,
+        "flip": false
+      },
+      {
+        "kind": "bamboo_small",
+        "pos": [15.8, 39.8],
+        "scale": 1.01,
+        "flip": false
+      },
+      {
+        "kind": "bamboo_single",
+        "pos": [14.7, 35.0],
+        "scale": 0.89,
+        "flip": false
+      },
+      {
+        "kind": "bamboo_single",
+        "pos": [16.3, 33.3],
+        "scale": 0.92,
+        "flip": true
+      },
+      {
+        "kind": "bamboo_single",
+        "pos": [15.9, 42.2],
+        "scale": 0.88,
+        "flip": true
+      },
+      {
+        "kind": "bamboo_large",
+        "pos": [14.4, 33.4],
+        "scale": 1.0,
+        "flip": false
+      },
+      {
+        "kind": "bamboo_large",
+        "pos": [15.0, 38.1],
+        "scale": 0.99,
+        "flip": false
+      },
+      {
+        "kind": "bamboo_large",
+        "pos": [14.7, 39.2],
+        "scale": 0.97,
+        "flip": false
+      },
+      {
+        "kind": "bamboo_small",
+        "pos": [17.4, 38.0],
+        "scale": 0.87,
+        "flip": true
+      },
+      {
+        "kind": "bamboo_single",
+        "pos": [10.7, 34.7],
+        "scale": 0.94,
+        "flip": true
+      },
+      {
+        "kind": "bamboo_single",
+        "pos": [12.9, 35.0],
+        "scale": 1.09,
+        "flip": false
+      },
+      {
+        "kind": "pine",
+        "pos": [15.7, 5.0],
+        "scale": 0.89,
+        "flip": false
+      },
+      {
+        "kind": "pine",
+        "pos": [16.5, 1.8],
+        "scale": 1.17,
+        "flip": true
+      },
+      {
+        "kind": "pine",
+        "pos": [24.4, 4.3],
+        "scale": 0.98,
+        "flip": false
+      },
+      {
+        "kind": "tree",
+        "pos": [20.9, 0.9],
+        "scale": 1.15,
+        "flip": true
+      },
+      {
+        "kind": "tree",
+        "pos": [24.1, 2.7],
+        "scale": 0.94,
+        "flip": true
+      },
+      {
+        "kind": "pine",
+        "pos": [18.5, 4.5],
+        "scale": 0.86,
+        "flip": false
+      },
+      {
+        "kind": "pine",
+        "pos": [21.8, 2.0],
+        "scale": 0.91,
+        "flip": false
+      },
+      {
+        "kind": "pine",
+        "pos": [27.8, 0.6],
+        "scale": 0.86,
+        "flip": false
+      },
+      {
+        "kind": "pine",
+        "pos": [20.1, 2.4],
+        "scale": 1.17,
+        "flip": false
+      },
+      {
+        "kind": "pine",
+        "pos": [21.9, 3.0],
+        "scale": 0.88,
+        "flip": false
+      },
+      {
+        "kind": "pine",
+        "pos": [26.0, 2.5],
+        "scale": 0.97,
+        "flip": false
+      },
+      {
+        "kind": "pine",
+        "pos": [38.7, 2.3],
+        "scale": 0.94,
+        "flip": false
+      },
+      {
+        "kind": "tree",
+        "pos": [42.0, 2.0],
+        "scale": 1.04,
+        "flip": true
+      },
+      {
+        "kind": "pine",
+        "pos": [46.8, 0.7],
+        "scale": 0.96,
+        "flip": false
+      },
+      {
+        "kind": "pine",
+        "pos": [40.1, 2.4],
+        "scale": 1.08,
+        "flip": true
+      },
+      {
+        "kind": "pine",
+        "pos": [40.0, 4.2],
+        "scale": 1.0,
+        "flip": false
+      },
+      {
+        "kind": "pine",
+        "pos": [42.2, 5.4],
+        "scale": 1.09,
+        "flip": false
+      },
+      {
+        "kind": "pine",
+        "pos": [47.8, 3.4],
+        "scale": 1.13,
+        "flip": true
+      },
+      {
+        "kind": "tree",
+        "pos": [43.5, 3.6],
+        "scale": 1.07,
+        "flip": false
+      },
+      {
+        "kind": "tree",
+        "pos": [20.7, 46.3],
+        "scale": 1.07,
+        "flip": true
+      },
+      {
+        "kind": "tree",
+        "pos": [27.0, 43.9],
+        "scale": 1.12,
+        "flip": true
+      },
+      {
+        "kind": "tree",
+        "pos": [31.9, 44.6],
+        "scale": 1.07,
+        "flip": false
+      },
+      {
+        "kind": "tree",
+        "pos": [41.4, 45.5],
+        "scale": 0.86,
+        "flip": true
+      },
+      {
+        "kind": "shrub",
+        "pos": [42.2, 46.7],
+        "scale": 0.97,
+        "flip": false
+      },
+      {
+        "kind": "pine",
+        "pos": [29.9, 43.8],
+        "scale": 1.15,
+        "flip": false
+      },
+      {
+        "kind": "tree",
+        "pos": [37.0, 45.0],
+        "scale": 1.02,
+        "flip": true
+      },
+      {
+        "kind": "tree",
+        "pos": [20.5, 44.0],
+        "scale": 1.14,
+        "flip": true
+      },
+      {
+        "kind": "tree",
+        "pos": [44.1, 44.7],
+        "scale": 0.94,
+        "flip": true
+      },
+      {
+        "kind": "shrub",
+        "pos": [36.9, 43.5],
+        "scale": 1.01,
+        "flip": false
+      },
+      {
+        "kind": "pine",
+        "pos": [33.5, 42.9],
+        "scale": 1.17,
+        "flip": true
+      },
+      {
+        "kind": "tree",
+        "pos": [22.1, 44.7],
+        "scale": 0.89,
+        "flip": false
+      },
+      {
+        "kind": "shrub",
+        "pos": [38.0, 46.6],
+        "scale": 0.94,
+        "flip": true
+      },
+      {
+        "kind": "tree",
+        "pos": [22.1, 42.7],
+        "scale": 1.0,
+        "flip": true
+      },
+      {
+        "kind": "shrub",
+        "pos": [29.7, 46.0],
+        "scale": 1.11,
+        "flip": false
+      },
+      {
+        "kind": "shrub",
+        "pos": [26.6, 45.8],
+        "scale": 1.05,
+        "flip": false
+      },
+      {
+        "kind": "tree",
+        "pos": [50.1, 42.0],
+        "scale": 1.15,
+        "flip": true
+      },
+      {
+        "kind": "tree",
+        "pos": [51.4, 44.4],
+        "scale": 0.92,
+        "flip": false
+      },
+      {
+        "kind": "tree",
+        "pos": [51.4, 42.9],
+        "scale": 0.85,
+        "flip": false
+      },
+      {
+        "kind": "tree",
+        "pos": [48.7, 41.1],
+        "scale": 1.13,
+        "flip": false
+      },
+      {
+        "kind": "pine",
+        "pos": [48.8, 42.8],
+        "scale": 1.04,
+        "flip": false
+      },
+      {
+        "kind": "shrub",
+        "pos": [51.2, 42.0],
+        "scale": 0.98,
+        "flip": false
+      },
+      {
+        "kind": "shrub",
+        "pos": [46.8, 40.4],
+        "scale": 0.91,
+        "flip": false
+      },
+      {
+        "kind": "pine",
+        "pos": [61.2, 35.1],
+        "scale": 1.06,
+        "flip": true
+      },
+      {
+        "kind": "tree",
+        "pos": [60.1, 35.9],
+        "scale": 0.96,
+        "flip": false
+      },
+      {
+        "kind": "tree",
+        "pos": [60.7, 28.7],
+        "scale": 1.02,
+        "flip": true
+      },
+      {
+        "kind": "bamboo_large",
+        "pos": [61.7, 28.8],
+        "scale": 0.85,
+        "flip": false
+      },
+      {
+        "kind": "bamboo_large",
+        "pos": [61.6, 30.5],
+        "scale": 1.2,
+        "flip": true
+      },
+      {
+        "kind": "bamboo_large",
+        "pos": [61.5, 33.0],
+        "scale": 0.87,
+        "flip": true
+      },
+      {
+        "kind": "tree",
+        "pos": [62.6, 24.5],
+        "scale": 0.95,
+        "flip": false
+      },
+      {
+        "kind": "pine",
+        "pos": [63.1, 39.8],
+        "scale": 0.88,
+        "flip": false
+      },
+      {
+        "kind": "tree",
+        "pos": [63.3, 10.3],
+        "scale": 0.92,
+        "flip": true
+      },
+      {
+        "kind": "tree",
+        "pos": [61.0, 2.6],
+        "scale": 0.96,
+        "flip": true
+      },
+      {
+        "kind": "pine",
+        "pos": [61.4, 10.3],
+        "scale": 1.05,
+        "flip": true
+      },
+      {
+        "kind": "tree",
+        "pos": [61.8, 1.4],
+        "scale": 1.2,
+        "flip": true
+      },
+      {
+        "kind": "shrub",
+        "pos": [4.6, 34.4],
+        "scale": 0.87,
+        "flip": true
+      },
+      {
+        "kind": "tree",
+        "pos": [5.0, 33.2],
+        "scale": 1.02,
+        "flip": true
+      },
+      {
+        "kind": "tree",
+        "pos": [2.2, 33.4],
+        "scale": 1.13,
+        "flip": true
+      },
+      {
+        "kind": "tree",
+        "pos": [1.6, 29.9],
+        "scale": 1.12,
+        "flip": false
+      },
+      {
+        "kind": "tree",
+        "pos": [3.9, 32.2],
+        "scale": 1.17,
+        "flip": false
+      },
+      {
+        "kind": "rock_large",
+        "pos": [14.3, 18.9],
+        "scale": 1.05,
+        "flip": false
+      },
+      {
+        "kind": "rock_large",
+        "pos": [14.5, 15.7],
+        "scale": 1.01,
+        "flip": true
+      },
+      {
+        "kind": "rock_small",
+        "pos": [16.1, 12.2],
+        "scale": 1.19,
+        "flip": true
+      },
+      {
+        "kind": "rock_large",
+        "pos": [18.4, 9.7],
+        "scale": 1.03,
+        "flip": true
+      },
+      {
+        "kind": "rock_small",
+        "pos": [21.5, 7.5],
+        "scale": 0.99,
+        "flip": false
+      },
+      {
+        "kind": "rock_large",
+        "pos": [24.2, 6.5],
+        "scale": 1.08,
+        "flip": true
+      },
+      {
+        "kind": "rock_small",
+        "pos": [37.8, 5.6],
+        "scale": 0.9,
+        "flip": true
+      },
+      {
+        "kind": "rock_small",
+        "pos": [40.5, 5.2],
+        "scale": 0.84,
+        "flip": false
+      },
+      {
+        "kind": "rock_small",
+        "pos": [43.4, 6.0],
+        "scale": 1.0,
+        "flip": false
+      },
+      {
+        "kind": "rock_large",
+        "pos": [45.4, 7.5],
+        "scale": 1.1,
+        "flip": false
+      },
+      {
+        "kind": "rock_small",
+        "pos": [46.7, 10.3],
+        "scale": 0.93,
+        "flip": true
+      },
+      {
+        "kind": "rock_large",
+        "pos": [46.9, 13.1],
+        "scale": 0.99,
+        "flip": true
+      },
+      {
+        "kind": "rock_small",
+        "pos": [51.3, 26.1],
+        "scale": 1.19,
+        "flip": false
+      },
+      {
+        "kind": "rock_small",
+        "pos": [51.8, 29.1],
+        "scale": 0.95,
+        "flip": true
+      },
+      {
+        "kind": "rock_large",
+        "pos": [50.8, 33.1],
+        "scale": 0.96,
+        "flip": false
+      },
+      {
+        "kind": "rock_large",
+        "pos": [48.8, 36.6],
+        "scale": 1.19,
+        "flip": false
+      },
+      {
+        "kind": "rock_small",
+        "pos": [45.0, 39.6],
+        "scale": 1.07,
+        "flip": false
+      },
+      {
+        "kind": "rock_large",
+        "pos": [41.0, 41.2],
+        "scale": 0.92,
+        "flip": false
+      },
+      {
+        "kind": "rock_large",
+        "pos": [35.4, 42.2],
+        "scale": 1.1,
+        "flip": true
+      },
+      {
+        "kind": "rock_small",
+        "pos": [30.3, 42.2],
+        "scale": 1.19,
+        "flip": true
+      },
+      {
+        "kind": "rock_small",
+        "pos": [24.7, 41.1],
+        "scale": 0.82,
+        "flip": true
+      },
+      {
+        "kind": "rock_large",
+        "pos": [20.7, 39.5],
+        "scale": 1.04,
+        "flip": true
+      },
+      {
+        "kind": "rock_small",
+        "pos": [17.6, 36.5],
+        "scale": 0.84,
+        "flip": false
+      },
+      {
+        "kind": "rock_small",
+        "pos": [52.9, 2.1],
+        "scale": 0.94,
+        "flip": false
+      },
+      {
+        "kind": "grass",
+        "pos": [60.0, 5.8],
+        "scale": 0.94,
+        "flip": false
+      },
+      {
+        "kind": "rock_small",
+        "pos": [53.0, 8.3],
+        "scale": 0.94,
+        "flip": false
+      },
+      {
+        "kind": "grass",
+        "pos": [59.8, 11.5],
+        "scale": 0.89,
+        "flip": false
+      },
+      {
+        "kind": "rock_small",
+        "pos": [52.7, 21.3],
+        "scale": 0.74,
+        "flip": true
+      },
+      {
+        "kind": "grass",
+        "pos": [60.1, 23.1],
+        "scale": 1.09,
+        "flip": false
+      },
+      {
+        "kind": "grass",
+        "pos": [59.7, 29.6],
+        "scale": 0.86,
+        "flip": true
+      },
+      {
+        "kind": "rock_small",
+        "pos": [52.7, 38.6],
+        "scale": 0.89,
+        "flip": false
+      },
+      {
+        "kind": "grass",
+        "pos": [59.7, 41.3],
+        "scale": 0.96,
+        "flip": false
+      },
+      {
+        "kind": "grass",
+        "pos": [60.0, 46.3],
+        "scale": 1.06,
+        "flip": true
+      },
+      {
+        "kind": "rock_small",
+        "pos": [9.2, 45.5],
+        "scale": 1.0,
+        "flip": false
+      },
+      {
+        "kind": "rock_small",
+        "pos": [9.2, 36.5],
+        "scale": 0.83,
+        "flip": false
+      },
+      {
+        "kind": "grass",
+        "pos": [50.7, 2.6],
+        "scale": 0.7,
+        "flip": false
+      },
+      {
+        "kind": "grass_patch",
+        "pos": [48.9, 6.3],
+        "scale": 0.78,
+        "flip": false
+      },
+      {
+        "kind": "grass",
+        "pos": [42.5, 10.8],
+        "scale": 1.04,
+        "flip": false
+      },
+      {
+        "kind": "grass",
+        "pos": [50.3, 35.6],
+        "scale": 1.09,
+        "flip": true
+      },
+      {
+        "kind": "grass",
+        "pos": [58.8, 42.1],
+        "scale": 0.74,
+        "flip": false
+      },
+      {
+        "kind": "grass_patch",
+        "pos": [48.6, 22.3],
+        "scale": 0.84,
+        "flip": false
+      },
+      {
+        "kind": "grass",
+        "pos": [41.2, 35.2],
+        "scale": 1.03,
+        "flip": false
+      },
+      {
+        "kind": "grass",
+        "pos": [58.4, 45.2],
+        "scale": 0.89,
+        "flip": false
+      },
+      {
+        "kind": "grass_patch",
+        "pos": [49.8, 5.2],
+        "scale": 1.04,
+        "flip": false
+      },
+      {
+        "kind": "grass",
+        "pos": [7.5, 36.2],
+        "scale": 0.99,
+        "flip": false
+      },
+      {
+        "kind": "flowers",
+        "pos": [19.1, 5.3],
+        "scale": 0.73,
+        "flip": true
+      },
+      {
+        "kind": "flowers",
+        "pos": [8.3, 7.8],
+        "scale": 0.73,
+        "flip": true
+      },
+      {
+        "kind": "grass_patch",
+        "pos": [40.7, 9.4],
+        "scale": 0.83,
+        "flip": false
+      },
+      {
+        "kind": "grass",
+        "pos": [57.8, 44.6],
+        "scale": 0.85,
+        "flip": true
+      },
+      {
+        "kind": "grass",
+        "pos": [38.0, 37.1],
+        "scale": 0.83,
+        "flip": false
+      },
+      {
+        "kind": "grass",
+        "pos": [23.9, 43.7],
+        "scale": 0.93,
+        "flip": true
+      },
+      {
+        "kind": "grass",
+        "pos": [50.2, 39.5],
+        "scale": 0.83,
+        "flip": false
+      },
+      {
+        "kind": "grass",
+        "pos": [12.6, 17.3],
+        "scale": 0.73,
+        "flip": true
+      },
+      {
+        "kind": "grass",
+        "pos": [9.8, 22.9],
+        "scale": 0.8,
+        "flip": true
+      },
+      {
+        "kind": "grass",
+        "pos": [28.9, 44.4],
+        "scale": 0.89,
+        "flip": true
+      },
+      {
+        "kind": "flowers",
+        "pos": [21.3, 6.2],
+        "scale": 0.77,
+        "flip": false
+      },
+      {
+        "kind": "grass",
+        "pos": [53.2, 22.6],
+        "scale": 1.07,
+        "flip": true
+      },
+      {
+        "kind": "grass",
+        "pos": [49.3, 46.6],
+        "scale": 0.8,
+        "flip": true
+      },
+      {
+        "kind": "grass",
+        "pos": [50.6, 15.9],
+        "scale": 0.84,
+        "flip": true
+      },
+      {
+        "kind": "grass",
+        "pos": [41.1, 44.7],
+        "scale": 0.8,
+        "flip": true
+      },
+      {
+        "kind": "flowers",
+        "pos": [1.2, 38.3],
+        "scale": 1.01,
+        "flip": false
+      },
+      {
+        "kind": "grass_patch",
+        "pos": [27.6, 3.2],
+        "scale": 0.96,
+        "flip": false
+      },
+      {
+        "kind": "grass",
+        "pos": [45.4, 22.7],
+        "scale": 0.91,
+        "flip": false
+      },
+      {
+        "kind": "shrub",
+        "pos": [26.3, 14.9],
+        "scale": 0.85,
+        "flip": true
+      },
+      {
+        "kind": "flowers",
+        "pos": [24.3, 29.8],
+        "scale": 0.91,
+        "flip": false
+      },
+      {
+        "kind": "shrub",
+        "pos": [24.8, 16.8],
+        "scale": 0.81,
+        "flip": true
+      },
+      {
+        "kind": "shrub",
+        "pos": [38.7, 30.5],
+        "scale": 0.8,
+        "flip": true
+      },
+      {
+        "kind": "shrub",
+        "pos": [19.4, 19.8],
+        "scale": 0.88,
+        "flip": false
+      },
+      {
+        "kind": "grass_patch",
+        "pos": [46.4, 27.4],
+        "scale": 0.78,
+        "flip": false
+      },
+      {
+        "kind": "grass",
+        "pos": [23.2, 17.1],
+        "scale": 0.8,
+        "flip": true
+      },
+      {
+        "kind": "grass_patch",
+        "pos": [29.8, 15.7],
+        "scale": 0.95,
+        "flip": false
+      },
+      {
+        "kind": "flowers",
+        "pos": [39.0, 18.0],
+        "scale": 0.74,
+        "flip": true
+      },
+      {
+        "kind": "flowers",
+        "pos": [26.1, 15.9],
+        "scale": 1.0,
+        "flip": true
+      },
+      {
+        "kind": "grass_patch",
+        "pos": [22.8, 18.6],
+        "scale": 0.73,
+        "flip": true
+      },
+      {
+        "kind": "grass",
+        "pos": [43.6, 31.1],
+        "scale": 0.83,
+        "flip": true
+      },
+      {
+        "kind": "flowers",
+        "pos": [29.4, 18.0],
+        "scale": 0.8,
+        "flip": false
+      },
+      {
+        "kind": "grass_patch",
+        "pos": [34.9, 17.8],
+        "scale": 0.78,
+        "flip": true
+      },
+      {
+        "kind": "grass_patch",
+        "pos": [24.6, 27.1],
+        "scale": 0.9,
+        "flip": true
+      },
+      {
+        "kind": "shrub",
+        "pos": [29.7, 30.9],
+        "scale": 0.98,
+        "flip": true
+      },
+      {
+        "kind": "grass_patch",
+        "pos": [28.1, 14.8],
+        "scale": 0.88,
+        "flip": false
+      },
+      {
+        "kind": "lantern_post",
+        "pos": [29.6, 22],
+        "scale": 1.0,
+        "flip": true
+      },
+      {
+        "kind": "lantern_post",
+        "pos": [29.6, 26],
+        "scale": 1.0,
+        "flip": true
+      },
+      {
+        "kind": "lantern_post",
+        "pos": [34.4, 22],
+        "scale": 1.0,
+        "flip": true
+      },
+      {
+        "kind": "lantern_post",
+        "pos": [40, 24.6],
+        "scale": 1.0,
+        "flip": false
+      },
+      {
+        "kind": "lantern_post",
+        "pos": [30, 14.5],
+        "scale": 1.0,
+        "flip": true
+      },
+      {
+        "kind": "barrel",
+        "pos": [29, 32.5],
+        "scale": 1.0,
+        "flip": false
+      },
+      {
+        "kind": "crate",
+        "pos": [35, 32.5],
+        "scale": 1.0,
+        "flip": true
+      },
+      {
+        "kind": "barrel",
+        "pos": [23.5, 32],
+        "scale": 1.0,
+        "flip": true
+      },
+      {
+        "kind": "crate",
+        "pos": [42.5, 28.5],
+        "scale": 1.0,
+        "flip": true
+      },
+      {
+        "kind": "panda_banner",
+        "pos": [20.5, 23.6],
+        "scale": 1.0,
+        "flip": true
+      },
+      {
+        "kind": "panda_banner",
+        "pos": [20.5, 28.4],
+        "scale": 1.0,
+        "flip": true
+      },
+      {
+        "kind": "panda_banner",
+        "pos": [28.6, 10.5],
+        "scale": 1.0,
+        "flip": false
+      },
+      {
+        "kind": "panda_banner",
+        "pos": [33.4, 10.5],
+        "scale": 1.0,
+        "flip": false
+      },
+      {
+        "kind": "panda_banner",
+        "pos": [45.2, 19.5],
+        "scale": 1.0,
+        "flip": true
+      },
+      {
+        "kind": "panda_banner",
+        "pos": [46.8, 23.5],
+        "scale": 1.0,
+        "flip": false
+      }
+    ]
+  }
 }

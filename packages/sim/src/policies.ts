@@ -6,6 +6,7 @@ import {
   buyOptions,
   castleOffer,
   throughGate,
+  walkAim,
   type BuyOption,
   type Command,
   type GameContext,
@@ -48,7 +49,8 @@ export function chaseNearestEnemy(state: GameState, ctx: GameContext): Command[]
   }
   // Through a wall's gate if a wing is in the way; rounded so the command log stays readable
   // (the core normalises the vector).
-  const aim = throughGate(state, ctx, king.pos, best, ctx.king.radius);
+  const around = walkAim(ctx.blockers, ctx.ways, king.pos, best, ctx.king.radius);
+  const aim = throughGate(state, ctx, king.pos, around, ctx.king.radius);
   const aimD = Math.sqrt((aim.x - king.pos.x) ** 2 + (aim.y - king.pos.y) ** 2) || 1;
   const round = (v: number) => Math.round(v * 100) / 100;
   const commands: Command[] = [
