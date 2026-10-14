@@ -133,6 +133,21 @@ steering, hand-made maps) and the prototype design (corpus 11), and are easy to 
 - Balance (`pnpm sim`, 200 seeds): balanced ~95%, defensive ~80%. The `defensive-loss` golden
   moved to seed 5.
 
+## Character animation (2026-10-14, corpus 11 §12.0)
+
+Light, code-driven and view-only (`apps/game/src/game/animation.ts`); the core, replays and
+balance are untouched.
+
+- Walk bob: actors hop once per 0.9 m walked, so faster walkers bob faster; standing still
+  settles the feet down. The king's horse bobs less, the catapult only rattles, the harpy flaps.
+- Facing: actors turn toward where they walk and toward the one they strike.
+- Weapon swing: footmen carry a sword, raiders and the Warlord an axe, brutes a club,
+  skirmishers a bow they draw; the king levels his spear into a thrust; the catapult throws its
+  arm. A melee blow swings on its `hit` event, a shot on its `fired` event.
+- Hit flash: anything hit, buildings included, washes white for 0.12 s (any sprite, no extra
+  drawers: the flash re-draws it with every colour replaced by white).
+- Death fall: a dead footman or enemy tips over backwards where it died, then fades (0.6 s).
+
 ## Balance (first playtest, 2026-10-13)
 
 Gold felt scarce in play while the simulator found the game easy (the king alone reached

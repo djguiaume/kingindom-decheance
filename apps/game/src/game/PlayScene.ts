@@ -20,7 +20,8 @@ import { colors } from '../theme.ts';
 import type { CameraView } from './camera.ts';
 import { SCALE, SQUASH } from './camera.ts';
 import type { GameRuntime } from './runtime.ts';
-import { shadow, spriteFor } from './sprites.ts';
+import { Animator, fallAt, keyOf, type Pose } from './animation.ts';
+import { bobHeight, shadow, spriteFor } from './sprites.ts';
 
 const HIT_FLASH_MS = 160;
 const SHOT_MS = 180;
@@ -63,6 +64,8 @@ export class PlayScene extends Phaser.Scene {
   private puffs: { at: { x: number; y: number }; start: number }[] = [];
   /** Who fired each shot in flight (the shooter may die before it lands). */
   private shooters = new Map<number, string>();
+  /** Walk bob, swings, hit flashes and falling bodies (view-only). */
+  private animator = new Animator();
 
   constructor(
     private readonly runtime: GameRuntime,
@@ -87,6 +90,7 @@ export class PlayScene extends Phaser.Scene {
     this.input.on('wheel', () => this.view.toggleZoom());
 
     this.unsubscribe = this.runtime.onEvents((events) => {
+      this.animator.onEvents(events, this.time.now, (ref) => this.refWorld(ref));
       for (const e of events) {
         if (e.type === 'stomp') {
           const enemy = this.runtime.state.enemies.find((x) => x.id === e.enemy);
@@ -230,20 +234,45 @@ export class PlayScene extends Phaser.Scene {
 
     // Everything that stands up is drawn back to front (painter's order by ground y).
     const items: { y: number; draw: () => void }[] = [];
+    const now = this.time.now;
+    /** Animation keys drawn this frame; the animator forgets the others. */
+    const seen = new Set<string>();
+    /**
+     * `key` animates the entity: actors (`actor`) walk, swing, flash and fall; buildings only
+     * flash when hit.
+     */
     const add = (
       pos: { x: number; y: number },
       radius: number,
       id: string,
       alpha = 1,
       hp?: [number, number],
+      key?: string,
+      actor = false,
     ) => {
       const p = this.px(pos);
       const s = radius * SCALE;
+      let pose: Pose | null = null;
+      let flash = 0;
+      if (key) {
+        seen.add(key);
+        if (actor) {
+          pose = this.animator.pose(key, pos, { sprite: id, radius }, now);
+          flash = pose.flash;
+        } else {
+          this.animator.still(key, pos);
+          flash = this.animator.flash(key, now);
+        }
+      }
       items.push({
         y: p.y,
         draw: () => {
           shadow(g, p.x, p.y, s);
-          spriteFor(id)(g, p.x, p.y, s, alpha);
+          if (pose) this.drawActor(id, p.x, p.y, s, alpha, pose);
+          else {
+            spriteFor(id)(g, p.x, p.y, s, alpha);
+            if (flash > 0) spriteFor(id)(whiteout(g, flash * 0.7), p.x, p.y, s, alpha);
+          }
           if (hp && hp[0] < hp[1]) this.hpBar(p.x, p.y - s * 3.2, s, hp[0], hp[1]);
         },
       });
@@ -259,32 +288,44 @@ export class PlayScene extends Phaser.Scene {
         b.type,
         b.destroyed ? 0.3 : 1,
         b.destroyed ? undefined : [b.hp, b.maxHp],
+        `b${b.id}`,
       );
     }
     for (const u of state.units) {
-      add(this.runtime.drawPos(`u${u.id}`, u.pos), ctx.units.get(u.type)!.radius, u.type, 1, [
-        u.hp,
-        u.maxHp,
-      ]);
+      const key = `u${u.id}`;
+      const def = ctx.units.get(u.type)!;
+      add(this.runtime.drawPos(key, u.pos), def.radius, u.type, 1, [u.hp, u.maxHp], key, true);
     }
     for (const e of state.enemies) {
-      add(this.runtime.drawPos(`e${e.id}`, e.pos), ctx.enemies.get(e.type)!.radius, e.type, 1, [
-        e.hp,
-        e.maxHp,
-      ]);
+      const key = `e${e.id}`;
+      const def = ctx.enemies.get(e.type)!;
+      add(this.runtime.drawPos(key, e.pos), def.radius, e.type, 1, [e.hp, e.maxHp], key, true);
     }
     if (state.king.alive) {
-      add(this.runtime.drawPos('king', state.king.pos), ctx.king.radius, 'king', 1, [
-        state.king.hp,
-        state.king.maxHp,
-      ]);
+      const hp: [number, number] = [state.king.hp, state.king.maxHp];
+      add(
+        this.runtime.drawPos('king', state.king.pos),
+        ctx.king.radius,
+        'king',
+        1,
+        hp,
+        'king',
+        true,
+      );
+    }
+    this.animator.prune(seen, now);
+    for (const c of this.animator.corpses) {
+      const fall = fallAt(now - c.start);
+      if (!fall) continue;
+      const p = this.px(c.pos);
+      const s = c.radius * SCALE;
+      items.push({ y: p.y, draw: () => this.drawCorpse(c.sprite, p.x, p.y, s, c.facing, fall) });
     }
     this.addFlags(items);
     items.sort((a, b) => a.y - b.y);
     for (const item of items) item.draw();
     this.drawProjectiles();
 
-    const now = this.time.now;
     this.stomps = this.stomps.filter((st) => now - st.start < STOMP_MS);
     for (const st of this.stomps) {
       const t = (now - st.start) / STOMP_MS;
@@ -568,6 +609,61 @@ export class PlayScene extends Phaser.Scene {
     }
   }
 
+  /**
+   * An actor in its pose: lifted by its step, mirrored to face where it goes or strikes, leaning
+   * into a blow, and washed white for a moment when hit. The shadow stays on the ground.
+   */
+  private drawActor(id: string, x: number, y: number, s: number, alpha: number, pose: Pose): void {
+    const g = this.dynamic;
+    const draw = spriteFor(id);
+    g.save();
+    g.translateCanvas(x, y - pose.bob * bobHeight(id) * s);
+    g.scaleCanvas(pose.facing, 1);
+    g.rotateCanvas(pose.lean);
+    draw(g, 0, 0, s, alpha, pose);
+    if (pose.flash > 0) draw(whiteout(g, pose.flash * 0.8), 0, 0, s, alpha, pose);
+    g.restore();
+  }
+
+  /** A body tipping over backwards where it died, then fading; a flyer drops to the ground. */
+  private drawCorpse(
+    id: string,
+    x: number,
+    y: number,
+    s: number,
+    facing: 1 | -1,
+    fall: { tip: number; alpha: number },
+  ): void {
+    const g = this.dynamic;
+    shadow(g, x, y, s * (1 - 0.3 * fall.tip));
+    g.save();
+    g.translateCanvas(x, y + (id === 'harpy' ? fall.tip * s * 2.2 : 0));
+    g.scaleCanvas(facing, 1);
+    g.rotateCanvas(-fall.tip * 1.35);
+    spriteFor(id)(g, 0, 0, s, fall.alpha);
+    g.restore();
+  }
+
+  /** An actor's position in metres, to turn it toward the one it strikes. */
+  private refWorld(ref: Ref): Vec | null {
+    const key = keyOf(ref);
+    const s = this.runtime.state;
+    switch (ref.kind) {
+      case 'king':
+        return s.king.pos;
+      case 'castle':
+        return s.castle.pos;
+      case 'building':
+        return s.buildings.find((x) => x.id === ref.id)?.pos ?? null;
+      case 'unit':
+      case 'enemy': {
+        const list: { id: number; pos: Vec }[] = ref.kind === 'unit' ? s.units : s.enemies;
+        const found = list.find((x) => x.id === ref.id);
+        return found && key ? this.runtime.drawPos(key, found.pos) : null;
+      }
+    }
+  }
+
   private hpBar(x: number, y: number, s: number, hp: number, max: number): void {
     const g = this.dynamic;
     const w = Math.max(24, s * 2);
@@ -599,3 +695,23 @@ const darken = (c: number, f = 0.7) =>
   (Math.round(((c >> 16) & 255) * f) << 16) |
   (Math.round(((c >> 8) & 255) * f) << 8) |
   Math.round((c & 255) * f);
+
+/**
+ * The same drawing in white: every fill and line colour is replaced, so any sprite can flash
+ * without a second set of drawers. `strength` is the white's opacity.
+ */
+function whiteout(g: Phaser.GameObjects.Graphics, strength: number): Phaser.GameObjects.Graphics {
+  return new Proxy(g, {
+    get(target, prop) {
+      if (prop === 'fillStyle')
+        return (_color: number, alpha = 1) => target.fillStyle(0xffffff, alpha * strength);
+      if (prop === 'lineStyle')
+        return (width: number, _color: number, alpha = 1) =>
+          target.lineStyle(width, 0xffffff, alpha * strength);
+      const value: unknown = Reflect.get(target, prop);
+      return typeof value === 'function'
+        ? (value as (...a: unknown[]) => unknown).bind(target)
+        : value;
+    },
+  });
+}
