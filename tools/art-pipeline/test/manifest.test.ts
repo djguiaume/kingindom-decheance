@@ -61,6 +61,17 @@ describe('manifest', () => {
     }
   });
 
+  it('tells long weapons to lie along their canvas and characters to turn right', () => {
+    const prompt = (id: string) => {
+      const a = manifest.assets.find((x) => x.id === id)!;
+      return promptFor(a, a.parts[0]!);
+    };
+    expect(prompt('footman_weapon')).toMatch(/perfectly horizontal/);
+    expect(prompt('monk_weapon')).toMatch(/perfectly upright/);
+    expect(prompt('arrow')).toMatch(/perfectly horizontal/);
+    expect(prompt('footman')).toMatch(/turned clearly toward the right/);
+  });
+
   it('keeps transparency rules consistent with the kind', () => {
     for (const a of manifest.assets) expect(a.transparent).toBe(KIND_RULES[a.kind].transparent);
   });
