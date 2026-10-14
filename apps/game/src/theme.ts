@@ -9,6 +9,8 @@ export const colors = {
   ground: 0x243044,
   grass: 0x6fa857,
   night: 0x0b1a4a,
+  /** Multiplied over painted buildings at night: moonlit blue, still readable. */
+  nightArt: 0xb4c0dc,
   lane: 0xc9b47e,
   airLane: 0x5b4a7a,
   slot: 0x6b7d99,

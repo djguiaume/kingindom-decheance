@@ -1,1 +1,1 @@
-{"permissions":{"allow":["Bash(pnpm art generate:*)"]}}
+{ "permissions": { "allow": ["Bash(pnpm art generate:*)"] } }
