@@ -1,0 +1,50 @@
+{
+  "token": "9ed6db278a",
+  "selector": "tile_path,path_edge,water_edge,gate_wood.diag.f1,gate_wood.diag.f2",
+  "modelId": "model_openai-gpt-image-2-5-flare",
+  "createdAt": "2026-10-14T19:33:32.867Z",
+  "totalCU": 61,
+  "parts": [
+    {
+      "id": "gate_wood.diag.f1",
+      "promptHash": "6061a2bef49b",
+      "estimateCU": 12
+    },
+    {
+      "id": "gate_wood.diag.f2",
+      "promptHash": "05a4e4c49711",
+      "estimateCU": 12
+    },
+    {
+      "id": "path_edge",
+      "promptHash": "33d3c08a701e",
+      "estimateCU": 12
+    },
+    {
+      "id": "water_edge",
+      "promptHash": "18bbe188f7ef",
+      "estimateCU": 13
+    },
+    {
+      "id": "tile_path",
+      "promptHash": "6ad1614f4610",
+      "estimateCU": 12
+    }
+  ],
+  "skipped": [],
+  "runs": [
+    {
+      "at": "2026-10-14T19:36:24.569Z",
+      "budgetCU": 104,
+      "spentCU": 61,
+      "done": [
+        "gate_wood.diag.f1",
+        "gate_wood.diag.f2",
+        "path_edge",
+        "water_edge",
+        "tile_path"
+      ],
+      "failed": []
+    }
+  ]
+}

@@ -1,0 +1,3980 @@
+{
+  "version": "1.2",
+  "reference": "art/reference/panda-kingdom-v1.2.png",
+  "scale": "1 m = 64 px",
+  "facing": "right",
+  "assets": [
+    {
+      "num": 1,
+      "code": "001",
+      "id": "king_roll_idle",
+      "name": "Rolling king: idle",
+      "group": "kings",
+      "kind": "character",
+      "contentId": "king",
+      "subject": "the panda king on foot: older, stout, crown one size too big, deep blue cape with gold trim, dark armour, standing ready; hands in a grip pose without a weapon (the spear is a separate layer)",
+      "canvas": {
+        "w": 192,
+        "h": 192
+      },
+      "heightPx": 125,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "king_roll_idle",
+          "frame": 0,
+          "master": "art/masters/kings/001_king_roll_idle.png"
+        },
+        {
+          "id": "king_roll_idle.back",
+          "frame": 0,
+          "view": "back",
+          "master": "art/masters/kings/001_king_roll_idle_back.png"
+        }
+      ]
+    },
+    {
+      "num": 2,
+      "code": "002",
+      "id": "king_roll_walk",
+      "name": "Rolling king: walk",
+      "group": "kings",
+      "kind": "character",
+      "contentId": "king",
+      "subject": "the panda king on foot (same design as the idle pose), walking right, no weapon",
+      "canvas": {
+        "w": 192,
+        "h": 192
+      },
+      "heightPx": 125,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "king_roll_walk.f1",
+          "frame": 0,
+          "pose": "contact pose, left foot forward",
+          "master": "art/masters/kings/002_king_roll_walk_f1.png"
+        },
+        {
+          "id": "king_roll_walk.f2",
+          "frame": 1,
+          "pose": "passing pose, body slightly raised",
+          "master": "art/masters/kings/002_king_roll_walk_f2.png"
+        },
+        {
+          "id": "king_roll_walk.f3",
+          "frame": 2,
+          "pose": "contact pose, right foot forward",
+          "master": "art/masters/kings/002_king_roll_walk_f3.png"
+        },
+        {
+          "id": "king_roll_walk.f4",
+          "frame": 3,
+          "pose": "passing pose, body slightly raised, opposite arm swing",
+          "master": "art/masters/kings/002_king_roll_walk_f4.png"
+        },
+        {
+          "id": "king_roll_walk.back.f1",
+          "frame": 0,
+          "view": "back",
+          "pose": "contact pose, left foot forward",
+          "master": "art/masters/kings/002_king_roll_walk_back_f1.png"
+        },
+        {
+          "id": "king_roll_walk.back.f2",
+          "frame": 1,
+          "view": "back",
+          "pose": "passing pose, body slightly raised",
+          "master": "art/masters/kings/002_king_roll_walk_back_f2.png"
+        },
+        {
+          "id": "king_roll_walk.back.f3",
+          "frame": 2,
+          "view": "back",
+          "pose": "contact pose, right foot forward",
+          "master": "art/masters/kings/002_king_roll_walk_back_f3.png"
+        },
+        {
+          "id": "king_roll_walk.back.f4",
+          "frame": 3,
+          "view": "back",
+          "pose": "passing pose, body slightly raised, opposite arm swing",
+          "master": "art/masters/kings/002_king_roll_walk_back_f4.png"
+        }
+      ]
+    },
+    {
+      "num": 3,
+      "code": "003",
+      "id": "king_roll_anticipate",
+      "name": "Rolling king: anticipate",
+      "group": "kings",
+      "kind": "character",
+      "contentId": "king",
+      "subject": "the panda king crouching and starting to curl into a ball before a rolling charge, cape wrapping around him",
+      "canvas": {
+        "w": 192,
+        "h": 192
+      },
+      "heightPx": 110,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "king_roll_anticipate",
+          "frame": 0,
+          "master": "art/masters/kings/003_king_roll_anticipate.png"
+        }
+      ]
+    },
+    {
+      "num": 4,
+      "code": "004",
+      "id": "king_roll_roll",
+      "name": "Rolling king: roll",
+      "group": "kings",
+      "kind": "character",
+      "contentId": "king",
+      "subject": "the panda king fully curled into a round ball wrapped in his blue and gold cape, rolling right like a spin dash; no motion trail (effects are separate)",
+      "canvas": {
+        "w": 192,
+        "h": 192
+      },
+      "heightPx": 96,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [
+        "The four frames are the same ball turned in 90-degree steps."
+      ],
+      "parts": [
+        {
+          "id": "king_roll_roll.f1",
+          "frame": 0,
+          "pose": "ball rotated 0 degrees",
+          "master": "art/masters/kings/004_king_roll_roll_f1.png"
+        },
+        {
+          "id": "king_roll_roll.f2",
+          "frame": 1,
+          "pose": "ball rotated 90 degrees",
+          "master": "art/masters/kings/004_king_roll_roll_f2.png"
+        },
+        {
+          "id": "king_roll_roll.f3",
+          "frame": 2,
+          "pose": "ball rotated 180 degrees",
+          "master": "art/masters/kings/004_king_roll_roll_f3.png"
+        },
+        {
+          "id": "king_roll_roll.f4",
+          "frame": 3,
+          "pose": "ball rotated 270 degrees",
+          "master": "art/masters/kings/004_king_roll_roll_f4.png"
+        }
+      ]
+    },
+    {
+      "num": 5,
+      "code": "005",
+      "id": "king_roll_impact_fx",
+      "name": "Rolling king: impact FX",
+      "group": "kings",
+      "kind": "effect",
+      "contentId": "king",
+      "subject": "a burst of dust and small stones thrown up where a rolling ball hits enemies",
+      "canvas": {
+        "w": 192,
+        "h": 128
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1536,
+        "h": 1024
+      },
+      "checks": [],
+      "inferred": "The sheet labels two items \"5\" (Uncurl and Impact FX); 5 is read as Impact FX, 6 as Uncurl.",
+      "parts": [
+        {
+          "id": "king_roll_impact_fx.f1",
+          "frame": 0,
+          "pose": "start: small and bright",
+          "master": "art/masters/kings/005_king_roll_impact_fx_f1.png"
+        },
+        {
+          "id": "king_roll_impact_fx.f2",
+          "frame": 1,
+          "pose": "peak: largest and brightest",
+          "master": "art/masters/kings/005_king_roll_impact_fx_f2.png"
+        },
+        {
+          "id": "king_roll_impact_fx.f3",
+          "frame": 2,
+          "pose": "fade: breaking apart",
+          "master": "art/masters/kings/005_king_roll_impact_fx_f3.png"
+        }
+      ]
+    },
+    {
+      "num": 6,
+      "code": "006",
+      "id": "king_roll_uncurl",
+      "name": "Rolling king: uncurl",
+      "group": "kings",
+      "kind": "character",
+      "contentId": "king",
+      "subject": "the panda king springing out of his ball, arms open, cape flaring, landing in a heroic stance",
+      "canvas": {
+        "w": 192,
+        "h": 192
+      },
+      "heightPx": 125,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "king_roll_uncurl.f1",
+          "frame": 0,
+          "pose": "half uncurled, still round",
+          "master": "art/masters/kings/006_king_roll_uncurl_f1.png"
+        },
+        {
+          "id": "king_roll_uncurl.f2",
+          "frame": 1,
+          "pose": "standing up, cape flaring",
+          "master": "art/masters/kings/006_king_roll_uncurl_f2.png"
+        }
+      ]
+    },
+    {
+      "num": 7,
+      "code": "007",
+      "id": "king_wolf_idle",
+      "name": "Wolf rider: idle",
+      "group": "kings",
+      "kind": "character",
+      "contentId": "king",
+      "subject": "the panda king (crown, blue cape with gold trim) riding a large grey wolf with a real four-legged wolf anatomy, saddle and blue harness; rider hands in a grip pose without a weapon",
+      "canvas": {
+        "w": 256,
+        "h": 256
+      },
+      "heightPx": 150,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [
+        "The wolf has four legs in a plausible stance."
+      ],
+      "parts": [
+        {
+          "id": "king_wolf_idle",
+          "frame": 0,
+          "master": "art/masters/kings/007_king_wolf_idle.png"
+        },
+        {
+          "id": "king_wolf_idle.back",
+          "frame": 0,
+          "view": "back",
+          "master": "art/masters/kings/007_king_wolf_idle_back.png"
+        }
+      ]
+    },
+    {
+      "num": 8,
+      "code": "008",
+      "id": "king_wolf_walk",
+      "name": "Wolf rider: walk",
+      "group": "kings",
+      "kind": "character",
+      "contentId": "king",
+      "subject": "the panda king riding the grey wolf, wolf walking right",
+      "canvas": {
+        "w": 256,
+        "h": 256
+      },
+      "heightPx": 150,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "king_wolf_walk.f1",
+          "frame": 0,
+          "pose": "wolf walk: left front and right hind leg forward",
+          "master": "art/masters/kings/008_king_wolf_walk_f1.png"
+        },
+        {
+          "id": "king_wolf_walk.f2",
+          "frame": 1,
+          "pose": "wolf walk: legs passing",
+          "master": "art/masters/kings/008_king_wolf_walk_f2.png"
+        },
+        {
+          "id": "king_wolf_walk.f3",
+          "frame": 2,
+          "pose": "wolf walk: right front and left hind leg forward",
+          "master": "art/masters/kings/008_king_wolf_walk_f3.png"
+        },
+        {
+          "id": "king_wolf_walk.f4",
+          "frame": 3,
+          "pose": "wolf walk: legs passing, opposite",
+          "master": "art/masters/kings/008_king_wolf_walk_f4.png"
+        },
+        {
+          "id": "king_wolf_walk.back.f1",
+          "frame": 0,
+          "view": "back",
+          "pose": "wolf walk: left front and right hind leg forward",
+          "master": "art/masters/kings/008_king_wolf_walk_back_f1.png"
+        },
+        {
+          "id": "king_wolf_walk.back.f2",
+          "frame": 1,
+          "view": "back",
+          "pose": "wolf walk: legs passing",
+          "master": "art/masters/kings/008_king_wolf_walk_back_f2.png"
+        },
+        {
+          "id": "king_wolf_walk.back.f3",
+          "frame": 2,
+          "view": "back",
+          "pose": "wolf walk: right front and left hind leg forward",
+          "master": "art/masters/kings/008_king_wolf_walk_back_f3.png"
+        },
+        {
+          "id": "king_wolf_walk.back.f4",
+          "frame": 3,
+          "view": "back",
+          "pose": "wolf walk: legs passing, opposite",
+          "master": "art/masters/kings/008_king_wolf_walk_back_f4.png"
+        }
+      ]
+    },
+    {
+      "num": 9,
+      "code": "009",
+      "id": "king_wolf_run",
+      "name": "Wolf rider: run",
+      "group": "kings",
+      "kind": "character",
+      "contentId": "king",
+      "subject": "the panda king riding the grey wolf at full gallop to the right, cape streaming",
+      "canvas": {
+        "w": 256,
+        "h": 256
+      },
+      "heightPx": 140,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "king_wolf_run.f1",
+          "frame": 0,
+          "pose": "gallop: all four legs gathered under the body",
+          "master": "art/masters/kings/009_king_wolf_run_f1.png"
+        },
+        {
+          "id": "king_wolf_run.f2",
+          "frame": 1,
+          "pose": "gallop: front legs reaching forward",
+          "master": "art/masters/kings/009_king_wolf_run_f2.png"
+        },
+        {
+          "id": "king_wolf_run.f3",
+          "frame": 2,
+          "pose": "gallop: all four legs extended, airborne",
+          "master": "art/masters/kings/009_king_wolf_run_f3.png"
+        },
+        {
+          "id": "king_wolf_run.f4",
+          "frame": 3,
+          "pose": "gallop: hind legs pushing off",
+          "master": "art/masters/kings/009_king_wolf_run_f4.png"
+        },
+        {
+          "id": "king_wolf_run.back.f1",
+          "frame": 0,
+          "view": "back",
+          "pose": "gallop: all four legs gathered under the body",
+          "master": "art/masters/kings/009_king_wolf_run_back_f1.png"
+        },
+        {
+          "id": "king_wolf_run.back.f2",
+          "frame": 1,
+          "view": "back",
+          "pose": "gallop: front legs reaching forward",
+          "master": "art/masters/kings/009_king_wolf_run_back_f2.png"
+        },
+        {
+          "id": "king_wolf_run.back.f3",
+          "frame": 2,
+          "view": "back",
+          "pose": "gallop: all four legs extended, airborne",
+          "master": "art/masters/kings/009_king_wolf_run_back_f3.png"
+        },
+        {
+          "id": "king_wolf_run.back.f4",
+          "frame": 3,
+          "view": "back",
+          "pose": "gallop: hind legs pushing off",
+          "master": "art/masters/kings/009_king_wolf_run_back_f4.png"
+        }
+      ]
+    },
+    {
+      "num": 10,
+      "code": "010",
+      "id": "king_wolf_lunge",
+      "name": "Wolf rider: lunge",
+      "group": "kings",
+      "kind": "character",
+      "contentId": "king",
+      "subject": "the panda king (crown, blue cape with gold trim) riding the large grey wolf, firmly seated in the saddle, same rider and wolf as the wolf-rider idle pose; the wolf leaps forward in a lunge charge, jaws open, and the king leans in; rider hands in a grip pose without a weapon. The king is always on the wolf’s back, never missing",
+      "canvas": {
+        "w": 320,
+        "h": 256
+      },
+      "heightPx": 140,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [
+        "The king rides the wolf in both frames."
+      ],
+      "parts": [
+        {
+          "id": "king_wolf_lunge.f1",
+          "frame": 0,
+          "pose": "crouched, about to spring",
+          "master": "art/masters/kings/010_king_wolf_lunge_f1.png"
+        },
+        {
+          "id": "king_wolf_lunge.f2",
+          "frame": 1,
+          "pose": "fully stretched mid-leap",
+          "master": "art/masters/kings/010_king_wolf_lunge_f2.png"
+        }
+      ]
+    },
+    {
+      "num": 11,
+      "code": "011",
+      "id": "king_wolf_impact_fx",
+      "name": "Wolf rider: impact FX",
+      "group": "kings",
+      "kind": "effect",
+      "contentId": "king",
+      "subject": "a golden star-shaped impact flash with dust where the wolf lands its lunge",
+      "canvas": {
+        "w": 192,
+        "h": 160
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "king_wolf_impact_fx.f1",
+          "frame": 0,
+          "pose": "start: small and bright",
+          "master": "art/masters/kings/011_king_wolf_impact_fx_f1.png"
+        },
+        {
+          "id": "king_wolf_impact_fx.f2",
+          "frame": 1,
+          "pose": "peak: largest and brightest",
+          "master": "art/masters/kings/011_king_wolf_impact_fx_f2.png"
+        },
+        {
+          "id": "king_wolf_impact_fx.f3",
+          "frame": 2,
+          "pose": "fade: breaking apart",
+          "master": "art/masters/kings/011_king_wolf_impact_fx_f3.png"
+        }
+      ]
+    },
+    {
+      "num": 12,
+      "code": "012",
+      "id": "king_portrait",
+      "name": "King portrait",
+      "group": "kings",
+      "kind": "portrait",
+      "contentId": "king",
+      "subject": "head-and-shoulders portrait of the panda king facing the viewer, crown, blue cape collar with gold trim; for the HUD",
+      "canvas": {
+        "w": 256,
+        "h": 256
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "king_portrait",
+          "frame": 0,
+          "master": "art/masters/kings/012_king_portrait.png"
+        }
+      ]
+    },
+    {
+      "num": 13,
+      "code": "013",
+      "id": "king_spear",
+      "name": "King spear (weapon layer)",
+      "group": "kings",
+      "kind": "weapon",
+      "contentId": "king",
+      "subject": "the king’s royal spear: dark wooden shaft, steel leaf blade, small gold collar",
+      "canvas": {
+        "w": 192,
+        "h": 48
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1536,
+        "h": 1024
+      },
+      "checks": [],
+      "inferred": "Not shown on the sheet (it shows 1-12). Read as the king’s independent weapon layer, shared by both modifiers.",
+      "parts": [
+        {
+          "id": "king_spear",
+          "frame": 0,
+          "master": "art/masters/kings/013_king_spear.png"
+        }
+      ]
+    },
+    {
+      "num": 14,
+      "code": "014",
+      "id": "king_crown",
+      "name": "King crown (layer)",
+      "group": "kings",
+      "kind": "weapon",
+      "contentId": "king",
+      "subject": "the king’s gold crown, one size too big, three points with blue gems",
+      "canvas": {
+        "w": 64,
+        "h": 48
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "inferred": "Not shown on the sheet. Read as a separate crown layer so it can pop off and land during the roll and uncurl.",
+      "parts": [
+        {
+          "id": "king_crown",
+          "frame": 0,
+          "master": "art/masters/kings/014_king_crown.png"
+        }
+      ]
+    },
+    {
+      "num": 15,
+      "code": "015",
+      "id": "footman",
+      "name": "Footman",
+      "group": "friendly",
+      "kind": "character",
+      "contentId": "footman",
+      "subject": "panda spearman: light blue armour, round blue shield with a white panda-face emblem on the off arm; hands in a grip pose without a weapon (the weapon is a separate layer)",
+      "canvas": {
+        "w": 160,
+        "h": 160
+      },
+      "heightPx": 96,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "footman",
+          "frame": 0,
+          "master": "art/masters/friendly/015_footman.png"
+        },
+        {
+          "id": "footman.back",
+          "frame": 0,
+          "view": "back",
+          "master": "art/masters/friendly/015_footman_back.png"
+        }
+      ]
+    },
+    {
+      "num": 16,
+      "code": "016",
+      "id": "footman_weapon",
+      "name": "Footman weapon",
+      "group": "friendly",
+      "kind": "weapon",
+      "contentId": "footman",
+      "subject": "spear: wooden shaft, steel head",
+      "canvas": {
+        "w": 192,
+        "h": 48
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1536,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "footman_weapon",
+          "frame": 0,
+          "master": "art/masters/friendly/016_footman_weapon.png"
+        }
+      ]
+    },
+    {
+      "num": 17,
+      "code": "017",
+      "id": "knight",
+      "name": "Knight",
+      "group": "friendly",
+      "kind": "character",
+      "contentId": "knight",
+      "subject": "panda knight: heavy steel armour, blue tabard with gold trim, plumed helmet, large kite shield with panda emblem; hands in a grip pose without a weapon (the weapon is a separate layer)",
+      "canvas": {
+        "w": 160,
+        "h": 160
+      },
+      "heightPx": 104,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "knight",
+          "frame": 0,
+          "master": "art/masters/friendly/017_knight.png"
+        },
+        {
+          "id": "knight.back",
+          "frame": 0,
+          "view": "back",
+          "master": "art/masters/friendly/017_knight_back.png"
+        }
+      ]
+    },
+    {
+      "num": 18,
+      "code": "018",
+      "id": "knight_weapon",
+      "name": "Knight weapon",
+      "group": "friendly",
+      "kind": "weapon",
+      "contentId": "knight",
+      "subject": "longsword with gold crossguard",
+      "canvas": {
+        "w": 160,
+        "h": 48
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1536,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "knight_weapon",
+          "frame": 0,
+          "master": "art/masters/friendly/018_knight_weapon.png"
+        }
+      ]
+    },
+    {
+      "num": 19,
+      "code": "019",
+      "id": "archer",
+      "name": "Archer",
+      "group": "friendly",
+      "kind": "character",
+      "contentId": "archer",
+      "subject": "panda archer: blue hood, leather armour, quiver on the back; hands in a grip pose without a weapon (the weapon is a separate layer)",
+      "canvas": {
+        "w": 160,
+        "h": 160
+      },
+      "heightPx": 92,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "archer",
+          "frame": 0,
+          "master": "art/masters/friendly/019_archer.png"
+        },
+        {
+          "id": "archer.back",
+          "frame": 0,
+          "view": "back",
+          "master": "art/masters/friendly/019_archer_back.png"
+        }
+      ]
+    },
+    {
+      "num": 20,
+      "code": "020",
+      "id": "archer_weapon",
+      "name": "Archer weapon",
+      "group": "friendly",
+      "kind": "weapon",
+      "contentId": "archer",
+      "subject": "longbow, string taut, drawn vertical",
+      "canvas": {
+        "w": 64,
+        "h": 160
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1536
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "archer_weapon",
+          "frame": 0,
+          "master": "art/masters/friendly/020_archer_weapon.png"
+        }
+      ]
+    },
+    {
+      "num": 21,
+      "code": "021",
+      "id": "crossbowman",
+      "name": "Crossbowman",
+      "group": "friendly",
+      "kind": "character",
+      "contentId": "crossbowman",
+      "subject": "panda crossbowman: blue quilted coat, steel cap; hands in a grip pose without a weapon (the weapon is a separate layer)",
+      "canvas": {
+        "w": 160,
+        "h": 160
+      },
+      "heightPx": 94,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "crossbowman",
+          "frame": 0,
+          "master": "art/masters/friendly/021_crossbowman.png"
+        },
+        {
+          "id": "crossbowman.back",
+          "frame": 0,
+          "view": "back",
+          "master": "art/masters/friendly/021_crossbowman_back.png"
+        }
+      ]
+    },
+    {
+      "num": 22,
+      "code": "022",
+      "id": "crossbowman_weapon",
+      "name": "Crossbowman weapon",
+      "group": "friendly",
+      "kind": "weapon",
+      "contentId": "crossbowman",
+      "subject": "hand-held crossbow carried by one soldier: wooden stock, steel prod, bolt loaded; no wheels, no stand, no carriage, not a siege engine",
+      "canvas": {
+        "w": 128,
+        "h": 64
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1536,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "crossbowman_weapon",
+          "frame": 0,
+          "master": "art/masters/friendly/022_crossbowman_weapon.png"
+        }
+      ]
+    },
+    {
+      "num": 23,
+      "code": "023",
+      "id": "guardian",
+      "name": "Guardian",
+      "group": "friendly",
+      "kind": "character",
+      "contentId": "guardian",
+      "subject": "panda guardian: heavy blue and steel armour, tower shield almost as tall as him with a gold panda emblem; hands in a grip pose without a weapon (the weapon is a separate layer)",
+      "canvas": {
+        "w": 160,
+        "h": 160
+      },
+      "heightPx": 104,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "inferred": "Guardian is proposed content (not in the game yet).",
+      "parts": [
+        {
+          "id": "guardian",
+          "frame": 0,
+          "master": "art/masters/friendly/023_guardian.png"
+        },
+        {
+          "id": "guardian.back",
+          "frame": 0,
+          "view": "back",
+          "master": "art/masters/friendly/023_guardian_back.png"
+        }
+      ]
+    },
+    {
+      "num": 24,
+      "code": "024",
+      "id": "guardian_weapon",
+      "name": "Guardian weapon",
+      "group": "friendly",
+      "kind": "weapon",
+      "contentId": "guardian",
+      "subject": "short spear with a broad head",
+      "canvas": {
+        "w": 160,
+        "h": 48
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1536,
+        "h": 1024
+      },
+      "checks": [],
+      "inferred": "Guardian is proposed content (not in the game yet).",
+      "parts": [
+        {
+          "id": "guardian_weapon",
+          "frame": 0,
+          "master": "art/masters/friendly/024_guardian_weapon.png"
+        }
+      ]
+    },
+    {
+      "num": 25,
+      "code": "025",
+      "id": "monk",
+      "name": "Monk",
+      "group": "friendly",
+      "kind": "character",
+      "contentId": "monk",
+      "subject": "panda monk: wide conical straw hat, simple blue robe with gold sash, calm stance; hands in a grip pose without a weapon (the weapon is a separate layer)",
+      "canvas": {
+        "w": 160,
+        "h": 160
+      },
+      "heightPx": 98,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "inferred": "Monk is proposed content (not in the game yet).",
+      "parts": [
+        {
+          "id": "monk",
+          "frame": 0,
+          "master": "art/masters/friendly/025_monk.png"
+        },
+        {
+          "id": "monk.back",
+          "frame": 0,
+          "view": "back",
+          "master": "art/masters/friendly/025_monk_back.png"
+        }
+      ]
+    },
+    {
+      "num": 26,
+      "code": "026",
+      "id": "monk_weapon",
+      "name": "Monk weapon",
+      "group": "friendly",
+      "kind": "weapon",
+      "contentId": "monk",
+      "subject": "long wooden staff with gold rings at the top",
+      "canvas": {
+        "w": 48,
+        "h": 192
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1536
+      },
+      "checks": [],
+      "inferred": "Monk is proposed content (not in the game yet).",
+      "parts": [
+        {
+          "id": "monk_weapon",
+          "frame": 0,
+          "master": "art/masters/friendly/026_monk_weapon.png"
+        }
+      ]
+    },
+    {
+      "num": 27,
+      "code": "027",
+      "id": "raider",
+      "name": "Raider",
+      "group": "enemies",
+      "kind": "character",
+      "contentId": "raider",
+      "subject": "small green goblin raider: red bandana, ragged leather, mean grin; hands in a grip pose without a weapon (the weapon is a separate layer)",
+      "canvas": {
+        "w": 160,
+        "h": 160
+      },
+      "heightPx": 80,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "raider",
+          "frame": 0,
+          "master": "art/masters/enemies/027_raider.png"
+        },
+        {
+          "id": "raider.back",
+          "frame": 0,
+          "view": "back",
+          "master": "art/masters/enemies/027_raider_back.png"
+        }
+      ]
+    },
+    {
+      "num": 28,
+      "code": "028",
+      "id": "raider_weapon",
+      "name": "Raider weapon",
+      "group": "enemies",
+      "kind": "weapon",
+      "contentId": "raider",
+      "subject": "crude hand axe",
+      "canvas": {
+        "w": 96,
+        "h": 64
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1536,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "raider_weapon",
+          "frame": 0,
+          "master": "art/masters/enemies/028_raider_weapon.png"
+        }
+      ]
+    },
+    {
+      "num": 29,
+      "code": "029",
+      "id": "skirmisher",
+      "name": "Skirmisher",
+      "group": "enemies",
+      "kind": "character",
+      "contentId": "skirmisher",
+      "subject": "hooded goblin archer: dark hood with red trim, light leathers; hands in a grip pose without a weapon (the weapon is a separate layer)",
+      "canvas": {
+        "w": 160,
+        "h": 160
+      },
+      "heightPx": 84,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "skirmisher",
+          "frame": 0,
+          "master": "art/masters/enemies/029_skirmisher.png"
+        },
+        {
+          "id": "skirmisher.back",
+          "frame": 0,
+          "view": "back",
+          "master": "art/masters/enemies/029_skirmisher_back.png"
+        }
+      ]
+    },
+    {
+      "num": 30,
+      "code": "030",
+      "id": "skirmisher_weapon",
+      "name": "Skirmisher weapon",
+      "group": "enemies",
+      "kind": "weapon",
+      "contentId": "skirmisher",
+      "subject": "short recurved bow",
+      "canvas": {
+        "w": 64,
+        "h": 128
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1536
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "skirmisher_weapon",
+          "frame": 0,
+          "master": "art/masters/enemies/030_skirmisher_weapon.png"
+        }
+      ]
+    },
+    {
+      "num": 31,
+      "code": "031",
+      "id": "brute",
+      "name": "Brute",
+      "group": "enemies",
+      "kind": "character",
+      "contentId": "brute",
+      "subject": "big hunched grey-green ogre brute: red war paint, fur loincloth, heavy shoulders; hands in a grip pose without a weapon (the weapon is a separate layer)",
+      "canvas": {
+        "w": 256,
+        "h": 256
+      },
+      "heightPx": 150,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "brute",
+          "frame": 0,
+          "master": "art/masters/enemies/031_brute.png"
+        },
+        {
+          "id": "brute.back",
+          "frame": 0,
+          "view": "back",
+          "master": "art/masters/enemies/031_brute_back.png"
+        }
+      ]
+    },
+    {
+      "num": 32,
+      "code": "032",
+      "id": "brute_weapon",
+      "name": "Brute weapon",
+      "group": "enemies",
+      "kind": "weapon",
+      "contentId": "brute",
+      "subject": "huge spiked wooden club",
+      "canvas": {
+        "w": 192,
+        "h": 96
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1536,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "brute_weapon",
+          "frame": 0,
+          "master": "art/masters/enemies/032_brute_weapon.png"
+        }
+      ]
+    },
+    {
+      "num": 33,
+      "code": "033",
+      "id": "harpy",
+      "name": "Harpy",
+      "group": "enemies",
+      "kind": "flyer",
+      "contentId": "harpy",
+      "subject": "dark purple harpy flying, wings spread, red crest, talons tucked, hands in a grip pose without a weapon",
+      "canvas": {
+        "w": 192,
+        "h": 192
+      },
+      "heightPx": 110,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "harpy.f1",
+          "frame": 0,
+          "pose": "wings up",
+          "master": "art/masters/enemies/033_harpy_f1.png"
+        },
+        {
+          "id": "harpy.f2",
+          "frame": 1,
+          "pose": "wings level",
+          "master": "art/masters/enemies/033_harpy_f2.png"
+        },
+        {
+          "id": "harpy.f3",
+          "frame": 2,
+          "pose": "wings down",
+          "master": "art/masters/enemies/033_harpy_f3.png"
+        },
+        {
+          "id": "harpy.back.f1",
+          "frame": 0,
+          "view": "back",
+          "pose": "wings up",
+          "master": "art/masters/enemies/033_harpy_back_f1.png"
+        },
+        {
+          "id": "harpy.back.f2",
+          "frame": 1,
+          "view": "back",
+          "pose": "wings level",
+          "master": "art/masters/enemies/033_harpy_back_f2.png"
+        },
+        {
+          "id": "harpy.back.f3",
+          "frame": 2,
+          "view": "back",
+          "pose": "wings down",
+          "master": "art/masters/enemies/033_harpy_back_f3.png"
+        }
+      ]
+    },
+    {
+      "num": 34,
+      "code": "034",
+      "id": "harpy_weapon",
+      "name": "Harpy weapon",
+      "group": "enemies",
+      "kind": "weapon",
+      "contentId": "harpy",
+      "subject": "small crude double-headed axe with a dark bone handle and red rag wrapping; enemy gear, so no panda emblem, no blue and no gold",
+      "canvas": {
+        "w": 96,
+        "h": 96
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "inferred": "The sheet shows a double axe beside the harpy at 33-34; read as its weapon layer.",
+      "parts": [
+        {
+          "id": "harpy_weapon",
+          "frame": 0,
+          "master": "art/masters/enemies/034_harpy_weapon.png"
+        }
+      ]
+    },
+    {
+      "num": 35,
+      "code": "035",
+      "id": "catapult_chassis",
+      "name": "Catapult chassis",
+      "group": "enemies",
+      "kind": "siege",
+      "contentId": "catapult",
+      "subject": "goblin siege catapult chassis WITHOUT its throwing arm: symmetric rectangular wooden frame on four wheels, two upright A-frame supports on either side of the centre line holding a horizontal axle, crossbar stop, red rag flags; enemy gear, so no panda emblem, no blue and no gold; no operator",
+      "canvas": {
+        "w": 256,
+        "h": 256
+      },
+      "heightPx": 120,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [
+        "Mechanics: symmetric chassis, throwing arm centred on an axle between two supports; never side-mounted.",
+        "The axle hole is empty: the arm is the separate sprite 036.",
+        "No panda emblem: enemy gear."
+      ],
+      "parts": [
+        {
+          "id": "catapult_chassis",
+          "frame": 0,
+          "master": "art/masters/enemies/035_catapult_chassis.png"
+        }
+      ]
+    },
+    {
+      "num": 36,
+      "code": "036",
+      "id": "catapult_arm",
+      "name": "Catapult throwing arm",
+      "group": "enemies",
+      "kind": "siege",
+      "contentId": "catapult",
+      "subject": "the throwing arm of a goblin catapult on its own: one straight rough timber beam bound with rope, an axle hub near the lower end and a wooden bucket cup holding a grey stone at the top end; enemy gear, so no panda emblem, no blue and no gold. Every frame shows the exact same beam, hub and cup; only the angle changes",
+      "canvas": {
+        "w": 128,
+        "h": 256
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1536
+      },
+      "checks": [
+        "Mechanics: symmetric chassis, throwing arm centred on an axle between two supports; never side-mounted.",
+        "The hub lines up with the chassis axle; the pivot is the hub centre.",
+        "Both frames show the same beam and cup."
+      ],
+      "parts": [
+        {
+          "id": "catapult_arm.f1",
+          "frame": 0,
+          "pose": "cocked: arm pulled back",
+          "master": "art/masters/enemies/036_catapult_arm_f1.png"
+        },
+        {
+          "id": "catapult_arm.f2",
+          "frame": 1,
+          "pose": "released: arm vertical against the stop",
+          "master": "art/masters/enemies/036_catapult_arm_f2.png"
+        }
+      ]
+    },
+    {
+      "num": 37,
+      "code": "037",
+      "id": "warlord",
+      "name": "Warlord",
+      "group": "enemies",
+      "kind": "character",
+      "contentId": "warlord",
+      "subject": "big armoured goblin warlord (boss): red cape, horned helmet, spiked dark armour; hands in a grip pose without a weapon (the weapon is a separate layer)",
+      "canvas": {
+        "w": 256,
+        "h": 256
+      },
+      "heightPx": 170,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "warlord",
+          "frame": 0,
+          "master": "art/masters/enemies/037_warlord.png"
+        },
+        {
+          "id": "warlord.back",
+          "frame": 0,
+          "view": "back",
+          "master": "art/masters/enemies/037_warlord_back.png"
+        }
+      ]
+    },
+    {
+      "num": 38,
+      "code": "038",
+      "id": "warlord_weapon",
+      "name": "Warlord weapon",
+      "group": "enemies",
+      "kind": "weapon",
+      "contentId": "warlord",
+      "subject": "huge crude two-handed battle axe of dark iron with red rag wrapping; enemy gear, so no panda emblem, no blue and no gold",
+      "canvas": {
+        "w": 192,
+        "h": 96
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1536,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "warlord_weapon",
+          "frame": 0,
+          "master": "art/masters/enemies/038_warlord_weapon.png"
+        }
+      ]
+    },
+    {
+      "num": 39,
+      "code": "039",
+      "id": "warlord_bodyguard",
+      "name": "Warlord bodyguard",
+      "group": "enemies",
+      "kind": "character",
+      "contentId": "warlord",
+      "subject": "goblin bodyguard: small green goblin in a red-trimmed helmet and leather armour holding a round red-and-black shield",
+      "canvas": {
+        "w": 160,
+        "h": 160
+      },
+      "heightPx": 82,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "inferred": "The sheet shows two small goblins under the warlord at 37-39; read as the warlord’s escort.",
+      "parts": [
+        {
+          "id": "warlord_bodyguard",
+          "frame": 0,
+          "master": "art/masters/enemies/039_warlord_bodyguard.png"
+        },
+        {
+          "id": "warlord_bodyguard.back",
+          "frame": 0,
+          "view": "back",
+          "master": "art/masters/enemies/039_warlord_bodyguard_back.png"
+        }
+      ]
+    },
+    {
+      "num": 40,
+      "code": "040",
+      "id": "castle_1",
+      "name": "Castle 1",
+      "group": "buildings",
+      "kind": "building",
+      "contentId": "castle",
+      "subject": "pagoda castle level 1, the first stage of the same castle as levels 2 and 3: a broad, low wood-and-stone keep on a square stone platform with steps, one wide blue tiled pagoda roof, a short wooden palisade around it, panda banners; clearly wider than it is tall, a small castle and not a tower",
+      "canvas": {
+        "w": 512,
+        "h": 512
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [
+        "Castles 1, 2 and 3 read as one castle growing: same platform and roof style, more tiers each level."
+      ],
+      "parts": [
+        {
+          "id": "castle_1",
+          "frame": 0,
+          "master": "art/masters/buildings/040_castle_1.png"
+        }
+      ]
+    },
+    {
+      "num": 41,
+      "code": "041",
+      "id": "castle_2",
+      "name": "Castle 2",
+      "group": "buildings",
+      "kind": "building",
+      "contentId": "castle",
+      "subject": "pagoda keep level 2: larger, stone walls, two blue roof tiers, gold ridge ornaments",
+      "canvas": {
+        "w": 512,
+        "h": 512
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "castle_2",
+          "frame": 0,
+          "master": "art/masters/buildings/041_castle_2.png"
+        }
+      ]
+    },
+    {
+      "num": 42,
+      "code": "042",
+      "id": "castle_3",
+      "name": "Castle 3",
+      "group": "buildings",
+      "kind": "building",
+      "contentId": "castle",
+      "subject": "grand three-tier pagoda castle: stone base, three blue tiled roof tiers, gold ornaments, many panda banners",
+      "canvas": {
+        "w": 512,
+        "h": 512
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "castle_3",
+          "frame": 0,
+          "master": "art/masters/buildings/042_castle_3.png"
+        }
+      ]
+    },
+    {
+      "num": 43,
+      "code": "043",
+      "id": "house",
+      "name": "House",
+      "group": "buildings",
+      "kind": "building",
+      "contentId": "house",
+      "subject": "thatched bamboo hut with a paper lantern and a chimney",
+      "canvas": {
+        "w": 256,
+        "h": 256
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "house",
+          "frame": 0,
+          "master": "art/masters/buildings/043_house.png"
+        }
+      ]
+    },
+    {
+      "num": 44,
+      "code": "044",
+      "id": "manor",
+      "name": "Manor",
+      "group": "buildings",
+      "kind": "building",
+      "contentId": "manor",
+      "subject": "two-storey timber house with a blue tiled roof and a panda banner",
+      "canvas": {
+        "w": 256,
+        "h": 256
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "manor",
+          "frame": 0,
+          "master": "art/masters/buildings/044_manor.png"
+        }
+      ]
+    },
+    {
+      "num": 45,
+      "code": "045",
+      "id": "gold_mine",
+      "name": "Gold mine",
+      "group": "buildings",
+      "kind": "building",
+      "contentId": "gold_mine",
+      "subject": "rocky mine entrance with a timber frame, rails and a cart of gold nuggets",
+      "canvas": {
+        "w": 256,
+        "h": 256
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "gold_mine",
+          "frame": 0,
+          "master": "art/masters/buildings/045_gold_mine.png"
+        }
+      ]
+    },
+    {
+      "num": 46,
+      "code": "046",
+      "id": "tower",
+      "name": "Tower",
+      "group": "buildings",
+      "kind": "building",
+      "contentId": "tower",
+      "subject": "simple bamboo archer tower with a small blue roof",
+      "canvas": {
+        "w": 192,
+        "h": 288
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1536
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "tower",
+          "frame": 0,
+          "master": "art/masters/buildings/046_tower.png"
+        }
+      ]
+    },
+    {
+      "num": 47,
+      "code": "047",
+      "id": "watchtower",
+      "name": "Watchtower",
+      "group": "buildings",
+      "kind": "building",
+      "contentId": "watchtower",
+      "subject": "tall watchtower: stone base, timber upper floor, blue pagoda roof, lantern",
+      "canvas": {
+        "w": 224,
+        "h": 320
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1536
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "watchtower",
+          "frame": 0,
+          "master": "art/masters/buildings/047_watchtower.png"
+        }
+      ]
+    },
+    {
+      "num": 48,
+      "code": "048",
+      "id": "ballista_tower",
+      "name": "Ballista tower",
+      "group": "buildings",
+      "kind": "building",
+      "contentId": "ballista_tower",
+      "subject": "stone and timber tower with a working ballista mounted on its top platform: two bow limbs, taut string, central rail with a loaded bolt",
+      "canvas": {
+        "w": 256,
+        "h": 320
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [
+        "Ballista: two bow arms, a taut string, a central firing rail and a bolt."
+      ],
+      "inferred": "The sheet shows two items labelled 48; this is the complete tower, 050 and 051 split it into layers.",
+      "parts": [
+        {
+          "id": "ballista_tower",
+          "frame": 0,
+          "master": "art/masters/buildings/048_ballista_tower.png"
+        }
+      ]
+    },
+    {
+      "num": 49,
+      "code": "049",
+      "id": "volley_tower",
+      "name": "Volley tower",
+      "group": "buildings",
+      "kind": "building",
+      "contentId": "volley_tower",
+      "subject": "stone tower with several timber archer platforms at different heights and a blue roof",
+      "canvas": {
+        "w": 256,
+        "h": 320
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "volley_tower",
+          "frame": 0,
+          "master": "art/masters/buildings/049_volley_tower.png"
+        }
+      ]
+    },
+    {
+      "num": 50,
+      "code": "050",
+      "id": "ballista_tower_base",
+      "name": "Ballista tower base",
+      "group": "buildings",
+      "kind": "building",
+      "contentId": "ballista_tower",
+      "subject": "the same square wood-and-stone ballista tower as 048, standing on the ground, with an EMPTY flat top platform holding only a round pivot mount (no ballista on it); no wheels, not a cart or wagon",
+      "canvas": {
+        "w": 256,
+        "h": 320
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "inferred": "50-51 are not on the sheet. Read as the ballista tower split into base and turret so the weapon can aim.",
+      "parts": [
+        {
+          "id": "ballista_tower_base",
+          "frame": 0,
+          "master": "art/masters/buildings/050_ballista_tower_base.png"
+        }
+      ]
+    },
+    {
+      "num": 51,
+      "code": "051",
+      "id": "ballista_turret",
+      "name": "Ballista turret",
+      "group": "buildings",
+      "kind": "weapon",
+      "contentId": "ballista_tower",
+      "subject": "the ballista weapon head that sits on top of a tower, on its own, seen in the same 3/4 view: a big crossbow-like frame with two bow limbs, a taut string and a central rail with a bolt, on a small round turntable, pointing right; no wheels, no carriage, no throwing arm, no tower and nothing under it",
+      "canvas": {
+        "w": 192,
+        "h": 128
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1536,
+        "h": 1024
+      },
+      "checks": [
+        "Ballista: two bow arms, a taut string, a central firing rail and a bolt."
+      ],
+      "inferred": "See 050.",
+      "parts": [
+        {
+          "id": "ballista_turret",
+          "frame": 0,
+          "master": "art/masters/buildings/051_ballista_turret.png"
+        }
+      ]
+    },
+    {
+      "num": 52,
+      "code": "052",
+      "id": "barracks",
+      "name": "Barracks",
+      "group": "buildings",
+      "kind": "building",
+      "contentId": "barracks",
+      "subject": "training hall with spear racks and a blue roof",
+      "canvas": {
+        "w": 320,
+        "h": 320
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "barracks",
+          "frame": 0,
+          "master": "art/masters/buildings/052_barracks.png"
+        }
+      ]
+    },
+    {
+      "num": 53,
+      "code": "053",
+      "id": "garrison",
+      "name": "Garrison",
+      "group": "buildings",
+      "kind": "building",
+      "contentId": "garrison",
+      "subject": "fortified barracks: palisade, several blue banners, wooden melee training dummies in the yard, coherent blue roof",
+      "canvas": {
+        "w": 320,
+        "h": 320
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [
+        "Melee training dummies are visible; there are NO archery targets."
+      ],
+      "parts": [
+        {
+          "id": "garrison",
+          "frame": 0,
+          "master": "art/masters/buildings/053_garrison.png"
+        }
+      ]
+    },
+    {
+      "num": 54,
+      "code": "054",
+      "id": "knight_hall",
+      "name": "Knight hall",
+      "group": "buildings",
+      "kind": "building",
+      "contentId": "knight_hall",
+      "subject": "stone hall with crossed swords over the door, shields on the walls, armour stands and a knight banner",
+      "canvas": {
+        "w": 320,
+        "h": 320
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [
+        "Unmistakably a knight hall: crossed swords, shields, armoured practice equipment."
+      ],
+      "parts": [
+        {
+          "id": "knight_hall",
+          "frame": 0,
+          "master": "art/masters/buildings/054_knight_hall.png"
+        }
+      ]
+    },
+    {
+      "num": 55,
+      "code": "055",
+      "id": "archery_range",
+      "name": "Archery range",
+      "group": "buildings",
+      "kind": "building",
+      "contentId": "archery_range",
+      "subject": "open roofed range with straw targets, bow racks and a shooting lane",
+      "canvas": {
+        "w": 320,
+        "h": 320
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [
+        "Targets, bow racks and a shooting lane."
+      ],
+      "parts": [
+        {
+          "id": "archery_range",
+          "frame": 0,
+          "master": "art/masters/buildings/055_archery_range.png"
+        }
+      ]
+    },
+    {
+      "num": 56,
+      "code": "056",
+      "id": "marksmen",
+      "name": "Marksmen",
+      "group": "buildings",
+      "kind": "building",
+      "contentId": "marksmen",
+      "subject": "upgraded range: raised shooting platforms, several targets at varied distances, longbow racks",
+      "canvas": {
+        "w": 320,
+        "h": 320
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [
+        "More targets at varied distances than 055, plus platforms and bow racks."
+      ],
+      "parts": [
+        {
+          "id": "marksmen",
+          "frame": 0,
+          "master": "art/masters/buildings/056_marksmen.png"
+        }
+      ]
+    },
+    {
+      "num": 57,
+      "code": "057",
+      "id": "crossbow_range",
+      "name": "Crossbow range",
+      "group": "buildings",
+      "kind": "building",
+      "contentId": "crossbow_range",
+      "subject": "range with a reinforced shooting platform, large targets and heavy crossbow racks",
+      "canvas": {
+        "w": 320,
+        "h": 320
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [
+        "Large targets, reinforced platform, heavy crossbow racks."
+      ],
+      "parts": [
+        {
+          "id": "crossbow_range",
+          "frame": 0,
+          "master": "art/masters/buildings/057_crossbow_range.png"
+        }
+      ]
+    },
+    {
+      "num": 58,
+      "code": "058",
+      "id": "guardian_lodge",
+      "name": "Guardian lodge",
+      "group": "buildings",
+      "kind": "building",
+      "subject": "lodge with oversized shields on the walls and a shield-training wall",
+      "canvas": {
+        "w": 320,
+        "h": 320
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [
+        "Oversized shields and shield-training equipment."
+      ],
+      "inferred": "Proposed content.",
+      "parts": [
+        {
+          "id": "guardian_lodge",
+          "frame": 0,
+          "master": "art/masters/buildings/058_guardian_lodge.png"
+        }
+      ]
+    },
+    {
+      "num": 59,
+      "code": "059",
+      "id": "guardian_bastion",
+      "name": "Guardian bastion",
+      "group": "buildings",
+      "kind": "building",
+      "subject": "upgraded fortified bastion with large shield racks and a pell for shield drills",
+      "canvas": {
+        "w": 320,
+        "h": 320
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [
+        "Oversized shields and shield-training equipment."
+      ],
+      "inferred": "Proposed content.",
+      "parts": [
+        {
+          "id": "guardian_bastion",
+          "frame": 0,
+          "master": "art/masters/buildings/059_guardian_bastion.png"
+        }
+      ]
+    },
+    {
+      "num": 60,
+      "code": "060",
+      "id": "monk_sanctuary",
+      "name": "Monk sanctuary",
+      "group": "buildings",
+      "kind": "building",
+      "subject": "small sanctuary with a pink blossom tree, staff racks and wooden staff-training posts",
+      "canvas": {
+        "w": 320,
+        "h": 320
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [
+        "Distinct staff training elements."
+      ],
+      "inferred": "Proposed content.",
+      "parts": [
+        {
+          "id": "monk_sanctuary",
+          "frame": 0,
+          "master": "art/masters/buildings/060_monk_sanctuary.png"
+        }
+      ]
+    },
+    {
+      "num": 61,
+      "code": "061",
+      "id": "monastery",
+      "name": "Monastery",
+      "group": "buildings",
+      "kind": "building",
+      "subject": "larger monastery with a two-tier blue roof, a bell and a staff-training courtyard",
+      "canvas": {
+        "w": 320,
+        "h": 320
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [
+        "Distinct staff training elements."
+      ],
+      "inferred": "Proposed content.",
+      "parts": [
+        {
+          "id": "monastery",
+          "frame": 0,
+          "master": "art/masters/buildings/061_monastery.png"
+        }
+      ]
+    },
+    {
+      "num": 62,
+      "code": "062",
+      "id": "wall_post",
+      "name": "Wood post",
+      "group": "structures",
+      "kind": "structure",
+      "contentId": "wall",
+      "subject": "one bamboo palisade stake bound with blue rope",
+      "canvas": {
+        "w": 64,
+        "h": 128
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1536
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "wall_post",
+          "frame": 0,
+          "master": "art/masters/structures/062_wall_post.png"
+        }
+      ]
+    },
+    {
+      "num": 63,
+      "code": "063",
+      "id": "stone_wall_post",
+      "name": "Stone post",
+      "group": "structures",
+      "kind": "structure",
+      "contentId": "stone_wall",
+      "subject": "one stone wall block with a small blue roof-tile cap",
+      "canvas": {
+        "w": 64,
+        "h": 128
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1536
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "stone_wall_post",
+          "frame": 0,
+          "master": "art/masters/structures/063_stone_wall_post.png"
+        }
+      ]
+    },
+    {
+      "num": 64,
+      "code": "064",
+      "id": "gate_wood",
+      "name": "Wood gate",
+      "group": "structures",
+      "kind": "structure",
+      "contentId": "wall",
+      "subject": "bamboo palisade gate with two doors bound in blue rope, flanked by two small square bamboo towers with blue pagoda roofs, one on each side of the doors, in every view",
+      "canvas": {
+        "w": 192,
+        "h": 192
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [
+        "The same gate in all three views (face-on, side, diagonal); the side and diagonal views are the gate turned, not a new design."
+      ],
+      "followFirstFrame": true,
+      "parts": [
+        {
+          "id": "gate_wood.f1",
+          "frame": 0,
+          "pose": "closed",
+          "master": "art/masters/structures/064_gate_wood_f1.png"
+        },
+        {
+          "id": "gate_wood.f2",
+          "frame": 1,
+          "pose": "open",
+          "master": "art/masters/structures/064_gate_wood_f2.png"
+        },
+        {
+          "id": "gate_wood.side.f1",
+          "frame": 0,
+          "view": "side",
+          "pose": "closed",
+          "master": "art/masters/structures/064_gate_wood_side_f1.png"
+        },
+        {
+          "id": "gate_wood.side.f2",
+          "frame": 1,
+          "view": "side",
+          "pose": "open",
+          "master": "art/masters/structures/064_gate_wood_side_f2.png"
+        },
+        {
+          "id": "gate_wood.diag.f1",
+          "frame": 0,
+          "view": "diag",
+          "pose": "closed",
+          "master": "art/masters/structures/064_gate_wood_diag_f1.png"
+        },
+        {
+          "id": "gate_wood.diag.f2",
+          "frame": 1,
+          "view": "diag",
+          "pose": "open",
+          "master": "art/masters/structures/064_gate_wood_diag_f2.png"
+        }
+      ]
+    },
+    {
+      "num": 65,
+      "code": "065",
+      "id": "gate_stone",
+      "name": "Stone gate",
+      "group": "structures",
+      "kind": "structure",
+      "contentId": "stone_wall",
+      "subject": "stone gate with a wooden double door and a small blue tiled roof",
+      "canvas": {
+        "w": 192,
+        "h": 192
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [
+        "The same gate in all three views (face-on, side, diagonal); the side and diagonal views are the gate turned, not a new design."
+      ],
+      "followFirstFrame": true,
+      "parts": [
+        {
+          "id": "gate_stone.f1",
+          "frame": 0,
+          "pose": "closed",
+          "master": "art/masters/structures/065_gate_stone_f1.png"
+        },
+        {
+          "id": "gate_stone.f2",
+          "frame": 1,
+          "pose": "open",
+          "master": "art/masters/structures/065_gate_stone_f2.png"
+        },
+        {
+          "id": "gate_stone.side.f1",
+          "frame": 0,
+          "view": "side",
+          "pose": "closed",
+          "master": "art/masters/structures/065_gate_stone_side_f1.png"
+        },
+        {
+          "id": "gate_stone.side.f2",
+          "frame": 1,
+          "view": "side",
+          "pose": "open",
+          "master": "art/masters/structures/065_gate_stone_side_f2.png"
+        },
+        {
+          "id": "gate_stone.diag.f1",
+          "frame": 0,
+          "view": "diag",
+          "pose": "closed",
+          "master": "art/masters/structures/065_gate_stone_diag_f1.png"
+        },
+        {
+          "id": "gate_stone.diag.f2",
+          "frame": 1,
+          "view": "diag",
+          "pose": "open",
+          "master": "art/masters/structures/065_gate_stone_diag_f2.png"
+        }
+      ]
+    },
+    {
+      "num": 66,
+      "code": "066",
+      "id": "slot_empty",
+      "name": "Empty slot",
+      "group": "structures",
+      "kind": "decal",
+      "subject": "flat stone foundation outline on a patch of packed earth, where a building can go",
+      "canvas": {
+        "w": 192,
+        "h": 96
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1536,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "slot_empty",
+          "frame": 0,
+          "master": "art/masters/structures/066_slot_empty.png"
+        }
+      ]
+    },
+    {
+      "num": 67,
+      "code": "067",
+      "id": "construction",
+      "name": "Construction",
+      "group": "structures",
+      "kind": "structure",
+      "subject": "bamboo scaffolding with planks and rope",
+      "canvas": {
+        "w": 256,
+        "h": 256
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "construction",
+          "frame": 0,
+          "master": "art/masters/structures/067_construction.png"
+        }
+      ]
+    },
+    {
+      "num": 68,
+      "code": "068",
+      "id": "ruin",
+      "name": "Ruin",
+      "group": "structures",
+      "kind": "structure",
+      "subject": "collapsed rubble with broken beams and a torn blue roof",
+      "canvas": {
+        "w": 256,
+        "h": 192
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "ruin",
+          "frame": 0,
+          "master": "art/masters/structures/068_ruin.png"
+        }
+      ]
+    },
+    {
+      "num": 69,
+      "code": "069",
+      "id": "window_glow",
+      "name": "Window glow",
+      "group": "structures",
+      "kind": "overlay",
+      "subject": "a small soft warm yellow glow on its own, a blurred rounded square of window light, filling only the middle half of the frame with a wide empty transparent margin all around, fading to fully transparent well before the edges, for night; light only, no building, no wall, no window frame, no lantern",
+      "canvas": {
+        "w": 96,
+        "h": 96
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "noReference": true,
+      "parts": [
+        {
+          "id": "window_glow",
+          "frame": 0,
+          "master": "art/masters/structures/069_window_glow.png"
+        }
+      ]
+    },
+    {
+      "num": 70,
+      "code": "070",
+      "id": "lantern_glow",
+      "name": "Lantern glow",
+      "group": "structures",
+      "kind": "overlay",
+      "subject": "a soft warm orange round halo of light on its own, bright in the centre and fading to transparent at the edges, for night; light only, no lantern, no building, no object",
+      "canvas": {
+        "w": 128,
+        "h": 128
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "lantern_glow",
+          "frame": 0,
+          "master": "art/masters/structures/070_lantern_glow.png"
+        }
+      ]
+    },
+    {
+      "num": 71,
+      "code": "071",
+      "id": "panda_banner",
+      "name": "Panda banner",
+      "group": "structures",
+      "kind": "structure",
+      "subject": "vertical blue banner with a white panda-face emblem on a wooden pole",
+      "canvas": {
+        "w": 64,
+        "h": 160
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1536
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "panda_banner",
+          "frame": 0,
+          "master": "art/masters/structures/071_panda_banner.png"
+        }
+      ]
+    },
+    {
+      "num": 72,
+      "code": "072",
+      "id": "castle_flag",
+      "name": "Castle flag",
+      "group": "structures",
+      "kind": "structure",
+      "subject": "blue flag with a panda-face emblem waving on a tall pole",
+      "canvas": {
+        "w": 96,
+        "h": 192
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1536
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "castle_flag",
+          "frame": 0,
+          "master": "art/masters/structures/072_castle_flag.png"
+        }
+      ]
+    },
+    {
+      "num": 73,
+      "code": "073",
+      "id": "arrow",
+      "name": "Arrow",
+      "group": "effects",
+      "kind": "projectile",
+      "subject": "arrow pointing right",
+      "canvas": {
+        "w": 64,
+        "h": 16
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1536,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "arrow",
+          "frame": 0,
+          "master": "art/masters/effects/073_arrow.png"
+        }
+      ]
+    },
+    {
+      "num": 74,
+      "code": "074",
+      "id": "bolt",
+      "name": "Bolt",
+      "group": "effects",
+      "kind": "projectile",
+      "subject": "crossbow bolt pointing right",
+      "canvas": {
+        "w": 48,
+        "h": 16
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1536,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "bolt",
+          "frame": 0,
+          "master": "art/masters/effects/074_bolt.png"
+        }
+      ]
+    },
+    {
+      "num": 75,
+      "code": "075",
+      "id": "ballista_bolt",
+      "name": "Ballista bolt",
+      "group": "effects",
+      "kind": "projectile",
+      "subject": "large ballista bolt pointing right",
+      "canvas": {
+        "w": 96,
+        "h": 24
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1536,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "ballista_bolt",
+          "frame": 0,
+          "master": "art/masters/effects/075_ballista_bolt.png"
+        }
+      ]
+    },
+    {
+      "num": 76,
+      "code": "076",
+      "id": "boulder",
+      "name": "Boulder",
+      "group": "effects",
+      "kind": "projectile",
+      "subject": "round grey catapult boulder bound with rough rope; enemy ammunition, so no panda emblem, no blue and no gold",
+      "canvas": {
+        "w": 48,
+        "h": 48
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "boulder",
+          "frame": 0,
+          "master": "art/masters/effects/076_boulder.png"
+        }
+      ]
+    },
+    {
+      "num": 77,
+      "code": "077",
+      "id": "hit_spark",
+      "name": "Hit spark",
+      "group": "effects",
+      "kind": "effect",
+      "subject": "golden star-shaped impact flash",
+      "canvas": {
+        "w": 64,
+        "h": 64
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "hit_spark.f1",
+          "frame": 0,
+          "pose": "start: small and bright",
+          "master": "art/masters/effects/077_hit_spark_f1.png"
+        },
+        {
+          "id": "hit_spark.f2",
+          "frame": 1,
+          "pose": "peak: largest and brightest",
+          "master": "art/masters/effects/077_hit_spark_f2.png"
+        },
+        {
+          "id": "hit_spark.f3",
+          "frame": 2,
+          "pose": "fade: breaking apart",
+          "master": "art/masters/effects/077_hit_spark_f3.png"
+        }
+      ]
+    },
+    {
+      "num": 78,
+      "code": "078",
+      "id": "dust",
+      "name": "Dust",
+      "group": "effects",
+      "kind": "effect",
+      "subject": "soft beige dust cloud",
+      "canvas": {
+        "w": 128,
+        "h": 64
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1536,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "dust.f1",
+          "frame": 0,
+          "pose": "start: small and bright",
+          "master": "art/masters/effects/078_dust_f1.png"
+        },
+        {
+          "id": "dust.f2",
+          "frame": 1,
+          "pose": "peak: largest and brightest",
+          "master": "art/masters/effects/078_dust_f2.png"
+        },
+        {
+          "id": "dust.f3",
+          "frame": 2,
+          "pose": "fade: breaking apart",
+          "master": "art/masters/effects/078_dust_f3.png"
+        }
+      ]
+    },
+    {
+      "num": 79,
+      "code": "079",
+      "id": "slash",
+      "name": "Slash",
+      "group": "effects",
+      "kind": "effect",
+      "subject": "a curved light-blue sword slash arc on its own: the swoosh of light only, no sword, no character, nobody making it",
+      "canvas": {
+        "w": 96,
+        "h": 96
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "slash.f1",
+          "frame": 0,
+          "pose": "start: small and bright",
+          "master": "art/masters/effects/079_slash_f1.png"
+        },
+        {
+          "id": "slash.f2",
+          "frame": 1,
+          "pose": "peak: largest and brightest",
+          "master": "art/masters/effects/079_slash_f2.png"
+        },
+        {
+          "id": "slash.f3",
+          "frame": 2,
+          "pose": "fade: breaking apart",
+          "master": "art/masters/effects/079_slash_f3.png"
+        }
+      ]
+    },
+    {
+      "num": 80,
+      "code": "080",
+      "id": "shield_fx",
+      "name": "Shield",
+      "group": "effects",
+      "kind": "effect",
+      "subject": "glowing light-blue shield crest with a gold rim",
+      "canvas": {
+        "w": 96,
+        "h": 96
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "shield_fx",
+          "frame": 0,
+          "master": "art/masters/effects/080_shield_fx.png"
+        }
+      ]
+    },
+    {
+      "num": 81,
+      "code": "081",
+      "id": "coin",
+      "name": "Coin",
+      "group": "effects",
+      "kind": "effect",
+      "subject": "gold coin with a panda face",
+      "canvas": {
+        "w": 48,
+        "h": 48
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "coin",
+          "frame": 0,
+          "master": "art/masters/effects/081_coin.png"
+        }
+      ]
+    },
+    {
+      "num": 82,
+      "code": "082",
+      "id": "heal",
+      "name": "Heal",
+      "group": "effects",
+      "kind": "effect",
+      "subject": "green four-point sparkle",
+      "canvas": {
+        "w": 64,
+        "h": 64
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "heal.f1",
+          "frame": 0,
+          "pose": "start: small and bright",
+          "master": "art/masters/effects/082_heal_f1.png"
+        },
+        {
+          "id": "heal.f2",
+          "frame": 1,
+          "pose": "peak: largest and brightest",
+          "master": "art/masters/effects/082_heal_f2.png"
+        },
+        {
+          "id": "heal.f3",
+          "frame": 2,
+          "pose": "fade: breaking apart",
+          "master": "art/masters/effects/082_heal_f3.png"
+        }
+      ]
+    },
+    {
+      "num": 83,
+      "code": "083",
+      "id": "death",
+      "name": "Death",
+      "group": "effects",
+      "kind": "effect",
+      "subject": "small grey puff with a cartoon skull wisp",
+      "canvas": {
+        "w": 96,
+        "h": 96
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "death.f1",
+          "frame": 0,
+          "pose": "puff appears",
+          "master": "art/masters/effects/083_death_f1.png"
+        },
+        {
+          "id": "death.f2",
+          "frame": 1,
+          "pose": "skull wisp rises",
+          "master": "art/masters/effects/083_death_f2.png"
+        },
+        {
+          "id": "death.f3",
+          "frame": 2,
+          "pose": "wisp fades",
+          "master": "art/masters/effects/083_death_f3.png"
+        },
+        {
+          "id": "death.f4",
+          "frame": 3,
+          "pose": "last smoke",
+          "master": "art/masters/effects/083_death_f4.png"
+        }
+      ]
+    },
+    {
+      "num": 84,
+      "code": "084",
+      "id": "charge",
+      "name": "Charge",
+      "group": "effects",
+      "kind": "effect",
+      "subject": "blue and violet speed streaks pointing right on their own: motion lines only, no character, no rider, no animal",
+      "canvas": {
+        "w": 128,
+        "h": 64
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1536,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "charge.f1",
+          "frame": 0,
+          "pose": "start: small and bright",
+          "master": "art/masters/effects/084_charge_f1.png"
+        },
+        {
+          "id": "charge.f2",
+          "frame": 1,
+          "pose": "peak: largest and brightest",
+          "master": "art/masters/effects/084_charge_f2.png"
+        },
+        {
+          "id": "charge.f3",
+          "frame": 2,
+          "pose": "fade: breaking apart",
+          "master": "art/masters/effects/084_charge_f3.png"
+        }
+      ]
+    },
+    {
+      "num": 85,
+      "code": "085",
+      "id": "stomp",
+      "name": "Stomp",
+      "group": "effects",
+      "kind": "effect",
+      "subject": "a ground stomp shockwave on its own: a low ring of flying dirt clods and a gold flash, no character, nobody stomping",
+      "canvas": {
+        "w": 128,
+        "h": 96
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "stomp.f1",
+          "frame": 0,
+          "pose": "start: small and bright",
+          "master": "art/masters/effects/085_stomp_f1.png"
+        },
+        {
+          "id": "stomp.f2",
+          "frame": 1,
+          "pose": "peak: largest and brightest",
+          "master": "art/masters/effects/085_stomp_f2.png"
+        },
+        {
+          "id": "stomp.f3",
+          "frame": 2,
+          "pose": "fade: breaking apart",
+          "master": "art/masters/effects/085_stomp_f3.png"
+        }
+      ]
+    },
+    {
+      "num": 86,
+      "code": "086",
+      "id": "bamboo_small",
+      "name": "Bamboo S",
+      "group": "environment",
+      "kind": "prop",
+      "subject": "small clump of bamboo",
+      "canvas": {
+        "w": 96,
+        "h": 160
+      },
+      "heightPx": 120,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1536
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "bamboo_small",
+          "frame": 0,
+          "master": "art/masters/environment/086_bamboo_small.png"
+        }
+      ]
+    },
+    {
+      "num": 87,
+      "code": "087",
+      "id": "bamboo_large",
+      "name": "Bamboo L",
+      "group": "environment",
+      "kind": "prop",
+      "subject": "large clump of tall bamboo",
+      "canvas": {
+        "w": 192,
+        "h": 256
+      },
+      "heightPx": 220,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "bamboo_large",
+          "frame": 0,
+          "master": "art/masters/environment/087_bamboo_large.png"
+        }
+      ]
+    },
+    {
+      "num": 88,
+      "code": "088",
+      "id": "bamboo_single",
+      "name": "Bamboo 1",
+      "group": "environment",
+      "kind": "prop",
+      "subject": "single bamboo stalk with leaves",
+      "canvas": {
+        "w": 64,
+        "h": 224
+      },
+      "heightPx": 200,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1536
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "bamboo_single",
+          "frame": 0,
+          "master": "art/masters/environment/088_bamboo_single.png"
+        }
+      ]
+    },
+    {
+      "num": 89,
+      "code": "089",
+      "id": "tree",
+      "name": "Tree",
+      "group": "environment",
+      "kind": "prop",
+      "subject": "rounded broadleaf tree",
+      "canvas": {
+        "w": 256,
+        "h": 320
+      },
+      "heightPx": 280,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "tree",
+          "frame": 0,
+          "master": "art/masters/environment/089_tree.png"
+        }
+      ]
+    },
+    {
+      "num": 90,
+      "code": "090",
+      "id": "pine",
+      "name": "Pine",
+      "group": "environment",
+      "kind": "prop",
+      "subject": "pine tree",
+      "canvas": {
+        "w": 192,
+        "h": 288
+      },
+      "heightPx": 260,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1536
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "pine",
+          "frame": 0,
+          "master": "art/masters/environment/090_pine.png"
+        }
+      ]
+    },
+    {
+      "num": 91,
+      "code": "091",
+      "id": "rock_small",
+      "name": "Rock S",
+      "group": "environment",
+      "kind": "prop",
+      "subject": "small grey rock",
+      "canvas": {
+        "w": 96,
+        "h": 80
+      },
+      "heightPx": 50,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "rock_small",
+          "frame": 0,
+          "master": "art/masters/environment/091_rock_small.png"
+        }
+      ]
+    },
+    {
+      "num": 92,
+      "code": "092",
+      "id": "rock_large",
+      "name": "Rock L",
+      "group": "environment",
+      "kind": "prop",
+      "subject": "large grey rock with moss",
+      "canvas": {
+        "w": 192,
+        "h": 160
+      },
+      "heightPx": 120,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "rock_large",
+          "frame": 0,
+          "master": "art/masters/environment/092_rock_large.png"
+        }
+      ]
+    },
+    {
+      "num": 93,
+      "code": "093",
+      "id": "grass",
+      "name": "Grass",
+      "group": "environment",
+      "kind": "prop",
+      "subject": "tuft of tall grass",
+      "canvas": {
+        "w": 96,
+        "h": 80
+      },
+      "heightPx": 56,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "grass",
+          "frame": 0,
+          "master": "art/masters/environment/093_grass.png"
+        }
+      ]
+    },
+    {
+      "num": 94,
+      "code": "094",
+      "id": "flowers",
+      "name": "Flowers",
+      "group": "environment",
+      "kind": "prop",
+      "subject": "small patch of pink and white flowers",
+      "canvas": {
+        "w": 96,
+        "h": 64
+      },
+      "heightPx": 40,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1536,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "flowers",
+          "frame": 0,
+          "master": "art/masters/environment/094_flowers.png"
+        }
+      ]
+    },
+    {
+      "num": 95,
+      "code": "095",
+      "id": "shrub",
+      "name": "Shrub",
+      "group": "environment",
+      "kind": "prop",
+      "subject": "round leafy shrub",
+      "canvas": {
+        "w": 128,
+        "h": 96
+      },
+      "heightPx": 72,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "shrub",
+          "frame": 0,
+          "master": "art/masters/environment/095_shrub.png"
+        }
+      ]
+    },
+    {
+      "num": 96,
+      "code": "096",
+      "id": "lantern_post",
+      "name": "Lantern",
+      "group": "environment",
+      "kind": "prop",
+      "subject": "stone lantern post with a warm cream paper lantern",
+      "canvas": {
+        "w": 64,
+        "h": 160
+      },
+      "heightPx": 140,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1536
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "lantern_post",
+          "frame": 0,
+          "master": "art/masters/environment/096_lantern_post.png"
+        }
+      ]
+    },
+    {
+      "num": 97,
+      "code": "097",
+      "id": "barrel",
+      "name": "Barrel",
+      "group": "environment",
+      "kind": "prop",
+      "subject": "wooden barrel with iron bands",
+      "canvas": {
+        "w": 64,
+        "h": 80
+      },
+      "heightPx": 60,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "barrel",
+          "frame": 0,
+          "master": "art/masters/environment/097_barrel.png"
+        }
+      ]
+    },
+    {
+      "num": 98,
+      "code": "098",
+      "id": "crate",
+      "name": "Crate",
+      "group": "environment",
+      "kind": "prop",
+      "subject": "wooden supply crate",
+      "canvas": {
+        "w": 80,
+        "h": 80
+      },
+      "heightPx": 56,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "crate",
+          "frame": 0,
+          "master": "art/masters/environment/098_crate.png"
+        }
+      ]
+    },
+    {
+      "num": 99,
+      "code": "099",
+      "id": "path_edge",
+      "name": "Path edge",
+      "group": "environment",
+      "kind": "decal",
+      "subject": "flat ground texture only, seen straight from above: a soft ragged strip where meadow grass meets packed dirt, fading to transparent on all sides; no buildings, no towers, no objects, no props, nothing standing on it",
+      "canvas": {
+        "w": 128,
+        "h": 128
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "noReference": true,
+      "parts": [
+        {
+          "id": "path_edge",
+          "frame": 0,
+          "master": "art/masters/environment/099_path_edge.png"
+        }
+      ]
+    },
+    {
+      "num": 100,
+      "code": "100",
+      "id": "water_edge",
+      "name": "Water edge",
+      "group": "environment",
+      "kind": "decal",
+      "subject": "flat ground texture only, seen straight from above: a soft strip where shallow blue water meets a pebbly grass bank, fading to transparent on all sides; no buildings, no towers, no island, no objects, nothing standing on it",
+      "canvas": {
+        "w": 192,
+        "h": 128
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1536,
+        "h": 1024
+      },
+      "checks": [],
+      "noReference": true,
+      "parts": [
+        {
+          "id": "water_edge",
+          "frame": 0,
+          "master": "art/masters/environment/100_water_edge.png"
+        }
+      ]
+    },
+    {
+      "num": 101,
+      "code": "101",
+      "id": "ground_greyhollow",
+      "name": "Greyhollow ground (map)",
+      "group": "map",
+      "kind": "background",
+      "subject": "top-down painted ground for the Greyhollow map: calm low-contrast meadow, packed dirt paths, richer vegetation only at the edges, no buildings or characters",
+      "canvas": {
+        "w": 1536,
+        "h": 1024
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": false,
+      "generate": {
+        "w": 1536,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "ground_greyhollow",
+          "frame": 0,
+          "master": "art/masters/map/101_ground_greyhollow.png"
+        }
+      ]
+    },
+    {
+      "num": 102,
+      "code": "102",
+      "id": "tile_grass",
+      "name": "Grass tile",
+      "group": "map",
+      "kind": "tile",
+      "subject": "seamless square ground texture tile seen straight from above: soft meadow grass, calm and low contrast, filling the whole square; texture only, no objects, no props, no buildings, no fire, no banners, nothing standing on it",
+      "canvas": {
+        "w": 512,
+        "h": 512
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": false,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "tile_grass",
+          "frame": 0,
+          "master": "art/masters/map/102_tile_grass.png"
+        }
+      ]
+    },
+    {
+      "num": 103,
+      "code": "103",
+      "id": "tile_path",
+      "name": "Path tile",
+      "group": "map",
+      "kind": "tile",
+      "subject": "seamless square ground texture tile seen straight from above: packed dirt path, calm and low contrast, filling the whole square; texture only, no objects, no props, no buildings, no fire, no banners, nothing standing on it",
+      "canvas": {
+        "w": 512,
+        "h": 512
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": false,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "tile_path",
+          "frame": 0,
+          "master": "art/masters/map/103_tile_path.png"
+        }
+      ]
+    },
+    {
+      "num": 104,
+      "code": "104",
+      "id": "tile_stone",
+      "name": "Stone tile",
+      "group": "map",
+      "kind": "tile",
+      "subject": "seamless square ground texture tile seen straight from above: worn stone paving, calm and low contrast, filling the whole square; texture only, no objects, no props, no buildings, no fire, no banners, nothing standing on it",
+      "canvas": {
+        "w": 512,
+        "h": 512
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": false,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "tile_stone",
+          "frame": 0,
+          "master": "art/masters/map/104_tile_stone.png"
+        }
+      ]
+    },
+    {
+      "num": 105,
+      "code": "105",
+      "id": "map_background",
+      "name": "Map background",
+      "group": "map",
+      "kind": "background",
+      "subject": "painted backdrop for the title and map screens: misty bamboo forest, distant blue mountains, a small torii-like gate, lanterns; no characters, no text",
+      "canvas": {
+        "w": 1536,
+        "h": 1024
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": false,
+      "generate": {
+        "w": 1536,
+        "h": 1024
+      },
+      "checks": [],
+      "parts": [
+        {
+          "id": "map_background",
+          "frame": 0,
+          "master": "art/masters/map/105_map_background.png"
+        }
+      ]
+    },
+    {
+      "num": 106,
+      "code": "106",
+      "id": "cliff_section",
+      "name": "Cliff section",
+      "group": "environment",
+      "kind": "prop",
+      "subject": "a straight section of a raised grassy plateau edge seen from the same camera: a grass lip on top and a vertical grey-brown rock cliff face below it, about one storey high, a few tufts and bamboo shoots on the lip; a self-contained chunk with rough ends so pieces can overlap side by side",
+      "canvas": {
+        "w": 256,
+        "h": 192
+      },
+      "heightPx": 150,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [
+        "Reads as a drop in height: grass on top, rock face below, lit from the upper left."
+      ],
+      "inferred": "Not on the sheet. Lets a map show high ground, e.g. a path winding up between cliffs.",
+      "parts": [
+        {
+          "id": "cliff_section",
+          "frame": 0,
+          "master": "art/masters/environment/106_cliff_section.png"
+        }
+      ]
+    },
+    {
+      "num": 107,
+      "code": "107",
+      "id": "cliff_end",
+      "name": "Cliff end",
+      "group": "environment",
+      "kind": "prop",
+      "subject": "the rounded end of the same raised grassy plateau edge: grass lip on top, rock cliff face curving back into the ground on the right side where the slope ends; same rock and grass as the cliff section",
+      "canvas": {
+        "w": 192,
+        "h": 192
+      },
+      "heightPx": 150,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [
+        "Matches cliff_section; mirrored by the game for the left end."
+      ],
+      "inferred": "See 106.",
+      "noReference": true,
+      "parts": [
+        {
+          "id": "cliff_end",
+          "frame": 0,
+          "master": "art/masters/environment/107_cliff_end.png"
+        }
+      ]
+    },
+    {
+      "num": 108,
+      "code": "108",
+      "id": "grass_patch",
+      "name": "Grass patch",
+      "group": "environment",
+      "kind": "decal",
+      "subject": "flat decal seen from above: an irregular patch of lusher, slightly darker meadow grass with a few small flowers, ragged soft edges fading to transparent, to break up the ground",
+      "canvas": {
+        "w": 192,
+        "h": 128
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1536,
+        "h": 1024
+      },
+      "checks": [],
+      "inferred": "Not on the sheet. Variation on top of the grass tile.",
+      "noReference": true,
+      "parts": [
+        {
+          "id": "grass_patch",
+          "frame": 0,
+          "master": "art/masters/environment/108_grass_patch.png"
+        }
+      ]
+    },
+    {
+      "num": 109,
+      "code": "109",
+      "id": "tile_water",
+      "name": "Water tile",
+      "group": "map",
+      "kind": "tile",
+      "subject": "seamless square ground texture tile seen straight from above: calm shallow blue-green water with soft ripples, calm and low contrast, filling the whole square; texture only, no objects, no props, no buildings, no fire, no banners, nothing standing on it",
+      "canvas": {
+        "w": 512,
+        "h": 512
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": false,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "inferred": "Not on the sheet. Fills lakes and rivers; water_edge (100) lines their banks.",
+      "parts": [
+        {
+          "id": "tile_water",
+          "frame": 0,
+          "master": "art/masters/map/109_tile_water.png"
+        }
+      ]
+    },
+    {
+      "num": 110,
+      "code": "110",
+      "id": "bridge",
+      "name": "Bridge",
+      "group": "environment",
+      "kind": "decal",
+      "subject": "a sturdy wooden bridge on its own, as it would stand over a river: a broad plank deck wide enough for two pandas to walk side by side (about 3 metres), so it reads wide and solid, never a narrow footbridge; bamboo railings bound in blue rope, a small paper lantern on each end post, short stone footings at both ends; no water, no river banks, no ground around it",
+      "canvas": {
+        "w": 320,
+        "h": 320
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [
+        "The same bridge in all three views; deck wide enough for a path, ends left open for the path to join."
+      ],
+      "inferred": "Not on the sheet. The reworked Greyhollow map crosses its river with bridges; the game picks the view closest to the bridge angle and stretches it to the river width.",
+      "parts": [
+        {
+          "id": "bridge",
+          "frame": 0,
+          "master": "art/masters/environment/110_bridge.png"
+        },
+        {
+          "id": "bridge.side",
+          "frame": 0,
+          "view": "side",
+          "master": "art/masters/environment/110_bridge_side.png"
+        },
+        {
+          "id": "bridge.diag",
+          "frame": 0,
+          "view": "diag",
+          "master": "art/masters/environment/110_bridge_diag.png"
+        }
+      ]
+    }
+  ]
+}

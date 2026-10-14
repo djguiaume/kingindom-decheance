@@ -5,3 +5,6 @@ playwright-report/
 test-results/
 *.log
 .DS_Store
+# Art pipeline: raw Scenario downloads (large; masters are committed) and mock runs.
+art/.cache/
+.art-mock/
