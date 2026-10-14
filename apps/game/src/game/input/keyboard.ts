@@ -22,6 +22,8 @@ export function attachKeyboard(hub: InputHub): () => void {
   const store = useHudStore();
   const down = new Set<string>();
   let holdTimer: number | undefined;
+  /** The hold in progress: when it started, how long it needs and what it does. */
+  let hold: { start: number; ms: number; action: () => void } | null = null;
 
   const updateMove = () => {
     let x = 0;
@@ -39,8 +41,10 @@ export function attachKeyboard(hub: InputHub): () => void {
   const startHold = (id: string, ms: number, action: () => void) => {
     clearTimeout(holdTimer);
     store.keyHold = id;
+    hold = { start: performance.now(), ms, action };
     holdTimer = window.setTimeout(() => {
       store.keyHold = null;
+      hold = null;
       action();
     }, ms);
   };
@@ -48,6 +52,11 @@ export function attachKeyboard(hub: InputHub): () => void {
     if (store.keyHold !== id) return;
     clearTimeout(holdTimer);
     store.keyHold = null;
+    // On a busy page the key can come up before the timer gets to run although it was held long
+    // enough (the browser handles input before timers): the hold still counts.
+    const done = hold && performance.now() - hold.start >= hold.ms ? hold.action : null;
+    hold = null;
+    done?.();
   };
 
   const onDown = (e: KeyboardEvent) => {
