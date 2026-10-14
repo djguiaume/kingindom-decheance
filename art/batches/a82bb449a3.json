@@ -1,0 +1,41 @@
+{
+  "token": "a82bb449a3",
+  "selector": "1,15,16,27,28,43",
+  "modelId": "model_openai-gpt-image-2-5-flare",
+  "createdAt": "2026-10-14T14:21:55.188Z",
+  "totalCU": 74,
+  "parts": [
+    {
+      "id": "king_roll_idle",
+      "promptHash": "fa3607ad6c43",
+      "estimateCU": 12
+    },
+    {
+      "id": "footman",
+      "promptHash": "a3eef3b624e8",
+      "estimateCU": 12
+    },
+    {
+      "id": "footman_weapon",
+      "promptHash": "e9f42951fd69",
+      "estimateCU": 13
+    },
+    {
+      "id": "raider",
+      "promptHash": "217be3e40e80",
+      "estimateCU": 12
+    },
+    {
+      "id": "raider_weapon",
+      "promptHash": "dbf88cbe519a",
+      "estimateCU": 13
+    },
+    {
+      "id": "house",
+      "promptHash": "99668566a628",
+      "estimateCU": 12
+    }
+  ],
+  "skipped": [],
+  "runs": []
+}
