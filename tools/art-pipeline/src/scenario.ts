@@ -37,8 +37,8 @@ export interface GenerateRequest {
   background: 'transparent' | 'opaque';
   quality: 'high' | 'medium' | 'low' | 'auto' | 'xhigh' | 'max';
   numOutputs: number;
-  /** Asset id of the uploaded style reference; absent for assets generated without it. */
-  referenceAssetId?: string;
+  /** Uploaded reference images: the style sheet, then any earlier frame to follow. */
+  referenceAssetIds: string[];
 }
 
 export type JobStatus =
@@ -160,8 +160,8 @@ export class ScenarioClient {
       background: req.background,
       quality: req.quality,
       numOutputs: req.numOutputs,
-      ...(req.referenceAssetId
-        ? { [this.opts.referenceField ?? 'referenceImages']: [req.referenceAssetId] }
+      ...(req.referenceAssetIds.length
+        ? { [this.opts.referenceField ?? 'referenceImages']: req.referenceAssetIds }
         : {}),
     };
   }

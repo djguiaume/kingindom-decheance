@@ -180,6 +180,19 @@ describe('generation', () => {
     expect(w.status.data.modelId).toBe('model_openai-gpt-image-2-5-flare');
   });
 
+  it("paints a gate's open frame from its closed frame, so only the doors change", async () => {
+    const { w, state } = await ws();
+    await generateSelection(w, 'gate_wood.f1,gate_wood.f2', 100);
+    const [closed, open] = state.generations;
+    expect(closed!.body.referenceImages).toEqual([w.status.data.referenceAssetId]);
+    expect(closed!.prompt).not.toMatch(/frame 1 of this very subject/);
+    const refs = open!.body.referenceImages as string[];
+    expect(refs).toHaveLength(2);
+    expect(refs[0]).toBe(w.status.data.referenceAssetId);
+    expect(state.uploads.map((u) => u.name)).toContain('gate_wood.f1.png');
+    expect(open!.prompt).toMatch(/frame 1 of this very subject in this same view/);
+  });
+
   it('generates ground decals and lights without the reference sheet, so no figures leak in', async () => {
     const { w, state } = await ws();
     const batch = await estimate(w, 'grass_patch,window_glow');

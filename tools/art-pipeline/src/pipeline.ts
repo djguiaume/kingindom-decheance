@@ -39,7 +39,12 @@ export const paths = (root: string) => ({
 
 const sha256 = (b: Buffer) => createHash('sha256').update(b).digest('hex');
 
-export function requestFor(asset: Asset, part: Part, referenceAssetId: string): GenerateRequest {
+export function requestFor(
+  asset: Asset,
+  part: Part,
+  referenceAssetId: string,
+  firstFrameAssetId?: string,
+): GenerateRequest {
   return {
     prompt: promptFor(asset, part),
     width: asset.generate.w,
@@ -47,8 +52,41 @@ export function requestFor(asset: Asset, part: Part, referenceAssetId: string): 
     background: asset.transparent ? 'transparent' : 'opaque',
     quality: 'high',
     numOutputs: 1,
-    ...(asset.noReference ? {} : { referenceAssetId }),
+    referenceAssetIds: [
+      ...(asset.noReference ? [] : [referenceAssetId]),
+      ...(firstFrameAssetId ? [firstFrameAssetId] : []),
+    ],
   };
+}
+
+/** The frame-1 part a later frame must match, for assets that follow their first frame. */
+export function firstFrameOf(asset: Asset, part: Part): Part | undefined {
+  if (!asset.followFirstFrame || part.frame === 0) return undefined;
+  return asset.parts.find((p) => p.view === part.view && p.frame === 0);
+}
+
+/**
+ * Uploads the current master of the first frame a part must follow, once per content.
+ * Returns undefined when there is none or it is not generated yet.
+ */
+async function firstFrameReference(
+  ws: Workspace,
+  asset: Asset,
+  part: Part,
+  cache: Map<string, string>,
+): Promise<string | undefined> {
+  const first = firstFrameOf(asset, part);
+  if (!first) return undefined;
+  const png = await readFile(join(ws.root, first.master)).catch(() => undefined);
+  if (!png) return undefined;
+  const hash = sha256(png);
+  let id = cache.get(hash);
+  if (!id) {
+    id = await ws.client.uploadAsset(`${first.id}.png`, png);
+    cache.set(hash, id);
+    ws.log?.(`Uploaded ${first.id} as the frame for ${part.id} to follow.`);
+  }
+  return id;
 }
 
 /** Uploads the approved reference sheet once; re-uploads only if the file changed. */
@@ -104,6 +142,7 @@ export async function estimate(
 ): Promise<Batch> {
   const maxAttempts = opts.maxAttempts ?? 3;
   const ref = await ensureReference(ws);
+  const frameRefs = new Map<string, string>();
   const parts: BatchPart[] = [];
   const skipped: Batch['skipped'] = [];
   for (const { asset, part } of selectParts(ws.manifest, selector)) {
@@ -116,7 +155,8 @@ export async function estimate(
       skipped.push({ id: part.id, reason: `out of attempts (${st.attempts}/${maxAttempts})` });
       continue;
     }
-    const estimateCU = await ws.client.estimate(requestFor(asset, part, ref));
+    const follow = await firstFrameReference(ws, asset, part, frameRefs);
+    const estimateCU = await ws.client.estimate(requestFor(asset, part, ref, follow));
     parts.push({ id: part.id, promptHash: promptHash(asset, part), estimateCU });
   }
   const batch: Batch = {
@@ -182,6 +222,7 @@ export async function generateBatch(
   }
 
   const ref = await ensureReference(ws);
+  const frameRefs = new Map<string, string>();
   const dir = paths(ws.root);
   await mkdir(dir.originals, { recursive: true });
   const result: RunResult = { spentCU: 0, done: [], failed: [] };
@@ -215,7 +256,9 @@ export async function generateBatch(
       // Charged from the moment a job exists: the estimate, until the job reports its own cost.
       let cost = 0;
       try {
-        const jobId = await ws.client.generate(requestFor(asset, part, ref));
+        // Read at generation time: the first frame may have been redrawn earlier in this run.
+        const follow = await firstFrameReference(ws, asset, part, frameRefs);
+        const jobId = await ws.client.generate(requestFor(asset, part, ref, follow));
         cost = p.estimateCU;
         ws.status.update(p.id, { jobId });
         const job = await ws.client.waitForJob(jobId);

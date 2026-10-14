@@ -72,15 +72,20 @@ function framing(asset: Asset, part: Part): string {
   }
 }
 
+const FOLLOW_RULE =
+  'The second attached image is frame 1 of this very subject in this same view. Repaint it exactly: the same structure, towers, roof, walls, colours, size and position on the canvas. Change only what this frame describes.';
+
 export function promptFor(asset: Asset, part: Part): string {
   const pose = part.pose
     ? ` Animation frame ${part.frame + 1} of ${asset.parts.filter((p) => p.view === part.view).length}: ${part.pose}.`
     : '';
+  const follow = asset.followFirstFrame && part.frame > 0;
   return [
     `Game sprite: ${asset.subject}.${pose}`,
     framing(asset, part),
     STYLE_BIBLE,
     asset.noReference ? NO_REFERENCE_RULE : REFERENCE_RULE,
+    ...(follow ? [FOLLOW_RULE] : []),
   ].join('\n');
 }
 

@@ -620,6 +620,7 @@ export const CATALOG: CatalogEntry[] = [
     frames: ['closed', 'open'],
     canvas: [192, 192],
     views: ['side', 'diag'],
+    followFirstFrame: true,
     checks: [gateCheck],
   },
   {
@@ -633,6 +634,7 @@ export const CATALOG: CatalogEntry[] = [
     frames: ['closed', 'open'],
     canvas: [192, 192],
     views: ['side', 'diag'],
+    followFirstFrame: true,
     checks: [gateCheck],
   },
   {
@@ -885,7 +887,7 @@ export const CATALOG: CatalogEntry[] = [
     group: 'environment',
     kind: 'decal',
     subject:
-      'a sturdy wooden footbridge on its own, as it would stand over a river: plank deck with bamboo railings bound in blue rope, a small paper lantern on each end post, short stone footings at both ends; no water, no river banks, no ground around it',
+      'a sturdy wooden bridge on its own, as it would stand over a river: a broad plank deck wide enough for two pandas to walk side by side (about 3 metres), so it reads wide and solid, never a narrow footbridge; bamboo railings bound in blue rope, a small paper lantern on each end post, short stone footings at both ends; no water, no river banks, no ground around it',
     canvas: [320, 320],
     views: ['side', 'diag'],
     checks: [
