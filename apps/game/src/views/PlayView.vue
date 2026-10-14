@@ -4,6 +4,9 @@ import { computed, markRaw, onBeforeUnmount, onMounted, ref, watchEffect } from 
 import { CameraView } from '../game/camera.ts';
 import GameView from '../game/GameView.vue';
 import EdgeArrows from '../components/EdgeArrows.vue';
+import SoundToggle from '../components/SoundToggle.vue';
+import { attachAudio } from '../audio/attach.ts';
+import { audio } from '../audio/engine.ts';
 import { InputHub } from '../game/input/hub.ts';
 import { attachKeyboard } from '../game/input/keyboard.ts';
 import { GameRuntime } from '../game/runtime.ts';
@@ -36,13 +39,16 @@ const onVisibility = () => {
 };
 
 let detachKeyboard = () => {};
+let detachAudio = () => {};
 onMounted(() => {
   detachKeyboard = attachKeyboard(hub);
+  detachAudio = attachAudio(runtime, audio);
   media.addEventListener('change', onMedia);
   document.addEventListener('visibilitychange', onVisibility);
 });
 onBeforeUnmount(() => {
   detachKeyboard();
+  detachAudio();
   media.removeEventListener('change', onMedia);
   document.removeEventListener('visibilitychange', onVisibility);
 });
@@ -74,6 +80,7 @@ async function fullscreen(): Promise<void> {
     <GameView :runtime="runtime" :camera="camera" />
     <EdgeArrows :runtime="runtime" :camera="camera" />
     <GameHud :runtime="runtime" :hub="hub" @restart="restart" @fullscreen="fullscreen" />
+    <SoundToggle />
     <div v-if="showRotate" class="rotate" data-testid="rotate">
       <div class="phone">📱</div>
       <p>Turn your phone sideways to play.</p>

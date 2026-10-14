@@ -91,9 +91,22 @@ mine 25) and stronger waves (+30% enemy HP and +30% enemies per group). Targets,
 So investing in eco pays off, and building nothing loses. Bots are a rough guide: real play
 decides the final numbers.
 
+## Sound (placeholder)
+
+`apps/game/src/audio/` is a view-only layer: it listens to the core's events (ADR-004) and never
+changes the state. Every sound is synthesized by Web Audio from a short recipe, so no audio files
+ship yet. Callers only name a sound id (`SOUNDS` in `sounds.ts`); the final audio pass swaps a
+recipe for `{ url: 'sfx/….ogg' }` and nothing else changes. Music is three synthesized loops
+(`day`, `night`, `finale` on the last night) behind `TrackId`s, swappable the same way.
+
+- Audio unlocks on the first tap or key press (browsers, iOS above all, require a gesture).
+- Sounds far from the king play quieter; each sound has a minimum gap and at most 14 play at once.
+- The Charge has no event of its own, so the layer watches the king's dash start.
+- Sound on/off: the top-right button or M, remembered on the device.
+
 ## Not built yet
 
-- Day/night music and lighting, object pools for effects.
+- Day/night lighting, object pools for effects; the real audio (recorded sounds and music).
 - Web Worker pool and Comlink (ADR-003): the runner is ready to be moved into a worker.
 - Tier 3 nightly balance assertions (ADR-007) and the ECharts dashboard (ADR-005).
 - Perks, mutators, research, score.
