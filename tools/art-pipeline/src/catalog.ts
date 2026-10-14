@@ -875,7 +875,7 @@ export const CATALOG: CatalogEntry[] = [
     group: 'environment',
     kind: 'decal',
     subject:
-      'flat decal seen from above: an irregular patch of lusher, slightly darker meadow grass with a few small flowers, ragged soft edges fading to transparent, to break up the ground',
+      'flat decal seen straight from above: an irregular patch of lusher, slightly darker meadow grass blades with a few tiny flowers, ragged soft edges fading to transparent, to break up the ground; only grass and flowers, nothing built, no pavilion, no path, no stones, no water',
     canvas: [192, 128],
     inferred: 'Not on the sheet. Variation on top of the grass tile.',
     noReference: true,

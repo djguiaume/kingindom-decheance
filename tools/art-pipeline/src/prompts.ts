@@ -58,7 +58,7 @@ function framing(asset: Asset, part: Part): string {
               : ' Same camera angle, but turned 90 degrees: its length runs straight up the screen, away from the viewer.'
             : part.view === 'diag'
               ? gate
-                ? ' Same camera angle, but the gate is turned 45 degrees: its wall line runs diagonally from bottom-left to top-right, so the gateway is seen at an angle.'
+                ? ` Same camera angle, but the gate is turned 45 degrees: its wall line runs diagonally from bottom-left to top-right, so the gateway is seen at an angle.${part.pose === 'open' ? ' Both doors are swung wide open, square to the wall, so the gateway is clearly empty and you can see the ground through it.' : ''}`
                 : ' Same camera angle, but turned 45 degrees: its length runs diagonally from bottom-left to top-right.'
               : turnable && !gate
                 ? ' Its length runs straight left to right across the frame.'
