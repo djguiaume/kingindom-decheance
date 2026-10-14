@@ -18,6 +18,7 @@
     "e2e": "pnpm --filter @kd/game e2e",
     "content:schema": "pnpm --filter @kd/content schema",
     "sim": "pnpm --filter @kd/sim cli",
+    "art": "pnpm --filter @kd/art-pipeline art",
     "golden:update": "UPDATE_GOLDEN=1 vitest run packages/sim/test/golden.test.ts"
   },
   "devDependencies": {
