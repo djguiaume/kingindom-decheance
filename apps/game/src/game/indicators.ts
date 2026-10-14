@@ -43,6 +43,30 @@ export interface Arrow {
   label: string;
   /** What the marker shows inside: an icon with an optional count, per enemy type. */
   parts: { icon: IconId; count: number | null }[];
+  /** The marker body's size in CSS px (a pill sized to its icons and counts). */
+  width: number;
+  height: number;
+  /** True when the target is on screen and the marker stands over it, pointing down. */
+  onScreen: boolean;
+}
+
+/** Marker body height per arrow size, in CSS px. */
+export const PIN_HEIGHT = { 1: 30, 2: 36, 3: 44 } as const;
+
+/** The marker body's size: as tall as its size class, as wide as its icons and counts. */
+export function pinSize(
+  size: Arrow['size'],
+  parts: Arrow['parts'],
+): { width: number; height: number; font: number } {
+  const height = PIN_HEIGHT[size];
+  const font = Math.round(height * 0.45);
+  const partW = (p: Arrow['parts'][number]) =>
+    font * 1.3 + (p.count === null ? 0 : String(p.count).length * font * 0.62);
+  const width = Math.max(
+    height,
+    parts.reduce((n, p) => n + partW(p), 0) + (parts.length - 1) * 6 + height * 0.6,
+  );
+  return { width: Math.round(width), height, font };
 }
 
 export const MAX_ARROWS = 6;
@@ -95,22 +119,28 @@ export function enemyGroups(state: GameState, exclude?: (id: number) => boolean)
   return groups;
 }
 
+/** Room for the tip outside the marker body, in CSS px. */
+const TIP = 14;
+
 /**
- * Where an arrow toward a screen point sits: on the inset rectangle, along the line from the
- * screen centre, moved out of any area to avoid. Null when the point is on screen.
+ * Where an arrow toward a screen point sits: on the inset rectangle (shrunk by half the marker's
+ * size, so a wide marker never pokes out of the screen), along the line from the screen centre.
+ * If that spot is in an area to avoid, the marker slides along the same screen edge out of it,
+ * so it always stays on the edge. Null when the point is on screen.
  */
 export function placeArrow(
   target: Vec,
   view: { width: number; height: number },
   layout: ArrowLayout,
+  half: { w: number; h: number } = { w: 0, h: 0 },
 ): { x: number; y: number; angle: number } | null {
   const { width: w, height: h } = view;
   if (target.x >= 0 && target.x <= w && target.y >= 0 && target.y <= h) return null;
   const inner: Rect = {
-    left: layout.inset.left,
-    top: layout.inset.top,
-    right: w - layout.inset.right,
-    bottom: h - layout.inset.bottom,
+    left: layout.inset.left + half.w,
+    top: layout.inset.top + half.h,
+    right: w - layout.inset.right - half.w,
+    bottom: h - layout.inset.bottom - half.h,
   };
   const cx = w / 2;
   const cy = h / 2;
@@ -119,28 +149,33 @@ export function placeArrow(
   const angle = Math.atan2(dy, dx);
   const kx = dx > 0 ? (inner.right - cx) / dx : dx < 0 ? (inner.left - cx) / dx : Infinity;
   const ky = dy > 0 ? (inner.bottom - cy) / dy : dy < 0 ? (inner.top - cy) / dy : Infinity;
-  const k = Math.min(kx, ky);
+  const k = Math.max(0, Math.min(kx, ky));
   let x = cx + dx * k;
   let y = cy + dy * k;
+  // Which edge it sits on decides the direction it may slide in.
+  const onSide = kx <= ky;
   for (const r of layout.avoid) {
-    if (x < r.left || x > r.right || y < r.top || y > r.bottom) continue;
-    // Slide along the edge to the nearest side of the area that is still inside the frame.
-    const options = [
-      { x, y: r.top },
-      { x, y: r.bottom },
-      { x: r.left, y },
-      { x: r.right, y },
-    ].filter(
-      (p) => p.x >= inner.left && p.x <= inner.right && p.y >= inner.top && p.y <= inner.bottom,
-    );
-    const best = options.sort(
-      (a, b) => Math.abs(a.x - x) + Math.abs(a.y - y) - (Math.abs(b.x - x) + Math.abs(b.y - y)),
-    )[0];
-    if (best) ({ x, y } = best);
+    // The marker's box, not just its centre, must stay out of the area.
+    if (x + half.w < r.left || x - half.w > r.right || y + half.h < r.top || y - half.h > r.bottom)
+      continue;
+    if (onSide) {
+      const up = r.top - half.h;
+      const down = r.bottom + half.h;
+      const options = [up, down].filter((v) => v >= inner.top && v <= inner.bottom);
+      const best = options.sort((a, b) => Math.abs(a - y) - Math.abs(b - y))[0];
+      if (best !== undefined) y = best;
+    } else {
+      const left = r.left - half.w;
+      const right = r.right + half.w;
+      const options = [left, right].filter((v) => v >= inner.left && v <= inner.right);
+      const best = options.sort((a, b) => Math.abs(a - x) - Math.abs(b - x))[0];
+      if (best !== undefined) x = best;
+    }
   }
   return { x, y, angle };
 }
 
+const dist2 = (a: Vec, b: Vec) => (a.x - b.x) ** 2 + (a.y - b.y) ** 2;
 const sizeFor = (count: number): 1 | 2 | 3 => (count >= 12 ? 3 : count >= 5 ? 2 : 1);
 /** Every enemy marker is one danger red, like Thronefall's; the icons tell the types apart. */
 const ENEMY_RED = css(ui.enemy);
@@ -168,9 +203,29 @@ export function buildArrows(
     color: string,
     parts: Arrow['parts'],
   ) => {
-    const at = placeArrow(view.toScreen(world), view, layout);
+    const { width, height } = pinSize(size, parts);
+    const screen = view.toScreen(world);
+    const at = placeArrow(screen, view, layout, { w: width / 2 + TIP, h: height / 2 + TIP });
     const label = parts.map((p) => `${p.icon}${p.count ?? ''}`).join(' ');
-    if (at) out.push({ key, kind, ...at, size, color, label, parts });
+    if (at)
+      out.push({ key, kind, ...at, size, color, label, parts, width, height, onScreen: false });
+    // By day a spawn on screen keeps its marker, standing over the spawn, so the player can
+    // still read what comes from there.
+    else if (kind === 'spawn')
+      out.push({
+        key,
+        kind,
+        x: screen.x,
+        y: screen.y - height / 2 - TIP - 6,
+        angle: Math.PI / 2,
+        size,
+        color,
+        label,
+        parts,
+        width,
+        height,
+        onScreen: true,
+      });
   };
 
   if (state.phase === 'day') {
@@ -208,15 +263,21 @@ export function buildArrows(
     add(`b${b.id}`, 'building', b.pos, 2, ALERT_RED, [{ icon: 'house', count: null }]);
 
   const bossIds = new Set(bosses.map((b) => b.id));
-  const groups = enemyGroups(state, (id) => bossIds.has(id)).sort((a, b) => b.count - a.count);
+  const groups = enemyGroups(state, (id) => bossIds.has(id));
+  // Stable keys (lane and rank along the lane) so a marker keeps its identity while its group
+  // moves, instead of being replaced every time its centre crosses a metre.
+  const rank = new Map<EnemyGroup, number>();
+  for (const lane of new Set(groups.map((g) => g.lane))) {
+    const start = req(ctx.lanes, lane).points[0]!;
+    groups
+      .filter((g) => g.lane === lane)
+      .sort((a, b) => dist2(b.pos, start) - dist2(a.pos, start))
+      .forEach((g, i) => rank.set(g, i));
+  }
+  groups.sort((a, b) => b.count - a.count);
   for (const g of groups)
-    add(
-      `g-${g.lane}-${Math.round(g.pos.x)}-${Math.round(g.pos.y)}`,
-      'group',
-      g.pos,
-      sizeFor(g.count),
-      ENEMY_RED,
-      [{ icon: enemyIcon(g.main), count: g.count }],
-    );
+    add(`g-${g.lane}-${rank.get(g)}`, 'group', g.pos, sizeFor(g.count), ENEMY_RED, [
+      { icon: enemyIcon(g.main), count: g.count },
+    ]);
   return out.slice(0, MAX_ARROWS);
 }

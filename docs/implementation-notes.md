@@ -82,7 +82,7 @@ steering, hand-made maps) and the prototype design (corpus 11), and are easy to 
 - **Dodgeable enemy shots**: an attack with `projectile: { speed }` no longer hits at once. It
   fires a shot at the spot where its target stands; the shot lands after its flight time and
   hits only if the target's edge is still within 0.2 m of that spot (`PROJECTILE_SLACK`).
-  Archers (12 m/s) and catapults (7 m/s, lobbed, with a landing shadow) use it; towers, the
+  Archers (8 m/s since playtest 3) and catapults (7 m/s, lobbed, with a landing shadow) use it; towers, the
   king and footmen still hit at once. Shots in flight live in `GameState.projectiles`
   (state schema 2) and vanish at dawn.
 - **Rally and flags**: each barracks has a flag where its squad stands guard (its gate, or
@@ -109,6 +109,22 @@ steering, hand-made maps) and the prototype design (corpus 11), and are easy to 
   king-only falls night 5, greedy falls night 3. The bots' king never stands still, so it
   dodges more than a player will. The `defensive-loss` golden moved to seed 6 (seed 4 now
   wins).
+
+## Playtest 3 fixes (2026-10-14)
+
+- **Messages clear themselves**: a refused command ("Charge isn't ready") shows for 1.5 s
+  (`MESSAGE_MS` in `input/hub.ts`) instead of staying until the next command.
+- **Edge pins stay on the edge**: a pin is placed by its whole box, not its centre, so a wide
+  pill never pokes off screen. When it would cover the joystick or the buttons it slides along
+  its own edge, never inwards. Group markers keep a stable key (lane and rank along the lane),
+  and every pin eases toward its new spot, so they no longer jump.
+- **Spawn pin while the spawn is on screen**: by day the pin stands over the spawn, pointing
+  down, so the king can walk there and still read what is coming.
+- **Readable attacks**: melee hits draw a short slash on the target instead of a white line
+  from the attacker (those looked like shots). Enemy arrows are thick dark shafts with a white
+  head and a ground shadow, and fly at 8 m/s (was 12), so there is time to step aside.
+- Balance (`pnpm sim`, 200 seeds): balanced ~95%, defensive ~80%. The `defensive-loss` golden
+  moved to seed 5.
 
 ## Balance (first playtest, 2026-10-13)
 
