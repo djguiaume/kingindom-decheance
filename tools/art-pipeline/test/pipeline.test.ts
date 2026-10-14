@@ -1,0 +1,285 @@
+import { existsSync, readFileSync } from 'node:fs';
+import { cp, mkdir, mkdtemp, readFile, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import sharp from 'sharp';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { buildRuntime, pack } from '../src/atlas.ts';
+import { CATALOG } from '../src/catalog.ts';
+import { buildManifest, type Manifest } from '../src/manifest.ts';
+import { createMockScenario, fixturePng, type MockOptions } from '../src/mock-scenario.ts';
+import { estimate, generateBatch, paths, type Workspace } from '../src/pipeline.ts';
+import { audit, contactSheet, animationSheet } from '../src/review.ts';
+import { APPROVED_MODEL_ID, ScenarioClient, credentialsFromEnv, redact } from '../src/scenario.ts';
+import { StatusStore } from '../src/status.ts';
+import { analyze, normalize } from '../src/validate.ts';
+
+const REPO = join(import.meta.dirname, '../../..');
+const CREDS = { key: 'test-key-abc', secret: 'test-secret-xyz' };
+let root: string;
+
+beforeEach(async () => {
+  root = await mkdtemp(join(tmpdir(), 'art-pipeline-'));
+  await mkdir(join(root, 'art/reference'), { recursive: true });
+  await cp(join(REPO, 'art/manifest.json'), paths(root).manifest);
+  await cp(join(REPO, 'art/reference/panda-kingdom-v1.2.png'), paths(root).reference);
+});
+afterEach(async () => {
+  await rm(root, { recursive: true, force: true });
+});
+
+async function ws(mock: MockOptions = {}) {
+  const { fetch, state } = createMockScenario(mock);
+  const manifest = buildManifest(CATALOG);
+  const status = await StatusStore.open(paths(root).status, APPROVED_MODEL_ID);
+  const client = new ScenarioClient({ credentials: CREDS, fetch, pollIntervalMs: 1 });
+  const w: Workspace = { root, manifest, status, client };
+  return { w, state, manifest };
+}
+
+const asset = (m: Manifest, id: string) => m.assets.find((a) => a.id === id)!;
+
+describe('credentials', () => {
+  it('come only from the environment and missing ones are named, not echoed', () => {
+    expect(() => credentialsFromEnv({})).toThrow(/SCENARIO_API_KEY, SCENARIO_API_SECRET/);
+    expect(credentialsFromEnv({ SCENARIO_API_KEY: 'k', SCENARIO_API_SECRET: 's' })).toEqual({
+      key: 'k',
+      secret: 's',
+    });
+  });
+
+  it('are sent as HTTP Basic auth and redacted from error text', async () => {
+    const { w, state } = await ws();
+    await estimate(w, 'raider');
+    expect([...state.authHeaders]).toEqual([
+      `Basic ${Buffer.from('test-key-abc:test-secret-xyz').toString('base64')}`,
+    ]);
+    expect(redact('bad test-key-abc / test-secret-xyz', CREDS)).toBe('bad [redacted] / [redacted]');
+  });
+
+  it('are never written to the status or batch files', async () => {
+    const { w } = await ws();
+    const batch = await estimate(w, '35-36');
+    await generateBatch(w, batch.token, batch.totalCU);
+    for (const f of [paths(root).status, join(paths(root).batches, `${batch.token}.json`)]) {
+      const text = readFileSync(f, 'utf8');
+      expect(text).not.toContain(CREDS.key);
+      expect(text).not.toContain(CREDS.secret);
+    }
+  });
+});
+
+describe('budget gates', () => {
+  it('a dry-run estimate uploads the reference once and charges nothing', async () => {
+    const { w, state } = await ws({ costPerImage: 7 });
+    const batch = await estimate(w, 'enemies');
+    expect(state.generations).toHaveLength(0);
+    expect(state.spent).toBe(0);
+    expect(state.uploads).toHaveLength(1);
+    expect(batch.parts.length).toBe(state.dryRuns);
+    expect(batch.totalCU).toBe(7 * batch.parts.length);
+    await estimate(w, 'kings');
+    expect(state.uploads).toHaveLength(1);
+  });
+
+  it('refuses a batch whose estimate exceeds the approved budget, before generating anything', async () => {
+    const { w, state } = await ws();
+    const batch = await estimate(w, 'friendly');
+    await expect(generateBatch(w, batch.token, batch.totalCU - 1)).rejects.toThrow(
+      /over the approved/,
+    );
+    expect(state.generations).toHaveLength(0);
+  });
+
+  it('refuses a batch whose prompts changed since the estimate', async () => {
+    const { w, state, manifest } = await ws();
+    const batch = await estimate(w, 'raider');
+    asset(manifest, 'raider').subject += ' with a hat';
+    await expect(generateBatch(w, batch.token, 100)).rejects.toThrow(/changed since/);
+    expect(state.generations).toHaveLength(0);
+  });
+
+  it('refuses an unknown token or a missing budget', async () => {
+    const { w } = await ws();
+    await expect(generateBatch(w, 'nothex', 10)).rejects.toThrow(/not a batch token/);
+    await expect(generateBatch(w, '0123456789', 0)).rejects.toThrow(/budget/);
+  });
+
+  it('stops before a part that would push spending over the budget', async () => {
+    // Every image fails validation, so retries eat the budget.
+    const { w, state } = await ws({ costPerImage: 5, fixtureFor: () => 'opaque' });
+    const batch = await estimate(w, 'footman,knight');
+    const run = await generateBatch(w, batch.token, 12);
+    expect(run.spentCU).toBeLessThanOrEqual(12);
+    expect(state.spent).toBeLessThanOrEqual(12);
+    expect(run.stoppedFor).toMatch(/budget/);
+  });
+});
+
+describe('generation', () => {
+  it('limits retries per part and records why each attempt failed', async () => {
+    const { w, state } = await ws({ fixtureFor: () => 'cutoff' });
+    const batch = await estimate(w, 'raider');
+    const run = await generateBatch(w, batch.token, 100, { maxAttempts: 3 });
+    expect(state.generations).toHaveLength(3);
+    expect(run.failed).toEqual(['raider']);
+    const st = w.status.get('raider');
+    expect(st).toMatchObject({ state: 'failed', attempts: 3, costCU: 15 });
+    expect(st.issues.map((i) => i.code)).toContain('cutoff');
+    // Out of attempts: the next estimate skips it instead of spending again.
+    const again = await estimate(w, 'raider');
+    expect(again.parts).toHaveLength(0);
+    expect(again.skipped[0]?.reason).toMatch(/out of attempts/);
+  });
+
+  it('retries a failed job and keeps the first valid output', async () => {
+    const { w, state } = await ws({ failJob: (n) => n === 0 });
+    const batch = await estimate(w, 'raider');
+    const run = await generateBatch(w, batch.token, 100);
+    expect(run.done).toEqual(['raider']);
+    expect(state.generations).toHaveLength(2);
+    expect(w.status.get('raider')).toMatchObject({ state: 'validated', attempts: 2 });
+  });
+
+  it('generates each part independently with the approved model, the reference and transparency', async () => {
+    const { w, state } = await ws();
+    const batch = await estimate(w, '35-36');
+    await generateBatch(w, batch.token, batch.totalCU);
+    expect(state.generations).toHaveLength(3);
+    const ref = w.status.data.referenceAssetId;
+    for (const g of state.generations) {
+      expect(g.body).toMatchObject({
+        background: 'transparent',
+        numOutputs: 1,
+        referenceImages: [ref],
+      });
+      expect(g.prompt).toMatch(/paint ONE new isolated subject/);
+    }
+    expect(new Set(state.generations.map((g) => g.prompt)).size).toBe(3);
+    expect(w.status.data.modelId).toBe('model_openai-gpt-image-2-5-flare');
+  });
+
+  it('skips parts already validated when estimating again', async () => {
+    const { w } = await ws();
+    const first = await estimate(w, 'raider');
+    await generateBatch(w, first.token, 100);
+    const second = await estimate(w, 'raider,skirmisher');
+    expect(second.parts.map((p) => p.id)).toEqual(['skirmisher']);
+  });
+});
+
+describe('validation and masters', () => {
+  const m = buildManifest(CATALOG);
+  const raider = asset(m, 'raider');
+  const tile = asset(m, 'tile_grass');
+  const { w, h } = raider.generate;
+
+  it('accepts a clean transparent sprite', async () => {
+    const a = await analyze(await fixturePng(w, h, 'good', 1), raider);
+    expect(a.issues.filter((i) => i.level === 'error')).toEqual([]);
+  });
+
+  it('rejects a painted background, a cut-off subject, a tiny subject and a wrong size', async () => {
+    const codes = async (png: Buffer) => (await analyze(png, raider)).issues.map((i) => i.code);
+    expect(await codes(await fixturePng(w, h, 'opaque', 1))).toContain('background');
+    expect(await codes(await fixturePng(w, h, 'cutoff', 1))).toContain('cutoff');
+    expect(await codes(await fixturePng(w, h, 'tiny', 1))).toContain('tiny');
+    expect(await codes(await fixturePng(512, 512, 'good', 1))).toContain('size');
+    expect(await codes(Buffer.from('not an image'))).toContain('decode');
+  });
+
+  it('requires tiles to be opaque', async () => {
+    const opaque = await analyze(
+      await fixturePng(tile.generate.w, tile.generate.h, 'good', 1, false),
+      tile,
+    );
+    expect(opaque.issues.filter((i) => i.level === 'error')).toEqual([]);
+    const clear = await analyze(
+      await fixturePng(tile.generate.w, tile.generate.h, 'good', 1, true),
+      tile,
+    );
+    expect(clear.issues.map((i) => i.code)).toContain('opaque');
+  });
+
+  it('normalises a sprite onto its canvas, feet on the anchor, at its listed height', async () => {
+    const master = await normalize(await fixturePng(w, h, 'good', 1), raider);
+    const { data, info } = await sharp(master).raw().toBuffer({ resolveWithObject: true });
+    expect([info.width, info.height, info.channels]).toEqual([raider.canvas.w, raider.canvas.h, 4]);
+    let top = info.height,
+      bottom = -1;
+    for (let y = 0; y < info.height; y++) {
+      for (let x = 0; x < info.width; x++) {
+        if ((data[(y * info.width + x) * 4 + 3] ?? 0) > 8) {
+          top = Math.min(top, y);
+          bottom = Math.max(bottom, y);
+        }
+      }
+    }
+    expect(bottom + 1).toBeCloseTo(raider.canvas.h * raider.anchor.y, -1);
+    expect(bottom - top + 1).toBeCloseTo(raider.heightPx!, -1);
+  });
+});
+
+describe('runtime atlases and review', () => {
+  it('packs frames without overlap', () => {
+    const items = Array.from({ length: 60 }, (_, i) => ({
+      w: 40 + ((i * 37) % 300),
+      h: 30 + ((i * 53) % 400),
+    }));
+    const packed = pack(items, 1024, 2);
+    for (const a of packed) {
+      for (const b of packed) {
+        if (a === b || a.page !== b.page) continue;
+        const apart =
+          a.x + a.item.w <= b.x ||
+          b.x + b.item.w <= a.x ||
+          a.y + a.item.h <= b.y ||
+          b.y + b.item.h <= a.y;
+        expect(apart).toBe(true);
+      }
+      expect(a.x + a.item.w).toBeLessThanOrEqual(1024);
+      expect(a.y + a.item.h).toBeLessThanOrEqual(1024);
+    }
+  });
+
+  it('builds Phaser JSON Hash atlases with pivots, a contact sheet and an honest audit', async () => {
+    const { w, manifest } = await ws();
+    const batch = await estimate(w, '35-36,102');
+    await generateBatch(w, batch.token, batch.totalCU);
+    const out = paths(root).runtime;
+    const index = await buildRuntime(root, manifest, out);
+
+    const atlas = JSON.parse(await readFile(join(out, 'enemies.json'), 'utf8'));
+    expect(atlas.meta).toMatchObject({ image: 'enemies.webp', format: 'RGBA8888' });
+    expect(Object.keys(atlas.frames).sort()).toEqual([
+      'catapult_arm.f1',
+      'catapult_arm.f2',
+      'catapult_chassis',
+    ]);
+    const chassis = atlas.frames.catapult_chassis;
+    expect(chassis).toMatchObject({
+      rotated: false,
+      trimmed: true,
+      sourceSize: { w: 256, h: 256 },
+      pivot: { x: 0.5, y: 0.9 },
+      contentId: 'catapult',
+    });
+    const meta = await sharp(join(out, 'enemies.webp')).metadata();
+    expect(meta.format).toBe('webp');
+    expect(meta.hasAlpha).toBe(true);
+    expect(index.images.map((i) => i.key)).toEqual(['tile_grass']);
+    expect(index.frames['catapult_arm.f2']).toMatchObject({ atlas: 'enemies', num: 36 });
+
+    const review = paths(root).review;
+    await mkdir(review, { recursive: true });
+    await contactSheet(root, manifest, w.status.data, join(review, 'contact-sheet.png'));
+    await animationSheet(root, manifest, join(review, 'animation-frames.png'));
+    expect(existsSync(join(review, 'contact-sheet.png'))).toBe(true);
+    expect(existsSync(join(review, 'animation-frames.png'))).toBe(true);
+
+    const result = audit(root, manifest, w.status.data, index);
+    expect(result.complete).toBe(false);
+    const done = result.rows.filter((r) => r.problems.length === 0).map((r) => r.id);
+    expect(done).toEqual(['catapult_chassis', 'catapult_arm', 'tile_grass']);
+  });
+});

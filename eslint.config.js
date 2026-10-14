@@ -31,6 +31,7 @@ export default tseslint.config(
       '**/playwright-report/**',
       '**/test-results/**',
       'packages/content/schema/**',
+      '.art-mock/**',
     ],
   },
   js.configs.recommended,

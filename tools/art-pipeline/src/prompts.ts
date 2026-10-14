@@ -1,0 +1,60 @@
+/**
+ * Prompt for one generation part. Every part is generated on its own; the uploaded v1.2 sheet
+ * is attached as a style reference only.
+ */
+import { createHash } from 'node:crypto';
+import { KIND_RULES, type Asset, type Part } from './manifest.ts';
+
+export const STYLE_BIBLE = [
+  'Cozy hand-painted storybook strategy game art, soft brushwork, warm sunlight, saturated but not neon.',
+  'Consistent three-quarter isometric-like view looking down about 35-40 degrees; light from the upper left.',
+  'Subtle dark-brown outline so the sprite reads at 40 px tall on a phone.',
+  'Palette: deep blue #315F94, gold #E2B94B (royalty and money only), panda white and black, bamboo, natural wood, grey stone.',
+  'Red appears ONLY on enemies. No red on pandas or panda buildings.',
+  'Pandas are round, friendly and brave; not a Kung Fu Panda look-alike. East Asian mood through bamboo, paper lanterns and pagoda roofs.',
+  'No text, letters, numbers, labels, UI, frames or parchment. The only symbol allowed is a simple panda-face emblem.',
+].join(' ');
+
+const REFERENCE_RULE =
+  'The attached image is the approved v1.2 style reference sheet. Match its art style, palette, proportions and character designs. Do NOT copy, crop or recompose it; paint ONE new isolated subject from scratch.';
+
+function framing(asset: Asset): string {
+  const rule = KIND_RULES[asset.kind];
+  switch (asset.kind) {
+    case 'tile':
+      return 'Fill the whole square edge to edge as a seamless, tileable texture. Opaque, no border, no vignette.';
+    case 'background':
+      return 'Fill the whole frame edge to edge. Opaque painted scene.';
+    case 'weapon':
+      return 'Show the object alone, whole and centred, nobody holding it, on a fully transparent background.';
+    default: {
+      const ground = rule.groundAllowed
+        ? 'Small contextual decorations attached to it are fine; no wide ground plate or scenery around it.'
+        : 'No ground patch, no cast shadow, no scenery, nothing under the feet.';
+      const facing = ['character', 'flyer', 'siege', 'projectile'].includes(asset.kind)
+        ? ' Facing right.'
+        : '';
+      return `One single subject, whole (nothing cut off by the frame), centred with margin, on a fully transparent background.${facing} ${ground}`;
+    }
+  }
+}
+
+export function promptFor(asset: Asset, part: Part): string {
+  const pose = part.pose
+    ? ` Animation frame ${part.frame + 1} of ${asset.parts.length}: ${part.pose}.`
+    : '';
+  return [
+    `Game sprite: ${asset.subject}.${pose}`,
+    framing(asset),
+    STYLE_BIBLE,
+    REFERENCE_RULE,
+  ].join('\n');
+}
+
+/** Short stable hash of everything that shapes a generation, to detect stale approvals. */
+export function promptHash(asset: Asset, part: Part): string {
+  return createHash('sha256')
+    .update(JSON.stringify([promptFor(asset, part), asset.generate, asset.transparent]))
+    .digest('hex')
+    .slice(0, 12);
+}
