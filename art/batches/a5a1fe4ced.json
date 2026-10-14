@@ -1,0 +1,307 @@
+{
+  "token": "a5a1fe4ced",
+  "selector": "kings,friendly,enemies",
+  "modelId": "model_openai-gpt-image-2-5-flare",
+  "createdAt": "2026-10-14T15:06:32.423Z",
+  "totalCU": 674,
+  "parts": [
+    {
+      "id": "king_roll_walk.f1",
+      "promptHash": "feee76ee8e06",
+      "estimateCU": 12
+    },
+    {
+      "id": "king_roll_walk.f2",
+      "promptHash": "c0c48dd44f90",
+      "estimateCU": 12
+    },
+    {
+      "id": "king_roll_walk.f3",
+      "promptHash": "b8950ea60c35",
+      "estimateCU": 12
+    },
+    {
+      "id": "king_roll_walk.f4",
+      "promptHash": "c1be17bb6aab",
+      "estimateCU": 12
+    },
+    {
+      "id": "king_roll_anticipate",
+      "promptHash": "474aa0fd2dce",
+      "estimateCU": 12
+    },
+    {
+      "id": "king_roll_roll.f1",
+      "promptHash": "6c6be1c50a24",
+      "estimateCU": 12
+    },
+    {
+      "id": "king_roll_roll.f2",
+      "promptHash": "4e524cefdbc0",
+      "estimateCU": 12
+    },
+    {
+      "id": "king_roll_roll.f3",
+      "promptHash": "f173c692b5ad",
+      "estimateCU": 12
+    },
+    {
+      "id": "king_roll_roll.f4",
+      "promptHash": "e4b055800529",
+      "estimateCU": 12
+    },
+    {
+      "id": "king_roll_impact_fx.f1",
+      "promptHash": "8278ff032f26",
+      "estimateCU": 13
+    },
+    {
+      "id": "king_roll_impact_fx.f2",
+      "promptHash": "d9bc386a075a",
+      "estimateCU": 13
+    },
+    {
+      "id": "king_roll_impact_fx.f3",
+      "promptHash": "1155493641c0",
+      "estimateCU": 13
+    },
+    {
+      "id": "king_roll_uncurl.f1",
+      "promptHash": "92c5b6ae107b",
+      "estimateCU": 12
+    },
+    {
+      "id": "king_roll_uncurl.f2",
+      "promptHash": "400d93a50f2b",
+      "estimateCU": 12
+    },
+    {
+      "id": "king_wolf_idle",
+      "promptHash": "38ad4123b791",
+      "estimateCU": 12
+    },
+    {
+      "id": "king_wolf_walk.f1",
+      "promptHash": "b42272fa66f8",
+      "estimateCU": 12
+    },
+    {
+      "id": "king_wolf_walk.f2",
+      "promptHash": "76239e0fb62b",
+      "estimateCU": 12
+    },
+    {
+      "id": "king_wolf_walk.f3",
+      "promptHash": "c15b736662d1",
+      "estimateCU": 12
+    },
+    {
+      "id": "king_wolf_walk.f4",
+      "promptHash": "e608ff354d19",
+      "estimateCU": 12
+    },
+    {
+      "id": "king_wolf_run.f1",
+      "promptHash": "9fc64f7cbce6",
+      "estimateCU": 12
+    },
+    {
+      "id": "king_wolf_run.f2",
+      "promptHash": "911053cfbfd5",
+      "estimateCU": 12
+    },
+    {
+      "id": "king_wolf_run.f3",
+      "promptHash": "229122331703",
+      "estimateCU": 12
+    },
+    {
+      "id": "king_wolf_run.f4",
+      "promptHash": "2f3053e08d9e",
+      "estimateCU": 12
+    },
+    {
+      "id": "king_wolf_lunge.f1",
+      "promptHash": "65a3f6ee0cbd",
+      "estimateCU": 12
+    },
+    {
+      "id": "king_wolf_lunge.f2",
+      "promptHash": "c9df383877f7",
+      "estimateCU": 12
+    },
+    {
+      "id": "king_wolf_impact_fx.f1",
+      "promptHash": "078b4cd066d9",
+      "estimateCU": 12
+    },
+    {
+      "id": "king_wolf_impact_fx.f2",
+      "promptHash": "bce658a86a45",
+      "estimateCU": 12
+    },
+    {
+      "id": "king_wolf_impact_fx.f3",
+      "promptHash": "2e187fb8d26e",
+      "estimateCU": 12
+    },
+    {
+      "id": "king_portrait",
+      "promptHash": "37f7ba0c850f",
+      "estimateCU": 12
+    },
+    {
+      "id": "king_spear",
+      "promptHash": "56a8c118eb59",
+      "estimateCU": 13
+    },
+    {
+      "id": "king_crown",
+      "promptHash": "ed8c38d0e994",
+      "estimateCU": 12
+    },
+    {
+      "id": "knight",
+      "promptHash": "9b1b28f2d70b",
+      "estimateCU": 12
+    },
+    {
+      "id": "knight_weapon",
+      "promptHash": "712af3658b98",
+      "estimateCU": 13
+    },
+    {
+      "id": "archer",
+      "promptHash": "69ef29494bf1",
+      "estimateCU": 12
+    },
+    {
+      "id": "archer_weapon",
+      "promptHash": "97814a7d5cd8",
+      "estimateCU": 13
+    },
+    {
+      "id": "crossbowman",
+      "promptHash": "092e8b084935",
+      "estimateCU": 12
+    },
+    {
+      "id": "crossbowman_weapon",
+      "promptHash": "3d1dcde5c339",
+      "estimateCU": 13
+    },
+    {
+      "id": "guardian",
+      "promptHash": "3739928e8790",
+      "estimateCU": 12
+    },
+    {
+      "id": "guardian_weapon",
+      "promptHash": "65a922de85b4",
+      "estimateCU": 13
+    },
+    {
+      "id": "monk",
+      "promptHash": "4cbf61e9b8c8",
+      "estimateCU": 12
+    },
+    {
+      "id": "monk_weapon",
+      "promptHash": "f64c08592606",
+      "estimateCU": 13
+    },
+    {
+      "id": "skirmisher",
+      "promptHash": "ecd527fbbc0a",
+      "estimateCU": 12
+    },
+    {
+      "id": "skirmisher_weapon",
+      "promptHash": "8f8fc61fe5d6",
+      "estimateCU": 13
+    },
+    {
+      "id": "brute",
+      "promptHash": "92b9dd865108",
+      "estimateCU": 12
+    },
+    {
+      "id": "brute_weapon",
+      "promptHash": "b08711666b9e",
+      "estimateCU": 13
+    },
+    {
+      "id": "harpy.f1",
+      "promptHash": "0b515208c29f",
+      "estimateCU": 12
+    },
+    {
+      "id": "harpy.f2",
+      "promptHash": "6b2778343524",
+      "estimateCU": 12
+    },
+    {
+      "id": "harpy.f3",
+      "promptHash": "20673c019936",
+      "estimateCU": 12
+    },
+    {
+      "id": "harpy_weapon",
+      "promptHash": "3946e8f33434",
+      "estimateCU": 12
+    },
+    {
+      "id": "catapult_chassis",
+      "promptHash": "c6a3d30e83c5",
+      "estimateCU": 12
+    },
+    {
+      "id": "catapult_arm.f1",
+      "promptHash": "9272a95cd1bb",
+      "estimateCU": 13
+    },
+    {
+      "id": "catapult_arm.f2",
+      "promptHash": "579f01245fe3",
+      "estimateCU": 13
+    },
+    {
+      "id": "warlord",
+      "promptHash": "85c82ef431c3",
+      "estimateCU": 12
+    },
+    {
+      "id": "warlord_weapon",
+      "promptHash": "532be9a70696",
+      "estimateCU": 13
+    },
+    {
+      "id": "warlord_bodyguard",
+      "promptHash": "16b7c7c7fcdd",
+      "estimateCU": 12
+    }
+  ],
+  "skipped": [
+    {
+      "id": "king_roll_idle",
+      "reason": "validated"
+    },
+    {
+      "id": "footman",
+      "reason": "validated"
+    },
+    {
+      "id": "footman_weapon",
+      "reason": "validated"
+    },
+    {
+      "id": "raider",
+      "reason": "validated"
+    },
+    {
+      "id": "raider_weapon",
+      "reason": "validated"
+    }
+  ],
+  "runs": []
+}
