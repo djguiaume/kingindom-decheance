@@ -633,9 +633,8 @@ const pct = (v: number, max: number) =>
 }
 .offer-head b {
   flex: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  /* Long names ("Archery range", "Crossbow range") wrap instead of being cut. */
+  line-height: 1.1;
 }
 .up {
   color: var(--moss);
