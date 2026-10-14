@@ -118,6 +118,13 @@ steering, hand-made maps) and the prototype design (corpus 11), and are easy to 
   pill never pokes off screen. When it would cover the joystick or the buttons it slides along
   its own edge, never inwards. Group markers keep a stable key (lane and rank along the lane),
   and every pin eases toward its new spot, so they no longer jump.
+- **Pins on a short phone screen** (follow-up): pins sat 40 px in from every edge plus a 52 px
+  top bar, which on a phone in landscape (about 330 px tall) put them near the middle. They now
+  hug the edge (6 px inside the safe area) and keep clear of the HUD by measuring its panels and
+  buttons (`.hud .panel`, `.hud button`, every 250 ms) instead of fixed zones: a pin slides along
+  its edge to the nearest free spot, and steps just past a panel only when the whole edge is
+  blocked there. The joystick zone is the bottom-left corner, at most 200 × 160 px. A spawn pin
+  standing over an on-screen spawn is kept inside the screen.
 - **Spawn pin while the spawn is on screen**: by day the pin stands over the spawn, pointing
   down, so the king can walk there and still read what is coming.
 - **Readable attacks**: melee hits draw a short slash on the target instead of a white line
