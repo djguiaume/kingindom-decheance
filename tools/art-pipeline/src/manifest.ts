@@ -165,9 +165,14 @@ export const KIND_RULES: Record<AssetKind, KindRule> = {
 const Size = z.object({ w: z.number().int().positive(), h: z.number().int().positive() });
 
 export const PartSchema = z.object({
-  /** Stable id: the asset id, plus ".f<n>" for animation frames. Also the atlas frame name. */
-  id: z.string().regex(/^[a-z0-9_]+(\.f\d+)?$/),
+  /**
+   * Stable id: the asset id, plus ".back" for the view from behind and ".f<n>" for animation
+   * frames. Also the atlas frame name.
+   */
+  id: z.string().regex(/^[a-z0-9_]+(\.back)?(\.f\d+)?$/),
   frame: z.number().int().nonnegative(),
+  /** "back": seen from behind, walking away (up the screen). Absent: the default right-facing view. */
+  view: z.literal('back').optional(),
   /** The pose of this frame, added to the prompt. */
   pose: z.string().optional(),
   /** Committed lossless master, relative to the repo root. */
@@ -219,6 +224,8 @@ export interface CatalogLike {
   heightPx?: number;
   checks?: string[];
   inferred?: string;
+  /** Also generate every frame seen from behind, for walking up the screen. */
+  back?: boolean;
 }
 
 /** Scenario output size: square for most, landscape for wide canvases and backdrops. */
@@ -252,15 +259,19 @@ export function buildManifest(catalog: readonly CatalogLike[]): Manifest {
         generate: generationSize(e.canvas),
         checks: e.checks ?? [],
         ...(e.inferred ? { inferred: e.inferred } : {}),
-        parts: frames.map((pose, i) => {
-          const id = frames.length > 1 ? `${e.id}.f${i + 1}` : e.id;
-          return {
-            id,
-            frame: i,
-            ...(pose ? { pose } : {}),
-            master: `art/masters/${e.group}/${code}_${id.replace('.', '_')}.png`,
-          };
-        }),
+        parts: [undefined, ...(e.back ? (['back'] as const) : [])].flatMap((view) =>
+          frames.map((pose, i) => {
+            const base = view ? `${e.id}.${view}` : e.id;
+            const id = frames.length > 1 ? `${base}.f${i + 1}` : base;
+            return {
+              id,
+              frame: i,
+              ...(view ? { view } : {}),
+              ...(pose ? { pose } : {}),
+              master: `art/masters/${e.group}/${code}_${id.replaceAll('.', '_')}.png`,
+            };
+          }),
+        ),
       };
     });
   return ManifestSchema.parse({

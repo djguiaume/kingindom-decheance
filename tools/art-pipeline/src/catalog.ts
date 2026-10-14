@@ -30,6 +30,8 @@ export interface CatalogEntry {
   /** Things a human must check on the review sheet beyond the automatic validation. */
   checks?: string[];
   inferred?: string;
+  /** Also generate the view from behind (walking up the screen). */
+  back?: boolean;
 }
 
 const walk4 = [
@@ -54,6 +56,7 @@ export const CATALOG: CatalogEntry[] = [
   {
     num: 1,
     id: 'king_roll_idle',
+    back: true,
     name: 'Rolling king: idle',
     group: 'kings',
     kind: 'character',
@@ -66,6 +69,7 @@ export const CATALOG: CatalogEntry[] = [
   {
     num: 2,
     id: 'king_roll_walk',
+    back: true,
     name: 'Rolling king: walk',
     group: 'kings',
     kind: 'character',
@@ -135,6 +139,7 @@ export const CATALOG: CatalogEntry[] = [
   {
     num: 7,
     id: 'king_wolf_idle',
+    back: true,
     name: 'Wolf rider: idle',
     group: 'kings',
     kind: 'character',
@@ -148,6 +153,7 @@ export const CATALOG: CatalogEntry[] = [
   {
     num: 8,
     id: 'king_wolf_walk',
+    back: true,
     name: 'Wolf rider: walk',
     group: 'kings',
     kind: 'character',
@@ -165,6 +171,7 @@ export const CATALOG: CatalogEntry[] = [
   {
     num: 9,
     id: 'king_wolf_run',
+    back: true,
     name: 'Wolf rider: run',
     group: 'kings',
     kind: 'character',

@@ -73,7 +73,8 @@ central arm, the ballista's two limbs and string, garrison dummies with no arche
 ## Runtime format
 
 `art/runtime/<group>.json` is a Phaser JSON Hash atlas. Frame names are part ids
-(`footman`, `footman_weapon`, `king_roll_walk.f3`, `catapult_arm.f1`). Each frame keeps its
+(`footman`, `footman_weapon`, `king_roll_walk.f3`, `catapult_arm.f1`). Assets marked `back` in the catalog
+also have a view from behind for walking up the screen, e.g. `king_roll_walk.back.f3`. Each frame keeps its
 untrimmed `sourceSize` and a normalised `pivot`, which Phaser 4.2.1 reads as the frame's custom
 pivot, so a sprite placed at an entity's ground point stands on its feet. `contentId` maps art to
 existing game content ids. `index.json` lists every atlas, image and frame.

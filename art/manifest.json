@@ -33,6 +33,12 @@
           "id": "king_roll_idle",
           "frame": 0,
           "master": "art/masters/kings/001_king_roll_idle.png"
+        },
+        {
+          "id": "king_roll_idle.back",
+          "frame": 0,
+          "view": "back",
+          "master": "art/masters/kings/001_king_roll_idle_back.png"
         }
       ]
     },
@@ -84,6 +90,34 @@
           "frame": 3,
           "pose": "passing pose, body slightly raised, opposite arm swing",
           "master": "art/masters/kings/002_king_roll_walk_f4.png"
+        },
+        {
+          "id": "king_roll_walk.back.f1",
+          "frame": 0,
+          "view": "back",
+          "pose": "contact pose, left foot forward",
+          "master": "art/masters/kings/002_king_roll_walk_back_f1.png"
+        },
+        {
+          "id": "king_roll_walk.back.f2",
+          "frame": 1,
+          "view": "back",
+          "pose": "passing pose, body slightly raised",
+          "master": "art/masters/kings/002_king_roll_walk_back_f2.png"
+        },
+        {
+          "id": "king_roll_walk.back.f3",
+          "frame": 2,
+          "view": "back",
+          "pose": "contact pose, right foot forward",
+          "master": "art/masters/kings/002_king_roll_walk_back_f3.png"
+        },
+        {
+          "id": "king_roll_walk.back.f4",
+          "frame": 3,
+          "view": "back",
+          "pose": "passing pose, body slightly raised, opposite arm swing",
+          "master": "art/masters/kings/002_king_roll_walk_back_f4.png"
         }
       ]
     },
@@ -287,6 +321,12 @@
           "id": "king_wolf_idle",
           "frame": 0,
           "master": "art/masters/kings/007_king_wolf_idle.png"
+        },
+        {
+          "id": "king_wolf_idle.back",
+          "frame": 0,
+          "view": "back",
+          "master": "art/masters/kings/007_king_wolf_idle_back.png"
         }
       ]
     },
@@ -338,6 +378,34 @@
           "frame": 3,
           "pose": "wolf walk: legs passing, opposite",
           "master": "art/masters/kings/008_king_wolf_walk_f4.png"
+        },
+        {
+          "id": "king_wolf_walk.back.f1",
+          "frame": 0,
+          "view": "back",
+          "pose": "wolf walk: left front and right hind leg forward",
+          "master": "art/masters/kings/008_king_wolf_walk_back_f1.png"
+        },
+        {
+          "id": "king_wolf_walk.back.f2",
+          "frame": 1,
+          "view": "back",
+          "pose": "wolf walk: legs passing",
+          "master": "art/masters/kings/008_king_wolf_walk_back_f2.png"
+        },
+        {
+          "id": "king_wolf_walk.back.f3",
+          "frame": 2,
+          "view": "back",
+          "pose": "wolf walk: right front and left hind leg forward",
+          "master": "art/masters/kings/008_king_wolf_walk_back_f3.png"
+        },
+        {
+          "id": "king_wolf_walk.back.f4",
+          "frame": 3,
+          "view": "back",
+          "pose": "wolf walk: legs passing, opposite",
+          "master": "art/masters/kings/008_king_wolf_walk_back_f4.png"
         }
       ]
     },
@@ -389,6 +457,34 @@
           "frame": 3,
           "pose": "gallop: hind legs pushing off",
           "master": "art/masters/kings/009_king_wolf_run_f4.png"
+        },
+        {
+          "id": "king_wolf_run.back.f1",
+          "frame": 0,
+          "view": "back",
+          "pose": "gallop: all four legs gathered under the body",
+          "master": "art/masters/kings/009_king_wolf_run_back_f1.png"
+        },
+        {
+          "id": "king_wolf_run.back.f2",
+          "frame": 1,
+          "view": "back",
+          "pose": "gallop: front legs reaching forward",
+          "master": "art/masters/kings/009_king_wolf_run_back_f2.png"
+        },
+        {
+          "id": "king_wolf_run.back.f3",
+          "frame": 2,
+          "view": "back",
+          "pose": "gallop: all four legs extended, airborne",
+          "master": "art/masters/kings/009_king_wolf_run_back_f3.png"
+        },
+        {
+          "id": "king_wolf_run.back.f4",
+          "frame": 3,
+          "view": "back",
+          "pose": "gallop: hind legs pushing off",
+          "master": "art/masters/kings/009_king_wolf_run_back_f4.png"
         }
       ]
     },
