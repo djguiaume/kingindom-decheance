@@ -5,7 +5,7 @@ test('desktop: keyboard holds buy and start the night', async ({ page }) => {
   const errors = collectErrors(page);
   await page.goto('./');
   await page.getByTestId('play').click();
-  await expect(page.getByTestId('gold')).toHaveText('🪙 75');
+  await expect(page.getByTestId('gold')).toHaveText('75');
   await expect(page.getByTestId('buy-0')).toBeVisible();
 
   // Tonight's spawn is off-screen: an edge arrow points at it.
@@ -28,11 +28,11 @@ test('desktop: keyboard holds buy and start the night', async ({ page }) => {
 
   // Hold E to buy: a tap is not enough, a 0.4 s hold is.
   await page.keyboard.press('e');
-  await expect(page.getByTestId('gold')).toHaveText('🪙 75');
+  await expect(page.getByTestId('gold')).toHaveText('75');
   await page.keyboard.down('e');
   await page.waitForTimeout(600);
   await page.keyboard.up('e');
-  await expect(page.getByTestId('gold')).toHaveText('🪙 50');
+  await expect(page.getByTestId('gold')).toHaveText('50');
 
   // Hold Enter for 1 s to start the night.
   await page.keyboard.press('Enter');
