@@ -118,6 +118,8 @@ export const Unit = z.object({
   hp: Positive,
   speed: Positive,
   radius: Positive.default(0.3),
+  /** Share of incoming damage the unit does not take (a knight's 0.3 takes 30% less). */
+  armor: z.number().min(0).max(0.9).default(0),
   /** The unit engages enemies within this distance of its post (rally gate). */
   guardRadius: Positive,
   /** It gives up a chase beyond this distance from its post and walks back. */

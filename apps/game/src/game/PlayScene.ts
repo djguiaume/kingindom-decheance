@@ -603,7 +603,8 @@ export class PlayScene extends Phaser.Scene {
       g.fillEllipse(ground.x, ground.y, SCALE * 0.35, SCALE * 0.18);
       const head = at(t);
       const tail = at(Math.max(0, t - ARROW_LENGTH / Math.max(1, p.flight)));
-      g.lineStyle(4, 0x3a2a1a, 1);
+      // The player's own archers shoot pale arrows, so they never read as shots to dodge.
+      g.lineStyle(4, p.attacker.kind === 'enemy' ? 0x3a2a1a : 0xe8d9b0, 1);
       g.lineBetween(tail.x, tail.y, head.x, head.y);
       const a = Math.atan2(head.y - tail.y, head.x - tail.x);
       const hs = SCALE * 0.3;

@@ -37,6 +37,12 @@
             "type": "number",
             "exclusiveMinimum": 0
           },
+          "armor": {
+            "default": 0,
+            "type": "number",
+            "minimum": 0,
+            "maximum": 0.9
+          },
           "guardRadius": {
             "type": "number",
             "exclusiveMinimum": 0

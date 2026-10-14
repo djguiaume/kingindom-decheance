@@ -32,13 +32,26 @@ interface Stat {
 
 const show = (s: Stat) => `${s.value}${s.unit}`;
 
-/** Extra notes that are not numbers: what it hits, and its counters. */
-function notes(def: Building): string[] {
-  const atk = def.attack;
-  if (!atk) return [];
+/**
+ * Extra notes that are not numbers: what it hits and its counters, and for a military building
+ * the same about its soldiers ("knights take 30% less damage", "archers hit flyers").
+ */
+function notes(def: Building, ctx: GameContext): string[] {
   const out: string[] = [];
-  if (!atk.targets.includes('air')) out.push("can't hit flyers");
-  for (const [kind, factor] of Object.entries(atk.bonus)) out.push(`×${factor} vs ${plural(kind)}`);
+  const atk = def.attack;
+  if (atk) {
+    if (!atk.targets.includes('air')) out.push("can't hit flyers");
+    for (const [kind, factor] of Object.entries(atk.bonus))
+      out.push(`×${factor} vs ${plural(kind)}`);
+  }
+  const unit = def.spawns && ctx.units.get(def.spawns.unit);
+  if (unit) {
+    if (unit.armor > 0) out.push(`take ${Math.round(unit.armor * 100)}% less damage`);
+    if (unit.attack.range > 2) out.push(`shoot ${round(unit.attack.range)} m`);
+    if (unit.attack.targets.includes('air')) out.push('hit flyers');
+    for (const [kind, factor] of Object.entries(unit.attack.bonus))
+      out.push(`×${factor} vs ${plural(kind)}`);
+  }
   return out;
 }
 
@@ -60,7 +73,7 @@ export function offerInfo(ctx: GameContext, from: string | null, to: string): Of
   const parts: string[] = [];
   if (!from) {
     for (const [label, stat] of after) parts.push(`${label} ${show(stat)}`);
-    parts.push(...notes(next));
+    parts.push(...notes(next, ctx));
   } else {
     const prev = ctx.buildings.get(from)!;
     const before = stats(prev, ctx);
@@ -69,8 +82,8 @@ export function offerInfo(ctx: GameContext, from: string | null, to: string): Of
       if (!was) parts.push(`${label} ${show(stat)}`);
       else if (was.value !== stat.value) parts.push(`${label} ${was.value} → ${show(stat)}`);
     }
-    const old = new Set(notes(prev));
-    parts.push(...notes(next).filter((n) => !old.has(n)));
+    const old = new Set(notes(prev, ctx));
+    parts.push(...notes(next, ctx).filter((n) => !old.has(n)));
   }
   return { description: next.description, stats: parts.join(' · ') };
 }
@@ -78,7 +91,9 @@ export function offerInfo(ctx: GameContext, from: string | null, to: string): Of
 /** The current building's numbers, for the title above the buttons ("Tower · Damage 8/s"). */
 export function buildingStats(ctx: GameContext, id: string): string {
   const def = ctx.buildings.get(id)!;
-  return [...[...stats(def, ctx)].map(([l, s]) => `${l} ${show(s)}`), ...notes(def)].join(' · ');
+  return [...[...stats(def, ctx)].map(([l, s]) => `${l} ${show(s)}`), ...notes(def, ctx)].join(
+    ' · ',
+  );
 }
 
 /**

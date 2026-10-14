@@ -19,6 +19,8 @@ export interface Target {
   archetype: EnemyArchetype | null;
   /** The live record whose `hp` is changed by damage. */
   body: { hp: number };
+  /** Share of damage it does not take (armoured units); absent is none. */
+  armor?: number;
 }
 
 export function resolve(state: GameState, ctx: GameContext, ref: Ref): Target | null {
@@ -34,14 +36,16 @@ export function resolve(state: GameState, ctx: GameContext, ref: Ref): Target | 
     case 'unit': {
       const u = state.units.find((x) => x.id === ref.id);
       if (!u || u.hp <= 0) return null;
+      const def = req(ctx.units, u.type);
       return {
         ref,
         pos: u.pos,
-        radius: req(ctx.units, u.type).radius,
+        radius: def.radius,
         layer: 'ground',
         category: 'unit',
         archetype: null,
         body: u,
+        armor: def.armor,
       };
     }
     case 'enemy': {

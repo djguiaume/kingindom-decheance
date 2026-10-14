@@ -277,6 +277,7 @@ export function hit(
   events: GameEvent[],
   projectile = false,
 ): void {
+  if (target.armor) damage *= 1 - target.armor;
   target.body.hp = Math.max(0, target.body.hp - damage);
   if (target.ref.kind === 'king') state.king.calm = 0;
   events.push(

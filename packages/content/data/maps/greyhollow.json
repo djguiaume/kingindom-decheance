@@ -1,7 +1,7 @@
 {
   "$schema": "../../schema/map.schema.json",
   "schemaVersion": 1,
-  "notes": "Greyhollow, prototype design 11 §2 and §8.3. Wall slots double as lane waypoints. Tuned after the first playtest (2026-10-13): more gold (start 75, castle 25 a dawn) and 30% more enemies per group. Night 6: the warlord replaces the west brutes. Stage A2 (castle levels unlock tiers): raiders and skirmishers on nights 4-6 +15%, so castle upgrades do not make the late nights easy.",
+  "notes": "Greyhollow, prototype design 11 §2 and §8.3. Wall slots double as lane waypoints. Tuned after the first playtest (2026-10-13): more gold (start 75, castle 25 a dawn) and 30% more enemies per group. Night 6: the warlord replaces the west brutes. Stage A2 (castle levels unlock tiers): raiders and skirmishers on nights 4-6 +15%, so castle upgrades do not make the late nights easy. With the new units, night 6 raiders and skirmishers +15% more. Two archery range slots, one behind each side gate (11 §12.2).",
   "id": "greyhollow",
   "name": "Greyhollow",
   "size": [64, 48],
@@ -169,6 +169,22 @@
       "slot": {
         "options": ["barracks"],
         "rally": ["gate_w", "gate_e", "gate_n"]
+      }
+    },
+    {
+      "id": "r_w",
+      "pos": [21, 30],
+      "slot": {
+        "options": ["archery_range"],
+        "rally": ["gate_w", "gate_n", "gate_e"]
+      }
+    },
+    {
+      "id": "r_e",
+      "pos": [44, 26],
+      "slot": {
+        "options": ["archery_range"],
+        "rally": ["gate_e", "gate_n", "gate_w"]
       }
     },
     {
@@ -368,7 +384,7 @@
         {
           "lane": "west",
           "enemy": "raider",
-          "count": 18,
+          "count": 21,
           "delay": 0,
           "interval": 1
         },
@@ -382,14 +398,14 @@
         {
           "lane": "east",
           "enemy": "raider",
-          "count": 15,
+          "count": 17,
           "delay": 2,
           "interval": 1.2
         },
         {
           "lane": "east",
           "enemy": "skirmisher",
-          "count": 6,
+          "count": 7,
           "delay": 6,
           "interval": 2
         },
@@ -403,7 +419,7 @@
         {
           "lane": "north",
           "enemy": "skirmisher",
-          "count": 6,
+          "count": 7,
           "delay": 4,
           "interval": 2
         },

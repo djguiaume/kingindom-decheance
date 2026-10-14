@@ -1,7 +1,7 @@
 {
   "$schema": "../schema/buildings.schema.json",
   "schemaVersion": 1,
-  "notes": "Prototype design 11 §4. castleLevel is the tier: the castle level needed to build or upgrade into it (corpus 13 §1.1). Upgrade-only buildings repeat their upgrade edge's cost. Eco income raised after the first playtest (gold felt scarce).",
+  "notes": "Prototype design 11 §4. castleLevel is the tier: the castle level needed to build or upgrade into it (corpus 13 §1.1). Upgrade-only buildings repeat their upgrade edge's cost. Stage A2 (11 §12.2): the barracks branches into Garrison or Knight hall; archers only come from the Archery range. Eco income raised after the first playtest (gold felt scarce).",
   "buildings": [
     {
       "id": "house",
@@ -124,7 +124,10 @@
       "hp": 400,
       "radius": 1.2,
       "spawns": { "unit": "footman", "count": 3 },
-      "upgrades": [{ "to": "garrison", "cost": 40 }]
+      "upgrades": [
+        { "to": "garrison", "cost": 40, "exclusiveGroup": "barracks_t2" },
+        { "to": "knight_hall", "cost": 50, "exclusiveGroup": "barracks_t2" }
+      ]
     },
     {
       "id": "garrison",
@@ -136,6 +139,53 @@
       "hp": 600,
       "radius": 1.3,
       "spawns": { "unit": "footman", "count": 5 }
+    },
+    {
+      "id": "knight_hall",
+      "name": "Knight hall",
+      "description": "Trains three armoured knights instead of footmen.",
+      "class": "military",
+      "cost": 50,
+      "castleLevel": 2,
+      "hp": 650,
+      "radius": 1.3,
+      "spawns": { "unit": "knight", "count": 3 }
+    },
+    {
+      "id": "archery_range",
+      "name": "Archery range",
+      "description": "Trains archers who shoot from its flag, at flyers too.",
+      "class": "military",
+      "cost": 45,
+      "hp": 300,
+      "radius": 1.1,
+      "spawns": { "unit": "archer", "count": 3 },
+      "upgrades": [
+        { "to": "marksmen", "cost": 40, "exclusiveGroup": "range_t2" },
+        { "to": "crossbow_range", "cost": 45, "exclusiveGroup": "range_t2" }
+      ]
+    },
+    {
+      "id": "marksmen",
+      "name": "Marksmen",
+      "description": "Trains more archers.",
+      "class": "military",
+      "cost": 40,
+      "castleLevel": 2,
+      "hp": 420,
+      "radius": 1.2,
+      "spawns": { "unit": "archer", "count": 5 }
+    },
+    {
+      "id": "crossbow_range",
+      "name": "Crossbow range",
+      "description": "Crossbowmen: slow, heavy bolts that crack brutes.",
+      "class": "military",
+      "cost": 45,
+      "castleLevel": 2,
+      "hp": 420,
+      "radius": 1.2,
+      "spawns": { "unit": "crossbowman", "count": 3 }
     }
   ]
 }
