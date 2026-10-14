@@ -24,8 +24,11 @@ no pixel is ever cut out of it.
 ## Setup (once, by a human)
 
 1. In the project's cloud environment, set `SCENARIO_API_KEY` and `SCENARIO_API_SECRET`
+   (`SCENARIO_API_KEY_SECRET` is accepted too)
    (optionally `SCENARIO_PROJECT_ID`). Never put them in code, files or chat.
-2. Allow network access to `api.cloud.scenario.com` and `cdn.scenario.com` (where generated files are downloaded from).
+2. Allow network access to `api.cloud.scenario.com` and `cdn.cloud.scenario.com` (where
+   generated files are downloaded from; checked on 2026-10-14, the docs' `cdn.scenario.com`
+   example is not what real asset urls use). Downloads follow redirects.
 
 ## Workflow
 

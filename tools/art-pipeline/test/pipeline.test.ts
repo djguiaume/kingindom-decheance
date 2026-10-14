@@ -42,6 +42,10 @@ const asset = (m: Manifest, id: string) => m.assets.find((a) => a.id === id)!;
 describe('credentials', () => {
   it('come only from the environment and missing ones are named, not echoed', () => {
     expect(() => credentialsFromEnv({})).toThrow(/SCENARIO_API_KEY, SCENARIO_API_SECRET/);
+    expect(credentialsFromEnv({ SCENARIO_API_KEY: 'k', SCENARIO_API_KEY_SECRET: 's' })).toEqual({
+      key: 'k',
+      secret: 's',
+    });
     expect(credentialsFromEnv({ SCENARIO_API_KEY: 'k', SCENARIO_API_SECRET: 's' })).toEqual({
       key: 'k',
       secret: 's',

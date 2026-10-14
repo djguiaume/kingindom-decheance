@@ -2,7 +2,8 @@
  * Minimal Scenario.gg REST client (https://docs.scenario.com/).
  *
  * - Base URL https://api.cloud.scenario.com/v1, HTTP Basic auth with key:secret.
- * - Credentials come only from SCENARIO_API_KEY / SCENARIO_API_SECRET; they are never logged,
+ * - Credentials come only from SCENARIO_API_KEY / SCENARIO_API_SECRET (or SCENARIO_API_KEY_SECRET,
+ *   the name used in the project's environment); they are never logged,
  *   written to disk or included in error messages.
  * - `fetch` is injected so tests run against the mock (mock-scenario.ts) with no network.
  */
@@ -19,7 +20,7 @@ export interface Credentials {
 
 export function credentialsFromEnv(env: NodeJS.ProcessEnv = process.env): Credentials {
   const key = env.SCENARIO_API_KEY?.trim();
-  const secret = env.SCENARIO_API_SECRET?.trim();
+  const secret = (env.SCENARIO_API_SECRET ?? env.SCENARIO_API_KEY_SECRET)?.trim();
   const missing = [!key && 'SCENARIO_API_KEY', !secret && 'SCENARIO_API_SECRET'].filter(Boolean);
   if (missing.length > 0 || !key || !secret) {
     throw new Error(
@@ -232,9 +233,21 @@ export class ScenarioClient {
     const url = body.asset?.url;
     if (!url) throw new ScenarioError(`Asset ${assetId} has no url.`);
     // The CDN url is pre-signed: no Authorization header goes to it.
-    const res = await this.fetch(url);
-    if (!res.ok)
-      throw new ScenarioError(`Download of ${assetId} failed: HTTP ${res.status}`, res.status);
+    const host = new URL(url).host;
+    let res: Response;
+    try {
+      res = await this.fetch(url);
+    } catch (e) {
+      throw new ScenarioError(
+        `Download of ${assetId} from ${host} failed: ${(e as Error).message}`,
+      );
+    }
+    if (!res.ok) {
+      throw new ScenarioError(
+        `Download of ${assetId} from ${host} failed: HTTP ${res.status}`,
+        res.status,
+      );
+    }
     return Buffer.from(await res.arrayBuffer());
   }
 }
