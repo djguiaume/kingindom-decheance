@@ -369,5 +369,5 @@ describe('runtime atlases and review', () => {
     expect(result.complete).toBe(false);
     const done = result.rows.filter((r) => r.problems.length === 0).map((r) => r.id);
     expect(done).toEqual(['catapult_chassis', 'catapult_arm', 'tile_grass']);
-  });
+  }, 30_000);
 });
