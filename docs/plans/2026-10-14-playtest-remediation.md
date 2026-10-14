@@ -71,6 +71,14 @@ reopen any fixed finding if the next playtest still shows the issue.
 | 1     | PR #43, merged                                                                                   | F05, F06                | Partial: stronger attacks/recoil and correct target facing; broader attack animation quality remains open.                                                               |
 | 2     | [PR #44](https://github.com/djguiaume/kingindom-decheance/pull/44), awaiting merge               | F07, F08, F10           | Fixed in branch: gate hinge span fits projected core passage, front/side/diagonal perspective and mirroring, upright posts, and calibrated building/ruin ground centres. |
 
+### CI follow-up for PR #44
+
+The new orientation, scale/anchor and rotated-map tests passed on GitHub Actions. The failing
+check was the existing atlas/contact-sheet integration test exceeding its default 5 s limit
+while rasterizing and compressing full-catalog PNG review sheets. That single integration
+test now has a 20 s timeout, with all assertions retained; ordinary tests keep their existing
+limits. Verification uses the standard `pnpm test` command without a global timeout override.
+
 ### Batch 2 details
 
 - Gate placement uses measured ground hinge points from the existing closed master, shared
