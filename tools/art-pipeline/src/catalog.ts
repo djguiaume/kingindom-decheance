@@ -868,6 +868,22 @@ export const CATALOG: CatalogEntry[] = [
     ...t(109, 'tile_water', 'Water tile', 'calm shallow blue-green water with soft ripples'),
     inferred: 'Not on the sheet. Fills lakes and rivers; water_edge (100) lines their banks.',
   },
+  {
+    num: 110,
+    id: 'bridge',
+    name: 'Bridge',
+    group: 'environment',
+    kind: 'decal',
+    subject:
+      'a sturdy wooden footbridge on its own, as it would stand over a river: plank deck with bamboo railings bound in blue rope, a small paper lantern on each end post, short stone footings at both ends; no water, no river banks, no ground around it',
+    canvas: [320, 320],
+    views: ['side', 'diag'],
+    checks: [
+      'The same bridge in all three views; deck wide enough for a path, ends left open for the path to join.',
+    ],
+    inferred:
+      'Not on the sheet. The reworked Greyhollow map crosses its river with bridges; the game picks the view closest to the bridge angle and stretches it to the river width.',
+  },
 ];
 
 function unit(

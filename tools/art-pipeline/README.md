@@ -77,7 +77,8 @@ central arm, the ballista's two limbs and string, garrison dummies with no arche
 also have a view from behind for walking up the screen, e.g. `king_roll_walk.back.f3`. Gates have
 three views: face-on (the wall runs across the screen), `.side` (the wall runs up the screen) and
 `.diag` (bottom-left to top-right; mirror it for the other diagonal). The game picks the closest one
-to the wall's angle. Wall posts are drawn one by one along the wall line, so they fit any angle. Each frame keeps its
+to the wall's angle. The bridge has the same three views (its deck left to right, up the screen,
+diagonal) and is stretched to the river's width. Wall posts are drawn one by one along the wall line, so they fit any angle. Each frame keeps its
 untrimmed `sourceSize` and a normalised `pivot`, which Phaser 4.2.1 reads as the frame's custom
 pivot, so a sprite placed at an entity's ground point stands on its feet. `contentId` maps art to
 existing game content ids. `index.json` lists every atlas, image and frame.
