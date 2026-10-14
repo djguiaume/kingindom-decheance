@@ -2,7 +2,7 @@
   "frames": {
     "bamboo_large": {
       "frame": {
-        "x": 381,
+        "x": 816,
         "y": 2,
         "w": 169,
         "h": 220
@@ -28,8 +28,8 @@
     },
     "bamboo_single": {
       "frame": {
-        "x": 960,
-        "y": 2,
+        "x": 95,
+        "y": 298,
         "w": 59,
         "h": 92
       },
@@ -54,7 +54,7 @@
     },
     "bamboo_small": {
       "frame": {
-        "x": 735,
+        "x": 1757,
         "y": 2,
         "w": 76,
         "h": 120
@@ -80,8 +80,8 @@
     },
     "barrel": {
       "frame": {
-        "x": 1093,
-        "y": 2,
+        "x": 228,
+        "y": 298,
         "w": 41,
         "h": 60
       },
@@ -104,10 +104,140 @@
       "asset": "barrel",
       "num": 97
     },
+    "bridge": {
+      "frame": {
+        "x": 987,
+        "y": 2,
+        "w": 294,
+        "h": 169
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 13,
+        "y": 76,
+        "w": 294,
+        "h": 169
+      },
+      "sourceSize": {
+        "w": 320,
+        "h": 320
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "asset": "bridge",
+      "num": 110
+    },
+    "bridge.diag": {
+      "frame": {
+        "x": 379,
+        "y": 2,
+        "w": 294,
+        "h": 264
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 13,
+        "y": 28,
+        "w": 294,
+        "h": 264
+      },
+      "sourceSize": {
+        "w": 320,
+        "h": 320
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "asset": "bridge",
+      "num": 110
+    },
+    "bridge.side": {
+      "frame": {
+        "x": 2,
+        "y": 2,
+        "w": 137,
+        "h": 294
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 92,
+        "y": 13,
+        "w": 137,
+        "h": 294
+      },
+      "sourceSize": {
+        "w": 320,
+        "h": 320
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "asset": "bridge",
+      "num": 110
+    },
+    "cliff_end": {
+      "frame": {
+        "x": 1478,
+        "y": 2,
+        "w": 94,
+        "h": 150
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 49,
+        "y": 23,
+        "w": 94,
+        "h": 150
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "cliff_end",
+      "num": 107
+    },
+    "cliff_section": {
+      "frame": {
+        "x": 1283,
+        "y": 2,
+        "w": 193,
+        "h": 150
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 32,
+        "y": 23,
+        "w": 193,
+        "h": 150
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "cliff_section",
+      "num": 106
+    },
     "crate": {
       "frame": {
-        "x": 1136,
-        "y": 2,
+        "x": 271,
+        "y": 298,
         "w": 60,
         "h": 56
       },
@@ -132,8 +262,8 @@
     },
     "flowers": {
       "frame": {
-        "x": 1305,
-        "y": 2,
+        "x": 440,
+        "y": 298,
         "w": 44,
         "h": 40
       },
@@ -158,8 +288,8 @@
     },
     "grass": {
       "frame": {
-        "x": 1198,
-        "y": 2,
+        "x": 333,
+        "y": 298,
         "w": 47,
         "h": 56
       },
@@ -182,9 +312,35 @@
       "asset": "grass",
       "num": 93
     },
+    "grass_patch": {
+      "frame": {
+        "x": 1835,
+        "y": 2,
+        "w": 103,
+        "h": 118
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 45,
+        "y": 5,
+        "w": 103,
+        "h": 118
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "asset": "grass_patch",
+      "num": 108
+    },
     "lantern_post": {
       "frame": {
-        "x": 552,
+        "x": 1574,
         "y": 2,
         "w": 59,
         "h": 132
@@ -210,17 +366,17 @@
     },
     "path_edge": {
       "frame": {
-        "x": 891,
+        "x": 1940,
         "y": 2,
-        "w": 67,
+        "w": 102,
         "h": 118
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 31,
+        "x": 13,
         "y": 5,
-        "w": 67,
+        "w": 102,
         "h": 118
       },
       "sourceSize": {
@@ -236,7 +392,7 @@
     },
     "pine": {
       "frame": {
-        "x": 240,
+        "x": 675,
         "y": 2,
         "w": 139,
         "h": 249
@@ -262,7 +418,7 @@
     },
     "rock_large": {
       "frame": {
-        "x": 613,
+        "x": 1635,
         "y": 2,
         "w": 120,
         "h": 120
@@ -288,8 +444,8 @@
     },
     "rock_small": {
       "frame": {
-        "x": 1247,
-        "y": 2,
+        "x": 382,
+        "y": 298,
         "w": 56,
         "h": 50
       },
@@ -314,8 +470,8 @@
     },
     "shrub": {
       "frame": {
-        "x": 1021,
-        "y": 2,
+        "x": 156,
+        "y": 298,
         "w": 70,
         "h": 72
       },
@@ -340,7 +496,7 @@
     },
     "tree": {
       "frame": {
-        "x": 2,
+        "x": 141,
         "y": 2,
         "w": 236,
         "h": 276
@@ -366,17 +522,17 @@
     },
     "water_edge": {
       "frame": {
-        "x": 813,
-        "y": 2,
-        "w": 76,
+        "x": 2,
+        "y": 298,
+        "w": 91,
         "h": 118
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 58,
+        "x": 51,
         "y": 5,
-        "w": 76,
+        "w": 91,
         "h": 118
       },
       "sourceSize": {
@@ -397,8 +553,8 @@
     "image": "environment.webp",
     "format": "RGBA8888",
     "size": {
-      "w": 1351,
-      "h": 280
+      "w": 2044,
+      "h": 418
     },
     "scale": "1"
   }
