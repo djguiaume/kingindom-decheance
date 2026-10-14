@@ -5,7 +5,16 @@
  * from the ground, drawn back to front.
  */
 import Phaser from 'phaser';
-import { guardSpot, telegraph, type Ref } from '@kd/core';
+import {
+  GATE_HALF_WIDTH,
+  guardSpot,
+  telegraph,
+  WALL_HALF_SPAN,
+  wallLine,
+  type BuildingState,
+  type Ref,
+  type Vec,
+} from '@kd/core';
 import { nearbySlotId } from '../stores/hud.ts';
 import { colors } from '../theme.ts';
 import type { CameraView } from './camera.ts';
@@ -241,6 +250,7 @@ export class PlayScene extends Phaser.Scene {
     add(state.castle.pos, state.castle.radius, 'castle', 1, [state.castle.hp, state.castle.maxHp]);
     for (const b of state.buildings) {
       const def = ctx.buildings.get(b.type)!;
+      if (def.class === 'wall' && this.addWall(items, b)) continue;
       add(
         b.pos,
         def.radius,
@@ -307,6 +317,143 @@ export class PlayScene extends Phaser.Scene {
       const tail = SCALE * 0.6;
       g.lineStyle(3, colors.shot, 1);
       g.lineBetween(x - ((bx - ax) / len) * tail, y - ((by - ay) / len) * tail, x, y);
+    }
+  }
+
+  /**
+   * A wall across its lane (playtest 2, like Thronefall): two wings and a gate in the middle
+   * that opens while the king or a footman is near it. Drawn in short pieces so units and
+   * enemies on either side sort correctly in front of or behind it. False if the slot is not on
+   * a lane (then the plain sprite is drawn).
+   */
+  private addWall(items: { y: number; draw: () => void }[], b: BuildingState): boolean {
+    const { state, ctx } = this.runtime;
+    const line = wallLine(ctx, b.slot);
+    if (!line) return false;
+    const stone = b.type === 'stone_wall';
+    const height = (stone ? 1.6 : 1.4) * SCALE;
+    const color = stone ? 0x9a9a9a : 0x9b6a3c;
+    const alpha = b.destroyed ? 0.3 : 1;
+    const at = (k: number, a = 0): Vec => ({
+      x: line.at.x + line.across.x * k + line.along.x * a,
+      y: line.at.y + line.across.y * k + line.along.y * a,
+    });
+    const near = (p: Vec, r: number) => (p.x - line.at.x) ** 2 + (p.y - line.at.y) ** 2 < r * r;
+    const open =
+      !b.destroyed &&
+      ((state.king.alive && near(state.king.pos, 2.5)) || state.units.some((u) => near(u.pos, 2)));
+
+    const PIECES = 4;
+    for (const sign of [-1, 1]) {
+      for (let i = 0; i < PIECES; i++) {
+        const k0 = sign * (GATE_HALF_WIDTH + ((WALL_HALF_SPAN - GATE_HALF_WIDTH) * i) / PIECES);
+        const k1 =
+          sign * (GATE_HALF_WIDTH + ((WALL_HALF_SPAN - GATE_HALF_WIDTH) * (i + 1)) / PIECES);
+        const a = this.px(at(k0));
+        const c = this.px(at(k1));
+        items.push({
+          y: (a.y + c.y) / 2,
+          draw: () => this.slab(at(k0), at(k1), height, color, alpha, stone),
+        });
+      }
+      // Gate posts, a little taller than the wall.
+      const post = at(sign * GATE_HALF_WIDTH);
+      items.push({
+        y: this.px(post).y + 0.01,
+        draw: () =>
+          this.slab(
+            at(sign * (GATE_HALF_WIDTH - 0.25)),
+            at(sign * (GATE_HALF_WIDTH + 0.25)),
+            height * 1.25,
+            stone ? 0x7d7d7d : 0x7a5230,
+            alpha,
+            false,
+          ),
+      });
+      // Gate leaves: across the gap when shut, swung in towards the castle when open.
+      const hinge = at(sign * (GATE_HALF_WIDTH - 0.25));
+      const tip = open ? at(sign * (GATE_HALF_WIDTH - 0.25), GATE_HALF_WIDTH * 0.85) : at(0);
+      items.push({
+        y: (this.px(hinge).y + this.px(tip).y) / 2,
+        draw: () => this.slab(hinge, tip, height * 0.9, 0x6b4423, alpha, false, 0.15),
+      });
+    }
+    if (!b.destroyed && b.hp < b.maxHp) {
+      const p = this.px(line.at);
+      items.push({
+        y: p.y + 0.02,
+        draw: () => this.hpBar(p.x, p.y - height * 1.5, SCALE, b.hp, b.maxHp),
+      });
+    }
+    return true;
+  }
+
+  /** Fills a polygon with the current fill style. */
+  private quad(points: { x: number; y: number }[]): void {
+    const g = this.dynamic;
+    g.beginPath();
+    g.moveTo(points[0]!.x, points[0]!.y);
+    for (const p of points.slice(1)) g.lineTo(p.x, p.y);
+    g.closePath();
+    g.fillPath();
+  }
+
+  /**
+   * An upright box standing on the ground segment a→b, `thickness` metres either side of it:
+   * the sides that face the viewer, then a lighter top (a cheap 3/4 view of a block).
+   */
+  private slab(
+    a: Vec,
+    b: Vec,
+    height: number,
+    color: number,
+    alpha: number,
+    battlements: boolean,
+    thickness = 0.5,
+  ): void {
+    const g = this.dynamic;
+    const dx = b.x - a.x;
+    const dy = b.y - a.y;
+    const len = Math.sqrt(dx * dx + dy * dy) || 1;
+    const n = { x: (-dy / len) * thickness, y: (dx / len) * thickness };
+    // Footprint corners in order around the box.
+    const foot = [
+      { x: a.x + n.x, y: a.y + n.y },
+      { x: b.x + n.x, y: b.y + n.y },
+      { x: b.x - n.x, y: b.y - n.y },
+      { x: a.x - n.x, y: a.y - n.y },
+    ].map((p) => this.px(p));
+    const up = (p: { x: number; y: number }) => ({ x: p.x, y: p.y - height });
+    g.fillStyle(0x000000, 0.18 * alpha);
+    this.quad(foot.map((p) => ({ x: p.x + 3, y: p.y + 3 })));
+    // A side faces the viewer when the ground below it is lower on screen than the box centre.
+    const cy = foot.reduce((t, p) => t + p.y, 0) / 4;
+    for (let i = 0; i < 4; i++) {
+      const p = foot[i]!;
+      const q = foot[(i + 1) % 4]!;
+      if ((p.y + q.y) / 2 < cy - 0.01) continue;
+      g.fillStyle(darken(color, Math.abs(p.x - q.x) > Math.abs(p.y - q.y) ? 0.75 : 0.6), alpha);
+      this.quad([p, q, up(q), up(p)]);
+    }
+    g.fillStyle(color, alpha);
+    this.quad(foot.map(up));
+    if (battlements) {
+      g.fillStyle(darken(color, 0.85), alpha);
+      for (let f = 0.15; f < 1; f += 0.35) {
+        const x =
+          (foot[0]!.x +
+            (foot[1]!.x - foot[0]!.x) * f +
+            foot[3]!.x +
+            (foot[2]!.x - foot[3]!.x) * f) /
+          2;
+        const y =
+          (foot[0]!.y +
+            (foot[1]!.y - foot[0]!.y) * f +
+            foot[3]!.y +
+            (foot[2]!.y - foot[3]!.y) * f) /
+          2;
+        g.fillRect(x - SCALE * 0.2, y - height - SCALE * 0.3, SCALE * 0.4, SCALE * 0.3);
+      }
     }
   }
 
@@ -417,3 +564,8 @@ export class PlayScene extends Phaser.Scene {
     }
   }
 }
+
+const darken = (c: number, f = 0.7) =>
+  (Math.round(((c >> 16) & 255) * f) << 16) |
+  (Math.round(((c >> 8) & 255) * f) << 8) |
+  Math.round((c & 255) * f);

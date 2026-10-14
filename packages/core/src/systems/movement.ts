@@ -4,6 +4,7 @@ import { nextFloat } from '../rng.ts';
 import type { GameState } from '../state.ts';
 import { dist, moveToward, type Vec } from '../vec.ts';
 import { holdAtGate, resolve, wallAt, wallGate } from './targets.ts';
+import { blockByWalls, throughGate } from './walls.ts';
 
 /** Stop slightly inside attack range so floating-point rounding never leaves us just outside. */
 const RANGE_SLACK = 0.05;
@@ -63,18 +64,19 @@ export function movementSystem(state: GameState, ctx: GameContext): void {
     const def = req(ctx.units, unit.type);
     const step = perTick(def.speed);
     const target = unit.target && resolve(state, ctx, unit.target);
+    // Footmen go through wall gates on the way (playtest 2).
+    const via = (to: Vec) => throughGate(state, ctx, unit.pos, to, def.radius);
     if (target) {
-      moveToward(
-        unit.pos,
-        target.pos,
-        step,
-        def.radius + target.radius + def.attack.range - RANGE_SLACK,
-      );
+      const aim = via(target.pos);
+      const stop = def.radius + target.radius + def.attack.range - RANGE_SLACK;
+      moveToward(unit.pos, aim, step, aim === target.pos ? stop : 0);
     } else if (unit.following) {
       // Walk with the king, a step behind him.
-      moveToward(unit.pos, state.king.pos, step, ctx.king.radius + def.radius + FOLLOW_GAP);
+      const aim = via(state.king.pos);
+      const stop = ctx.king.radius + def.radius + FOLLOW_GAP;
+      moveToward(unit.pos, aim, step, aim === state.king.pos ? stop : 0);
     } else {
-      moveToward(unit.pos, unit.post, step);
+      moveToward(unit.pos, via(unit.post), step);
     }
   }
 }
@@ -99,6 +101,8 @@ export function separationSystem(state: GameState, ctx: GameContext): void {
   for (const u of state.units) ground.push({ pos: u.pos, radius: req(ctx.units, u.type).radius });
   separate(ground, state);
   separate(air, state);
+  // Footmen walk through wall gates, never through the wings.
+  for (const u of state.units) blockByWalls(state, ctx, u.pos, req(ctx.units, u.type).radius);
 }
 
 function separate(bodies: Body[], state: GameState): void {

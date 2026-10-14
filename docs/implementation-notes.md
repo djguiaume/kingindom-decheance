@@ -98,7 +98,14 @@ steering, hand-made maps) and the prototype design (corpus 11), and are easy to 
   no longer in the pause menu.
 - **Edge markers**: one red pin per marker, with the enemy icons (as white silhouettes) and
   counts inside, like Thronefall; castle, building and boss markers keep their own icons.
-- Balance after dodgeable shots (`pnpm sim`, 200 seeds): balanced ~98%, defensive ~75%,
+- **Walls like Thronefall**: a wall is a 9 m line across its lane, square to the lane, with a
+  2.2 m gate in the middle (`packages/core/src/systems/walls.ts`). Enemies are held behind the
+  whole line, as before. The king and footmen are stopped by the two wings and walk through the
+  gate; footmen (and the bots' king) steer to the gate when a wing is in the way. The gate is
+  drawn open while the king or a footman is near it. Enemies never open it.
+- New sim events for effects and sound: `fired` and `missed` (enemy shots), `flagTaken` and
+  `flagPlanted`; `hit` carries `projectile: true` when a shot landed.
+- Balance after dodgeable shots and walls (`pnpm sim`, 200 seeds): balanced ~95%, defensive ~76%,
   king-only falls night 5, greedy falls night 3. The bots' king never stands still, so it
   dodges more than a player will. The `defensive-loss` golden moved to seed 6 (seed 4 now
   wins).

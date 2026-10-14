@@ -4,6 +4,7 @@ import {
   effectivePriority,
   telegraph,
   TICK_RATE,
+  wallLine,
   type GameEvent,
 } from '../src/index.ts';
 import {
@@ -494,5 +495,53 @@ describe('enemy projectiles', () => {
     s.step();
     expect(s.state.phase).toBe('day');
     expect(s.state.projectiles).toEqual([]);
+  });
+});
+
+describe('walls span the lane with a gate', () => {
+  /** A wall on the west slot, the king on the field side, `off` metres across the lane. */
+  function atWall(off: number) {
+    const s = newSession();
+    s.state.gold = 1000;
+    s.submit({ type: 'buy', slot: 'ww', option: 0 });
+    const line = wallLine(s.ctx, 'ww')!;
+    const side = (k: number) => ({
+      x: line.at.x - line.along.x * 2 + line.across.x * off * k,
+      y: line.at.y - line.along.y * 2 + line.across.y * off * k,
+    });
+    s.state.king.pos = side(1);
+    const along = (p: { x: number; y: number }) =>
+      (p.x - line.at.x) * line.along.x + (p.y - line.at.y) * line.along.y;
+    return { s, line, along };
+  }
+
+  it('a wing stops the king', () => {
+    const { s, line, along } = atWall(3);
+    s.submit({ type: 'move', x: line.along.x, y: line.along.y });
+    for (let i = 0; i < TICK_RATE; i++) s.step();
+    expect(along(s.state.king.pos)).toBeLessThan(0);
+  });
+
+  it('the king walks through the gate', () => {
+    const { s, line, along } = atWall(0);
+    s.submit({ type: 'move', x: line.along.x, y: line.along.y });
+    for (let i = 0; i < TICK_RATE; i++) s.step();
+    expect(along(s.state.king.pos)).toBeGreaterThan(2);
+  });
+
+  it('footmen following the king go round to the gate', () => {
+    const { s, line, along } = atWall(0);
+    s.submit({ type: 'buy', slot: 'b1', option: 0 });
+    emptyNight(s, 10_000);
+    for (const u of s.state.units) {
+      u.following = true;
+      u.pos = {
+        x: line.at.x - line.along.x * 2 + line.across.x * 3,
+        y: line.at.y - line.along.y * 2 + line.across.y * 3,
+      };
+    }
+    s.state.king.pos = { x: line.at.x + line.along.x * 4, y: line.at.y + line.along.y * 4 };
+    for (let i = 0; i < TICK_RATE * 6; i++) s.step();
+    for (const u of s.state.units) expect(along(u.pos)).toBeGreaterThan(0.5);
   });
 });

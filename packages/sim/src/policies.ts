@@ -2,7 +2,7 @@
  * Bot policies (08 §6.1) decide the day's commands. These are deliberately naive stand-ins
  * to exercise the runner; the real baselines come with the balancing simulator (ADR-001).
  */
-import { buyOptions, type Command, type GameContext, type GameState } from '@kd/core';
+import { buyOptions, throughGate, type Command, type GameContext, type GameState } from '@kd/core';
 
 export interface Policy {
   id: string;
@@ -38,13 +38,16 @@ export function chaseNearestEnemy(state: GameState, ctx: GameContext): Command[]
   if (!best || bestD <= reach) {
     return king.intent.x === 0 && king.intent.y === 0 ? [] : [{ type: 'move', x: 0, y: 0 }];
   }
-  // Rounded so the command log stays readable; the core normalises the vector.
+  // Through a wall's gate if a wing is in the way; rounded so the command log stays readable
+  // (the core normalises the vector).
+  const aim = throughGate(state, ctx, king.pos, best, ctx.king.radius);
+  const aimD = Math.sqrt((aim.x - king.pos.x) ** 2 + (aim.y - king.pos.y) ** 2) || 1;
   const round = (v: number) => Math.round(v * 100) / 100;
   const commands: Command[] = [
     {
       type: 'move',
-      x: round((best.x - king.pos.x) / bestD),
-      y: round((best.y - king.pos.y) / bestD),
+      x: round((aim.x - king.pos.x) / aimD),
+      y: round((aim.y - king.pos.y) / aimD),
     },
   ];
   const ability = ctx.weapon.ability;

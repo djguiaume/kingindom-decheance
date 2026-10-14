@@ -8,6 +8,7 @@ import type { GameEvent } from '../events.ts';
 import type { GameState } from '../state.ts';
 import { enemyTargets, gap } from './targets.ts';
 import { hit } from './combat.ts';
+import { blockByWalls } from './walls.ts';
 
 export function kingSystem(state: GameState, ctx: GameContext, events: GameEvent[]): void {
   const king = state.king;
@@ -53,6 +54,8 @@ function moveBy(state: GameState, ctx: GameContext, dx: number, dy: number): voi
   const pos = state.king.pos;
   pos.x = Math.min(maxX, Math.max(minX, pos.x + dx));
   pos.y = Math.min(maxY, Math.max(minY, pos.y + dy));
+  // The king walks through wall gates, never through the wings.
+  blockByWalls(state, ctx, pos, ctx.king.radius);
 }
 
 /** Starts the weapon's dash along the facing direction. Validation is done by the command. */
