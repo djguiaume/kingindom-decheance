@@ -3,6 +3,12 @@
 Choices made while building the skeleton, answering the open questions at the end of
 ADR-010. Significant ones can be promoted to ADRs in the design corpus.
 
+## Active implementation plans
+
+The [2026-10-14 panda playtest remediation strategy](plans/2026-10-14-playtest-remediation.md)
+tracks the 21 findings from the latest main-branch playtest, their implementation order and
+acceptance criteria. It is planned work; the notes below describe implemented behavior.
+
 ## PRNG
 
 sfc32 (four 32-bit integers of state), seeded through splitmix32 and warmed up 12 rounds.
