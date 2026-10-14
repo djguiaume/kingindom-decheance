@@ -8,7 +8,13 @@ import { buildRuntime, pack } from '../src/atlas.ts';
 import { CATALOG } from '../src/catalog.ts';
 import { buildManifest, type Manifest } from '../src/manifest.ts';
 import { createMockScenario, fixturePng, type MockOptions } from '../src/mock-scenario.ts';
-import { estimate, generateBatch, paths, type Workspace } from '../src/pipeline.ts';
+import {
+  estimate,
+  generateBatch,
+  generateSelection,
+  paths,
+  type Workspace,
+} from '../src/pipeline.ts';
 import { audit, contactSheet, animationSheet } from '../src/review.ts';
 import { APPROVED_MODEL_ID, ScenarioClient, credentialsFromEnv, redact } from '../src/scenario.ts';
 import { StatusStore } from '../src/status.ts';
@@ -117,6 +123,17 @@ describe('budget gates', () => {
     expect(run.spentCU).toBeLessThanOrEqual(12);
     expect(state.spent).toBeLessThanOrEqual(12);
     expect(run.stoppedFor).toMatch(/budget/);
+  });
+
+  it('generates a selection in one step, up to the budget, without a separate approval', async () => {
+    const { w, state } = await ws({ costPerImage: 5 });
+    const run = await generateSelection(w, 'boulder,coin', 7);
+    expect(run.batch.totalCU).toBe(10);
+    expect(run.done).toHaveLength(1);
+    expect(run.spentCU).toBe(5);
+    expect(state.spent).toBe(5);
+    expect(run.stoppedFor).toMatch(/budget/);
+    await expect(generateSelection(w, 'coin', 0)).rejects.toThrow(/budget/);
   });
 });
 

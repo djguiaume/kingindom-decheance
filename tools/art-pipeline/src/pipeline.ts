@@ -150,7 +150,7 @@ export async function generateBatch(
   ws: Workspace,
   token: string,
   budgetCU: number,
-  opts: { maxAttempts?: number; now?: () => string } = {},
+  opts: { maxAttempts?: number; now?: () => string; partial?: boolean } = {},
 ): Promise<RunResult> {
   const maxAttempts = opts.maxAttempts ?? 3;
   if (!(budgetCU > 0)) throw new Error('An approved budget (CU > 0) is required.');
@@ -158,7 +158,7 @@ export async function generateBatch(
   if (batch.modelId !== ws.client.modelId) {
     throw new Error(`Batch ${token} was estimated for ${batch.modelId}, not ${ws.client.modelId}.`);
   }
-  if (batch.totalCU > budgetCU) {
+  if (!opts.partial && batch.totalCU > budgetCU) {
     throw new Error(
       `Batch ${token} is estimated at ${batch.totalCU} CU, over the approved ${budgetCU} CU. Nothing was generated.`,
     );
@@ -262,4 +262,22 @@ export async function generateBatch(
   batch.runs.push({ at: (opts.now ?? (() => new Date().toISOString()))(), budgetCU, ...result });
   await writeFile(join(dir.batches, `${token}.json`), `${JSON.stringify(batch, null, 2)}\n`);
   return result;
+}
+
+/**
+ * One-step run: prices the selection (Scenario's free dry run, recorded as a batch file) and
+ * generates it straight away, stopping before any generation that would pass the budget.
+ */
+export async function generateSelection(
+  ws: Workspace,
+  selector: string,
+  budgetCU: number,
+  opts: { maxAttempts?: number; redo?: boolean; now?: () => string } = {},
+): Promise<RunResult & { batch: Batch }> {
+  if (!(budgetCU > 0)) throw new Error('An approved budget (CU > 0) is required.');
+  const batch = await estimate(ws, selector, opts);
+  for (const s of batch.skipped) ws.log?.(`skip ${s.id}: ${s.reason}`);
+  ws.log?.(`${batch.parts.length} generations, about ${batch.totalCU} CU (budget ${budgetCU}).`);
+  const result = await generateBatch(ws, batch.token, budgetCU, { ...opts, partial: true });
+  return { ...result, batch };
 }
