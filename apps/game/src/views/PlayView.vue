@@ -5,6 +5,7 @@ import { CameraView } from '../game/camera.ts';
 import GameView from '../game/GameView.vue';
 import EdgeArrows from '../components/EdgeArrows.vue';
 import SoundToggle from '../components/SoundToggle.vue';
+import GameIcon from '../components/GameIcon.vue';
 import { attachAudio } from '../audio/attach.ts';
 import { audio } from '../audio/engine.ts';
 import { InputHub } from '../game/input/hub.ts';
@@ -82,7 +83,7 @@ async function fullscreen(): Promise<void> {
     <GameHud :runtime="runtime" :hub="hub" @restart="restart" @fullscreen="fullscreen" />
     <SoundToggle />
     <div v-if="showRotate" class="rotate" data-testid="rotate">
-      <div class="phone">📱</div>
+      <div class="phone"><GameIcon name="turn" /></div>
       <p>Turn your phone sideways to play.</p>
     </div>
   </div>
@@ -113,6 +114,7 @@ async function fullscreen(): Promise<void> {
 }
 .phone {
   font-size: 64px;
+  color: var(--gold);
   animation: turn 1.6s ease-in-out infinite;
 }
 @keyframes turn {

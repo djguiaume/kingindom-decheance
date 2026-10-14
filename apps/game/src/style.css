@@ -1,10 +1,27 @@
+/* Bundled fonts (corpus 14 §5.3): no font CDN, so the game starts offline and never swaps fonts. */
+@import '@fontsource-variable/fraunces';
+@import '@fontsource/figtree/500.css';
+@import '@fontsource/figtree/700.css';
+
+/* Identity tokens, direction A "Linen and ink" (corpus 14 §2.1); theme.ts `ui` holds the same values. */
 :root {
+  --linen: #f4efe4;
+  --linen-deep: #e7e0d1;
+  --ink: #24272c;
+  --muted: #6c6f72;
+  --gold: #c99a1e;
+  --enemy: #c4412f;
+  --night: #34507a;
+  --moss: #5d7a4c;
+  --line: rgba(36, 39, 44, 0.16);
+  --shadow: 0 3px 10px rgba(20, 24, 30, 0.28);
+  --display: 'Fraunces Variable', Georgia, serif;
+  --body: 'Figtree', system-ui, sans-serif;
   --bg: #1b2130;
-  --fg: #e6e9ef;
-  --muted: #8a99b3;
-  --accent: #e8c547;
+  --fg: #f4efe4;
+  --accent: var(--gold);
   color-scheme: dark;
-  font-family: system-ui, sans-serif;
+  font-family: var(--body);
 }
 html,
 body {
@@ -17,6 +34,9 @@ body {
   color: var(--fg);
 }
 footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
   padding: 8px 16px;
   color: var(--muted);
   font-size: 12px;
@@ -24,18 +44,51 @@ footer {
 button,
 a.primary {
   font: inherit;
+  font-weight: 700;
   min-height: 44px;
-  padding: 6px 12px;
-  border-radius: 4px;
-  border: 1px solid var(--muted);
-  background: #2a3346;
-  color: var(--fg);
+  padding: 6px 14px;
+  border-radius: 14px;
+  border: none;
+  background: var(--linen);
+  color: var(--ink);
+  box-shadow: var(--shadow);
   cursor: pointer;
   text-decoration: none;
 }
 .primary {
-  background: var(--accent);
-  color: #1b2130;
-  border-color: var(--accent);
-  font-weight: 600;
+  background: var(--night);
+  color: var(--linen);
+}
+/* A linen panel: paper grain and a thin inner ink rule (corpus 14 §2.1). */
+.panel {
+  position: relative;
+  background-color: var(--linen);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 .3 0 0 0 0 .25 0 0 0 0 .2 0 0 0 .08 0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+  color: var(--ink);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+}
+.panel::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border: 1px solid rgba(36, 39, 44, 0.18);
+  border-radius: 11px;
+  pointer-events: none;
+}
+.panel.round,
+.panel.round::after {
+  border-radius: 50%;
+}
+.display {
+  font-family: var(--display);
+  font-weight: 700;
+}
+kbd {
+  font: 600 11px var(--body);
+  opacity: 0.65;
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  padding: 0 4px;
+  margin-left: 4px;
 }

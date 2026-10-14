@@ -52,9 +52,14 @@ onBeforeUnmount(cancel);
   touch-action: none;
 }
 .fill {
+  /* A bar filling along the bottom edge while held, in gold (money) or the button's --fill. */
   position: absolute;
-  inset: 0;
-  background: rgba(255, 255, 255, 0.35);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 4px;
+  z-index: 1;
+  background: var(--fill, var(--gold));
   transform: scaleX(0);
   transform-origin: left;
 }
@@ -66,6 +71,7 @@ onBeforeUnmount(cancel);
   position: relative;
 }
 .disabled {
-  opacity: 0.5;
+  filter: grayscale(1);
+  opacity: 0.75;
 }
 </style>

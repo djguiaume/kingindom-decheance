@@ -9,6 +9,7 @@ import type { CameraView } from '../game/camera.ts';
 import { buildArrows, type Arrow, type ArrowLayout } from '../game/indicators.ts';
 import type { GameRuntime } from '../game/runtime.ts';
 import { useHudStore } from '../stores/hud.ts';
+import GameIcon from './GameIcon.vue';
 
 const props = defineProps<{ runtime: GameRuntime; camera: CameraView }>();
 const store = useHudStore();
@@ -29,8 +30,12 @@ function layout(w: number, h: number): ArrowLayout {
     bottom: px(safe?.paddingBottom) + MARGIN,
     left: px(safe?.paddingLeft) + MARGIN,
   };
-  // Keep clear of the right-hand controls and, on touch, the joystick corner.
-  const avoid = [{ left: w - 240, top: h * 0.35, right: w, bottom: h }];
+  // Keep clear of the bottom band and action buttons (corpus 14 §3.1, zones 7 and 8) and, on
+  // touch, the joystick corner.
+  const avoid = [
+    { left: w - 240, top: h - 170, right: w, bottom: h },
+    { left: w * 0.3, top: h - 130, right: w, bottom: h },
+  ];
   if (store.device === 'touch') avoid.push({ left: 0, top: h - 240, right: 240, bottom: h });
   return { inset, avoid };
 }
@@ -108,10 +113,10 @@ onBeforeUnmount(() => {
     >
       <span class="tip" :style="pin(a).tip" />
       <span class="body" :style="pin(a).body">
-        <span v-for="(p, i) in a.parts" :key="i" class="part"
-          ><span class="icon">{{ p.icon }}</span
-          ><b v-if="p.count !== null">{{ p.count }}</b></span
-        >
+        <span v-for="(p, i) in a.parts" :key="i" class="part">
+          <GameIcon class="icon" :name="p.icon" />
+          <b v-if="p.count !== null">{{ p.count }}</b>
+        </span>
       </span>
     </div>
   </div>
@@ -155,12 +160,10 @@ onBeforeUnmount(() => {
   gap: 1px;
 }
 .icon {
-  /* Emoji placeholders drawn as white silhouettes until the art pass brings real icons. */
-  filter: brightness(0) invert(1);
+  font-size: 1.15em;
 }
 .part b {
-  font-weight: 800;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+  font: 700 1em var(--display);
 }
 .tip {
   position: absolute;
@@ -180,18 +183,18 @@ onBeforeUnmount(() => {
   border-top: 9px solid transparent;
   border-bottom: 9px solid transparent;
 }
+/* One of ours under attack: a white pin with a red glyph and a pulsing red halo, so it reads
+   apart from enemy groups (corpus 14 §3.3). */
 .castle .body,
 .building .body {
+  background: #fff;
+  color: var(--enemy);
+  border-color: var(--enemy);
   animation: pulse 0.8s ease-in-out infinite alternate;
-}
-.castle .icon,
-.building .icon,
-.boss .icon {
-  filter: none;
 }
 @keyframes pulse {
   to {
-    box-shadow: 0 0 0 6px rgba(255, 77, 77, 0.35);
+    box-shadow: 0 0 0 6px rgba(196, 65, 47, 0.4);
   }
 }
 </style>

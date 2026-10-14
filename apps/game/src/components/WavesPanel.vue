@@ -2,11 +2,12 @@
 /**
  * The coming nights (design 11 §8.3, trimmed after playtest 2): tonight and the next night by
  * default, every night behind "All nights". Lane by lane, with icons and counts; the boss
- * night carries the boss's icon.
+ * night carries the boss's icon. A linen panel under the night track (corpus 14 §3.1, zone 4).
  */
 import { computed, ref } from 'vue';
 import type { NightPlan } from '../stores/hud.ts';
 import { enemyIcon } from '../theme.ts';
+import GameIcon from './GameIcon.vue';
 
 const props = defineProps<{ plans: NightPlan[]; tonight: number }>();
 const all = ref(false);
@@ -19,7 +20,7 @@ const when = (n: number) =>
 </script>
 
 <template>
-  <div class="waves" data-testid="waves-panel">
+  <div class="waves panel" data-testid="waves-panel">
     <div
       v-for="p in shown"
       :key="p.night"
@@ -27,19 +28,21 @@ const when = (n: number) =>
       :class="{ tonight: p.night === tonight, past: p.night < tonight }"
       :data-night="p.night"
     >
-      <strong class="n">
+      <strong class="n display">
         {{ when(p.night)
-        }}<span v-if="p.boss" class="boss" :title="'Boss night'">{{ enemyIcon(p.boss) }}</span>
+        }}<span v-if="p.boss" class="boss" title="Boss night"
+          ><GameIcon :name="enemyIcon(p.boss)"
+        /></span>
       </strong>
       <span v-for="l in p.lanes" :key="l.lane" class="lane">
         <em>{{ laneName[l.lane] ?? l.lane }}</em>
-        <span v-for="e in l.enemies" :key="e.id" :title="e.name"
-          >{{ enemyIcon(e.id) }}{{ e.count }}</span
+        <span v-for="e in l.enemies" :key="e.id" class="foe" :title="e.name"
+          ><GameIcon :name="enemyIcon(e.id)" />{{ e.count }}</span
         >
       </span>
     </div>
     <button class="more" data-testid="waves-all" @click.stop="all = !all">
-      {{ all ? 'Fewer' : 'All nights' }}
+      {{ all ? 'Fewer' : 'All six nights' }}
     </button>
   </div>
 </template>
@@ -48,49 +51,63 @@ const when = (n: number) =>
 .waves {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  background: rgba(20, 26, 40, 0.92);
-  border-radius: 8px;
+  gap: 2px;
   padding: 8px 10px;
   max-height: 60vh;
   overflow-y: auto;
+  font-size: 13px;
 }
 .night {
   display: flex;
   flex-wrap: wrap;
   gap: 4px 12px;
-  align-items: baseline;
-  padding: 4px 6px;
-  border-radius: 6px;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 8px;
 }
 .tonight {
-  background: rgba(232, 197, 71, 0.25);
-  outline: 2px solid rgba(232, 197, 71, 0.8);
+  background: var(--linen-deep);
 }
 .past {
   opacity: 0.5;
 }
 .n {
-  min-width: 4.5em;
+  min-width: 4.6em;
+  font-size: 14px;
 }
 .boss {
   margin-left: 4px;
+  color: var(--enemy);
+}
+.lane {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-weight: 700;
 }
 .lane em {
   font-style: normal;
-  opacity: 0.7;
-  margin-right: 4px;
+  font-weight: 500;
+  color: var(--muted);
+  margin-right: 3px;
 }
-.lane span {
-  margin-right: 6px;
+.foe {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  margin-right: 5px;
+}
+.foe .gi {
+  color: var(--enemy);
+  font-size: 15px;
 }
 .more {
   align-self: flex-start;
   background: none;
-  border: none;
-  color: #e8c547;
-  font: inherit;
-  font-size: 0.85em;
-  padding: 4px 6px;
+  box-shadow: none;
+  min-height: 32px;
+  color: var(--muted);
+  font-size: 12px;
+  padding: 4px 8px;
 }
 </style>

@@ -1,7 +1,8 @@
 <script setup lang="ts">
 /**
  * The HUD and on-screen controls, laid out for a landscape phone first (design 11 §10.3) and
- * equally usable with a mouse. It reads HUD snapshots and sends intents through the InputHub;
+ * equally usable with a mouse. Zones and look follow corpus 14 (direction A, "Linen and ink"):
+ * what you read sits on top, what you press sits in the bottom third. It reads HUD snapshots and sends intents through the InputHub;
  * it never touches the live game state.
  */
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
@@ -9,6 +10,7 @@ import HoldButton from '../components/HoldButton.vue';
 import NightTrack from '../components/NightTrack.vue';
 import VirtualJoystick from '../components/VirtualJoystick.vue';
 import WavesPanel from '../components/WavesPanel.vue';
+import GameIcon from '../components/GameIcon.vue';
 import { HOLD_BUY_MS, HOLD_NIGHT_MS, type InputHub } from '../game/input/hub.ts';
 import type { GameRuntime } from '../game/runtime.ts';
 import { nightPlans, snapshot, useHudStore } from '../stores/hud.ts';
@@ -84,78 +86,121 @@ const showRally = computed(() => {
   if (h.phase === 'night') return h.hasBarracks;
   return h.phase === 'day' && (h.flagHere || h.flagsCarried > 0);
 });
+/** Gold ring around Charge: full when ready, emptying after use. */
 const cooldownStyle = computed(() => ({
-  background: `conic-gradient(rgba(0,0,0,0.55) ${(store.hud?.abilityCooldown ?? 0) * 360}deg, transparent 0)`,
+  background: `conic-gradient(var(--gold) ${(1 - (store.hud?.abilityCooldown ?? 0)) * 360}deg, rgba(36,39,44,0.18) 0)`,
 }));
+const pct = (v: number, max: number) =>
+  `${Math.max(0, Math.min(100, (100 * v) / Math.max(1, max)))}%`;
 </script>
 
 <template>
   <div v-if="store.hud" class="hud" :class="{ touch }">
     <VirtualJoystick @move="onStick" />
 
-    <header class="top">
-      <button class="icon" aria-label="Pause" data-testid="pause" @click="hub.togglePause()">
-        II
-      </button>
-      <span class="chip" data-testid="gold">🪙 {{ store.hud.gold }}</span>
+    <!-- Zone 1, top left: the treasury. Gold, then castle and king health as bars. -->
+    <div class="treasury panel zone">
+      <span class="coin"><GameIcon name="coin" /></span>
+      <span class="gold display" data-testid="gold">{{ store.hud.gold }}</span>
+      <span class="health">
+        <span class="row" :title="`Castle ${store.hud.castleHp} / ${store.hud.castleMaxHp}`">
+          <GameIcon name="keep" />
+          <span class="bar" data-testid="castle-hp"
+            ><i :style="{ width: pct(store.hud.castleHp, store.hud.castleMaxHp) }"
+          /></span>
+        </span>
+        <span
+          class="row"
+          :class="{ down: !store.hud.kingAlive }"
+          :title="`King ${store.hud.kingHp} / ${store.hud.kingMaxHp}`"
+        >
+          <GameIcon name="crown" />
+          <span v-if="store.hud.kingAlive" class="bar king" data-testid="king-hp"
+            ><i :style="{ width: pct(store.hud.kingHp, store.hud.kingMaxHp) }"
+          /></span>
+          <span v-else class="respawn" data-testid="king-hp"
+            >back in {{ store.hud.kingRespawnSeconds }}s</span
+          >
+        </span>
+      </span>
+    </div>
+
+    <!-- Zones 2 and 4, top centre: the night track, and under it one message at a time. -->
+    <div class="centre zone">
       <NightTrack
         :day="store.hud.day"
         :nights="store.hud.nights"
         :phase="store.hud.phase"
         :bosses="bosses"
         :enemies-left="store.hud.enemiesLeft"
+        :touch="touch"
         @click="store.waveOpen = !store.waveOpen"
       />
-      <span class="chip">🏰 {{ store.hud.castleHp }}</span>
-      <span class="chip" :class="{ warn: !store.hud.kingAlive }">
-        {{
-          store.hud.kingAlive
-            ? `👑 ${store.hud.kingHp}`
-            : `👑 back in ${store.hud.kingRespawnSeconds}s`
-        }}
-      </span>
-    </header>
-
-    <div v-if="store.hud.boss" class="boss-bar" data-testid="boss-bar">
-      <span>{{ store.hud.boss.name }}</span>
-      <div class="bar">
-        <div :style="{ width: `${(100 * store.hud.boss.hp) / store.hud.boss.maxHp}%` }" />
+      <section v-if="store.waveOpen" class="wave-panel" @click="store.waveOpen = false">
+        <WavesPanel :plans="plans" :tonight="store.hud.day" />
+      </section>
+      <div v-else-if="store.hud.boss" class="boss-bar panel" data-testid="boss-bar">
+        <GameIcon :name="bosses[store.hud.nights] ?? 'helm'" />
+        <strong class="display">{{ store.hud.boss.name }}</strong>
+        <span class="bar"
+          ><i :style="{ width: pct(store.hud.boss.hp, store.hud.boss.maxHp) }"
+        /></span>
       </div>
+      <div v-else-if="dawnCard" class="dawn-card panel" data-testid="dawn-card">
+        <span class="kicker">Dawn</span>
+        <strong class="display">Night {{ dawnCard.night }} held</strong>
+        <span
+          ><b>+{{ dawnCard.income }}</b> gold · {{ dawnCard.killed }} fell<template
+            v-if="dawnCard.lost > 0"
+          >
+            · <b class="lost">{{ dawnCard.lost }}</b> building{{
+              dawnCard.lost > 1 ? 's' : ''
+            }}
+            burned, rebuilt</template
+          ></span
+        >
+      </div>
+      <p v-if="store.message" class="toast panel">{{ store.message }}</p>
     </div>
 
-    <section v-if="store.waveOpen" class="wave-panel" @click="store.waveOpen = false">
-      <WavesPanel :plans="plans" :tonight="store.hud.day" />
-    </section>
+    <!-- Zone 3, top right: pause (sound sits just left of it, see SoundToggle). -->
+    <button
+      class="pause panel round zone"
+      aria-label="Pause"
+      data-testid="pause"
+      @click="hub.togglePause()"
+    >
+      <GameIcon name="pause" />
+    </button>
 
-    <p v-if="store.message" class="toast">{{ store.message }}</p>
-
-    <div v-if="dawnCard" class="dawn-card" data-testid="dawn-card">
-      <strong>Night {{ dawnCard.night }} survived</strong>
-      <span>+{{ dawnCard.income }} 🪙 · {{ dawnCard.killed }} enemies beaten</span>
-      <span v-if="dawnCard.lost > 0" class="warn"
-        >{{ dawnCard.lost }} building{{ dawnCard.lost > 1 ? 's' : '' }} lost (rebuilt free)</span
-      >
-    </div>
-
-    <div class="right">
-      <template v-if="store.hud.phase === 'day' && store.hud.nearby">
-        <div class="slot-title" data-testid="slot-title">
-          <strong>{{ store.hud.nearby.current ?? 'Empty plot' }}</strong>
-          <small v-if="store.hud.nearby.currentStats">{{ store.hud.nearby.currentStats }}</small>
-        </div>
+    <!-- Zone 7, bottom centre: by day, the plot you stand on and what it can become. -->
+    <div v-if="store.hud.phase === 'day' && store.hud.nearby" class="band zone">
+      <div class="slot-title" data-testid="slot-title">
+        <strong class="display">{{ store.hud.nearby.current ?? 'Empty plot' }}</strong>
+        <small v-if="store.hud.nearby.currentStats">{{ store.hud.nearby.currentStats }}</small>
+      </div>
+      <div class="cards">
         <HoldButton
           v-if="store.hud.nearby.rally"
+          class="card panel"
           :duration="HOLD_BUY_MS"
           :external-holding="store.keyHold === 'buy-0'"
           data-testid="rally"
           @confirm="hub.mainAction()"
         >
-          Guard: {{ store.hud.nearby.rally.replace('gate_', '') }} ↻ <kbd v-if="!touch">E</kbd>
+          <span class="offer">
+            <span class="offer-head"
+              ><GameIcon name="flag" /><b class="display">Guard</b><kbd v-if="!touch">E</kbd></span
+            >
+            <small class="offer-desc"
+              >{{ store.hud.nearby.rally.replace('gate_', '') }} gate · tap to change</small
+            >
+          </span>
         </HoldButton>
         <HoldButton
           v-for="o in store.hud.nearby.offers"
           :key="o.option"
-          class="card"
+          class="card panel"
           :duration="HOLD_BUY_MS"
           :disabled="!o.affordable"
           :external-holding="
@@ -166,7 +211,9 @@ const cooldownStyle = computed(() => ({
         >
           <span class="offer">
             <span class="offer-head">
-              {{ o.kind === 'upgrade' ? '↑ ' : '' }}{{ o.name }} · {{ o.cost }}🪙
+              <GameIcon v-if="o.kind === 'upgrade'" name="up" class="up" />
+              <b class="display">{{ o.name }}</b>
+              <span class="cost"><i />{{ o.cost }}</span>
               <kbd v-if="!touch">{{ store.hud.nearby.rally || o.option === 1 ? 'R' : 'E' }}</kbd>
             </span>
             <small v-if="o.stats" class="offer-stats" data-testid="offer-stats">{{
@@ -175,16 +222,22 @@ const cooldownStyle = computed(() => ({
             <small class="offer-desc">{{ o.description }}</small>
           </span>
         </HoldButton>
-      </template>
+      </div>
+    </div>
 
+    <!-- Zone 8, bottom right: the right thumb's buttons. -->
+    <div class="actions zone">
       <button
         v-if="showRally"
-        class="rally-btn"
+        class="rally-btn panel round"
         :data-testid="store.hud.phase === 'night' ? 'rally-night' : 'rally-day'"
         @pointerdown.prevent="rally"
       >
-        <span class="flag" aria-hidden="true">⚑</span>
-        {{ rallyLabel }}
+        <GameIcon name="flag" />
+        <span>{{ rallyLabel }}</span>
+        <span v-if="store.hud.phase === 'night' && store.hud.followers > 0" class="badge">{{
+          store.hud.followers
+        }}</span>
         <kbd v-if="!touch">F</kbd>
       </button>
 
@@ -196,19 +249,28 @@ const cooldownStyle = computed(() => ({
         @pointerdown.prevent="charge"
       >
         <span class="ring" :style="cooldownStyle" />
-        {{ store.hud.abilityName }}
-        <kbd v-if="!touch">Space</kbd>
+        <span class="face panel round">
+          <GameIcon name="spear" />
+          <span>{{ store.hud.abilityName }}</span>
+          <kbd v-if="!touch">Space</kbd>
+        </span>
       </button>
 
       <HoldButton
         v-if="store.hud.phase === 'day'"
-        class="primary night"
+        class="call panel"
         :duration="HOLD_NIGHT_MS"
         :external-holding="store.keyHold === 'night'"
         data-testid="start-night"
         @confirm="hub.startNight()"
       >
-        Start night (hold) <kbd v-if="!touch">Enter</kbd>
+        <span class="call-in">
+          <span class="moon"><GameIcon name="moon" /></span>
+          <span class="call-text"
+            ><b class="display">Call the night</b
+            ><small>Hold <kbd v-if="!touch">Enter</kbd></small></span
+          >
+        </span>
       </HoldButton>
     </div>
 
@@ -217,22 +279,35 @@ const cooldownStyle = computed(() => ({
       class="modal"
       data-testid="outcome"
     >
-      <h2>{{ store.hud.phase === 'won' ? 'Victory!' : 'The castle has fallen' }}</h2>
-      <button class="primary big" @click="emit('restart')">Play again</button>
+      <div class="sheet panel">
+        <h2 class="display">
+          {{ store.hud.phase === 'won' ? 'Greyhollow stands' : 'Greyhollow has fallen' }}
+        </h2>
+        <p>
+          {{
+            store.hud.phase === 'won'
+              ? `You held all ${store.hud.nights} nights.`
+              : `You held ${Math.max(0, store.hud.day - 1)} night${store.hud.day === 2 ? '' : 's'}.`
+          }}
+        </p>
+        <button class="primary big" @click="emit('restart')">Play again</button>
+      </div>
     </div>
 
     <div v-else-if="store.paused" class="modal" data-testid="pause-menu">
-      <h2>Paused</h2>
-      <button class="primary big" @click="hub.togglePause()">Resume</button>
-      <button class="big" @click="emit('fullscreen')">Full screen</button>
-      <button class="big" @click="emit('restart')">Restart run</button>
-      <p class="hint">
-        {{
-          keyHint(
-            'WASD/arrows move · Space ability · F rally / flag · hold E/R buy · hold Enter night · Tab waves · Z zoom',
-          )
-        }}
-      </p>
+      <div class="sheet panel">
+        <h2 class="display">Paused</h2>
+        <button class="primary big" @click="hub.togglePause()">Resume</button>
+        <button class="big" @click="emit('fullscreen')">Full screen</button>
+        <button class="big" @click="emit('restart')">Restart run</button>
+        <p class="hint">
+          {{
+            keyHint(
+              'WASD/arrows move · Space ability · F rally / flag · hold E/R buy · hold Enter night · Tab waves · Z zoom · M sound',
+            )
+          }}
+        </p>
+      </div>
     </div>
   </div>
 </template>
@@ -242,214 +317,401 @@ const cooldownStyle = computed(() => ({
   position: absolute;
   inset: 0;
   pointer-events: none;
-  /* Keep everything clear of notches, rounded corners and the home bar. */
-  padding: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right))
-    max(8px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
-  font-size: max(14px, 2.6vmin);
+  --top: max(10px, env(safe-area-inset-top));
+  --right: max(12px, env(safe-area-inset-right));
+  --bottom: max(12px, env(safe-area-inset-bottom));
+  --left: max(12px, env(safe-area-inset-left));
+  font-size: 14px;
 }
 .hud button,
-.hud .chip,
 .wave-panel,
 .modal {
   pointer-events: auto;
 }
-.top {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  align-items: center;
+/* Phones are the reference size; larger screens scale every zone up (corpus 14 §3.5). */
+@media (min-width: 900px) and (min-height: 600px) {
+  .zone {
+    zoom: 1.3;
+  }
 }
-.chip {
-  background: rgba(20, 26, 40, 0.75);
-  border-radius: 999px;
-  padding: 6px 12px;
-  min-height: 36px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  border: none;
-  color: inherit;
-  font: inherit;
+.bar {
+  display: block;
+  width: 74px;
+  height: 6px;
+  border-radius: 9px;
+  background: var(--line);
+  overflow: hidden;
 }
-.icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  font-weight: 700;
+.bar i {
+  display: block;
+  height: 100%;
+  border-radius: 9px;
+  background: var(--moss);
+  transition: width 0.2s;
 }
-.wave-panel {
-  margin-top: 6px;
-  background: rgba(20, 26, 40, 0.9);
-  border-radius: 8px;
-  padding: 8px 12px;
-  display: inline-flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.toast {
+
+/* Zone 1 */
+.treasury {
   position: absolute;
-  top: 25%;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(20, 26, 40, 0.85);
-  padding: 6px 12px;
-  border-radius: 6px;
-  color: #ffb199;
-}
-.right {
-  position: absolute;
-  right: max(8px, env(safe-area-inset-right));
-  bottom: max(8px, env(safe-area-inset-bottom));
+  top: var(--top);
+  left: var(--left);
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
+  align-items: center;
   gap: 8px;
+  padding: 6px 14px 6px 6px;
 }
-.slot-title {
-  background: rgba(20, 26, 40, 0.75);
-  padding: 4px 10px;
-  border-radius: 6px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  max-width: 260px;
-}
-.slot-title small {
-  opacity: 0.8;
-  font-size: 0.75em;
-}
-.card {
-  width: 260px;
-  text-align: left;
-}
-.offer {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 2px;
-}
-.offer-head {
-  font-weight: 700;
-}
-.offer-stats {
-  font-size: 0.75em;
-  color: #ffe9a3;
-}
-.offer-desc {
-  font-size: 0.72em;
-  opacity: 0.75;
-  line-height: 1.2;
-}
-.rally-btn {
-  width: 64px;
-  height: 64px;
+.coin {
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
-  font-weight: 700;
-  font-size: 11px;
-  line-height: 1.1;
-  touch-action: none;
-  margin-right: 8px;
   display: grid;
   place-items: center;
-  align-content: center;
-}
-.rally-btn .flag {
+  background: radial-gradient(circle at 35% 30%, #ffe9a0, var(--gold) 60%, #8a6410);
+  color: #5a3d06;
   font-size: 18px;
-  color: #e8c547;
+  box-shadow: inset 0 0 0 2px rgba(90, 60, 6, 0.4);
 }
-.dawn-card {
+.gold {
+  font-size: 26px;
+  line-height: 1;
+  min-width: 1.6em;
+  font-variant-numeric: tabular-nums;
+}
+.health {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-left: 10px;
+  border-left: 1px solid var(--line);
+}
+.health .row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+}
+.bar.king i {
+  background: var(--gold);
+}
+.respawn {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--enemy);
+  white-space: nowrap;
+}
+
+/* Zones 2 and 4 */
+.centre {
   position: absolute;
-  top: 22%;
+  top: var(--top);
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(20, 26, 40, 0.9);
-  border: 2px solid #e8c547;
-  border-radius: 10px;
-  padding: 10px 18px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: 8px;
+}
+.centre > * {
+  pointer-events: auto;
+}
+.boss-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  color: var(--enemy);
+  font-size: 18px;
+}
+.boss-bar strong {
+  font-size: 14px;
+}
+.boss-bar .bar {
+  width: min(40vw, 220px);
+  height: 8px;
+}
+.boss-bar .bar i {
+  background: var(--enemy);
+}
+.dawn-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 20px;
+  min-width: 240px;
   animation: rise 0.3s ease-out;
 }
+.kicker {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
 .dawn-card strong {
-  font-size: 1.2em;
-  color: #e8c547;
+  font-size: 20px;
+}
+.dawn-card span:last-child {
+  font-size: 12px;
+  color: var(--muted);
+}
+.dawn-card b {
+  color: var(--ink);
+}
+.dawn-card .lost {
+  color: var(--enemy);
 }
 @keyframes rise {
   from {
     opacity: 0;
-    transform: translate(-50%, 8px);
+    transform: translateY(8px);
   }
 }
-.boss-bar {
-  position: absolute;
-  top: calc(max(8px, env(safe-area-inset-top)) + 56px);
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(60vw, 420px);
-  text-align: center;
+.toast {
+  margin: 0;
+  padding: 6px 14px;
   font-weight: 700;
-  text-shadow: 0 1px 2px #000;
+  color: var(--enemy);
 }
-.boss-bar .bar {
-  height: 10px;
-  border-radius: 5px;
-  background: rgba(0, 0, 0, 0.5);
+
+/* Zone 3 */
+.pause {
+  position: absolute;
+  top: var(--top);
+  right: var(--right);
+  width: 40px;
+  height: 40px;
+  min-height: 40px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+}
+
+/* Zone 7 */
+.band {
+  position: absolute;
+  bottom: var(--bottom);
+  /* Left of the action buttons, so the right thumb reaches the cards. */
+  right: calc(var(--right) + 220px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  max-width: calc(100vw - 260px - var(--left) - var(--right));
+}
+.touch .band {
+  /* Never under the joystick's thumb zone (left 45%, corpus 14 §3.1, zone 6). */
+  max-width: calc(55vw - 230px - var(--right));
+}
+.slot-title {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  white-space: nowrap;
+}
+.slot-title strong {
+  font-size: 14px;
+}
+.slot-title small {
+  font-size: 11px;
+  opacity: 0.9;
+}
+.cards {
+  display: flex;
+  flex-wrap: wrap-reverse;
+  justify-content: flex-start;
+  gap: 8px;
+}
+.card {
+  width: 156px;
+  padding: 8px 10px 9px;
+  text-align: left;
+  font-weight: 500;
+}
+.offer {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.offer-head {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+}
+.offer-head b {
+  flex: 1;
+  white-space: nowrap;
   overflow: hidden;
-  margin-top: 2px;
+  text-overflow: ellipsis;
 }
-.boss-bar .bar div {
-  height: 100%;
-  background: #c0392b;
+.up {
+  color: var(--moss);
+}
+.cost {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font: 700 14px var(--display);
+}
+.cost i {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--gold);
+}
+.offer-stats {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--moss);
+}
+.offer-desc {
+  font-size: 11px;
+  line-height: 1.25;
+  color: var(--muted);
+}
+
+/* Zone 8 */
+.actions {
+  position: absolute;
+  right: var(--right);
+  bottom: var(--bottom);
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+.rally-btn {
+  width: 58px;
+  height: 58px;
+  padding: 0;
+  margin-bottom: 26px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  line-height: 1.1;
+  touch-action: none;
+}
+.rally-btn .gi {
+  font-size: 20px;
+}
+.rally-btn kbd {
+  margin: 1px 0 0;
+  font-size: 9px;
+}
+.badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: var(--gold);
+  color: #3b2a05;
+  border-radius: 9px;
+  padding: 0 5px;
+  font: 700 11px var(--display);
 }
 .charge {
   position: relative;
-  width: 72px;
-  height: 72px;
+  width: 84px;
+  height: 84px;
+  padding: 0;
   border-radius: 50%;
-  font-weight: 700;
-  font-size: 13px;
-  overflow: hidden;
+  background: none;
+  box-shadow: none;
   touch-action: none;
-  display: grid;
-  place-items: center;
 }
 .ring {
   position: absolute;
   inset: 0;
   border-radius: 50%;
+  -webkit-mask: radial-gradient(circle, transparent 37px, #000 38px);
+  mask: radial-gradient(circle, transparent 37px, #000 38px);
 }
-.night {
-  min-width: 180px;
-}
-.modal {
+.face {
   position: absolute;
-  inset: 0;
-  background: rgba(10, 14, 24, 0.75);
+  inset: 5px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 1px;
+  font-size: 11px;
+}
+.face .gi {
+  font-size: 28px;
+}
+.face kbd {
+  margin: 1px 0 0;
+  font-size: 9px;
+}
+.charge:disabled .face {
+  color: var(--muted);
+}
+.call {
+  --fill: var(--night);
+  padding: 8px 18px 8px 8px;
+}
+.call-in {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.moon {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--night);
+  color: var(--linen);
+  font-size: 22px;
+}
+.call-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.call-text b {
+  font-size: 17px;
+  white-space: nowrap;
+}
+.call-text small {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* Pause and end of run */
+.modal {
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 26, 40, 0.55);
+  display: grid;
+  place-items: center;
+}
+.sheet {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 22px 28px;
+  max-width: min(90vw, 460px);
+  text-align: center;
+}
+.sheet h2 {
+  margin: 0;
+  font-size: 26px;
+}
+.sheet p {
+  margin: 0;
+  color: var(--muted);
 }
 .big {
   min-width: 200px;
-  min-height: 52px;
+  min-height: 48px;
 }
 .hint {
-  color: var(--muted);
-  font-size: 13px;
-}
-kbd {
-  font-size: 11px;
-  opacity: 0.7;
-  border: 1px solid currentColor;
-  border-radius: 3px;
-  padding: 0 4px;
-  margin-left: 4px;
-}
-.warn {
-  color: #ffb199;
+  font-size: 12px;
 }
 </style>
