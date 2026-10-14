@@ -1,8 +1,8 @@
 # Panda Kingdom playtest remediation strategy
 
 Status: ongoing. [PR #43](https://github.com/djguiaume/kingindom-decheance/pull/43) is merged.
-Gate and ground-anchor fixes are implemented on `fix/panda-gates-ground-anchors`, awaiting PR
-review and merge. No assets have been generated for either batch.
+[PR #44](https://github.com/djguiaume/kingindom-decheance/pull/44) contains the gate and
+ground-anchor fixes on `fix/panda-gates-ground-anchors`, awaiting review and merge. No assets have been generated for either batch.
 
 Reported by Guillaume after testing the latest `main` on 2026-10-14. Code reviewed at
 `1de7567a91912545aa9343791f21aab43d53b104` (PR #39, “Bring the panda art into main”).
@@ -69,7 +69,7 @@ reopen any fixed finding if the next playtest still shows the issue.
 | ----- | ------------------------------------------------------------------------------------------------ | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | 1     | [PR #43](https://github.com/djguiaume/kingindom-decheance/pull/43), merged into main (`f1e9097`) | F01, F02, F11, F20, F21 | Fixed: walk cadence, rolling charge, foundation visibility, projectile mapping, night battlefield/HUD separation.                                                        |
 | 1     | PR #43, merged                                                                                   | F05, F06                | Partial: stronger attacks/recoil and correct target facing; broader attack animation quality remains open.                                                               |
-| 2     | `fix/panda-gates-ground-anchors`, awaiting merge                                                 | F07, F08, F10           | Fixed in branch: gate hinge span fits projected core passage, front/side/diagonal perspective and mirroring, upright posts, and calibrated building/ruin ground centres. |
+| 2     | [PR #44](https://github.com/djguiaume/kingindom-decheance/pull/44), awaiting merge               | F07, F08, F10           | Fixed in branch: gate hinge span fits projected core passage, front/side/diagonal perspective and mirroring, upright posts, and calibrated building/ruin ground centres. |
 
 ### Batch 2 details
 
