@@ -1,8 +1,251 @@
 {
   "frames": {
-    "raider": {
+    "brute": {
+      "frame": {
+        "x": 200,
+        "y": 2,
+        "w": 124,
+        "h": 150
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 66,
+        "y": 80,
+        "w": 124,
+        "h": 150
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "brute",
+      "num": 31,
+      "contentId": "brute"
+    },
+    "brute_weapon": {
+      "frame": {
+        "x": 1102,
+        "y": 2,
+        "w": 177,
+        "h": 58
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 8,
+        "y": 19,
+        "w": 177,
+        "h": 58
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 96
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "asset": "brute_weapon",
+      "num": 32,
+      "contentId": "brute"
+    },
+    "catapult_arm.f1": {
+      "frame": {
+        "x": 80,
+        "y": 2,
+        "w": 118,
+        "h": 210
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 5,
+        "y": 20,
+        "w": 118,
+        "h": 210
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "catapult_arm",
+      "num": 36,
+      "contentId": "catapult"
+    },
+    "catapult_arm.f2": {
       "frame": {
         "x": 2,
+        "y": 2,
+        "w": 76,
+        "h": 221
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 26,
+        "y": 9,
+        "w": 76,
+        "h": 221
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "catapult_arm",
+      "num": 36,
+      "contentId": "catapult"
+    },
+    "catapult_chassis": {
+      "frame": {
+        "x": 326,
+        "y": 2,
+        "w": 136,
+        "h": 120
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 60,
+        "y": 110,
+        "w": 136,
+        "h": 120
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "catapult_chassis",
+      "num": 35,
+      "contentId": "catapult"
+    },
+    "harpy_weapon": {
+      "frame": {
+        "x": 903,
+        "y": 2,
+        "w": 54,
+        "h": 88
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 21,
+        "y": 4,
+        "w": 54,
+        "h": 88
+      },
+      "sourceSize": {
+        "w": 96,
+        "h": 96
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "asset": "harpy_weapon",
+      "num": 34,
+      "contentId": "harpy"
+    },
+    "harpy.f1": {
+      "frame": {
+        "x": 507,
+        "y": 2,
+        "w": 114,
+        "h": 110
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 39,
+        "y": 41,
+        "w": 114,
+        "h": 110
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "asset": "harpy",
+      "num": 33,
+      "contentId": "harpy"
+    },
+    "harpy.f2": {
+      "frame": {
+        "x": 724,
+        "y": 2,
+        "w": 177,
+        "h": 101
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 8,
+        "y": 46,
+        "w": 177,
+        "h": 101
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "asset": "harpy",
+      "num": 33,
+      "contentId": "harpy"
+    },
+    "harpy.f3": {
+      "frame": {
+        "x": 623,
+        "y": 2,
+        "w": 99,
+        "h": 110
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 47,
+        "y": 41,
+        "w": 99,
+        "h": 110
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "asset": "harpy",
+      "num": 33,
+      "contentId": "harpy"
+    },
+    "raider": {
+      "frame": {
+        "x": 1008,
         "y": 2,
         "w": 54,
         "h": 80
@@ -29,7 +272,7 @@
     },
     "raider_weapon": {
       "frame": {
-        "x": 58,
+        "x": 1064,
         "y": 2,
         "w": 36,
         "h": 59
@@ -53,6 +296,60 @@
       "asset": "raider_weapon",
       "num": 28,
       "contentId": "raider"
+    },
+    "skirmisher": {
+      "frame": {
+        "x": 959,
+        "y": 2,
+        "w": 47,
+        "h": 84
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 57,
+        "y": 60,
+        "w": 47,
+        "h": 84
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 160
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "skirmisher",
+      "num": 29,
+      "contentId": "skirmisher"
+    },
+    "skirmisher_weapon": {
+      "frame": {
+        "x": 464,
+        "y": 2,
+        "w": 41,
+        "h": 118
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 12,
+        "y": 5,
+        "w": 41,
+        "h": 118
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "asset": "skirmisher_weapon",
+      "num": 30,
+      "contentId": "skirmisher"
     }
   },
   "meta": {
@@ -61,8 +358,8 @@
     "image": "enemies.webp",
     "format": "RGBA8888",
     "size": {
-      "w": 96,
-      "h": 84
+      "w": 1281,
+      "h": 225
     },
     "scale": "1"
   }
