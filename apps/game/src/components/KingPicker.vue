@@ -5,24 +5,25 @@ import ArtSprite from './ArtSprite.vue';
 defineProps<{
   kings: readonly KingSettings[];
   modelValue: string;
-  best: number | null;
+  isUnlocked: (king: KingSettings) => boolean;
 }>();
 defineEmits<{ 'update:modelValue': [id: string] }>();
 </script>
 
 <template>
-  <aside class="picker panel" data-testid="king-picker" aria-label="Choose your king">
+  <section class="picker" data-testid="king-picker" aria-label="Choose your king">
     <span class="heading">
       <span class="kicker">Choose your king</span>
-      <small v-if="best !== null" data-testid="home-best">Best on Greyhollow: {{ best }}</small>
+      <small>Your choice changes movement, survivability and the active ability.</small>
     </span>
     <div class="choices">
       <button
         v-for="king in kings"
         :key="king.id"
         class="king"
-        :class="{ selected: modelValue === king.id }"
+        :class="{ selected: modelValue === king.id, locked: !isUnlocked(king) }"
         :aria-pressed="modelValue === king.id"
+        :disabled="!isUnlocked(king)"
         :data-testid="`king-${king.id}`"
         @click="$emit('update:modelValue', king.id)"
       >
@@ -31,20 +32,23 @@ defineEmits<{ 'update:modelValue': [id: string] }>();
           <b class="display">{{ king.name }}</b>
           <small>{{ king.description }}</small>
           <span class="ability">{{ king.ability.name }}</span>
+          <span v-if="!isUnlocked(king)" class="unlock">
+            Unlocks at level {{ king.unlock?.level ?? '?' }}
+          </span>
         </span>
       </button>
     </div>
-  </aside>
+  </section>
 </template>
 
 <style scoped>
 .picker {
-  position: relative;
-  z-index: 1;
-  width: min(560px, 43vw);
-  padding: 14px;
+  width: 100%;
+  min-height: 0;
+  flex: 1;
   display: grid;
-  gap: 10px;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 16px;
 }
 .heading {
   display: flex;
@@ -61,11 +65,15 @@ defineEmits<{ 'update:modelValue': [id: string] }>();
 }
 .heading small {
   color: var(--muted);
+  text-align: right;
 }
 .choices {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(min(250px, 100%), 1fr));
+  gap: 12px;
+  align-content: start;
+  overflow-y: auto;
+  padding: 2px;
 }
 .king {
   min-width: 0;
@@ -83,6 +91,9 @@ defineEmits<{ 'update:modelValue': [id: string] }>();
 .king.selected {
   border-color: var(--gold);
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--gold) 25%, transparent);
+}
+.king.locked {
+  opacity: 0.58;
 }
 .portrait {
   width: 72px;
@@ -106,19 +117,36 @@ defineEmits<{ 'update:modelValue': [id: string] }>();
   font-weight: 800;
   text-transform: uppercase;
 }
-@media (max-width: 780px) {
-  .picker {
-    width: min(94vw, 560px);
-  }
+.unlock {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
 }
-@media (max-width: 520px) {
+@media (max-width: 780px) {
   .heading {
     align-items: flex-start;
     flex-direction: column;
     gap: 3px;
   }
-  .choices {
-    grid-template-columns: 1fr;
+  .heading small {
+    text-align: left;
+  }
+}
+@media (max-height: 460px) {
+  .picker {
+    gap: 8px;
+  }
+  .heading small {
+    display: none;
+  }
+  .king {
+    grid-template-columns: 58px 1fr;
+    padding: 7px;
+  }
+  .portrait {
+    width: 58px;
+    height: 58px;
   }
 }
 </style>

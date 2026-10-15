@@ -32,19 +32,44 @@
       </nav>
     </div>
 
-    <KingPicker
-      :kings="prototypeContent.kings"
-      :model-value="kingId"
-      :best="best"
-      @update:model-value="selectKing"
-    />
+    <button
+      class="king panel"
+      data-testid="king-card"
+      aria-haspopup="dialog"
+      @click="sheet = 'king'"
+    >
+      <ArtSprite :name="selectedKing.art.idle" icon="crown" class="portrait" />
+      <span class="who">
+        <span class="kicker">Your king</span>
+        <b class="display">{{ selectedKing.name }}</b>
+        <small>{{ selectedKing.description }}</small>
+        <small class="ability">{{ selectedKing.ability.name }}</small>
+        <small v-if="best !== null" class="best" data-testid="home-best"
+          >Best on Greyhollow: {{ best }}</small
+        >
+      </span>
+      <span class="change">Change</span>
+    </button>
 
     <div v-if="sheet" class="modal" @click.self="sheet = null">
-      <div class="sheet panel capped" role="dialog" :aria-label="SHEET_TITLES[sheet]">
+      <div
+        class="sheet panel capped"
+        :class="{ 'king-sheet': sheet === 'king' }"
+        role="dialog"
+        :aria-label="SHEET_TITLES[sheet]"
+      >
         <button class="close" aria-label="Close" @click="sheet = null">
           <GameIcon name="close" />
         </button>
-        <template v-if="sheet === 'how'">
+        <template v-if="sheet === 'king'">
+          <KingPicker
+            :kings="prototypeContent.kings"
+            :model-value="kingId"
+            :is-unlocked="(king) => isUnlocked(profile, king)"
+            @update:model-value="selectKing"
+          />
+        </template>
+        <template v-else-if="sheet === 'how'">
           <h2 class="display">How to play</h2>
           <p>
             By day, walk to a plot and build. At night, hold the line: your spear strikes on its
@@ -154,9 +179,10 @@ import {
 } from '../progression.ts';
 import { backdropUrl } from '../ui-art.ts';
 
-type Sheet = 'how' | 'settings' | 'setup';
+type Sheet = 'how' | 'king' | 'settings' | 'setup';
 const SHEET_TITLES: Record<Sheet, string> = {
   how: 'How to play',
+  king: 'Choose your king',
   settings: 'Settings',
   setup: 'Customise run',
 };
@@ -167,10 +193,16 @@ onBeforeUnmount(audio.onMuted((m) => (muted.value = m)));
 const profile = ref(loadProfile());
 const best = profile.value.records[prototypeRun.mapId]?.score ?? null;
 const kingId = ref(selectedKingId(prototypeContent));
+const selectedKing = computed(
+  () =>
+    prototypeContent.kings.find((king) => king.id === kingId.value) ??
+    prototypeContent.kings.find((king) => king.id === prototypeContent.defaultKing)!,
+);
 
 function selectKing(id: string): void {
   kingId.value = id;
   saveSelectedKingId(id);
+  sheet.value = null;
 }
 
 // The run setup (13 §6.1). Play starts with the remembered setup; a first launch has none.
@@ -326,7 +358,14 @@ const backdrop = computed(() =>
   align-items: center;
   gap: 10px;
   padding: 8px 16px 8px 8px;
-  max-width: 300px;
+  max-width: 340px;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+.king:hover,
+.king:focus-visible {
+  border-color: var(--gold);
 }
 .portrait {
   font-size: 76px;
@@ -338,6 +377,14 @@ const backdrop = computed(() =>
   flex-direction: column;
   gap: 1px;
 }
+.change {
+  align-self: flex-start;
+  color: var(--livery);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
 .who b.display {
   font-size: 17px;
 }
@@ -348,6 +395,11 @@ const backdrop = computed(() =>
 }
 .who small b {
   color: var(--ink);
+}
+.who .ability {
+  color: var(--gold-dark);
+  font-weight: 800;
+  text-transform: uppercase;
 }
 .kicker {
   font-size: 10px;
@@ -381,6 +433,17 @@ const backdrop = computed(() =>
   overflow-y: auto;
   box-sizing: border-box;
   text-align: center;
+}
+.king-sheet {
+  width: min(94vw, 1080px);
+  max-width: min(94vw, 1080px);
+  height: min(88dvh, 760px);
+  align-items: stretch;
+  padding: 24px 28px 28px;
+  text-align: left;
+}
+.king-sheet :deep(.heading) {
+  padding-right: 36px;
 }
 .sheet h2 {
   margin: 0;
@@ -515,6 +578,9 @@ const backdrop = computed(() =>
   }
   .sheet h2 {
     font-size: 20px;
+  }
+  .king-sheet {
+    padding: 12px 18px;
   }
   .setup-intro {
     display: none;
