@@ -83,9 +83,11 @@ export function promptFor(asset: Asset, part: Part): string {
   const followed = asset.followAsset?.replaceAll('_', ' ');
   const piece = !followed
     ? undefined
-    : asset.id.startsWith('ruin_')
-      ? `The second attached image is this ${followed} before the attack. Paint that very building destroyed: the same base, footprint, materials, colours, camera angle, scale and position on the canvas, so the ruin sits exactly where the building stood and is still recognisably the ${followed}.`
-      : `The second attached image is the ${followed} this piece joins. Match its rock, grass, colours, height, depth and scale exactly, so the two sit side by side as one continuous piece of terrain.`;
+    : asset.id.endsWith('_wall_segment')
+      ? `The second attached image is the ${followed} this wall section joins, in this same view. Paint only a straight piece of its wall: the same stone, colours, crenellations, height, thickness and camera angle, without the gateway or its roof, so sections laid end to end continue the gate's wall as one solid fortification.`
+      : asset.id.startsWith('ruin_')
+        ? `The second attached image is this ${followed} before the attack. Paint that very building destroyed: the same base, footprint, materials, colours, camera angle, scale and position on the canvas, so the ruin sits exactly where the building stood and is still recognisably the ${followed}.`
+        : `The second attached image is the ${followed} this piece joins. Match its rock, grass, colours, height, depth and scale exactly, so the two sit side by side as one continuous piece of terrain.`;
   return [
     `Game sprite: ${asset.subject}.${pose}`,
     framing(asset, part),

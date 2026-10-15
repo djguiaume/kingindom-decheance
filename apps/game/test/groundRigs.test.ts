@@ -6,8 +6,8 @@ import {
   GATE_UPRIGHT_SCALE,
   GATE_RIGS,
   groundOrigin,
+  GATE_WIDTH_RANGE,
   GROUND_ANCHORS,
-  wallPostMatrix,
 } from '../src/game/groundRigs.ts';
 import { GATE_HALF_WIDTH, wallLine, Session } from '@kd/core';
 import { prototypeContent, prototypeRun } from '@kd/content/prototype';
@@ -77,7 +77,7 @@ describe('gate placement', () => {
     expect(gateView({ x: 0.2, y: -0.98 }, SQUASH)).toEqual({ view: '.side', mirror: false });
   });
 
-  it('fits the painted hinge endpoints to the core passage on every Greyhollow lane and both tiers', () => {
+  it('meets the core passage on every Greyhollow lane and both tiers, keeping the painted depth', () => {
     const session = new Session(prototypeContent, { ...prototypeRun, seed: 1 });
     const frames = atlas('structures');
     for (const slot of ['ww', 'we', 'wn']) {
@@ -86,35 +86,24 @@ describe('gate placement', () => {
         const { view, mirror } = gateView(line.across, SQUASH);
         const name = `${base}${view}`;
         const rig = GATE_RIGS[name]!;
-        const p = gatePlacement(rig, line.across, mirror, 2 * GATE_HALF_WIDTH, SCALE, SQUASH);
         for (const state of ['f1', 'f2'])
           expect(frames[`${name}.${state}`], `${name}.${state}`).toBeDefined();
-        const points = rig.hinges.map(([x, y]) => {
-          const dx = x - p.anchor[0],
-            dy = y - p.anchor[1];
-          return { x: p.matrix.a * dx + p.matrix.c * dy, y: p.matrix.b * dx + p.matrix.d * dy };
-        });
-        const expected = {
+        expectFits(gatePlacement(rig, line.across, mirror, 2 * GATE_HALF_WIDTH, SCALE, SQUASH), {
           x: line.across.x * GATE_HALF_WIDTH * SCALE,
           y: line.across.y * GATE_HALF_WIDTH * SCALE * SQUASH,
-        };
-        const sign = Math.sign(points[0]!.x * expected.x + points[0]!.y * expected.y) || 1;
-        expect(points[0]!.x).toBeCloseTo(sign * expected.x);
-        expect(points[0]!.y).toBeCloseTo(sign * expected.y);
-        expect(points[1]!.x).toBeCloseTo(-sign * expected.x);
-        expect(points[1]!.y).toBeCloseTo(-sign * expected.y);
-        expect(p.matrix.c).toBeCloseTo(0);
-        expect(p.matrix.d).toBe((SCALE / 64) * GATE_UPRIGHT_SCALE);
+        });
       }
     }
   });
 
-  it('keeps vertical gates upright enough and gives identical placement when axis direction reverses', () => {
-    const rig = GATE_RIGS['gate_wood.side']!;
-    const p = gatePlacement(rig, { x: 0, y: 1 }, false, 2.2, SCALE, SQUASH);
-    expect(p.matrix.c).toBeGreaterThan(0);
-    expect(p.matrix.d).toBe((SCALE / 64) * GATE_UPRIGHT_SCALE);
-    expect(p).toEqual(gatePlacement(rig, { x: 0, y: -1 }, false, 2.2, SCALE, SQUASH));
+  it('keeps a vertical gate its painted width (no edge-on sliver), the same both lane ways', () => {
+    for (const base of ['gate_wood', 'gate_stone']) {
+      const rig = GATE_RIGS[`${base}.side`]!;
+      const p = gatePlacement(rig, { x: 0, y: 1 }, false, 2.2, SCALE, SQUASH);
+      expect(Math.abs(p.matrix.a)).toBeCloseTo(GATE_WIDTH_RANGE[0] * WIDTH);
+      expect(p.matrix.d).toBe(WIDTH);
+      expect(p).toEqual(gatePlacement(rig, { x: 0, y: -1 }, false, 2.2, SCALE, SQUASH));
+    }
   });
 
   it('keeps the larger apparent height stable when each painted gate opens', () => {
@@ -157,23 +146,6 @@ describe('gate placement', () => {
   });
 });
 
-describe('stone wall placement', () => {
-  it('projects blocks along arbitrary wall axes and is stable when a lane reverses', () => {
-    for (const across of [
-      { x: 1, y: 0 },
-      { x: 0.7, y: 0.7 },
-      { x: 0, y: 1 },
-    ]) {
-      const placement = wallPostMatrix(across, 0.5, SQUASH);
-      expect(placement).toEqual(wallPostMatrix({ x: -across.x, y: -across.y }, 0.5, SQUASH));
-      expect(Math.hypot(placement.a, placement.b)).toBeGreaterThan(0);
-      expect(placement.d).toBe(0.5);
-    }
-    expect(wallPostMatrix({ x: 1, y: 0 }, 1, SQUASH).b).toBe(0);
-    expect(wallPostMatrix({ x: 0, y: 1 }, 1, SQUASH).b).not.toBe(0);
-  });
-});
-
 it('reconstructs the affine projection with ordinary parent and child transforms, including mirrored views', () => {
   for (const m of [
     { a: 0.3, b: 0.5, c: 0, d: 0.5 },
@@ -192,7 +164,7 @@ it('reconstructs the affine projection with ordinary parent and child transforms
   }
 });
 
-it('fits future maps at every degree, through view boundaries, exact verticals and both lane directions', () => {
+it('fits future maps at every degree without flattening the painting, both lane directions', () => {
   for (let angle = 0; angle < 360; angle++) {
     const across = { x: Math.cos((angle * Math.PI) / 180), y: Math.sin((angle * Math.PI) / 180) };
     if (angle % 90 === 0) {
@@ -203,31 +175,29 @@ it('fits future maps at every degree, through view boundaries, exact verticals a
       const { view, mirror } = gateView(across, SQUASH);
       const rig = GATE_RIGS[`${base}${view}`]!;
       const p = gatePlacement(rig, across, mirror, 2.2, SCALE, SQUASH);
-      const points = rig.hinges.map(([x, y]) => ({
-        x: p.matrix.a * (x - p.anchor[0]) + p.matrix.c * (y - p.anchor[1]),
-        y: p.matrix.b * (x - p.anchor[0]) + p.matrix.d * (y - p.anchor[1]),
-      }));
-      const expected = { x: across.x * 1.1 * SCALE, y: across.y * 1.1 * SCALE * SQUASH };
-      const sign = Math.sign(points[0]!.x * expected.x + points[0]!.y * expected.y) || 1;
-      expect(points[0]!.x).toBeCloseTo(sign * expected.x);
-      expect(points[0]!.y).toBeCloseTo(sign * expected.y);
-      expect(points[1]!.x).toBeCloseTo(-sign * expected.x);
-      expect(points[1]!.y).toBeCloseTo(-sign * expected.y);
-      const m = p.matrix;
-      const t = decomposeAffine(m);
-      const co = Math.cos(t.outer),
-        so = Math.sin(t.outer),
-        ci = Math.cos(t.inner),
-        si = Math.sin(t.inner);
-      expect(co * t.scaleX * ci - so * t.scaleY * si).toBeCloseTo(m.a);
-      expect(so * t.scaleX * ci + co * t.scaleY * si).toBeCloseTo(m.b);
-      expect(-co * t.scaleX * si - so * t.scaleY * ci).toBeCloseTo(m.c);
-      expect(-so * t.scaleX * si + co * t.scaleY * ci).toBeCloseTo(m.d);
-      expect(Math.abs(m.a * m.d - m.b * m.c)).toBeGreaterThan(0.001);
-      expect(Math.abs(Math.atan2(m.c, m.d))).toBeLessThan(0.041);
+      expectFits(p, { x: across.x * 1.1 * SCALE, y: across.y * 1.1 * SCALE * SQUASH });
       expect(p).toEqual(
         gatePlacement(rig, { x: -across.x, y: -across.y }, mirror, 2.2, SCALE, SQUASH),
       );
     }
   }
 });
+
+const WIDTH = (SCALE / 64) * GATE_UPRIGHT_SCALE;
+
+/**
+ * The painted gate stays as painted: upright, never narrower than GATE_WIDTH_RANGE allows, tilted
+ * only a little; its hinges land within a third of a metre of the passage ends.
+ */
+function expectFits(p: ReturnType<typeof gatePlacement>, end: { x: number; y: number }): void {
+  const m = p.matrix;
+  expect(m.c).toBe(0);
+  expect(m.d).toBe(WIDTH);
+  expect(Math.abs(m.a)).toBeGreaterThanOrEqual(GATE_WIDTH_RANGE[0] * WIDTH - 1e-9);
+  expect(Math.abs(m.a)).toBeLessThanOrEqual(GATE_WIDTH_RANGE[1] * WIDTH + 1e-9);
+  expect(Math.abs(m.b / m.a)).toBeLessThan(0.4);
+  const [h0, h1] = p.hinges;
+  const sign = Math.sign(h0!.x * end.x + h0!.y * end.y) || 1;
+  expect(Math.hypot(h0!.x - sign * end.x, h0!.y - sign * end.y)).toBeLessThan(SCALE / 3);
+  expect(Math.hypot(h1!.x + sign * end.x, h1!.y + sign * end.y)).toBeLessThan(SCALE / 3);
+}

@@ -4430,6 +4430,54 @@
           "master": "art/masters/buildings/123_ruin_crossbow_range.png"
         }
       ]
+    },
+    {
+      "num": 124,
+      "code": "124",
+      "id": "stone_wall_segment",
+      "name": "Stone wall section",
+      "group": "structures",
+      "kind": "structure",
+      "contentId": "stone_wall",
+      "subject": "a straight section of thick grey stone fortification wall, the same wall as the wings of the stone gate: solid grey stone blocks, a brown wooden walkway band near the top and square crenellations along the top, a little moss at the foot; its top and its thickness clearly visible, about as thick as a person is wide; no door, no gate, no roof pavilion, no tower, no banner, no lantern, no bamboo; both ends cut straight and plain, showing the wall's cross-section, so identical sections join end to end into one continuous wall",
+      "canvas": {
+        "w": 192,
+        "h": 192
+      },
+      "heightPx": 100,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [
+        "Same stone, crenellations and height as the stone gate in the same view; thick, with its top visible; ends join a copy of itself without a seam."
+      ],
+      "inferred": "Not on the sheet. The game repeats it along each wing of a stone wall, picking the view closest to the wall angle like the gate.",
+      "followAsset": "gate_stone",
+      "parts": [
+        {
+          "id": "stone_wall_segment",
+          "frame": 0,
+          "master": "art/masters/structures/124_stone_wall_segment.png"
+        },
+        {
+          "id": "stone_wall_segment.side",
+          "frame": 0,
+          "view": "side",
+          "master": "art/masters/structures/124_stone_wall_segment_side.png"
+        },
+        {
+          "id": "stone_wall_segment.diag",
+          "frame": 0,
+          "view": "diag",
+          "master": "art/masters/structures/124_stone_wall_segment_diag.png"
+        }
+      ]
     }
   ]
 }

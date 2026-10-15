@@ -55,7 +55,7 @@ import { addCliffs, CLIFF_TEXTURE, type CliffSprite } from './cliffs.ts';
 import { bobHeight, shadow, spriteFor } from './sprites.ts';
 import { addPaintedTerrain, drawTerrain, paintedPropFrame, propNeedsDepth } from './terrain.ts';
 import { emptyPlotIds, gateIsOpen, projectileFrame, ruinFrame } from './presentation.ts';
-import { gatePlacement, gateView, GATE_RIGS, groundOrigin, wallPostMatrix } from './groundRigs.ts';
+import { gatePlacement, gateView, GATE_RIGS, groundOrigin } from './groundRigs.ts';
 
 const HIT_FLASH_MS = 160;
 const TICK_MS = 1000 / TICK_RATE;
@@ -684,52 +684,66 @@ export class PlayScene extends Phaser.Scene {
     });
     const open = gateIsOpen(line.at, b.destroyed, state.king, state.units);
 
-    // Painted walls: a row of stakes (or stone posts) on each wing, and the gate in the view
-    // closest to the wall's angle. Each piece is sorted on its own like the slabs.
+    // Painted walls: stakes (or stone posts) along each wing, and the gate in the view closest
+    // to the wall's angle. Each piece is sorted on its own like the slabs.
     const post = this.art.still(stone ? 'stone_wall_post' : 'wall_post');
     const gate = this.gateFrame(stone ? 'gate_stone' : 'gate_wood', line.across, open);
+    const centre = this.px(line.at);
+    const placement = gate
+      ? gatePlacement(gate.rig, line.across, gate.mirror, 2 * GATE_HALF_WIDTH, SCALE, SQUASH, open)
+      : null;
+    const acrossPx = { x: line.across.x, y: line.across.y * SQUASH };
+    const alongPx = { x: line.along.x * SCALE, y: line.along.y * SCALE * SQUASH };
+    // Each wing starts where the painted gate's hinge on that side really landed, which can be a
+    // little off the wall line near a vertical wall (see gatePlacement), so the two always meet.
+    const wingStart = (sign: number) => {
+      const hinge = placement?.hinges.find((h) => sign * (h.x * acrossPx.x + h.y * acrossPx.y) > 0);
+      return hinge
+        ? { x: centre.x + hinge.x, y: centre.y + hinge.y }
+        : this.px(at(sign * GATE_HALF_WIDTH));
+    };
     if (post) {
       const width = this.textures.getFrame(this.art.atlas(post)!, post).cutWidth;
       const step = ((width * ART_SCALE) / SCALE) * 0.85;
       const span = WALL_HALF_SPAN - GATE_HALF_WIDTH;
       const count = Math.max(1, Math.round(span / step));
-      for (const sign of [-1, 1])
-        for (let i = 0; i < count; i++) {
-          const p = this.px(at(sign * (GATE_HALF_WIDTH + (span * (i + 0.5)) / count)));
-          items.push({
-            y: p.y,
-            draw: () => {
-              const image = stone
-                ? this.painter.projectedImage(
-                    this.art.atlas(post)!,
-                    post,
-                    p.x,
-                    p.y,
-                    wallPostMatrix(line.across, ART_SCALE, SQUASH),
-                  )
-                : this.image(post, p.x, p.y, ART_SCALE);
-              image.setAlpha(alpha).setTint(sceneryTint(this.night));
-            },
-          });
-        }
+      // A palisade is two staggered rows of stakes, so it keeps its thickness at every angle:
+      // one row seen end-on (a wall running up the screen) is a single thin column.
+      const rows = stone ? [0] : [-0.28, 0.28];
+      for (const sign of [-1, 1]) {
+        const start = wingStart(sign);
+        const end = this.px(at(sign * WALL_HALF_SPAN));
+        rows.forEach((offset, row) => {
+          for (let i = 0; i < count; i++) {
+            const t = (i + 0.25 + 0.5 * row) / count;
+            const p = {
+              x: start.x + (end.x - start.x) * t + alongPx.x * offset,
+              y: start.y + (end.y - start.y) * t + alongPx.y * offset,
+            };
+            items.push({
+              y: p.y,
+              draw: () =>
+                this.image(post, p.x, p.y, ART_SCALE)
+                  .setAlpha(alpha)
+                  .setTint(sceneryTint(this.night)),
+            });
+          }
+        });
+      }
     }
-    if (gate) {
-      const p = this.px(line.at);
+    if (gate && placement) {
       const size = this.textures.getFrame(this.art.atlas(gate.frame)!, gate.frame);
-      const placement = gatePlacement(
-        gate.rig,
-        line.across,
-        gate.mirror,
-        2 * GATE_HALF_WIDTH,
-        SCALE,
-        SQUASH,
-        open,
-      );
       items.push({
-        y: p.y,
+        y: centre.y,
         draw: () =>
           this.painter
-            .projectedImage(this.art.atlas(gate.frame)!, gate.frame, p.x, p.y, placement.matrix)
+            .projectedImage(
+              this.art.atlas(gate.frame)!,
+              gate.frame,
+              centre.x,
+              centre.y,
+              placement.matrix,
+            )
             .setOrigin(placement.anchor[0] / size.realWidth, placement.anchor[1] / size.realHeight)
             .setAlpha(alpha)
             .setTint(sceneryTint(this.night)),

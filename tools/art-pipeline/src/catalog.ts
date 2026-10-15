@@ -925,6 +925,29 @@ CATALOG.push(
   ].map((id, i) => ruinOf(111 + i, id)),
 );
 
+// Walls (124+): the stone gate's wings, painted from the gate in the same view so they join it.
+// A row of separate stone posts never read as one wall, and posts sheared onto a diagonal or
+// vertical line lost their thickness (playtest after the ruins, 2026-10-15).
+CATALOG.push({
+  num: 124,
+  id: 'stone_wall_segment',
+  name: 'Stone wall section',
+  group: 'structures',
+  kind: 'structure',
+  contentId: 'stone_wall',
+  subject:
+    "a straight section of thick grey stone fortification wall, the same wall as the wings of the stone gate: solid grey stone blocks, a brown wooden walkway band near the top and square crenellations along the top, a little moss at the foot; its top and its thickness clearly visible, about as thick as a person is wide; no door, no gate, no roof pavilion, no tower, no banner, no lantern, no bamboo; both ends cut straight and plain, showing the wall's cross-section, so identical sections join end to end into one continuous wall",
+  canvas: [192, 192],
+  heightPx: 100,
+  views: ['side', 'diag'],
+  checks: [
+    'Same stone, crenellations and height as the stone gate in the same view; thick, with its top visible; ends join a copy of itself without a seam.',
+  ],
+  inferred:
+    'Not on the sheet. The game repeats it along each wing of a stone wall, picking the view closest to the wall angle like the gate.',
+  followAsset: 'gate_stone',
+});
+
 /** The destroyed state of a building, painted from the building's own master. */
 function ruinOf(num: number, id: string): CatalogEntry {
   const building = CATALOG.find((e) => e.id === id)!;
