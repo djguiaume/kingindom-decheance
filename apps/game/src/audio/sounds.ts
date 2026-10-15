@@ -1,9 +1,13 @@
 /**
- * The sound catalog: every sound the game can play, by id. Placeholder sounds are synthesized
- * from a few oscillator and noise layers, so the prototype ships no audio files. The final audio
- * pass swaps a recipe for a file (`{ url: 'sfx/hit.ogg' }`) without touching any caller: code
+ * The sound catalog: every sound the game can play, by id. Each sound has a synthesized recipe
+ * (a few oscillator and noise layers). Combat sounds also list recorded takes in public/sfx/,
+ * built from CC0 packs by tools/sfx/build.py (which records where each one comes from); the
+ * engine plays a random take once loaded and the recipe until then, or if a file fails. Code
  * only ever names the id.
  */
+
+/** Where the recorded takes are served, relative to the page. */
+export const SFX_DIR = 'sfx/';
 
 export type SoundId =
   | 'build'
@@ -82,7 +86,11 @@ interface Common {
   priority?: boolean;
 }
 
-export type SoundDef = Common & ({ layers: Layer[] } | { url: string });
+export interface SoundDef extends Common {
+  layers: Layer[];
+  /** Recorded takes in SFX_DIR; one is picked at random each time. */
+  files?: string[];
+}
 
 const tone = (
   wave: OscillatorType,
@@ -130,6 +138,7 @@ export const SOUNDS: Record<SoundId, SoundDef> = {
   // The king. The roll is his Charge: a tumble of body thumps under a cloth swish, as long as
   // the dash; what he bowls over gets a heavy bump, not a spear hit.
   roll: {
+    files: ['roll.mp3'],
     layers: [
       noise('lowpass', 600, 250, 0.32, 0.5),
       noise('bandpass', 800, 1600, 0.26, 0.35, 0, 2),
@@ -141,12 +150,14 @@ export const SOUNDS: Record<SoundId, SoundDef> = {
     priority: true,
   },
   rollHit: {
+    files: ['roll-hit_1.mp3', 'roll-hit_2.mp3'],
     layers: [tone('sine', 110, 45, 0.14, 0.7), noise('lowpass', 1200, 200, 0.1, 0.8)],
     minGapMs: 60,
     vary: 0.08,
   },
   // The spear: a short whoosh, then the stab lands.
   spearThrust: {
+    files: ['spear_1.mp3', 'spear_2.mp3', 'spear_3.mp3'],
     layers: [
       noise('bandpass', 1200, 3500, 0.07, 0.5, 0, 2),
       noise('bandpass', 2200, 900, 0.06, 0.8, 0.05, 3),
@@ -165,6 +176,7 @@ export const SOUNDS: Record<SoundId, SoundDef> = {
 
   // Melee, by weapon: the sword rings, the axe chops, the club thuds.
   swordHit: {
+    files: ['sword_1.mp3', 'sword_2.mp3', 'sword_3.mp3'],
     layers: [
       noise('bandpass', 4000, 2500, 0.04, 0.6, 0, 5),
       tone('triangle', 1250, 1250, 0.18, 0.12),
@@ -174,11 +186,13 @@ export const SOUNDS: Record<SoundId, SoundDef> = {
     vary: 0.08,
   },
   axeHit: {
+    files: ['axe_1.mp3', 'axe_2.mp3'],
     layers: [noise('bandpass', 1400, 700, 0.07, 0.8, 0, 2), tone('triangle', 320, 160, 0.08, 0.3)],
     minGapMs: 60,
     vary: 0.12,
   },
   clubHit: {
+    files: ['club_1.mp3', 'club_2.mp3'],
     layers: [noise('lowpass', 700, 120, 0.14, 1), tone('sine', 95, 50, 0.15, 0.6)],
     minGapMs: 100,
     vary: 0.08,
@@ -186,6 +200,7 @@ export const SOUNDS: Record<SoundId, SoundDef> = {
 
   // Shots: the release when the shooter lets go, then the impact or the miss when it lands.
   bowRelease: {
+    files: ['bow_1.mp3', 'bow_2.mp3', 'bow_3.mp3'],
     layers: [
       tone('triangle', 260, 220, 0.18, 0.25),
       noise('highpass', 4000, 6000, 0.04, 0.25),
@@ -196,6 +211,7 @@ export const SOUNDS: Record<SoundId, SoundDef> = {
     volume: 0.8,
   },
   crossbowRelease: {
+    files: ['crossbow_1.mp3', 'crossbow_2.mp3'],
     layers: [
       tone('square', 1400, 900, 0.02, 0.2),
       noise('bandpass', 3000, 1200, 0.05, 0.7, 0, 4),
@@ -205,17 +221,20 @@ export const SOUNDS: Record<SoundId, SoundDef> = {
     vary: 0.06,
   },
   arrowHit: {
+    files: ['arrow-hit_1.mp3', 'arrow-hit_2.mp3'],
     layers: [noise('highpass', 3000, 1500, 0.05, 0.5), tone('triangle', 520, 300, 0.04, 0.2)],
     minGapMs: 60,
     vary: 0.15,
     volume: 0.7,
   },
   boltHit: {
+    files: ['bolt-hit_1.mp3', 'bolt-hit_2.mp3'],
     layers: [noise('bandpass', 1800, 700, 0.07, 0.8, 0, 2), tone('triangle', 300, 150, 0.06, 0.3)],
     minGapMs: 60,
     vary: 0.1,
   },
   arrowMiss: {
+    files: ['arrow-miss_1.mp3', 'arrow-miss_2.mp3'],
     layers: [noise('lowpass', 1500, 400, 0.06, 0.4)],
     minGapMs: 60,
     vary: 0.2,
@@ -223,18 +242,24 @@ export const SOUNDS: Record<SoundId, SoundDef> = {
   },
   // Towers and the castle shoot and hit in the same instant: a twang and a thwip together.
   towerShot: {
-    layers: [tone('triangle', 300, 240, 0.12, 0.18), noise('highpass', 3000, 1500, 0.05, 0.45, 0.03)],
+    files: ['tower_1.mp3', 'tower_2.mp3'],
+    layers: [
+      tone('triangle', 300, 240, 0.12, 0.18),
+      noise('highpass', 3000, 1500, 0.05, 0.45, 0.03),
+    ],
     minGapMs: 60,
     vary: 0.12,
     volume: 0.7,
   },
   ballista: {
+    files: ['ballista.mp3'],
     layers: [noise('lowpass', 1400, 300, 0.15, 0.9), tone('square', 140, 70, 0.12, 0.25)],
     minGapMs: 80,
     vary: 0.06,
   },
   // The catapult: the arm creaks back, whips round and slams the crossbar.
   catapultLaunch: {
+    files: ['catapult.mp3'],
     layers: [
       tone('sawtooth', 70, 110, 0.25, 0.12),
       noise('lowpass', 400, 900, 0.18, 0.6, 0.15),
@@ -243,6 +268,7 @@ export const SOUNDS: Record<SoundId, SoundDef> = {
     minGapMs: 150,
   },
   boulder: {
+    files: ['boulder.mp3'],
     layers: [
       noise('lowpass', 500, 80, 0.45, 1),
       tone('sine', 90, 40, 0.4, 0.6),
@@ -251,6 +277,7 @@ export const SOUNDS: Record<SoundId, SoundDef> = {
     minGapMs: 120,
   },
   boulderLand: {
+    files: ['boulder-land.mp3'],
     layers: [noise('lowpass', 350, 60, 0.4, 0.9), tone('sine', 70, 35, 0.35, 0.6)],
     minGapMs: 120,
     volume: 0.8,
@@ -258,10 +285,12 @@ export const SOUNDS: Record<SoundId, SoundDef> = {
 
   // Blows on structures, by material.
   stoneHit: {
+    files: ['stone_1.mp3', 'stone_2.mp3'],
     layers: [noise('lowpass', 400, 120, 0.2, 0.8), tone('sine', 70, 50, 0.2, 0.5)],
     minGapMs: 120,
   },
   woodHit: {
+    files: ['wood_1.mp3', 'wood_2.mp3', 'wood_3.mp3'],
     layers: [noise('bandpass', 700, 400, 0.08, 0.7, 0, 3), tone('triangle', 240, 180, 0.06, 0.3)],
     minGapMs: 80,
     vary: 0.1,
