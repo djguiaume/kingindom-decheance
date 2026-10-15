@@ -23,20 +23,25 @@ export function attachAudio(runtime: GameRuntime, engine: AudioEngine): () => vo
   const enemies = new EnemyTypes();
   const shots = new Shots();
 
-  // The roll (the Charge) has no event of its own: the command only starts a dash. Watch the
-  // dash both here and on every event batch, so the roll sounds the moment it starts.
+  // A king ability has no event of its own: the command only starts a dash. Watch it here and
+  // on every event batch so its movement sound starts immediately.
   let dashing = false;
   const watchDash = () => {
     const dash = runtime.state.king.dash !== null;
-    if (dash && !dashing) engine.play('roll');
+    if (dash && !dashing)
+      engine.play(runtime.ctx.king.ability.kind === 'roll' ? 'roll' : 'spearThrust');
     dashing = dash;
   };
 
   const offEvents = runtime.onEvents((events) => {
-    const wasRolling = dashing;
+    const wasRolling = dashing && runtime.ctx.king.ability.kind === 'roll';
     watchDash();
     enemies.learn(events);
-    for (const cue of cuesFor(events, worldOf(runtime.state, enemies, wasRolling), shots))
+    for (const cue of cuesFor(
+      events,
+      worldOf(runtime.state, enemies, wasRolling, runtime.ctx.king.ability.kind === 'roll'),
+      shots,
+    ))
       engine.play(cue.id, cue.gain);
     enemies.forget(events);
     shots.keepOnly(runtime.state.projectiles);

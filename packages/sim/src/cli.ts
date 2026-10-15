@@ -14,6 +14,7 @@ const { values } = parseArgs({
     policy: { type: 'string', default: 'greedy' },
     map: { type: 'string', default: prototypeRun.mapId },
     weapon: { type: 'string', default: prototypeRun.weaponId },
+    king: { type: 'string', default: prototypeRun.kingId },
     runs: { type: 'string', default: '100' },
     seed: { type: 'string', default: '1' },
     json: { type: 'boolean', default: false },
@@ -43,7 +44,13 @@ const firstSeed = Number(values.seed);
 const started = Date.now();
 const summaries = [];
 for (let i = 0; i < runs; i++) {
-  const config = { mapId: values.map, weaponId: values.weapon, seed: firstSeed + i, mutatorIds };
+  const config = {
+    mapId: values.map,
+    weaponId: values.weapon,
+    kingId: values.king,
+    seed: firstSeed + i,
+    mutatorIds,
+  };
   summaries.push(runHeadless(prototypeContent, config, policy).summary);
 }
 const elapsed = (Date.now() - started) / 1000;
@@ -53,6 +60,16 @@ if (values.json) {
 } else {
   const wins = summaries.filter((s) => s.outcome === 'won').length;
   const meanNight = summaries.reduce((n, s) => n + s.nightReached, 0) / runs;
+  const failureNights = Object.entries(
+    summaries
+      .filter((s) => s.outcome === 'lost')
+      .reduce<Record<number, number>>((counts, s) => {
+        counts[s.nightReached] = (counts[s.nightReached] ?? 0) + 1;
+        return counts;
+      }, {}),
+  )
+    .map(([night, count]) => `N${night}:${count}`)
+    .join(', ');
   console.log(
     `content ${prototypeContent.hash} · policy ${policy.id}${picks ? ` perks ${picks.join(',')}` : ''}${branches ? ` branches ${branches.join(',')}` : ''}${mutatorIds ? ` mutators ${mutatorIds.join(',')}` : ''} · ${runs} runs in ${elapsed.toFixed(2)}s`,
   );
@@ -60,4 +77,5 @@ if (values.json) {
   console.log(
     `win rate ${((100 * wins) / runs).toFixed(1)}% · mean night reached ${meanNight.toFixed(2)} · mean score ${meanScore.toFixed(0)}`,
   );
+  if (failureNights) console.log(`failure nights ${failureNights}`);
 }

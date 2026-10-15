@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { prototypeContent } from '@kd/content/prototype';
 import {
   Art,
   atlasFiles,
@@ -22,6 +23,9 @@ const art = new Art([
       ...[1, 2].map((n) => `king_roll_uncurl.f${n}`),
       ...[1, 2, 3, 4].map((n) => `king_roll_walk.f${n}`),
       ...[1, 2, 3, 4].map((n) => `king_roll_walk.back.f${n}`),
+      'king_wolf_idle',
+      ...[1, 2, 3, 4].map((n) => `king_wolf_walk.f${n}`),
+      ...[1, 2, 3].map((n) => `king_wolf_lunge.f${n}`),
     ],
   ],
   ['art:enemies', ['harpy.f1', 'harpy.f2', 'harpy.f3', 'catapult_chassis']],
@@ -29,6 +33,8 @@ const art = new Art([
   ['art:buildings', ['castle_1', 'house']],
 ]);
 const still = { back: false, walked: 0, moving: false };
+const roll = prototypeContent.kings.find((king) => king.id === 'roll')!.art;
+const wolf = prototypeContent.kings.find((king) => king.id === 'wolf')!.art;
 
 describe('atlas files', () => {
   it('pairs each image with its JSON and skips the index', () => {
@@ -72,13 +78,20 @@ describe('art frames', () => {
   });
 
   it('walks the king through his four frames once per stride', () => {
-    expect(art.body('king', still, STRIDE_M, 0)).toBe('king_roll_idle');
+    expect(art.body('king', still, STRIDE_M, 0, null, roll)).toBe('king_roll_idle');
     const walk = (m: number, back = false) =>
-      art.body('king', { back, walked: m, moving: true }, STRIDE_M, 0);
+      art.body('king', { back, walked: m, moving: true }, STRIDE_M, 0, null, roll);
     expect(walk(0)).toBe('king_roll_walk.f1');
     expect(walk(STRIDE_M * 0.5)).toBe('king_roll_walk.f3');
     expect(walk(STRIDE_M * 1.25)).toBe('king_roll_walk.f2');
     expect(walk(0, true)).toBe('king_roll_walk.back.f1');
+  });
+
+  it('uses the selected king art and ability sequence', () => {
+    expect(art.body('king', still, STRIDE_M, 0, null, wolf)).toBe('king_wolf_idle');
+    expect(art.body('king', still, STRIDE_M, 0, { phase: 'roll', elapsed: 70 }, wolf)).toBe(
+      'king_wolf_lunge.f2',
+    );
   });
 
   it('beats a flyer’s wings up and down', () => {
@@ -151,24 +164,31 @@ describe('back view', () => {
 
 describe('king art actions', () => {
   it('uses the roll sequence during charge, uncurls afterwards, and can fall back without it', () => {
-    expect(art.body('king', still, KING_STRIDE_M, 0, { phase: 'anticipate', elapsed: 0 })).toBe(
-      'king_roll_anticipate',
-    );
-    expect(art.body('king', still, KING_STRIDE_M, 0, { phase: 'roll', elapsed: 120 })).toBe(
+    expect(
+      art.body('king', still, KING_STRIDE_M, 0, { phase: 'anticipate', elapsed: 0 }, roll),
+    ).toBe('king_roll_anticipate');
+    expect(art.body('king', still, KING_STRIDE_M, 0, { phase: 'roll', elapsed: 120 }, roll)).toBe(
       'king_roll_roll.f3',
     );
-    expect(art.body('king', still, KING_STRIDE_M, 0, { phase: 'uncurl', elapsed: 100 })).toBe(
+    expect(art.body('king', still, KING_STRIDE_M, 0, { phase: 'uncurl', elapsed: 100 }, roll)).toBe(
       'king_roll_uncurl.f2',
     );
     const old = new Art([['kings', ['king_roll_idle']]]);
-    expect(old.body('king', still, KING_STRIDE_M, 0, { phase: 'roll', elapsed: 60 })).toBe(
+    expect(old.body('king', still, KING_STRIDE_M, 0, { phase: 'roll', elapsed: 60 }, roll)).toBe(
       'king_roll_idle',
     );
   });
 
   it('advances about ten walk frames per second at the current 7 m/s speed', () => {
     const walk = (seconds: number) =>
-      art.body('king', { ...still, moving: true, walked: 7 * seconds }, KING_STRIDE_M, 0);
+      art.body(
+        'king',
+        { ...still, moving: true, walked: 7 * seconds },
+        KING_STRIDE_M,
+        0,
+        null,
+        roll,
+      );
     expect(walk(0)).toBe('king_roll_walk.f1');
     expect(walk(0.1)).toBe('king_roll_walk.f2');
     expect(walk(0.2)).toBe('king_roll_walk.f3');

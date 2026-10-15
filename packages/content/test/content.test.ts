@@ -104,6 +104,16 @@ describe('semantic validation', () => {
     expect(messages).toContain('unknown enemy');
   });
 
+  it('catches duplicate king ids and an unknown default king', () => {
+    const c = raw();
+    const catalog = c.king as Any;
+    catalog.kings.push({ ...catalog.kings[0] });
+    catalog.defaultKing = 'missing';
+    const messages = errorsOf(c).map((e) => e.message);
+    expect(messages).toContain('duplicate id "roll"');
+    expect(messages).toContain('unknown king "missing"');
+  });
+
   it('catches an upgrade edge whose cost differs from the target building', () => {
     const c = raw();
     (c.buildings as Any).buildings.find((b: Any) => b.id === 'manor').cost = 99;

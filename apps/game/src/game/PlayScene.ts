@@ -1018,7 +1018,14 @@ export class PlayScene extends Phaser.Scene {
             this.animationNow,
           )
         : null;
-    const frame = this.art.body(id, pose, strideFor(id), this.animationNow, action);
+    const frame = this.art.body(
+      id,
+      pose,
+      strideFor(id),
+      this.animationNow,
+      action,
+      id === 'king' ? this.runtime.ctx.king.art : undefined,
+    );
     if (!frame) return false;
     const k = ART_SCALE * ACTOR_SIZE;
     const f = pose.facing;
@@ -1069,7 +1076,8 @@ export class PlayScene extends Phaser.Scene {
       if (pose.flash > 0) this.painter.whiteout(im, pose.flash * 0.8);
       return true;
     }
-    const rig = action ? null : this.art.rig(id);
+    const rig =
+      action || (id === 'king' && !this.runtime.ctx.king.art.weapon) ? null : this.art.rig(id);
     if (!rig) {
       body();
       return true;
@@ -1295,7 +1303,14 @@ export class PlayScene extends Phaser.Scene {
   ): void {
     const g = this.dynamic;
     shadow(g, x, y, s * (1 - 0.3 * fall.tip));
-    const frame = this.art.body(id, { back: false, walked: 0, moving: false }, STRIDE_M, 0);
+    const frame = this.art.body(
+      id,
+      { back: false, walked: 0, moving: false },
+      STRIDE_M,
+      0,
+      null,
+      id === 'king' ? this.runtime.ctx.king.art : undefined,
+    );
     if (frame) {
       const k = ART_SCALE * ACTOR_SIZE;
       const lift = id === 'harpy' ? s * 2.2 * (1 - fall.tip) : 0;

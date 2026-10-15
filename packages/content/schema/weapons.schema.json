@@ -98,47 +98,6 @@
               "targets"
             ]
           },
-          "ability": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string",
-                "pattern": "^[a-z0-9][a-z0-9_-]*$"
-              },
-              "name": {
-                "type": "string"
-              },
-              "kind": {
-                "type": "string",
-                "const": "dash"
-              },
-              "distance": {
-                "type": "number",
-                "exclusiveMinimum": 0
-              },
-              "duration": {
-                "type": "number",
-                "exclusiveMinimum": 0
-              },
-              "damage": {
-                "type": "number",
-                "minimum": 0
-              },
-              "cooldown": {
-                "type": "number",
-                "exclusiveMinimum": 0
-              }
-            },
-            "required": [
-              "id",
-              "name",
-              "kind",
-              "distance",
-              "duration",
-              "damage",
-              "cooldown"
-            ]
-          },
           "unlock": {
             "type": "object",
             "properties": {

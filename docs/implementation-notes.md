@@ -35,9 +35,24 @@ simulation/content changes:
   shots use art with a pale blue tint. Existing instant tower shot effects remain view-only;
   their damage/flight semantics are unchanged.
 
-Real audio, king selection and tutorial remain in the remediation plan. Attack quality still
-needs playtest feedback; these rig improvements do not constitute new attack sequences or
-pre-hit gameplay telegraphs.
+The tutorial remains in the remediation plan. Attack quality still needs playtest feedback;
+these rig improvements do not constitute new attack sequences or pre-hit gameplay telegraphs.
+
+## Selectable kings and abilities (2026-10-15)
+
+- The validated king catalog contains stable `roll` and `wolf` IDs. The home screen selects and
+  remembers one independently of the mutator/perk setup; old configs and direct Play default to
+  `roll`. Restart keeps the run's resolved king.
+- The run weapon owns the automatic normal attack. The selected king owns the manual active
+  ability and its HUD label: Royal Roll damages every touched enemy, while Hunting Lunge travels
+  farther, deals focused damage and stops on its first target.
+- Runtime rendering reads idle, walk and ability sequences from the selected king's content.
+  Existing wolf-rider art includes the rider's grip, so it does not draw the on-foot spear layer.
+- `kingId` is stored in game state, normalized into replay/simulator configs and written to new
+  profile run records. Existing profile entries remain valid without the optional field.
+- Modifier rebuilding starts from the selected king rather than a global default. A compatibility
+  alias maps PR #63's `weapon.ability.*` starting-perk paths onto `king.ability.*`, allowing the
+  independently developed perk branch to merge without dropping its cooldown effect.
 
 ## Panda gates and ground anchors (2026-10-14)
 
@@ -95,8 +110,8 @@ steering, hand-made maps) and the prototype design (corpus 11), and are easy to 
 - Units guard a post at their barracks' rally gate (`guardRadius`, `leash`). The player cycles
   the gate during the day.
 - The king attacks automatically with the run's weapon (multi-target arc for the spear). The
-  weapon's ability (the spear's Charge dash) is the only manual attack. Weapon and map are
-  chosen per run (`prototypeRun`), so starters and bonuses can swap them later.
+  selected king owns the manual active ability. Weapon, king and map are chosen per run
+  (`prototypeRun`), so starters and bonuses can swap them later.
 - Overlapping enemies and units push each other apart (separation), computed order-independently.
 - Dawn restores every building, the castle and the king; units are re-fielded each night.
   Income is the castle's plus each eco building that survived.

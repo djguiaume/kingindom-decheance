@@ -32,18 +32,12 @@
       </nav>
     </div>
 
-    <!-- The king who rides out (the king choice, B6, will make this card a picker). -->
-    <aside class="king panel" data-testid="king-card">
-      <ArtSprite name="portrait" icon="crown" class="portrait" />
-      <span class="who">
-        <span class="kicker">Your king</span>
-        <b class="display">The Panda King</b>
-        <small>Spear strikes on its own. <b>Charge</b> rolls through a crowd.</small>
-        <small v-if="best !== null" class="best" data-testid="home-best"
-          >Best on Greyhollow: {{ best }}</small
-        >
-      </span>
-    </aside>
+    <KingPicker
+      :kings="prototypeContent.kings"
+      :model-value="kingId"
+      :best="best"
+      @update:model-value="selectKing"
+    />
 
     <div v-if="sheet" class="modal" @click.self="sheet = null">
       <div class="sheet panel capped" role="dialog" :aria-label="SHEET_TITLES[sheet]">
@@ -148,7 +142,9 @@ import { useRouter } from 'vue-router';
 import { audio } from '../audio/engine.ts';
 import ArtSprite from '../components/ArtSprite.vue';
 import GameIcon from '../components/GameIcon.vue';
+import KingPicker from '../components/KingPicker.vue';
 import { fullscreen } from '../fullscreen.ts';
+import { saveSelectedKingId, selectedKingId } from '../king-selection.ts';
 import {
   isUnlocked,
   loadProfile,
@@ -170,6 +166,12 @@ const muted = ref(audio.muted);
 onBeforeUnmount(audio.onMuted((m) => (muted.value = m)));
 const profile = ref(loadProfile());
 const best = profile.value.records[prototypeRun.mapId]?.score ?? null;
+const kingId = ref(selectedKingId(prototypeContent));
+
+function selectKing(id: string): void {
+  kingId.value = id;
+  saveSelectedKingId(id);
+}
 
 // The run setup (13 §6.1). Play starts with the remembered setup; a first launch has none.
 const mutators = prototypeContent.mutators;
