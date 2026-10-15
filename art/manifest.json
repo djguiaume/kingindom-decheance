@@ -3842,7 +3842,7 @@
       "kind": "prop",
       "subject": "the right-hand end of the same straight cliff edge: on its left it continues the cliff face at full height, cut straight to join a section; towards the right the rock face gets lower and lower until the grass top meets the ground level, a gentle grassy ramp; same front-facing camera, running left to right, never diagonal; only the front face shows, no rock at the back, not a floating island or a round mound",
       "canvas": {
-        "w": 256,
+        "w": 384,
         "h": 192
       },
       "heightPx": 90,
@@ -3852,7 +3852,7 @@
       },
       "transparent": true,
       "generate": {
-        "w": 1024,
+        "w": 1536,
         "h": 1024
       },
       "checks": [

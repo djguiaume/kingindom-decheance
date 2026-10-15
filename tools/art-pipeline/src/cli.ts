@@ -6,7 +6,7 @@
  */
 import { cp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
-import { join, resolve } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { buildRuntime, type RuntimeIndex } from './atlas.ts';
 import { CATALOG } from './catalog.ts';
@@ -14,7 +14,7 @@ import { buildManifest, loadManifest, selectParts, writeManifest } from './manif
 import { createMockScenario } from './mock-scenario.ts';
 import { estimate, generateBatch, generateSelection, paths, type Workspace } from './pipeline.ts';
 import { animationSheet, audit, contactSheet, ensureDir, writeAudit } from './review.ts';
-import { makeSeamless } from './validate.ts';
+import { makeSeamless, normalize } from './validate.ts';
 import { APPROVED_MODEL_ID, ScenarioClient, credentialsFromEnv } from './scenario.ts';
 import { PART_STATES, StatusStore, type PartState } from './status.ts';
 
@@ -144,6 +144,25 @@ async function main(): Promise<number> {
       log(`${partId} is now ${state}.`);
       return 0;
     }
+    case 'normalize': {
+      // Rebuilds masters from the cached originals after a canvas or height change: free, no generation.
+      const manifest = await loadManifest(paths(root).manifest);
+      const sel = selectParts(manifest, args.join(','));
+      let missing = 0;
+      for (const { asset, part } of sel) {
+        const original = join(paths(root).originals, `${part.id}.png`);
+        if (!existsSync(original)) {
+          log(`${part.id}: no cached original in art/.cache/originals, skipped.`);
+          missing++;
+          continue;
+        }
+        const master = join(root, part.master);
+        await mkdir(dirname(master), { recursive: true });
+        await writeFile(master, await normalize(await readFile(original), asset));
+        log(`${part.id}: master rebuilt at ${asset.canvas.w}x${asset.canvas.h}.`);
+      }
+      return missing ? 1 : 0;
+    }
     case 'seamless': {
       // One-off repair for tile masters generated before normalize made tiles seamless.
       const manifest = await loadManifest(paths(root).manifest);
@@ -189,7 +208,7 @@ async function main(): Promise<number> {
     }
     default:
       log(
-        'Commands: manifest [--check] | plan [selector] | estimate <selector> | generate --approve <token> --budget <CU> | mark <part> <state> | seamless <tiles> | runtime | review | audit. Add --mock for a free offline run.',
+        'Commands: manifest [--check] | plan [selector] | estimate <selector> | generate --approve <token> --budget <CU> | mark <part> <state> | normalize <selector> | seamless <tiles> | runtime | review | audit. Add --mock for a free offline run.',
       );
       return command === 'help' ? 0 : 1;
   }
