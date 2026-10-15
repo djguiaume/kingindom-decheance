@@ -248,6 +248,8 @@ export const KingSettings = z.object({
   id: Id,
   name: z.string(),
   description: z.string(),
+  /** Optional progression gate; Stage C decides when the reward is actually granted. */
+  unlock: Unlock.optional(),
   hp: Positive,
   speed: Positive,
   radius: Positive.default(0.5),
