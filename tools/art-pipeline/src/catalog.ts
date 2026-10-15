@@ -255,6 +255,67 @@ export const CATALOG: CatalogEntry[] = [
     inferred:
       'Not shown on the sheet. Read as a separate crown layer so it can pop off and land during the roll and uncurl.',
   },
+  // The third king (Stage A, Guillaume 2026-10-15): weapons come with the king, so the Longbow
+  // is a king of his own with the Volley ability. Numbered after the ruins (111-123).
+  {
+    num: 124,
+    id: 'king_longbow_idle',
+    back: true,
+    name: 'Longbow king: idle',
+    group: 'kings',
+    kind: 'character',
+    contentId: 'king',
+    subject:
+      'the panda Longbow King on foot: leaner and younger than the old king, small gold crown, deep blue hooded hunting cloak with gold trim over light leather armour, leather bracers, a quiver of gold-fletched arrows on his back, standing ready; hands in a grip pose without a weapon (the bow is a separate layer)',
+    canvas: [192, 192],
+    heightPx: 125,
+    inferred: 'Not on the sheet: the third selectable king (Stage A Longbow).',
+  },
+  {
+    num: 125,
+    id: 'king_longbow_walk',
+    back: true,
+    name: 'Longbow king: walk',
+    group: 'kings',
+    kind: 'character',
+    contentId: 'king',
+    subject:
+      'the panda Longbow King on foot (same design as his idle pose: hooded blue cloak, quiver on the back), walking right, no weapon in hand',
+    frames: walk4,
+    canvas: [192, 192],
+    heightPx: 125,
+    inferred: 'Not on the sheet: the third selectable king (Stage A Longbow).',
+  },
+  {
+    num: 126,
+    id: 'king_longbow_volley',
+    name: 'Longbow king: volley',
+    group: 'kings',
+    kind: 'character',
+    contentId: 'king',
+    subject:
+      'the panda Longbow King (same design as his idle pose) shooting a volley to the right with his tall gold-tipped longbow held in his hands; no arrows in flight (effects are separate)',
+    frames: [
+      'bow raised and fully drawn, aiming up and to the right, several arrows nocked',
+      'just released: bow arm forward, string snapped back, cloak flaring',
+    ],
+    canvas: [192, 192],
+    heightPx: 125,
+    checks: ['He holds the bow in both frames.'],
+    inferred: 'Not on the sheet: the Longbow king’s ability pose (also his HUD ability icon).',
+  },
+  {
+    num: 127,
+    id: 'king_longbow_bow',
+    name: 'Longbow king bow (weapon layer)',
+    group: 'kings',
+    kind: 'weapon',
+    contentId: 'king',
+    subject:
+      'the Longbow King’s royal longbow: tall dark yew bow with gold tips and a blue grip wrap, string taut, drawn vertical',
+    canvas: [64, 192],
+    inferred: 'Not on the sheet: the Longbow king’s weapon layer, held like the archer’s bow.',
+  },
 
   // 2. Friendly units (15-26): body, then its independent weapon layer.
   ...unit(
