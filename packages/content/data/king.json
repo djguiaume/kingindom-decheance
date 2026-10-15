@@ -90,10 +90,10 @@
         "cooldown": 8
       },
       "art": {
-        "idle": "king_roll_idle",
-        "walk": "king_roll_walk",
+        "idle": "king_longbow_idle",
+        "walk": "king_longbow_walk",
         "ability": {
-          "active": "king_roll_idle"
+          "active": "king_longbow_volley"
         },
         "weapon": true
       }

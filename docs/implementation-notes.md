@@ -327,9 +327,10 @@ balance are untouched.
   nearest enemies in a 60° cone, 8 m, 25 damage each, 8 s cooldown. Arrows always land; the
   cone test is a dot product against `cosDegrees`, like weapon arcs, so it stays bit-exact. The
   bot fires it when two enemies are within range.
-- **View**: the king holds the archers' bow (`king_longbow` rig) until his own sprites land
-  (catalog 124-127, 13 parts, 300 CU approved); his shots draw as arrows from the bow and the
-  Volley as a fan of streaks. Sound: bow release on the Volley, arrow impacts on hits.
+- **Art**: his own sprites (catalog 124-127: idle and walk with back views, a two-frame Volley
+  pose, the royal bow layer; 169 CU of the 300 approved). The Volley plays its pose for
+  `SHOOT_MS` (the bow is painted in it, so no weapon layer) and a fan of arrow streaks; his
+  normal shots draw as arrows from the bow. Sound: bow release on the Volley, arrow impacts on hits.
 - **Sim**, balanced bot, 100 runs: Panda King 95%, Wolf Rider 93%, Longbow King 100% (5 arrows
   at 20 or 25 damage: still 100%). The bot cannot tell these apart; the end-of-Stage-A
   balancing pass decides with a harder baseline.

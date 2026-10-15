@@ -197,6 +197,7 @@ export class PlayScene extends Phaser.Scene {
         }
         if (e.type === 'volley') {
           this.volleys.push({ ...e, start: this.animationNow });
+          this.kingActions.shot(this.animationNow);
           continue;
         }
         if (e.type === 'fired') {

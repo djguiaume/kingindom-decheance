@@ -12,7 +12,7 @@
  */
 import type Phaser from 'phaser';
 import type { KingArt } from '@kd/content';
-import type { KingAction } from './animation.ts';
+import { SHOOT_MS, type KingAction } from './animation.ts';
 
 const files = import.meta.glob(
   ['../../../../art/runtime/*.{json,webp}', '!../../../../art/runtime/index.json'],
@@ -111,13 +111,13 @@ const UP = -Math.PI / 2;
 
 export const RIGS: Record<string, WeaponRig> = {
   king: { frame: 'king_spear', grip: [0.42, 0.5], points: 0, kind: 'thrust', length: 1.3 },
-  // The Longbow king carries the archers' bow, drawn larger, until the art pass paints his own.
+  // The Longbow king's own royal bow (catalog 127).
   king_longbow: {
-    frame: 'archer_weapon',
+    frame: 'king_longbow_bow',
     grip: [0.5, 0.5],
     points: UP,
     kind: 'aim',
-    length: 0.95,
+    length: 1.0,
   },
   footman: {
     frame: 'footman_weapon',
@@ -295,13 +295,15 @@ export class Art {
   ): string | null {
     if (id === 'king' && action && kingArt) {
       const frame =
-        action.phase === 'anticipate'
-          ? this.still(kingArt.ability.anticipate ?? kingArt.ability.active)
-          : action.phase === 'roll'
-            ? this.pick(kingArt.ability.active, () => Math.floor(action.elapsed / 60))
-            : kingArt.ability.recover
-              ? this.at(kingArt.ability.recover, action.elapsed / 160)
-              : this.still(kingArt.idle);
+        action.phase === 'shoot'
+          ? this.at(kingArt.ability.active, action.elapsed / SHOOT_MS)
+          : action.phase === 'anticipate'
+            ? this.still(kingArt.ability.anticipate ?? kingArt.ability.active)
+            : action.phase === 'roll'
+              ? this.pick(kingArt.ability.active, () => Math.floor(action.elapsed / 60))
+              : kingArt.ability.recover
+                ? this.at(kingArt.ability.recover, action.elapsed / 160)
+                : this.still(kingArt.idle);
       if (frame) return frame;
     }
     const step = (n: number) =>

@@ -13,22 +13,34 @@ export const KING_STRIDE_M = 2.8;
 export const strideFor = (id: string): number => (id === 'king' ? KING_STRIDE_M : STRIDE_M);
 
 export interface KingAction {
-  phase: 'anticipate' | 'roll' | 'uncurl';
+  /** A dash's wind-up, travel and recovery, or the Longbow king's volley shot. */
+  phase: 'anticipate' | 'roll' | 'uncurl' | 'shoot';
   elapsed: number;
 }
 
 /** Observes the real dash; it never delays or changes movement, damage or cooldown. */
+/** How long the volley pose holds: drawn, then released. */
+export const SHOOT_MS = 400;
+
 export class KingActions {
   private dashing = false;
   private started = 0;
   private ended = -Infinity;
+  private shotAt = -Infinity;
+
+  /** The volley was loosed: the shooting pose plays for SHOOT_MS. */
+  shot(now: number): void {
+    this.shotAt = now;
+  }
 
   update(dashing: boolean, alive: boolean, now: number): KingAction | null {
     if (!alive) {
       this.dashing = false;
       this.ended = -Infinity;
+      this.shotAt = -Infinity;
       return null;
     }
+    if (now - this.shotAt < SHOOT_MS) return { phase: 'shoot', elapsed: now - this.shotAt };
     if (dashing && !this.dashing) this.started = now;
     if (!dashing && this.dashing) this.ended = now;
     this.dashing = dashing;
