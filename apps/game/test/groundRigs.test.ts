@@ -8,6 +8,9 @@ import {
   groundOrigin,
   GATE_WIDTH_RANGE,
   GROUND_ANCHORS,
+  SEGMENT_RIGS,
+  SEGMENT_WIDTH_RANGE,
+  segmentPlacement,
 } from '../src/game/groundRigs.ts';
 import { GATE_HALF_WIDTH, wallLine, Session } from '@kd/core';
 import { prototypeContent, prototypeRun } from '@kd/content/prototype';
@@ -142,6 +145,60 @@ describe('gate placement', () => {
           expect(hinges[1]![i]!.y).toBeCloseTo(hinges[0]![i]!.y);
         }
       }
+    }
+  });
+});
+
+describe('stone wall sections', () => {
+  const width = (SCALE / 64) * GATE_UPRIGHT_SCALE;
+
+  it('has a calibrated run for every painted view, inside the painted section', () => {
+    const frames = atlas('structures');
+    for (const [name, [a, b]] of Object.entries(SEGMENT_RIGS)) {
+      const f = frames[name]!;
+      expect(f, name).toBeDefined();
+      for (const [x, y] of [a, b]) {
+        expect(x).toBeGreaterThan(f.spriteSourceSize.x);
+        expect(x).toBeLessThan(f.spriteSourceSize.x + f.spriteSourceSize.w);
+        expect(y).toBeLessThanOrEqual(f.spriteSourceSize.y + f.spriteSourceSize.h);
+      }
+      expect(b[0]).toBeGreaterThan(a[0]);
+    }
+  });
+
+  it('lays a continuous, upright, never-flattened wall at every angle, both lane directions', () => {
+    for (let angle = 0; angle < 360; angle += 3) {
+      const r = (angle * Math.PI) / 180;
+      const across = { x: Math.cos(r), y: Math.sin(r) };
+      const { view, mirror } = gateView(across, SQUASH);
+      const rig = SEGMENT_RIGS[`stone_wall_segment${view}`]!;
+      const step = { x: across.x * 1.2 * SCALE, y: across.y * 1.2 * SCALE * SQUASH };
+      let cursor = { x: 0, y: 0 };
+      for (let i = 1; i <= 3; i++) {
+        const to = { x: step.x * i, y: step.y * i };
+        const p = segmentPlacement(rig, cursor, to, mirror, SCALE);
+        const m = p.matrix;
+        expect(m.c).toBe(0);
+        expect(m.d).toBe(width);
+        expect(Math.abs(m.a)).toBeGreaterThanOrEqual(SEGMENT_WIDTH_RANGE[0] * width - 1e-9);
+        // The painted run, mapped, goes from `cursor` to `end` through `at`.
+        const [a, b] = rig;
+        const half = {
+          x: (m.a * (b[0] - a[0])) / 2,
+          y: (m.b * (b[0] - a[0]) + m.d * (b[1] - a[1])) / 2,
+        };
+        const ends = [
+          { x: p.at.x - half.x, y: p.at.y - half.y },
+          { x: p.at.x + half.x, y: p.at.y + half.y },
+        ];
+        const near = (u: { x: number; y: number }, v: { x: number; y: number }) =>
+          Math.hypot(u.x - v.x, u.y - v.y) < 1e-6;
+        expect(ends.some((e) => near(e, cursor)) && ends.some((e) => near(e, p.end))).toBe(true);
+        expect(p.end.y).toBeCloseTo(to.y);
+        cursor = p.end;
+      }
+      // A whole wing drifts at most half a metre sideways from its true end.
+      expect(Math.abs(cursor.x - step.x * 3)).toBeLessThan(SCALE / 2);
     }
   });
 });

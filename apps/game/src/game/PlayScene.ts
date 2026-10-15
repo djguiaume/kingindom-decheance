@@ -55,7 +55,15 @@ import { addCliffs, CLIFF_TEXTURE, type CliffSprite } from './cliffs.ts';
 import { bobHeight, shadow, spriteFor } from './sprites.ts';
 import { addPaintedTerrain, drawTerrain, paintedPropFrame, propNeedsDepth } from './terrain.ts';
 import { emptyPlotIds, gateIsOpen, projectileFrame, ruinFrame } from './presentation.ts';
-import { gatePlacement, gateView, GATE_RIGS, groundOrigin } from './groundRigs.ts';
+import {
+  gatePlacement,
+  gateView,
+  GATE_RIGS,
+  groundOrigin,
+  SEGMENT_RIGS,
+  segmentLength,
+  segmentPlacement,
+} from './groundRigs.ts';
 
 const HIT_FLASH_MS = 160;
 const TICK_MS = 1000 / TICK_RATE;
@@ -702,7 +710,40 @@ export class PlayScene extends Phaser.Scene {
         ? { x: centre.x + hinge.x, y: centre.y + hinge.y }
         : this.px(at(sign * GATE_HALF_WIDTH));
     };
-    if (post) {
+    const segment = stone ? this.wallSegment(line.across) : null;
+    if (segment) {
+      // Stone wings: painted wall sections laid end to end from the gate to the wing's end.
+      for (const sign of [-1, 1]) {
+        const start = wingStart(sign);
+        const end = this.px(at(sign * WALL_HALF_SPAN));
+        const length = Math.hypot(end.x - start.x, end.y - start.y);
+        const count = Math.max(1, Math.round(length / segmentLength(segment.rig, SCALE)));
+        let cursor = start;
+        for (let i = 0; i < count; i++) {
+          const t = (i + 1) / count;
+          const to = { x: start.x + (end.x - start.x) * t, y: start.y + (end.y - start.y) * t };
+          const p = segmentPlacement(segment.rig, cursor, to, segment.mirror, SCALE);
+          cursor = p.end;
+          items.push({
+            y: p.at.y,
+            draw: () => {
+              const size = this.textures.getFrame(this.art.atlas(segment.frame)!, segment.frame);
+              this.painter
+                .projectedImage(
+                  this.art.atlas(segment.frame)!,
+                  segment.frame,
+                  p.at.x,
+                  p.at.y,
+                  p.matrix,
+                )
+                .setOrigin(p.anchor[0] / size.realWidth, p.anchor[1] / size.realHeight)
+                .setAlpha(alpha)
+                .setTint(sceneryTint(this.night));
+            },
+          });
+        }
+      }
+    } else if (post) {
       const width = this.textures.getFrame(this.art.atlas(post)!, post).cutWidth;
       const step = ((width * ART_SCALE) / SCALE) * 0.85;
       const span = WALL_HALF_SPAN - GATE_HALF_WIDTH;
@@ -811,6 +852,17 @@ export class PlayScene extends Phaser.Scene {
     const name = `${base}${view}`;
     const frame = this.art.at(name, open ? 0.99 : 0);
     const rig = GATE_RIGS[name];
+    return frame && rig ? { frame, mirror, rig } : null;
+  }
+
+  /** The painted stone wall section in the view closest to the wall's angle, if painted. */
+  private wallSegment(
+    across: Vec,
+  ): { frame: string; mirror: boolean; rig: (typeof SEGMENT_RIGS)[string] } | null {
+    const { view, mirror } = gateView(across, SQUASH);
+    const name = `stone_wall_segment${view}`;
+    const frame = this.art.still(name);
+    const rig = SEGMENT_RIGS[name];
     return frame && rig ? { frame, mirror, rig } : null;
   }
 

@@ -22,5 +22,17 @@
     }
   ],
   "skipped": [],
-  "runs": []
+  "runs": [
+    {
+      "at": "2026-10-15T14:24:08.163Z",
+      "budgetCU": 80,
+      "spentCU": 52,
+      "done": [
+        "stone_wall_segment",
+        "stone_wall_segment.side",
+        "stone_wall_segment.diag"
+      ],
+      "failed": []
+    }
+  ]
 }

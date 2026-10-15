@@ -152,6 +152,81 @@ export function gatePlacement(
   return { anchor, matrix, hinges };
 }
 
+/**
+ * Stone wall sections: the front-bottom edge of each painted view, from its left end to its
+ * right end, a few pixels in from the tips so neighbouring sections overlap without a seam.
+ */
+export const SEGMENT_RIGS: Record<
+  string,
+  readonly [readonly [number, number], readonly [number, number]]
+> = {
+  stone_wall_segment: [
+    [18, 167],
+    [176, 139],
+  ],
+  'stone_wall_segment.diag': [
+    [38, 169],
+    [158, 120],
+  ],
+  'stone_wall_segment.side': [
+    [86, 171],
+    [109, 125],
+  ],
+};
+
+/**
+ * How far a section may be narrowed or stretched sideways. Narrowing a side view much below its
+ * painted width turns it into a sliver, so near a vertical wall the sections keep their width
+ * and are chained end to end instead (see segmentPlacement).
+ */
+export const SEGMENT_WIDTH_RANGE = [0.9, 1.6] as const;
+
+/**
+ * One painted wall section standing between two screen points (pixels), in the same view and
+ * mirroring as its gate, with the gate's upright scale. Like the gate it is stretched sideways
+ * within SEGMENT_WIDTH_RANGE and tilted to meet `to` vertically, never flattened onto the line.
+ * When the width limit stops it short of `to` sideways, `end` says where it really ends, so the
+ * next section starts there and the wall stays continuous (drifting a little off a vertical
+ * line rather than zigzagging). Draw it at `at` with `anchor` as its origin.
+ */
+export function segmentPlacement(
+  hinges: readonly [readonly [number, number], readonly [number, number]],
+  from: { x: number; y: number },
+  to: { x: number; y: number },
+  mirror: boolean,
+  pixelsPerM: number,
+) {
+  const [a, b] = hinges;
+  const dx = b[0] - a[0];
+  const dy = b[1] - a[1];
+  const width = (pixelsPerM / 64) * GATE_UPRIGHT_SCALE;
+  const sign = mirror ? -1 : 1;
+  // The section is undirected: run it whichever way its painted left end leads.
+  let t = { x: to.x - from.x, y: to.y - from.y };
+  if (t.x * sign < 0 || (t.x === 0 && t.y > 0)) t = { x: -t.x, y: -t.y };
+  const sx = Math.min(
+    Math.max(Math.abs(t.x) / dx, SEGMENT_WIDTH_RANGE[0] * width),
+    SEGMENT_WIDTH_RANGE[1] * width,
+  );
+  const flip = t.x !== to.x - from.x || t.y !== to.y - from.y ? -1 : 1;
+  const end = { x: from.x + flip * sign * sx * dx, y: from.y + flip * t.y };
+  return {
+    anchor: [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2] as const,
+    at: { x: (from.x + end.x) / 2, y: (from.y + end.y) / 2 },
+    end,
+    matrix: { a: sign * sx, b: (t.y - dy * width) / dx, c: 0, d: width },
+  };
+}
+
+/** How long one painted section is on screen (pixels) at the gate's scale, before fitting. */
+export function segmentLength(
+  hinges: readonly [readonly [number, number], readonly [number, number]],
+  pixelsPerM: number,
+): number {
+  const width = (pixelsPerM / 64) * GATE_UPRIGHT_SCALE;
+  return Math.hypot(hinges[1][0] - hinges[0][0], hinges[1][1] - hinges[0][1]) * width;
+}
+
 export interface Affine2D {
   a: number;
   b: number;

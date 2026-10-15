@@ -456,7 +456,7 @@
     },
     "slot_empty": {
       "frame": {
-        "x": 329,
+        "x": 672,
         "y": 225,
         "w": 111,
         "h": 88
@@ -482,7 +482,7 @@
     },
     "stone_wall_post": {
       "frame": {
-        "x": 529,
+        "x": 872,
         "y": 225,
         "w": 59,
         "h": 81
@@ -505,6 +505,87 @@
       },
       "asset": "stone_wall_post",
       "num": 63,
+      "contentId": "stone_wall"
+    },
+    "stone_wall_segment": {
+      "frame": {
+        "x": 493,
+        "y": 225,
+        "w": 177,
+        "h": 96
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 8,
+        "y": 77,
+        "w": 177,
+        "h": 96
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "stone_wall_segment",
+      "num": 124,
+      "contentId": "stone_wall"
+    },
+    "stone_wall_segment.diag": {
+      "frame": {
+        "x": 329,
+        "y": 225,
+        "w": 131,
+        "h": 100
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 31,
+        "y": 73,
+        "w": 131,
+        "h": 100
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "stone_wall_segment",
+      "num": 124,
+      "contentId": "stone_wall"
+    },
+    "stone_wall_segment.side": {
+      "frame": {
+        "x": 462,
+        "y": 225,
+        "w": 29,
+        "h": 100
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 82,
+        "y": 73,
+        "w": 29,
+        "h": 100
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "stone_wall_segment",
+      "num": 124,
       "contentId": "stone_wall"
     },
     "wall_post": {
@@ -536,7 +617,7 @@
     },
     "window_glow": {
       "frame": {
-        "x": 442,
+        "x": 785,
         "y": 225,
         "w": 85,
         "h": 88
