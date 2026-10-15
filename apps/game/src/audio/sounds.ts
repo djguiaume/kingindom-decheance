@@ -11,14 +11,24 @@ export type SoundId =
   | 'horn'
   | 'dawn'
   | 'coins'
-  | 'charge'
-  | 'spearHit'
+  | 'roll'
+  | 'rollHit'
+  | 'spearThrust'
   | 'swordHit'
+  | 'axeHit'
+  | 'clubHit'
+  | 'bowRelease'
+  | 'crossbowRelease'
   | 'arrowHit'
+  | 'boltHit'
+  | 'arrowMiss'
+  | 'towerShot'
   | 'ballista'
+  | 'catapultLaunch'
   | 'boulder'
+  | 'boulderLand'
   | 'kingHurt'
-  | 'castleHit'
+  | 'stoneHit'
   | 'woodHit'
   | 'enemyDie'
   | 'unitDie'
@@ -68,6 +78,8 @@ interface Common {
   minGapMs?: number;
   /** Random pitch spread, as a fraction (0.08 = ±8 %), so repeats do not sound robotic. */
   vary?: number;
+  /** Danger and abilities: still heard when a crowd of ordinary hits fills every voice. */
+  priority?: boolean;
 }
 
 export type SoundDef = Common & ({ layers: Layer[] } | { url: string });
@@ -111,31 +123,86 @@ export const SOUNDS: Record<SoundId, SoundDef> = {
       tone('sawtooth', 147, 147, 1.1, 0.25, 0.22),
       tone('sawtooth', 73, 73, 1.3, 0.2),
     ],
+    priority: true,
   },
   dawn: { layers: notes('sine', [784, 988, 1175, 1568], 0.12, 0.6, 0.25) },
 
-  // The king.
-  charge: { layers: [noise('bandpass', 400, 2400, 0.3, 0.8, 0, 2)], minGapMs: 200 },
-  spearHit: {
-    layers: [noise('bandpass', 2500, 1200, 0.07, 0.8, 0, 3), tone('square', 220, 110, 0.06, 0.2)],
+  // The king. The roll is his Charge: a tumble of body thumps under a cloth swish, as long as
+  // the dash; what he bowls over gets a heavy bump, not a spear hit.
+  roll: {
+    layers: [
+      noise('lowpass', 600, 250, 0.32, 0.5),
+      noise('bandpass', 800, 1600, 0.26, 0.35, 0, 2),
+      tone('sine', 120, 60, 0.08, 0.5),
+      tone('sine', 115, 58, 0.08, 0.45, 0.1),
+      tone('sine', 110, 55, 0.09, 0.4, 0.2),
+    ],
+    minGapMs: 200,
+    priority: true,
+  },
+  rollHit: {
+    layers: [tone('sine', 110, 45, 0.14, 0.7), noise('lowpass', 1200, 200, 0.1, 0.8)],
+    minGapMs: 60,
+    vary: 0.08,
+  },
+  // The spear: a short whoosh, then the stab lands.
+  spearThrust: {
+    layers: [
+      noise('bandpass', 1200, 3500, 0.07, 0.5, 0, 2),
+      noise('bandpass', 2200, 900, 0.06, 0.8, 0.05, 3),
+      tone('square', 200, 100, 0.05, 0.15, 0.05),
+    ],
     minGapMs: 50,
     vary: 0.1,
   },
   kingHurt: {
     layers: [tone('square', 330, 196, 0.12, 0.25), noise('lowpass', 600, 200, 0.1, 0.6)],
     minGapMs: 150,
+    priority: true,
   },
-  kingDown: { layers: notes('triangle', [392, 330, 262, 196], 0.14, 0.3, 0.35) },
+  kingDown: { layers: notes('triangle', [392, 330, 262, 196], 0.14, 0.3, 0.35), priority: true },
   respawn: { layers: notes('sine', [392, 523, 659], 0.09, 0.3, 0.3) },
 
-  // Combat.
+  // Melee, by weapon: the sword rings, the axe chops, the club thuds.
   swordHit: {
     layers: [
-      noise('bandpass', 3200, 1800, 0.05, 0.6, 0, 4),
-      tone('triangle', 900, 600, 0.05, 0.15),
+      noise('bandpass', 4000, 2500, 0.04, 0.6, 0, 5),
+      tone('triangle', 1250, 1250, 0.18, 0.12),
+      tone('triangle', 1870, 1870, 0.12, 0.08),
     ],
     minGapMs: 60,
+    vary: 0.08,
+  },
+  axeHit: {
+    layers: [noise('bandpass', 1400, 700, 0.07, 0.8, 0, 2), tone('triangle', 320, 160, 0.08, 0.3)],
+    minGapMs: 60,
     vary: 0.12,
+  },
+  clubHit: {
+    layers: [noise('lowpass', 700, 120, 0.14, 1), tone('sine', 95, 50, 0.15, 0.6)],
+    minGapMs: 100,
+    vary: 0.08,
+  },
+
+  // Shots: the release when the shooter lets go, then the impact or the miss when it lands.
+  bowRelease: {
+    layers: [
+      tone('triangle', 260, 220, 0.18, 0.25),
+      noise('highpass', 4000, 6000, 0.04, 0.25),
+      noise('bandpass', 2500, 1500, 0.1, 0.2, 0.02, 2),
+    ],
+    minGapMs: 60,
+    vary: 0.1,
+    volume: 0.8,
+  },
+  crossbowRelease: {
+    layers: [
+      tone('square', 1400, 900, 0.02, 0.2),
+      noise('bandpass', 3000, 1200, 0.05, 0.7, 0, 4),
+      tone('triangle', 180, 140, 0.1, 0.25),
+    ],
+    minGapMs: 80,
+    vary: 0.06,
   },
   arrowHit: {
     layers: [noise('highpass', 3000, 1500, 0.05, 0.5), tone('triangle', 520, 300, 0.04, 0.2)],
@@ -143,16 +210,54 @@ export const SOUNDS: Record<SoundId, SoundDef> = {
     vary: 0.15,
     volume: 0.7,
   },
+  boltHit: {
+    layers: [noise('bandpass', 1800, 700, 0.07, 0.8, 0, 2), tone('triangle', 300, 150, 0.06, 0.3)],
+    minGapMs: 60,
+    vary: 0.1,
+  },
+  arrowMiss: {
+    layers: [noise('lowpass', 1500, 400, 0.06, 0.4)],
+    minGapMs: 60,
+    vary: 0.2,
+    volume: 0.5,
+  },
+  // Towers and the castle shoot and hit in the same instant: a twang and a thwip together.
+  towerShot: {
+    layers: [tone('triangle', 300, 240, 0.12, 0.18), noise('highpass', 3000, 1500, 0.05, 0.45, 0.03)],
+    minGapMs: 60,
+    vary: 0.12,
+    volume: 0.7,
+  },
   ballista: {
     layers: [noise('lowpass', 1400, 300, 0.15, 0.9), tone('square', 140, 70, 0.12, 0.25)],
     minGapMs: 80,
     vary: 0.06,
   },
+  // The catapult: the arm creaks back, whips round and slams the crossbar.
+  catapultLaunch: {
+    layers: [
+      tone('sawtooth', 70, 110, 0.25, 0.12),
+      noise('lowpass', 400, 900, 0.18, 0.6, 0.15),
+      tone('sine', 80, 50, 0.12, 0.5, 0.2),
+    ],
+    minGapMs: 150,
+  },
   boulder: {
-    layers: [noise('lowpass', 500, 80, 0.45, 1), tone('sine', 90, 40, 0.4, 0.6)],
+    layers: [
+      noise('lowpass', 500, 80, 0.45, 1),
+      tone('sine', 90, 40, 0.4, 0.6),
+      noise('bandpass', 1200, 300, 0.3, 0.4, 0.03, 1.5),
+    ],
     minGapMs: 120,
   },
-  castleHit: {
+  boulderLand: {
+    layers: [noise('lowpass', 350, 60, 0.4, 0.9), tone('sine', 70, 35, 0.35, 0.6)],
+    minGapMs: 120,
+    volume: 0.8,
+  },
+
+  // Blows on structures, by material.
+  stoneHit: {
     layers: [noise('lowpass', 400, 120, 0.2, 0.8), tone('sine', 70, 50, 0.2, 0.5)],
     minGapMs: 120,
   },
@@ -175,8 +280,12 @@ export const SOUNDS: Record<SoundId, SoundDef> = {
   // The warlord.
   bossRoar: {
     layers: [tone('sawtooth', 90, 60, 1.2, 0.35), noise('bandpass', 500, 250, 1.1, 0.5, 0, 2)],
+    priority: true,
   },
-  stomp: { layers: [noise('lowpass', 300, 40, 0.6, 1), tone('sine', 60, 30, 0.6, 0.8)] },
+  stomp: {
+    layers: [noise('lowpass', 300, 40, 0.6, 1), tone('sine', 60, 30, 0.6, 0.8)],
+    priority: true,
+  },
   bossDie: {
     layers: [tone('sawtooth', 120, 40, 1.4, 0.35), noise('lowpass', 700, 60, 1.2, 0.7)],
   },

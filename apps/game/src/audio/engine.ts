@@ -15,6 +15,8 @@ const SFX_VOLUME = 0.55;
 const MUSIC_VOLUME = 0.3;
 /** Never more than this many effects at once: a big fight stays a sound, not noise. */
 const MAX_VOICES = 14;
+/** Extra voices only priority sounds (danger, abilities) may take. */
+const PRIORITY_VOICES = 4;
 
 type AudioContextCtor = typeof AudioContext;
 
@@ -114,7 +116,7 @@ export class AudioEngine {
     const ctx = this.ctx;
     if (!ctx || !this.sfx || !this.noise || ctx.state !== 'running' || this.muted) return;
     const def = SOUNDS[id];
-    if (this.voices >= MAX_VOICES) return;
+    if (this.voices >= MAX_VOICES + (def.priority ? PRIORITY_VOICES : 0)) return;
     if (!this.limiter.allow(id, performance.now(), def.minGapMs ?? 0)) return;
 
     const out = ctx.createGain();
