@@ -18,6 +18,7 @@ import {
 } from '@kd/core';
 import { nearbySlotId } from '../stores/hud.ts';
 import { colors } from '../theme.ts';
+import { easeNight, glowStrength, groundShade, sceneryTint } from './lighting.ts';
 import type { CameraView } from './camera.ts';
 import { SCALE, SQUASH } from './camera.ts';
 import type { GameRuntime } from './runtime.ts';
@@ -92,6 +93,10 @@ export class PlayScene extends Phaser.Scene {
   private unsubscribe: (() => void) | null = null;
   private lastTap = 0;
   private lead = { x: 0, y: 0 };
+  /** 0 by day, 1 by night, easing through dusk and dawn. */
+  private night = 0;
+  /** Warm lights to add over this frame's scene, in scene pixels. */
+  private glows: { frame: string; x: number; y: number; scale: number; alpha: number }[] = [];
   private stomps: { at: { x: number; y: number }; radius: number; start: number }[] = [];
   private puffs: { at: { x: number; y: number }; start: number }[] = [];
   /** Who fired each shot in flight (the shooter may die before it lands). */
@@ -195,8 +200,10 @@ export class PlayScene extends Phaser.Scene {
       this.puffs = [];
       this.shooters.clear();
       this.animationNow = 0;
+      this.night = this.runtime.state.phase === 'night' ? 1 : 0;
     }
     if (!this.runtime.paused) this.animationNow += delta;
+    this.night = easeNight(this.night, this.runtime.state.phase === 'night', delta);
     this.sourceTypes.clear();
     for (const e of this.runtime.state.enemies) this.sourceTypes.set(`e${e.id}`, e.type);
     for (const u of this.runtime.state.units) this.sourceTypes.set(`u${u.id}`, u.type);
@@ -341,19 +348,22 @@ export class PlayScene extends Phaser.Scene {
       const p = this.px({ x: node.pos[0], y: node.pos[1] });
       if (plot) {
         // Only empty plots have a foundation marker; buildings carry their own base.
-        this.image(plot, p.x, p.y, ART_SCALE * BUILDING_SIZE);
+        this.image(plot, p.x, p.y, ART_SCALE * BUILDING_SIZE).setTint(sceneryTint(this.night));
         continue;
       }
       g.lineStyle(2, colors.slot, 0.9);
       g.strokeEllipse(p.x, p.y, SCALE * 1.8, SCALE * 1.8 * SQUASH);
     }
 
-    if (state.phase === 'night') {
+    if (this.night > 0) {
       // Moonlit, never black (design 11 §9): tint the ground, keep actors bright.
       const [w, h] = ctx.map.size;
-      g.fillStyle(colors.night, 0.35);
+      g.fillStyle(colors.night, groundShade(this.night));
       g.fillRect(0, 0, w * SCALE, h * SCALE * SQUASH);
     }
+    const tint = sceneryTint(this.night);
+    const glow = glowStrength(this.night);
+    this.glows = [];
 
     // By day, the spawns of tonight's lanes glow (off-screen ones get edge arrows instead).
     if (state.phase === 'day') {
@@ -408,7 +418,8 @@ export class PlayScene extends Phaser.Scene {
             .image(CLIFF_TEXTURE, piece.frame)
             .setOrigin(0, 0)
             .setPosition(piece.x, piece.y)
-            .setAlpha(hides ? SEE_THROUGH : 1),
+            .setAlpha(hides ? SEE_THROUGH : 1)
+            .setTint(tint),
       });
     }
     for (const prop of ctx.map.terrain.props) {
@@ -417,8 +428,12 @@ export class PlayScene extends Phaser.Scene {
         const p = this.px({ x: prop.pos[0], y: prop.pos[1] });
         items.push({
           y: p.y,
-          draw: () =>
-            this.image(frame, p.x, p.y, ART_SCALE * prop.scale).setFlipX(Boolean(prop.flip)),
+          draw: () => {
+            const im = this.image(frame, p.x, p.y, ART_SCALE * prop.scale)
+              .setFlipX(Boolean(prop.flip))
+              .setTint(tint);
+            if (prop.kind === 'lantern_post' && glow > 0) this.addLanternGlow(im, glow);
+          },
         });
       }
     }
@@ -527,6 +542,7 @@ export class PlayScene extends Phaser.Scene {
     this.addFlags(items);
     items.sort((a, b) => a.y - b.y);
     for (const item of items) item.draw();
+    this.drawGlows();
     for (const bar of bars) bar();
     this.drawProjectiles();
     g = this.dynamic;
@@ -616,7 +632,13 @@ export class PlayScene extends Phaser.Scene {
       for (const sign of [-1, 1])
         for (let i = 0; i < count; i++) {
           const p = this.px(at(sign * (GATE_HALF_WIDTH + (span * (i + 0.5)) / count)));
-          items.push({ y: p.y, draw: () => this.image(post, p.x, p.y, ART_SCALE).setAlpha(alpha) });
+          items.push({
+            y: p.y,
+            draw: () =>
+              this.image(post, p.x, p.y, ART_SCALE)
+                .setAlpha(alpha)
+                .setTint(sceneryTint(this.night)),
+          });
         }
     }
     if (gate) {
@@ -636,7 +658,8 @@ export class PlayScene extends Phaser.Scene {
           this.painter
             .projectedImage(this.art.atlas(gate.frame)!, gate.frame, p.x, p.y, placement.matrix)
             .setOrigin(placement.anchor[0] / size.realWidth, placement.anchor[1] / size.realHeight)
-            .setAlpha(alpha),
+            .setAlpha(alpha)
+            .setTint(sceneryTint(this.night)),
       });
     }
 
@@ -996,6 +1019,46 @@ export class PlayScene extends Phaser.Scene {
   }
 
   /** A building, the castle or a structure: its painted frame, else its code-drawn shape. */
+  /** A warm window light over a painted building, in its lower half where the windows are. */
+  private addWindowGlow(im: Phaser.GameObjects.Image, strength: number): void {
+    const frame = this.art.still('window_glow');
+    if (!frame) return;
+    const b = im.getBounds();
+    const source = this.textures.getFrame(this.art.atlas(frame)!, frame).realWidth;
+    this.glows.push({
+      frame,
+      x: b.centerX,
+      y: b.y + b.height * 0.62,
+      scale: (b.width * 0.75) / source,
+      alpha: 0.8 * strength,
+    });
+  }
+
+  /** A warm halo round a lantern post's lamp. */
+  private addLanternGlow(im: Phaser.GameObjects.Image, strength: number): void {
+    const frame = this.art.still('lantern_glow');
+    if (!frame) return;
+    const b = im.getBounds();
+    const source = this.textures.getFrame(this.art.atlas(frame)!, frame).realWidth;
+    const lamp = im.flipX ? 0.34 : 0.66;
+    this.glows.push({
+      frame,
+      x: b.x + b.width * lamp,
+      y: b.y + b.height * 0.5,
+      scale: (SCALE * 1.2) / source,
+      alpha: 0.75 * strength,
+    });
+  }
+
+  /** Adds this frame's warm lights over the scene; additive, so they brighten and never hide. */
+  private drawGlows(): void {
+    for (const glow of this.glows)
+      this.image(glow.frame, glow.x, glow.y, glow.scale)
+        .setOrigin(0.5, 0.5)
+        .setAlpha(glow.alpha)
+        .setBlendMode(Phaser.BlendModes.ADD);
+  }
+
   private drawStill(
     id: string,
     x: number,
@@ -1017,7 +1080,10 @@ export class PlayScene extends Phaser.Scene {
       ).setOrigin(origin[0], origin[1]);
       const hides = king && king.y < y && im.getBounds().contains(king.x, king.y);
       im.setAlpha(hides ? alpha * SEE_THROUGH : alpha);
-      if (this.runtime.state.phase === 'night') im.setTint(colors.nightArt);
+      im.setTint(sceneryTint(this.night));
+      // Lit windows: every standing building, never a ruin.
+      const glow = glowStrength(this.night);
+      if (glow > 0 && id !== 'ruin' && alpha >= 1) this.addWindowGlow(im, glow);
       if (flash > 0) this.painter.whiteout(im, flash * 0.7);
       return;
     }

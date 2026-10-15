@@ -36,7 +36,7 @@ simulation/content changes:
   their damage/flight semantics are unchanged.
 
 Gate scale/orientation, per-building ground anchor calibration, painted terrain, panda UI,
-night lighting, real audio, king selection and tutorial remain in the remediation plan. Attack
+real audio, king selection and tutorial remain in the remediation plan. Attack
 quality still needs playtest feedback; these rig improvements do not constitute new attack
 sequences or pre-hit gameplay telegraphs.
 
@@ -320,6 +320,17 @@ recipe for `{ url: 'sfx/….ogg' }` and nothing else changes. Music is three syn
 - F09 audit (2026-10-15): every Greyhollow blocker is natural (cliff or water) and now drawn over
   exactly the ground it blocks; the man-made barriers are the buyable walls in the three passes,
   which already have wall art and gates. No collision or balance data changed.
+
+## Night lighting (F12, 2026-10-15)
+
+- Night is lighting, not new art (`game/lighting.ts`). A night level eases from 0 to 1 over dusk
+  and back at dawn (0.9 s time constant, frame-rate independent) instead of switching.
+- The ground gets a cool moonlit wash; cliffs, tall scenery, walls, gates, empty plots and
+  buildings get the same moonlight as a multiply tint, so nothing glows out of the dark.
+- Warm additive glows (`window_glow`, `lantern_glow`) light standing building windows and lantern
+  posts once dusk has fallen; ruins stay dark. Actors (king, units, enemies, shots) stay untinted
+  so silhouettes and attacks remain readable.
+- The pooled painter image resets blend mode as well as flip and tint.
 
 ## Not built yet
 
