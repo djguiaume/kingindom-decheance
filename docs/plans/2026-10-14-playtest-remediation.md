@@ -130,6 +130,25 @@ resolution below is adopted; do not silently mark them as fixed.
 | F21 | Fixed · PR #43 merged                   | Top HUD hides enemies at night                               | P0 / B0          | Compact night HUD and camera framing keep approaching enemies/telegraphs out from under opaque panels; boss bar/toasts and edge indicators remain usable on short landscape phones.                                                                                                                                                                                                                                                                                 |
 | F22 | Open                                    | Cliffs drawn as flat horizontal strips                       | P1 / B3          | Reported 2026-10-15. `PlayScene.ts` stamps the one front-facing `cliff_section` every 3.2 m along each cliff line, whatever its direction, so the ring around the hollow reads as stacked terrace steps, too low to be a cliff. Cliffs must follow the ring: a face where the high ground's edge faces the camera, side and back pieces elsewhere, `cliff_end` at the passes, and enough height to read as a cliff. Visible cliff and collision stay the same line. |
 
+## Parallel tracks (2026-10-15)
+
+Guillaume asked for every independent fix to run in its own thread. The tracks below touch
+different files, so they can proceed at the same time; each opens its own PR and updates only
+its own rows of the register above.
+
+| Track | Findings      | Owns (under `apps/game/src` unless noted)                                                             | Can start now? | Notes                                                                                                                                                            |
+| ----- | ------------- | ----------------------------------------------------------------------------------------------------- | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| T1    | F09, F22, F18 | `game/terrain.ts`, cliff/wall drawing in `game/PlayScene.ts`, map JSON, core terrain/walls, cliff art | Yes            | Fix the cliff renderer for any map (direction-aware faces, ends, height), not by removing cliffs from Greyhollow. Real fortifications get wall geometry and art. |
+| T2    | F05, F06      | `game/animation.ts`, weapon rigs in `game/art.ts`, actor drawing in `game/PlayScene.ts`               | Yes            | Rest of B2: readable king thrust and enemy strikes at phone scale.                                                                                               |
+| T3    | F13           | `audio/`                                                                                              | Yes            | Cue mapping and sound files now; final release/impact timing re-checked once T2 lands.                                                                           |
+| T4    | F14, F15, F16 | `views/HomeView.vue`, `views/GameHud.vue`, `components/`, `style.css`, `theme.ts`, `icons.ts`         | Yes            | B5. Paid art needs Guillaume's typed approval in the spending thread.                                                                                            |
+| T5    | F12           | night tint/glow in `game/PlayScene.ts`                                                                | After T1       | Same draw code as T1; T1's thread does it next.                                                                                                                  |
+| T6    | F03, F04      | core run config, content, pre-run view                                                                | After T2, T4   | B6 needs the action presentation (T2) and the pre-run screen (T4).                                                                                               |
+| T7    | F17           | tutorial controller, home/play views                                                                  | After T6       | B7 teaches the selected king's ability.                                                                                                                          |
+
+T1 and T2 both edit `game/PlayScene.ts` in different sections (terrain/scenery versus actors);
+merge main before each push and keep edits inside your own section.
+
 ## Implementation batches, in order
 
 ### B0 — Night visibility and a repeatable review scene
