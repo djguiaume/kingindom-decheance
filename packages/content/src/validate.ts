@@ -57,7 +57,16 @@ export function loadContent(raw: RawContent): LoadResult {
     return parse(GameMap, m, `maps/${id}.json`);
   });
 
-  if (errors.length > 0 || !buildings || !units || !enemies || !weapons || !king || !castle || !mutators) {
+  if (
+    errors.length > 0 ||
+    !buildings ||
+    !units ||
+    !enemies ||
+    !weapons ||
+    !king ||
+    !castle ||
+    !mutators
+  ) {
     return { ok: false, errors };
   }
 

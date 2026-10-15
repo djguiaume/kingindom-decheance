@@ -21,13 +21,19 @@ import { audio } from '../audio/engine.ts';
 import { InputHub } from '../game/input/hub.ts';
 import { attachKeyboard } from '../game/input/keyboard.ts';
 import { GameRuntime } from '../game/runtime.ts';
+import { loadProfile, runSetup } from '../progression.ts';
 import { useHudStore } from '../stores/hud.ts';
 import GameHud from './GameHud.vue';
 
 const store = useHudStore();
 // markRaw: the runtime holds live simulation state, which Vue must not make reactive (ADR-005).
+// The run setup screen saved its choices in the profile; Play starts with them (13 §6.1).
 const runtime = markRaw(
-  new GameRuntime(prototypeContent, { ...prototypeRun, seed: Math.floor(Math.random() * 2 ** 31) }),
+  new GameRuntime(prototypeContent, {
+    ...prototypeRun,
+    ...runSetup(loadProfile(), prototypeContent),
+    seed: Math.floor(Math.random() * 2 ** 31),
+  }),
 );
 const hub = markRaw(new InputHub(runtime));
 const camera = markRaw(new CameraView());

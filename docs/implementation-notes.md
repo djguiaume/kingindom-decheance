@@ -269,6 +269,23 @@ balance are untouched.
 - **End screen**: a score sheet under the result (nights, losses, gold, bonus, total) and the
   map best, with "New best!" when beaten.
 
+## Stage A, mutators (2026-10-15, corpus 13 §3)
+
+- `mutators.json`: seven mutators, each `{ scoreBonus, modifiers, closesClasses }`. `RunConfig`
+  takes `mutatorIds`; the context folds them into the content before castle perks, and their
+  bonuses are added to `rules.scoreMultiplier` (so Gambler's Oath multiplies the sum).
+- New rules: `waveSize` (Swarm, wave group sizes rounded, nights 1–2 via the `nights` filter)
+  and `incomeRate` (Lean Years, all dawn income). `rulesOn(ctx, night)` gives another night's
+  rules for the waves panel. No Walls closes wall slots: `buyOptions` drops them and
+  `slotClosed` hides the plot.
+- **Setup screen**: "Customise run" on the title screen opens the mutator cards and the score
+  multiplier; Start run saves the choice in the profile (`lastSetup`) and Play reuses it, so a
+  first launch is still a quick start. Finished runs record their mutators.
+- **Sim**: `--mutators a,b`. Balanced bot, 100 runs each (none 95%): Swarm 91%, Ironhide 0%,
+  Lean Years 7%, Swift Foe 40%, No Walls 80%, Glass Crown 8%, Mercy 100%. The bonuses are still
+  the design's guesses; repricing (bonus ≈ win-rate drop) belongs to the end-of-stage balancing
+  pass.
+
 ## Balance (first playtest, 2026-10-13)
 
 Gold felt scarce in play while the simulator found the game easy (the king alone reached
@@ -340,4 +357,4 @@ recipe for `{ url: 'sfx/….ogg' }` and nothing else changes. Music is three syn
 - Object pools for effects; the real audio (recorded sounds and music).
 - Web Worker pool and Comlink (ADR-003): the runner is ready to be moved into a worker.
 - Tier 3 nightly balance assertions (ADR-007) and the ECharts dashboard (ADR-005).
-- Starting perks, mutators, research (Gambler's Oath already stores its multiplier).
+- Starting perks, research (Gambler's Oath already stores its multiplier).

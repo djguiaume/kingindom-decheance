@@ -12,7 +12,13 @@
       </p>
       <nav class="choices">
         <RouterLink class="primary big" to="/play" data-testid="play">Play</RouterLink>
+        <p v-if="picked.length" class="setup-line" data-testid="setup-line">
+          {{ picked.map((m) => m.name).join(', ') }} · score ×{{ multiplier.toFixed(2) }}
+        </p>
         <div class="row">
+          <button data-testid="customise" @click="openSetup()">
+            <GameIcon name="gear" /> Customise run
+          </button>
           <button data-testid="how-to-play" @click="sheet = 'how'">
             <GameIcon name="book" /> How to play
           </button>
@@ -40,11 +46,7 @@
     </aside>
 
     <div v-if="sheet" class="modal" @click.self="sheet = null">
-      <div
-        class="sheet panel capped"
-        role="dialog"
-        :aria-label="sheet === 'how' ? 'How to play' : 'Settings'"
-      >
+      <div class="sheet panel capped" role="dialog" :aria-label="SHEET_TITLES[sheet]">
         <button class="close" aria-label="Close" @click="sheet = null">
           <GameIcon name="close" />
         </button>
@@ -92,6 +94,40 @@
             </div>
           </div>
         </template>
+        <template v-else-if="sheet === 'setup'">
+          <h2 class="display">Greyhollow</h2>
+          <p v-if="best !== null">Best: {{ best }}</p>
+          <h3 class="section">Mutators</h3>
+          <p class="setup-intro">
+            Each makes the run harder and raises the score of a win. Bonuses add up.
+          </p>
+          <div class="mutators" data-testid="mutators">
+            <button
+              v-for="m in mutators"
+              :key="m.id"
+              class="mutator"
+              :class="{ on: draft.includes(m.id), easier: m.scoreBonus < 0 }"
+              :aria-pressed="draft.includes(m.id)"
+              :disabled="!isUnlocked(profile, m)"
+              :data-testid="`mutator-${m.id}`"
+              @click="toggle(m.id)"
+            >
+              <span class="head">
+                <b>{{ m.name }}</b>
+                <span class="bonus">{{ bonusText(m.scoreBonus) }}</span>
+              </span>
+              <small>{{ m.description }}</small>
+            </button>
+          </div>
+          <div class="start">
+            <span class="mult" data-testid="setup-multiplier"
+              >Score ×{{ draftMultiplier.toFixed(2) }}</span
+            >
+            <button class="primary big" data-testid="start-run" @click="startRun()">
+              Start run
+            </button>
+          </div>
+        </template>
         <template v-else>
           <h2 class="display">Settings</h2>
           <button class="big" data-testid="settings-sound" @click="audio.setMuted(!muted)">
@@ -105,19 +141,62 @@
 </template>
 
 <script setup lang="ts">
-import { prototypeRun } from '@kd/content/prototype';
+import { prototypeContent, prototypeRun } from '@kd/content/prototype';
+import { SCORE } from '@kd/core';
 import { computed, onBeforeUnmount, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { audio } from '../audio/engine.ts';
 import ArtSprite from '../components/ArtSprite.vue';
 import GameIcon from '../components/GameIcon.vue';
 import { fullscreen } from '../fullscreen.ts';
-import { loadProfile } from '../progression.ts';
+import {
+  isUnlocked,
+  loadProfile,
+  mutatorMultiplier,
+  runSetup,
+  saveProfile,
+} from '../progression.ts';
 import { backdropUrl } from '../ui-art.ts';
 
-const sheet = ref<'how' | 'settings' | null>(null);
+type Sheet = 'how' | 'settings' | 'setup';
+const SHEET_TITLES: Record<Sheet, string> = {
+  how: 'How to play',
+  settings: 'Settings',
+  setup: 'Customise run',
+};
+const sheet = ref<Sheet | null>(null);
+const router = useRouter();
 const muted = ref(audio.muted);
 onBeforeUnmount(audio.onMuted((m) => (muted.value = m)));
-const best = loadProfile().records[prototypeRun.mapId]?.score ?? null;
+const profile = ref(loadProfile());
+const best = profile.value.records[prototypeRun.mapId]?.score ?? null;
+
+// The run setup (13 §6.1). Play starts with the remembered setup; a first launch has none.
+const mutators = prototypeContent.mutators;
+const byIds = (ids: readonly string[]) => mutators.filter((m) => ids.includes(m.id));
+const picked = computed(() => byIds(runSetup(profile.value, prototypeContent).mutatorIds));
+const multiplier = computed(() => mutatorMultiplier(picked.value, SCORE.multiplierFloor));
+const draft = ref<string[]>([]);
+const draftMultiplier = computed(() =>
+  mutatorMultiplier(byIds(draft.value), SCORE.multiplierFloor),
+);
+const bonusText = (bonus: number) =>
+  `${bonus < 0 ? '−' : '+'}${Math.round(Math.abs(bonus) * 100)}%`;
+
+function openSetup(): void {
+  draft.value = picked.value.map((m) => m.id);
+  sheet.value = 'setup';
+}
+function toggle(id: string): void {
+  draft.value = draft.value.includes(id)
+    ? draft.value.filter((x) => x !== id)
+    : [...draft.value, id];
+}
+function startRun(): void {
+  profile.value = { ...loadProfile(), lastSetup: { mutatorIds: [...draft.value] } };
+  saveProfile(profile.value);
+  void router.push('/play');
+}
 const backdrop = computed(() =>
   backdropUrl ? { '--backdrop': `url("${backdropUrl}")` } : undefined,
 );
@@ -354,8 +433,104 @@ const backdrop = computed(() =>
   opacity: 0.85;
 }
 
+.setup-line {
+  margin: -4px 0 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--trim);
+}
+.home:not(.painted) .setup-line {
+  color: var(--livery);
+}
+
+/* The run setup sheet: one card per mutator, its effect always visible (no hover on touch). */
+.section {
+  margin: 4px 0 0;
+  font: 700 15px var(--display);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--livery);
+}
+.mutators {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 8px;
+  width: 100%;
+}
+.mutator {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  min-height: 56px;
+  padding: 8px 10px;
+  text-align: left;
+  border: 2px solid var(--line);
+}
+.mutator .head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  width: 100%;
+  gap: 8px;
+}
+.mutator .bonus {
+  font-weight: 800;
+  color: var(--enemy);
+}
+.mutator.easier .bonus {
+  color: var(--muted);
+}
+.mutator small {
+  font-size: 12px;
+  line-height: 1.3;
+  color: var(--muted);
+}
+.mutator.on {
+  border-color: var(--livery);
+  box-shadow: inset 0 0 0 2px var(--trim);
+}
+.start {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  width: 100%;
+  margin-top: 6px;
+}
+.mult {
+  font: 800 18px var(--display);
+  color: var(--gold);
+}
+
 /* Short landscape phones: everything shrinks to fit one screen. */
 @media (max-height: 460px) {
+  /* The setup sheet fits one screen: no scrolling past the cards on a phone. */
+  .sheet {
+    gap: 6px;
+    padding: 10px 18px 12px;
+    max-width: 96vw;
+  }
+  .sheet h2 {
+    font-size: 20px;
+  }
+  .setup-intro {
+    display: none;
+  }
+  .mutators {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+  }
+  .mutator {
+    min-height: 48px;
+    padding: 6px 8px;
+  }
+  .mutator small {
+    font-size: 11px;
+  }
+  .start {
+    margin-top: 2px;
+  }
   .tagline {
     font-size: 13px;
     max-width: 26em;

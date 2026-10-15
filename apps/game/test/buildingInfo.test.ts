@@ -2,7 +2,15 @@ import { prototypeContent, prototypeRun } from '@kd/content/prototype';
 import { Session } from '@kd/core';
 import { describe, expect, it } from 'vitest';
 import { buildingStats, castleLevelInfo, offerInfo } from '../src/game/buildingInfo.ts';
-import { awardRun, isUnlocked, loadProfile, recordRun, RECENT_RUNS } from '../src/progression.ts';
+import {
+  awardRun,
+  isUnlocked,
+  loadProfile,
+  mutatorMultiplier,
+  recordRun,
+  RECENT_RUNS,
+  runSetup,
+} from '../src/progression.ts';
 
 const ctx = new Session(prototypeContent, { ...prototypeRun, seed: 1 }).ctx;
 
@@ -71,6 +79,7 @@ describe('progression (all open in Stage A)', () => {
       unlocked: [],
       records: {},
       recent: [],
+      lastSetup: { mutatorIds: [] },
     });
     expect(isUnlocked(profile, { unlock: { level: 9 } })).toBe(true);
     const run = { mapId: 'greyhollow', won: true, nightsSurvived: 6, score: 0 };
@@ -85,6 +94,7 @@ describe('progression (all open in Stage A)', () => {
       nights: 6,
       weaponId: 'spear',
       perks: [],
+      mutators: [],
       seed: 1,
       date: '2026-10-14T10:00:00.000Z',
     });
@@ -101,5 +111,18 @@ describe('progression (all open in Stage A)', () => {
     for (let i = 0; i < 12; i++) profile = recordRun(profile, run(i)).profile;
     expect(profile.recent).toHaveLength(RECENT_RUNS);
     expect(profile.recent[0]?.score).toBe(11);
+  });
+
+  it('remembers the run setup, dropping mutators the content no longer has', () => {
+    const profile = { ...loadProfile(null), lastSetup: { mutatorIds: ['swarm', 'gone', 'mercy'] } };
+    const content = { mutators: [{ id: 'swarm' }, { id: 'mercy' }] };
+    expect(runSetup(profile, content)).toEqual({ mutatorIds: ['swarm', 'mercy'] });
+    expect(runSetup(loadProfile(null), content)).toEqual({ mutatorIds: [] });
+  });
+
+  it('adds mutator bonuses up, never below the floor', () => {
+    expect(mutatorMultiplier([], 0.5)).toBe(1);
+    expect(mutatorMultiplier([{ scoreBonus: 0.3 }, { scoreBonus: 0.4 }], 0.5)).toBeCloseTo(1.7);
+    expect(mutatorMultiplier([{ scoreBonus: -0.3 }, { scoreBonus: -0.4 }], 0.5)).toBe(0.5);
   });
 });
