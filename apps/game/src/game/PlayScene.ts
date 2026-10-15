@@ -714,6 +714,7 @@ export class PlayScene extends Phaser.Scene {
         2 * GATE_HALF_WIDTH,
         SCALE,
         SQUASH,
+        open,
       );
       items.push({
         y: p.y,
