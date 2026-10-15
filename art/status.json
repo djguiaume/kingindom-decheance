@@ -2,7 +2,7 @@
   "modelId": "model_openai-gpt-image-2-5-flare",
   "referenceAssetId": "asset_RvvNgxiXxMS5HiHWN85YLtqS",
   "referenceSha256": "1ced3f125f8dd4584f33ed856a41dec5b679d0f7b65d0e95681f59689a4f65d8",
-  "spentCU": 3281,
+  "spentCU": 3320,
   "parts": {
     "archer": {
       "state": "validated",
@@ -360,26 +360,32 @@
       "updatedAt": "2026-10-14T19:13:15.335Z"
     },
     "cliff_end": {
-      "state": "validated",
-      "attempts": 2,
-      "promptHash": "28f9dd87219b",
-      "jobId": "job_zZPDWq8eNmDAPhfU3njncU3s",
-      "assetId": "asset_dmt5PiKKt5b4qrkQSUD3AqwK",
-      "costCU": 24,
-      "originalSha256": "4a4a3714db81d314840c7340e93527218ddc91a3145a7babb84db76c05ad5d26",
-      "issues": [],
-      "updatedAt": "2026-10-14T19:54:31.466Z"
+      "state": "failed",
+      "attempts": 3,
+      "promptHash": "dcbd5855e703",
+      "jobId": "job_RnmfAWrbPThmtg4LA2tNkLdA",
+      "assetId": "asset_wX6oDm4KpqPsb2zHGFFuQJJc",
+      "costCU": 37,
+      "originalSha256": "71f868332050f3b83b25b18febf8abb3543ca49ba0913170ac6e3d596c5fa3df",
+      "issues": [
+        {
+          "level": "error",
+          "code": "background",
+          "message": "Corners are not transparent (painted background or checkerboard)."
+        }
+      ],
+      "updatedAt": "2026-10-15T02:43:19.851Z"
     },
     "cliff_section": {
       "state": "validated",
-      "attempts": 2,
-      "promptHash": "d4a8e07c435c",
-      "jobId": "job_umkPCyvSHBpAbucxpcwfHkpK",
-      "assetId": "asset_w5acaNJeiDH9weMryTHu1kuo",
-      "costCU": 24,
-      "originalSha256": "b2027717dc92099b915b9b4754f8f1607563a484a1cdaca26c4552a1fb299f0e",
+      "attempts": 4,
+      "promptHash": "ffbc4566f9fb",
+      "jobId": "job_6PJXRYoNpe3ExJBjx9Grs9LC",
+      "assetId": "asset_bt4yj8HgF7MhwNSWvwv8acLa",
+      "costCU": 50,
+      "originalSha256": "75243ef06f61212460bc1049775a522a8673e2760c2a993a4467476af822f490",
       "issues": [],
-      "updatedAt": "2026-10-14T19:28:03.351Z"
+      "updatedAt": "2026-10-15T02:42:47.372Z"
     },
     "coin": {
       "state": "validated",
