@@ -989,12 +989,6 @@
       "num": 72,
       "asset": "castle_flag"
     },
-    "gate_wood.side.f2": {
-      "atlas": "structures",
-      "num": 64,
-      "asset": "gate_wood",
-      "contentId": "wall"
-    },
     "gate_stone.side.f1": {
       "atlas": "structures",
       "num": 65,
@@ -1007,13 +1001,13 @@
       "asset": "gate_stone",
       "contentId": "stone_wall"
     },
-    "gate_stone.diag.f1": {
+    "gate_wood.side.f2": {
       "atlas": "structures",
-      "num": 65,
-      "asset": "gate_stone",
-      "contentId": "stone_wall"
+      "num": 64,
+      "asset": "gate_wood",
+      "contentId": "wall"
     },
-    "gate_stone.diag.f2": {
+    "gate_stone.diag.f1": {
       "atlas": "structures",
       "num": 65,
       "asset": "gate_stone",
@@ -1025,19 +1019,19 @@
       "asset": "gate_wood",
       "contentId": "wall"
     },
-    "gate_wood.diag.f2": {
-      "atlas": "structures",
-      "num": 64,
-      "asset": "gate_wood",
-      "contentId": "wall"
-    },
-    "gate_wood.f2": {
-      "atlas": "structures",
-      "num": 64,
-      "asset": "gate_wood",
-      "contentId": "wall"
-    },
     "gate_wood.f1": {
+      "atlas": "structures",
+      "num": 64,
+      "asset": "gate_wood",
+      "contentId": "wall"
+    },
+    "gate_stone.diag.f2": {
+      "atlas": "structures",
+      "num": 65,
+      "asset": "gate_stone",
+      "contentId": "stone_wall"
+    },
+    "gate_wood.diag.f2": {
       "atlas": "structures",
       "num": 64,
       "asset": "gate_wood",
@@ -1047,6 +1041,12 @@
       "atlas": "structures",
       "num": 71,
       "asset": "panda_banner"
+    },
+    "gate_wood.f2": {
+      "atlas": "structures",
+      "num": 64,
+      "asset": "gate_wood",
+      "contentId": "wall"
     },
     "lantern_glow": {
       "atlas": "structures",
@@ -1245,16 +1245,6 @@
       "num": 110,
       "asset": "bridge"
     },
-    "cliff_section": {
-      "atlas": "environment",
-      "num": 106,
-      "asset": "cliff_section"
-    },
-    "cliff_end": {
-      "atlas": "environment",
-      "num": 107,
-      "asset": "cliff_end"
-    },
     "lantern_post": {
       "atlas": "environment",
       "num": 96,
@@ -1270,25 +1260,30 @@
       "num": 86,
       "asset": "bamboo_small"
     },
-    "grass_patch": {
-      "atlas": "environment",
-      "num": 108,
-      "asset": "grass_patch"
-    },
-    "path_edge": {
-      "atlas": "environment",
-      "num": 99,
-      "asset": "path_edge"
-    },
     "water_edge": {
       "atlas": "environment",
       "num": 100,
       "asset": "water_edge"
     },
+    "grass_patch": {
+      "atlas": "environment",
+      "num": 108,
+      "asset": "grass_patch"
+    },
     "bamboo_single": {
       "atlas": "environment",
       "num": 88,
       "asset": "bamboo_single"
+    },
+    "cliff_end": {
+      "atlas": "environment",
+      "num": 107,
+      "asset": "cliff_end"
+    },
+    "cliff_section": {
+      "atlas": "environment",
+      "num": 106,
+      "asset": "cliff_section"
     },
     "shrub": {
       "atlas": "environment",
@@ -1299,6 +1294,11 @@
       "atlas": "environment",
       "num": 97,
       "asset": "barrel"
+    },
+    "path_edge": {
+      "atlas": "environment",
+      "num": 99,
+      "asset": "path_edge"
     },
     "crate": {
       "atlas": "environment",

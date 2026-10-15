@@ -1,0 +1,103 @@
+{
+  "token": "7d6de1570d",
+  "selector": "window_glow,grass_patch,path_edge,water_edge,cliff_end,bridge,gate_wood.f2,gate_wood.side.f2,gate_wood.diag.f2,gate_stone.f2,gate_stone.side.f2,gate_stone.diag.f2",
+  "modelId": "model_openai-gpt-image-2-5-flare",
+  "createdAt": "2026-10-14T19:48:36.826Z",
+  "totalCU": 174,
+  "parts": [
+    {
+      "id": "gate_wood.f2",
+      "promptHash": "e975482ff313",
+      "estimateCU": 13
+    },
+    {
+      "id": "gate_wood.side.f2",
+      "promptHash": "c14cc92c953e",
+      "estimateCU": 13
+    },
+    {
+      "id": "gate_wood.diag.f2",
+      "promptHash": "4c19ab05e82b",
+      "estimateCU": 13
+    },
+    {
+      "id": "gate_stone.f2",
+      "promptHash": "de97aff80ff3",
+      "estimateCU": 13
+    },
+    {
+      "id": "gate_stone.side.f2",
+      "promptHash": "aa3fedddf08b",
+      "estimateCU": 13
+    },
+    {
+      "id": "gate_stone.diag.f2",
+      "promptHash": "35eef3ffa4e1",
+      "estimateCU": 13
+    },
+    {
+      "id": "window_glow",
+      "promptHash": "5ece28391d79",
+      "estimateCU": 12
+    },
+    {
+      "id": "path_edge",
+      "promptHash": "4953906ef5bf",
+      "estimateCU": 12
+    },
+    {
+      "id": "water_edge",
+      "promptHash": "05ead7209b26",
+      "estimateCU": 12
+    },
+    {
+      "id": "cliff_end",
+      "promptHash": "28f9dd87219b",
+      "estimateCU": 12
+    },
+    {
+      "id": "grass_patch",
+      "promptHash": "63910eb047f4",
+      "estimateCU": 12
+    },
+    {
+      "id": "bridge",
+      "promptHash": "39b9d2443d8d",
+      "estimateCU": 12
+    },
+    {
+      "id": "bridge.side",
+      "promptHash": "2eaf87ca2183",
+      "estimateCU": 12
+    },
+    {
+      "id": "bridge.diag",
+      "promptHash": "440c428a06f6",
+      "estimateCU": 12
+    }
+  ],
+  "skipped": [],
+  "redo": true,
+  "runs": [
+    {
+      "at": "2026-10-14T19:54:53.786Z",
+      "budgetCU": 180,
+      "spentCU": 174,
+      "done": [
+        "gate_wood.f2",
+        "gate_wood.side.f2",
+        "gate_wood.diag.f2",
+        "gate_stone.f2",
+        "gate_stone.side.f2",
+        "gate_stone.diag.f2",
+        "window_glow",
+        "path_edge",
+        "water_edge",
+        "cliff_end",
+        "grass_patch"
+      ],
+      "failed": [],
+      "stoppedFor": "budget: 174 CU spent, bridge needs 12 more of 180"
+    }
+  ]
+}
