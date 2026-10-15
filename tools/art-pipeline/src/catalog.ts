@@ -851,7 +851,7 @@ export const CATALOG: CatalogEntry[] = [
     subject:
       'a straight section of the edge of a raised grassy plateau, like a terrace step built into the ground, seen from the same camera: the cliff runs perfectly straight left to right across the frame, never diagonal; only its front face shows, a vertical grey-brown rock wall about one storey high; on top, a flat strip of grass with a few tufts that reads as level high ground continuing away behind it; the left and right ends are cut straight and plain so identical pieces join side by side; not a floating island, not a block, no rock showing on the ends or at the back, no bamboo or trees on top',
     canvas: [384, 192],
-    heightPx: 150,
+    heightPx: 90,
     checks: ['Reads as a drop in height: grass on top, rock face below, lit from the upper left.'],
     inferred:
       'Not on the sheet. Lets a map show high ground, e.g. a path winding up between cliffs.',
@@ -864,8 +864,8 @@ export const CATALOG: CatalogEntry[] = [
     kind: 'prop',
     subject:
       'the right-hand end of the same straight cliff edge: on its left it continues the cliff face at full height, cut straight to join a section; towards the right the rock face gets lower and lower until the grass top meets the ground level, a gentle grassy ramp; same front-facing camera, running left to right, never diagonal; only the front face shows, no rock at the back, not a floating island or a round mound',
-    canvas: [256, 192],
-    heightPx: 150,
+    canvas: [384, 192],
+    heightPx: 90,
     checks: ['Matches cliff_section; mirrored by the game for the left end.'],
     inferred: 'See 106.',
     followAsset: 'cliff_section',

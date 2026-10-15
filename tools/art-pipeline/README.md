@@ -40,6 +40,7 @@ pnpm art review                       # contact sheet, animation sheet, AUDIT.md
 pnpm art mark catapult_arm.f1 rejected --note "arm mounted on the side"
 pnpm art audit                        # exit 1 until every asset is complete
 pnpm art seamless tile_stone          # one-off: make an older tile master wrap cleanly
+pnpm art normalize cliff_end          # rebuild masters from cached originals after a canvas change (free)
 ```
 
 Every part is painted from scratch with the v1.2 sheet attached as a style reference, with two
