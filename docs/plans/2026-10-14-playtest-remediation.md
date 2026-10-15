@@ -73,7 +73,7 @@ reopen any fixed finding if the next playtest still shows the issue.
 | 3     | [PR #47](https://github.com/djguiaume/kingindom-decheance/pull/47), merged into main (`92fa86b`) | F18                     | Partial: reviewed grass, water, bank, bridge, cliff-section and matching prop art now render from map geometry; the mislabeled grass-patch and cliff-end assets remain.    |
 | 3     | [PR #47](https://github.com/djguiaume/kingindom-decheance/pull/47), merged into main (`92fa86b`) | F19                     | Fixed: reviewed path texture follows every validated ground-lane polyline with rounded joins at arbitrary orientations and does not alter routes.                          |
 | 3     | [PR #50](https://github.com/djguiaume/kingindom-decheance/pull/50), merged into main             | F18, F19                | CI follow-up: ground-level decoration stays static; only tall occluding scenery enters per-frame depth sorting, restoring headless-browser movement speed.                 |
-| 4     | `docs/record-second-playtest`, awaiting PR                                                       | F05, F06, F07, F23, F24 | Documentation only: record the second playtest, reopen the undersized gate, retain both animation findings as partial, and add gate-state scale and ruin-variety findings. |
+| 4     | [PR #57](https://github.com/djguiaume/kingindom-decheance/pull/57), awaiting merge               | F05, F06, F07, F23, F24 | Documentation only: record the second playtest, reopen the undersized gate, retain both animation findings as partial, and add gate-state scale and ruin-variety findings. |
 
 ### Second playtest follow-up — 2026-10-15
 
