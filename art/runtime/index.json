@@ -189,6 +189,9 @@
         "ruin",
         "slot_empty",
         "stone_wall_post",
+        "stone_wall_segment",
+        "stone_wall_segment.diag",
+        "stone_wall_segment.side",
         "wall_post",
         "window_glow"
       ]
@@ -1240,6 +1243,24 @@
       "num": 62,
       "asset": "wall_post",
       "contentId": "wall"
+    },
+    "stone_wall_segment.diag": {
+      "atlas": "structures",
+      "num": 128,
+      "asset": "stone_wall_segment",
+      "contentId": "stone_wall"
+    },
+    "stone_wall_segment.side": {
+      "atlas": "structures",
+      "num": 128,
+      "asset": "stone_wall_segment",
+      "contentId": "stone_wall"
+    },
+    "stone_wall_segment": {
+      "atlas": "structures",
+      "num": 128,
+      "asset": "stone_wall_segment",
+      "contentId": "stone_wall"
     },
     "slot_empty": {
       "atlas": "structures",

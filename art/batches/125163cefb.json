@@ -1,0 +1,38 @@
+{
+  "token": "125163cefb",
+  "selector": "stone_wall_segment",
+  "modelId": "model_openai-gpt-image-2-5-flare",
+  "createdAt": "2026-10-15T13:59:25.362Z",
+  "totalCU": 39,
+  "parts": [
+    {
+      "id": "stone_wall_segment",
+      "promptHash": "168f945cf5b5",
+      "estimateCU": 13
+    },
+    {
+      "id": "stone_wall_segment.side",
+      "promptHash": "15f67de65e6a",
+      "estimateCU": 13
+    },
+    {
+      "id": "stone_wall_segment.diag",
+      "promptHash": "28431d7b79e8",
+      "estimateCU": 13
+    }
+  ],
+  "skipped": [],
+  "runs": [
+    {
+      "at": "2026-10-15T14:24:08.163Z",
+      "budgetCU": 80,
+      "spentCU": 52,
+      "done": [
+        "stone_wall_segment",
+        "stone_wall_segment.side",
+        "stone_wall_segment.diag"
+      ],
+      "failed": []
+    }
+  ]
+}

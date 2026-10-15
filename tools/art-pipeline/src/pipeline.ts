@@ -61,11 +61,14 @@ export function requestFor(
 
 /**
  * The part whose master this part must match: frame 1 of the same view for assets that follow
- * their first frame, or the main part of the asset named by `followAsset`.
+ * their first frame, or the part of the asset named by `followAsset` in the same view (else its
+ * main part).
  */
 export function firstFrameOf(manifest: Manifest, asset: Asset, part: Part): Part | undefined {
   if (asset.followAsset) {
-    return manifest.assets.find((a) => a.id === asset.followAsset)?.parts[0];
+    const followed = manifest.assets.find((a) => a.id === asset.followAsset);
+    // The same view of the followed asset when it has one (a wall section beside its gate).
+    return followed?.parts.find((p) => p.view === part.view && p.frame === 0) ?? followed?.parts[0];
   }
   if (!asset.followFirstFrame || part.frame === 0) return undefined;
   return asset.parts.find((p) => p.view === part.view && p.frame === 0);
