@@ -140,19 +140,56 @@ export const RIGS: Record<string, WeaponRig> = {
   warlord: { frame: 'warlord_weapon', grip: [0.15, 0.5], points: 0, kind: 'swing', length: 0.9 },
 };
 
+const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+
 /**
- * The weapon's rotation for a swing from 0 to 1, as the code-drawn weapons move: raised and a
- * little back, then struck forward; a spear levels into a thrust; a bow stays as it is held.
+ * The weapon's rotation for an attack `act` (-1 wound up, 0 at rest, 1 at full reach), facing
+ * right, aimed `aim` radians below the horizontal at its target. A sword or axe is raised back
+ * over the head on the tell and chopped through to forward and down; the spear rests at the
+ * slope and levels at the target as it draws back and thrusts; a bow or crossbow tilts toward
+ * its target as it draws and keeps that line through the release.
  */
-export function weaponAngle(rig: WeaponRig, swing: number): number {
+export function weaponAngle(rig: WeaponRig, act: number, aim = 0): number {
+  switch (rig.kind) {
+    case 'swing': {
+      const rest = -0.95;
+      return (act < 0 ? lerp(rest, -2.45, -act) : lerp(rest, 0.55, act)) - rig.points;
+    }
+    case 'thrust':
+      return lerp(-0.55, aim, Math.min(1, Math.abs(act) * 1.6)) - rig.points;
+    case 'aim':
+      // Bows are laid out as they are held: only the aim turns them.
+      return aim * Math.min(1, Math.abs(act) * 2);
+  }
+}
+
+/**
+ * How far the hand moves forward (as a fraction of the body's width) for an attack `act`: the
+ * spear is drawn back on the tell and driven well past the body on the thrust; a bow string is
+ * drawn back and the bow kicks on release.
+ */
+export function weaponReach(rig: WeaponRig, act: number): number {
+  const back = Math.max(0, -act);
+  const on = Math.max(0, act);
   switch (rig.kind) {
     case 'swing':
-      return UP - 0.35 + swing * (Math.PI / 2 + 0.2) - rig.points;
+      return -0.08 * back + 0.12 * on;
     case 'thrust':
-      return -1.34 + swing * 1.2 - rig.points;
+      return -0.25 * back + 0.6 * on;
     case 'aim':
-      return 0;
+      return -0.1 * back - 0.12 * on;
   }
+}
+
+/**
+ * Where the far end of the weapon (blade, spear tip, bow tip) is, from its grip, as a fraction
+ * of its longer side, along the way it was painted to point.
+ */
+export function tipReach(rig: WeaponRig): number {
+  return (
+    Math.abs(Math.cos(rig.points)) * (1 - rig.grip[0]) +
+    Math.abs(Math.sin(rig.points)) * rig.grip[1]
+  );
 }
 
 /**

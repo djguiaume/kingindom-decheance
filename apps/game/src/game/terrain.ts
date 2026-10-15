@@ -67,9 +67,8 @@ export function bridgeFrame(from: Pt, to: Pt): string {
   return 'bridge.diag';
 }
 
-/** Assets reviewed as matching their prop id; grass_patch currently contains a panda guard. */
+/** Selects painted scenery when the runtime atlas contains a frame for the map prop. */
 export function paintedPropFrame(art: Art, kind: string): string | null {
-  if (kind === 'grass_patch') return null;
   return art.still(kind);
 }
 

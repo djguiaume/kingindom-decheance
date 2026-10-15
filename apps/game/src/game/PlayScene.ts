@@ -10,6 +10,7 @@ import {
   GATE_HALF_WIDTH,
   guardSpot,
   telegraph,
+  TICK_RATE,
   WALL_HALF_SPAN,
   wallLine,
   type BuildingState,
@@ -18,19 +19,36 @@ import {
 } from '@kd/core';
 import { nearbySlotId } from '../stores/hud.ts';
 import { colors } from '../theme.ts';
+import { easeNight, glowStrength, groundShade, sceneryTint } from './lighting.ts';
 import type { CameraView } from './camera.ts';
 import { SCALE, SQUASH } from './camera.ts';
 import type { GameRuntime } from './runtime.ts';
 import {
   Animator,
+  bodyAt,
   fallAt,
   keyOf,
+  NO_TELL,
   STRIDE_M,
   strideFor,
+  stompersIn,
+  styleOf,
   KingActions,
+  TIMING,
+  type BodyMotion,
   type Pose,
+  type Tell,
 } from './animation.ts';
-import { Art, ART_PX_PER_M, CATAPULT_ARM, HAND, loadArt, weaponAngle } from './art.ts';
+import {
+  Art,
+  ART_PX_PER_M,
+  CATAPULT_ARM,
+  HAND,
+  loadArt,
+  tipReach,
+  weaponAngle,
+  weaponReach,
+} from './art.ts';
 import { Painter } from './painter.ts';
 import { addCliffs, CLIFF_TEXTURE, type CliffSprite } from './cliffs.ts';
 import { bobHeight, shadow, spriteFor } from './sprites.ts';
@@ -39,6 +57,11 @@ import { emptyPlotIds, gateIsOpen, projectileFrame, ruinFrame } from './presenta
 import { gatePlacement, gateView, GATE_RIGS, groundOrigin } from './groundRigs.ts';
 
 const HIT_FLASH_MS = 160;
+const TICK_MS = 1000 / TICK_RATE;
+/** A target this much beyond an attacker's range still draws its tell (it may step in). */
+const REACH_SLACK = 0.3;
+/** A body that does not move with an attack (the king mid-roll). */
+const STILL: BodyMotion = { lean: 0, shift: 0, lift: 0, stretch: 1, squash: 1 };
 const SHOT_MS = 180;
 const DOUBLE_TAP_MS = 300;
 /** How far the camera looks ahead of a moving king, and how quickly it gets there. */
@@ -92,6 +115,10 @@ export class PlayScene extends Phaser.Scene {
   private unsubscribe: (() => void) | null = null;
   private lastTap = 0;
   private lead = { x: 0, y: 0 };
+  /** 0 by day, 1 by night, easing through dusk and dawn. */
+  private night = 0;
+  /** Warm lights to add over this frame's scene, in scene pixels. */
+  private glows: { frame: string; x: number; y: number; scale: number; alpha: number }[] = [];
   private stomps: { at: { x: number; y: number }; radius: number; start: number }[] = [];
   private puffs: { at: { x: number; y: number }; start: number }[] = [];
   /** Who fired each shot in flight (the shooter may die before it lands). */
@@ -146,6 +173,7 @@ export class PlayScene extends Phaser.Scene {
         (ref) => this.refWorld(ref),
         (id) => this.runtime.state.projectiles.find((p) => p.id === id)?.to ?? null,
       );
+      const stompers = stompersIn(events);
       for (const e of events) {
         if (e.type === 'stomp') {
           const enemy = this.runtime.state.enemies.find((x) => x.id === e.enemy);
@@ -167,8 +195,8 @@ export class PlayScene extends Phaser.Scene {
           this.puffs.push({ at: this.px(e.at), start: this.animationNow });
           continue;
         }
-        // A shot that flew has already been drawn in flight.
-        if (e.type !== 'hit' || e.projectile) continue;
+        // A shot that flew has already been drawn in flight; a stomp draws its ring.
+        if (e.type !== 'hit' || e.projectile || stompers.has(keyOf(e.attacker) ?? '')) continue;
         const from = this.refPos(e.attacker);
         const to = this.refPos(e.target);
         if (!from || !to) continue;
@@ -195,8 +223,10 @@ export class PlayScene extends Phaser.Scene {
       this.puffs = [];
       this.shooters.clear();
       this.animationNow = 0;
+      this.night = this.runtime.state.phase === 'night' ? 1 : 0;
     }
     if (!this.runtime.paused) this.animationNow += delta;
+    this.night = easeNight(this.night, this.runtime.state.phase === 'night', delta);
     this.sourceTypes.clear();
     for (const e of this.runtime.state.enemies) this.sourceTypes.set(`e${e.id}`, e.type);
     for (const u of this.runtime.state.units) this.sourceTypes.set(`u${u.id}`, u.type);
@@ -244,9 +274,17 @@ export class PlayScene extends Phaser.Scene {
     return this.painter.g();
   }
 
-  /** Places an atlas frame (known to exist) with its pivot on (x, y). */
+  /**
+   * Places an atlas frame (known to exist) with its pivot on (x, y). Pooled images keep the flip
+   * a mirrored prop gave them last frame, so it is cleared here: a weapon drawn on a flipped
+   * image pointed backwards.
+   */
   private image(frame: string, x: number, y: number, scale: number): Phaser.GameObjects.Image {
-    return this.painter.image(this.art.atlas(frame)!, frame).setPosition(x, y).setScale(scale);
+    return this.painter
+      .image(this.art.atlas(frame)!, frame)
+      .setPosition(x, y)
+      .setScale(scale)
+      .setFlipX(false);
   }
 
   /** Ground point of a world position, in scene pixels. */
@@ -341,19 +379,22 @@ export class PlayScene extends Phaser.Scene {
       const p = this.px({ x: node.pos[0], y: node.pos[1] });
       if (plot) {
         // Only empty plots have a foundation marker; buildings carry their own base.
-        this.image(plot, p.x, p.y, ART_SCALE * BUILDING_SIZE);
+        this.image(plot, p.x, p.y, ART_SCALE * BUILDING_SIZE).setTint(sceneryTint(this.night));
         continue;
       }
       g.lineStyle(2, colors.slot, 0.9);
       g.strokeEllipse(p.x, p.y, SCALE * 1.8, SCALE * 1.8 * SQUASH);
     }
 
-    if (state.phase === 'night') {
+    if (this.night > 0) {
       // Moonlit, never black (design 11 §9): tint the ground, keep actors bright.
       const [w, h] = ctx.map.size;
-      g.fillStyle(colors.night, 0.35);
+      g.fillStyle(colors.night, groundShade(this.night));
       g.fillRect(0, 0, w * SCALE, h * SCALE * SQUASH);
     }
+    const tint = sceneryTint(this.night);
+    const glow = glowStrength(this.night);
+    this.glows = [];
 
     // By day, the spawns of tonight's lanes glow (off-screen ones get edge arrows instead).
     if (state.phase === 'day') {
@@ -408,7 +449,8 @@ export class PlayScene extends Phaser.Scene {
             .image(CLIFF_TEXTURE, piece.frame)
             .setOrigin(0, 0)
             .setPosition(piece.x, piece.y)
-            .setAlpha(hides ? SEE_THROUGH : 1),
+            .setAlpha(hides ? SEE_THROUGH : 1)
+            .setTint(tint),
       });
     }
     for (const prop of ctx.map.terrain.props) {
@@ -417,8 +459,12 @@ export class PlayScene extends Phaser.Scene {
         const p = this.px({ x: prop.pos[0], y: prop.pos[1] });
         items.push({
           y: p.y,
-          draw: () =>
-            this.image(frame, p.x, p.y, ART_SCALE * prop.scale).setFlipX(Boolean(prop.flip)),
+          draw: () => {
+            const im = this.image(frame, p.x, p.y, ART_SCALE * prop.scale)
+              .setFlipX(Boolean(prop.flip))
+              .setTint(tint);
+            if (prop.kind === 'lantern_post' && glow > 0) this.addLanternGlow(im, glow);
+          },
         });
       }
     }
@@ -439,6 +485,7 @@ export class PlayScene extends Phaser.Scene {
       hp?: [number, number],
       key?: string,
       actor = false,
+      tell: Tell = NO_TELL,
     ) => {
       const p = this.px(pos);
       const s = radius * SCALE;
@@ -447,7 +494,7 @@ export class PlayScene extends Phaser.Scene {
       if (key) {
         seen.add(key);
         if (actor) {
-          pose = this.animator.pose(key, pos, { sprite: id, radius }, now);
+          pose = this.animator.pose(key, pos, { sprite: id, radius }, now, tell);
           flash = pose.flash;
         } else {
           this.animator.still(key, pos);
@@ -496,12 +543,33 @@ export class PlayScene extends Phaser.Scene {
     for (const u of state.units) {
       const key = `u${u.id}`;
       const def = ctx.units.get(u.type)!;
-      add(this.runtime.drawPos(key, u.pos), def.radius, u.type, 1, [u.hp, u.maxHp], key, true);
+      const tell = this.tell(u.cooldown, u.pos, def.radius, def.attack.range, u.target);
+      add(
+        this.runtime.drawPos(key, u.pos),
+        def.radius,
+        u.type,
+        1,
+        [u.hp, u.maxHp],
+        key,
+        true,
+        tell,
+      );
     }
     for (const e of state.enemies) {
       const key = `e${e.id}`;
       const def = ctx.enemies.get(e.type)!;
-      add(this.runtime.drawPos(key, e.pos), def.radius, e.type, 1, [e.hp, e.maxHp], key, true);
+      const tell = this.tell(e.cooldown, e.pos, def.radius, def.attack.range, e.target);
+      if (def.ability) tell.stomp = this.untilStomp(e.abilityCooldown, e.pos, def.ability.radius);
+      add(
+        this.runtime.drawPos(key, e.pos),
+        def.radius,
+        e.type,
+        1,
+        [e.hp, e.maxHp],
+        key,
+        true,
+        tell,
+      );
     }
     if (!state.king.alive) this.kingActions.update(false, false, this.animationNow);
     if (state.king.alive) {
@@ -514,6 +582,7 @@ export class PlayScene extends Phaser.Scene {
         hp,
         'king',
         true,
+        state.king.dash ? NO_TELL : this.kingTell(),
       );
     }
     this.animator.prune(seen, now);
@@ -527,6 +596,7 @@ export class PlayScene extends Phaser.Scene {
     this.addFlags(items);
     items.sort((a, b) => a.y - b.y);
     for (const item of items) item.draw();
+    this.drawGlows();
     for (const bar of bars) bar();
     this.drawProjectiles();
     g = this.dynamic;
@@ -556,6 +626,15 @@ export class PlayScene extends Phaser.Scene {
         const cy = f.to.y - SCALE * 0.7;
         const r = SCALE * 0.45;
         const dir = Math.atan2(f.to.y - f.from.y, f.to.x - f.from.x);
+        if (styleOf(f.source) === 'thrust') {
+          // A spear goes in straight: a stab line through the one hit, and a spark.
+          const dx = Math.cos(dir);
+          const dy = Math.sin(dir);
+          g.lineStyle(4, colors.hit, 0.95 * (1 - t));
+          g.lineBetween(cx - dx * r * 1.4, cy - dy * r * 1.4, cx + dx * r * 0.9, cy + dy * r * 0.9);
+          burst(g, cx + dx * r * 0.9, cy + dy * r * 0.9, r * (0.6 + 0.6 * t), 3, 1 - t);
+          continue;
+        }
         g.lineStyle(3, colors.hit, 0.9 * (1 - t));
         g.beginPath();
         g.arc(cx, cy, r, dir - 1.1, dir + 1.1);
@@ -616,7 +695,13 @@ export class PlayScene extends Phaser.Scene {
       for (const sign of [-1, 1])
         for (let i = 0; i < count; i++) {
           const p = this.px(at(sign * (GATE_HALF_WIDTH + (span * (i + 0.5)) / count)));
-          items.push({ y: p.y, draw: () => this.image(post, p.x, p.y, ART_SCALE).setAlpha(alpha) });
+          items.push({
+            y: p.y,
+            draw: () =>
+              this.image(post, p.x, p.y, ART_SCALE)
+                .setAlpha(alpha)
+                .setTint(sceneryTint(this.night)),
+          });
         }
     }
     if (gate) {
@@ -629,6 +714,7 @@ export class PlayScene extends Phaser.Scene {
         2 * GATE_HALF_WIDTH,
         SCALE,
         SQUASH,
+        open,
       );
       items.push({
         y: p.y,
@@ -636,7 +722,8 @@ export class PlayScene extends Phaser.Scene {
           this.painter
             .projectedImage(this.art.atlas(gate.frame)!, gate.frame, p.x, p.y, placement.matrix)
             .setOrigin(placement.anchor[0] / size.realWidth, placement.anchor[1] / size.realHeight)
-            .setAlpha(alpha),
+            .setAlpha(alpha)
+            .setTint(sceneryTint(this.night)),
       });
     }
 
@@ -934,27 +1021,43 @@ export class PlayScene extends Phaser.Scene {
     if (!frame) return false;
     const k = ART_SCALE * ACTOR_SIZE;
     const f = pose.facing;
-    const lean = action ? 0 : pose.lean;
+    const size = this.textures.getFrame(this.art.atlas(frame)!, frame);
+    // The body moves with its attack: rears back on the tell, throws its weight into the blow.
+    const style = styleOf(id);
+    const m = action ? STILL : bodyAt(style, pose.act, pose.stomp);
+    // Where the attack is aimed, in radians below the horizontal (facing right): a spear or bow
+    // aimed up or down the screen lunges and leans that way, not sideways.
+    const aim = pose.target ? this.aimAngle(x, y, pose.target) : 0;
+    const aimed = style === 'thrust' || style === 'shoot';
+    const lean = aimed ? m.lean * Math.abs(Math.cos(aim)) : m.lean;
+    const shiftX = aimed ? Math.cos(aim) : 1;
+    const shiftY = aimed ? Math.sin(aim) : 0;
+    const bx = x + f * m.shift * shiftX * size.cutWidth * k;
     // A flyer hovers high above its shadow; walkers hop with their step.
-    const by = y - (id === 'harpy' ? s * 2.2 : action ? 0 : pose.bob * bobHeight(id) * s);
+    const by =
+      y -
+      (id === 'harpy' ? s * 2.2 : action ? 0 : pose.bob * bobHeight(id) * s) -
+      m.lift * size.cutHeight * k +
+      m.shift * shiftY * size.cutWidth * k * SQUASH;
     const body = () => {
-      const im = this.image(frame, x, by, k)
-        .setScale(k * f, k)
+      const im = this.image(frame, bx, by, k)
+        .setScale(k * f * m.stretch, k * m.squash)
         .setRotation(lean * f)
         .setAlpha(alpha);
       if (pose.flash > 0) this.painter.whiteout(im, pose.flash * 0.8);
     };
-    const size = this.textures.getFrame(this.art.atlas(frame)!, frame);
-    // A point on the body, in art pixels from the feet (facing right), to scene pixels; the lean
-    // turns the body around its feet.
+    // A point on the body, in art pixels from the feet (facing right), to scene pixels: it
+    // stretches, squashes and leans with the body, so the hand stays on the body.
     const onBody = (fx: number, fy: number) => {
+      const ax = fx * m.stretch;
+      const ay = fy * m.squash;
       const c = Math.cos(lean);
       const sn = Math.sin(lean);
-      return { x: x + f * (fx * c - fy * sn) * k, y: by + (fx * sn + fy * c) * k };
+      return { x: bx + f * (ax * c - ay * sn) * k, y: by + (ax * sn + ay * c) * k };
     };
     if (id === 'catapult') {
       body();
-      const arm = this.art.at(CATAPULT_ARM.name, pose.swing > 0 ? 0.99 : 0);
+      const arm = this.art.at(CATAPULT_ARM.name, pose.act > 0.2 ? 0.99 : 0);
       if (!arm) return true;
       const hub = CATAPULT_ARM.hub[arm.endsWith('.f1') ? 0 : 1]!;
       const at = onBody(0, -CATAPULT_ARM.axle * size.cutHeight);
@@ -970,18 +1073,31 @@ export class PlayScene extends Phaser.Scene {
       body();
       return true;
     }
+    // The warlord raises its weapon for the stomp too.
+    const act = pose.stomp < 0 ? Math.min(pose.act, pose.stomp) : pose.act;
     const hand = rig.hand ?? HAND;
-    let hx = hand[0] * size.cutWidth;
-    if (rig.kind === 'thrust') hx += pose.swing * 0.42 * size.cutWidth;
-    if (rig.kind === 'aim') hx -= pose.swing * 0.12 * size.cutWidth;
-    const at = onBody(hx, -hand[1] * size.cutHeight);
+    const angle = weaponAngle(rig, act, aim);
+    // A blade's reach is sideways; a spear or bow moves along where it points, so a thrust up or
+    // down the screen drives the spear at its target. Held that way, the hand comes in toward
+    // the body's middle.
+    const reach = weaponReach(rig, act) * size.cutWidth;
+    const along = rig.kind === 'aim' ? angle : angle + rig.points;
+    const forward = rig.kind === 'thrust' ? Math.max(0.3, Math.abs(Math.cos(aim))) : 1;
+    const at =
+      rig.kind === 'swing'
+        ? onBody(hand[0] * size.cutWidth + reach, -hand[1] * size.cutHeight)
+        : onBody(
+            hand[0] * forward * size.cutWidth + Math.cos(along) * reach,
+            -hand[1] * size.cutHeight + Math.sin(along) * reach,
+          );
     const held = this.textures.getFrame(this.art.atlas(rig.frame)!, rig.frame);
-    const w = (k * rig.length * size.cutHeight) / Math.max(held.cutWidth, held.cutHeight);
+    const length = k * rig.length * size.cutHeight;
+    const w = length / Math.max(held.cutWidth, held.cutHeight);
     const weapon = () => {
       const im = this.image(rig.frame, at.x, at.y, w)
         .setOrigin(rig.grip[0], rig.grip[1])
         .setScale(w * f, w)
-        .setRotation(f * (weaponAngle(rig, pose.swing) + lean))
+        .setRotation(f * (angle + lean))
         .setAlpha(alpha);
       if (pose.flash > 0) this.painter.whiteout(im, pose.flash * 0.8);
     };
@@ -992,7 +1108,134 @@ export class PlayScene extends Phaser.Scene {
       body();
       weapon();
     }
+    this.drawStrike(id, rig.kind, at, angle + lean, f, length * tipReach(rig), s, pose, act);
     return true;
+  }
+
+  /**
+   * A soft warm light at a painted building's doorway and lower windows. Small and faint: it must
+   * suggest a lit interior without washing out the building.
+   */
+  private addWindowGlow(im: Phaser.GameObjects.Image, strength: number): void {
+    const frame = this.art.still('window_glow');
+    if (!frame) return;
+    const b = im.getBounds();
+    const source = this.textures.getFrame(this.art.atlas(frame)!, frame).realWidth;
+    this.glows.push({
+      frame,
+      x: b.centerX,
+      y: b.y + b.height * 0.7,
+      scale: (b.width * 0.3) / source,
+      alpha: 0.4 * strength,
+    });
+  }
+
+  /** A warm halo round a lantern post's lamp. */
+  private addLanternGlow(im: Phaser.GameObjects.Image, strength: number): void {
+    const frame = this.art.still('lantern_glow');
+    if (!frame) return;
+    const b = im.getBounds();
+    const source = this.textures.getFrame(this.art.atlas(frame)!, frame).realWidth;
+    const lamp = im.flipX ? 0.34 : 0.66;
+    this.glows.push({
+      frame,
+      x: b.x + b.width * lamp,
+      y: b.y + b.height * 0.5,
+      scale: (SCALE * 0.7) / source,
+      alpha: 0.45 * strength,
+    });
+  }
+
+  /** Adds this frame's warm lights over the scene; additive, so they brighten and never hide. */
+  private drawGlows(): void {
+    for (const glow of this.glows)
+      this.image(glow.frame, glow.x, glow.y, glow.scale)
+        .setOrigin(0.5, 0.5)
+        .setAlpha(glow.alpha)
+        .setBlendMode(Phaser.BlendModes.ADD);
+  }
+
+  /**
+   * The aim toward a target, in radians below the horizontal for an actor facing it: straight up
+   * the screen is -π/2, straight down π/2.
+   */
+  private aimAngle(x: number, y: number, target: Vec): number {
+    const t = this.px(target);
+    return Math.atan2(t.y - y, Math.abs(t.x - x));
+  }
+
+  /**
+   * What makes a blow read at phone size: a smear behind a chopping blade, speed lines along a
+   * thrusting spear and a spark at its tip, a snap at a bow on release, and a glint on an enemy's
+   * weapon as its tell peaks (the warning to step away). `angle` is where the weapon points as
+   * drawn facing right (the painted direction included), `reach` its grip-to-tip length in pixels.
+   */
+  private drawStrike(
+    id: string,
+    kind: 'swing' | 'thrust' | 'aim',
+    at: { x: number; y: number },
+    angle: number,
+    f: 1 | -1,
+    reach: number,
+    s: number,
+    pose: Pose,
+    act: number,
+  ): void {
+    const timing = TIMING[styleOf(id)];
+    const point = (a: number, r: number) => ({
+      x: at.x + f * Math.cos(a) * r,
+      y: at.y + Math.sin(a) * r,
+    });
+    const rig = this.art.rig(id)!;
+    const pointing = kind === 'aim' ? angle : angle + rig.points;
+    const tip = point(pointing, reach);
+    const width = Math.max(2, s * 0.18);
+    const shown = timing.strike + timing.hold + 80;
+    if (pose.blow < shown) {
+      const fade = 1 - pose.blow / shown;
+      const g = this.dynamic;
+      if (kind === 'swing') {
+        // The arc the blade has swept, brightest at its leading edge.
+        const from = Math.max(-2.45 + rig.points, pointing - 2.2);
+        const steps = 10;
+        for (let i = 0; i < steps; i++) {
+          const a0 = from + ((pointing - from) * i) / steps;
+          const a1 = from + ((pointing - from) * (i + 1)) / steps;
+          const p0 = point(a0, reach * 0.95);
+          const p1 = point(a1, reach * 0.95);
+          g.lineStyle(
+            width * (0.6 + (1.4 * i) / steps),
+            colors.hit,
+            0.7 * fade * ((i + 1) / steps),
+          );
+          g.lineBetween(p0.x, p0.y, p1.x, p1.y);
+        }
+      } else if (kind === 'thrust') {
+        const dx = f * Math.cos(pointing);
+        const dy = Math.sin(pointing);
+        for (const side of [-1, 1]) {
+          const ox = -dy * side * s * 0.16;
+          const oy = dx * side * s * 0.16;
+          g.lineStyle(width * 0.7, colors.hit, 0.75 * fade);
+          g.lineBetween(
+            tip.x - dx * reach * 1.1 + ox,
+            tip.y - dy * reach * 1.1 + oy,
+            tip.x - dx * reach * 0.35 + ox,
+            tip.y - dy * reach * 0.35 + oy,
+          );
+        }
+        burst(g, tip.x + dx * s * 0.15, tip.y + dy * s * 0.15, s * 0.45, width, fade);
+      } else {
+        burst(g, tip.x, tip.y, s * 0.35 * (1 - 0.4 * fade), width * 0.8, fade);
+      }
+    }
+    // An enemy's tell ends in a glint on its weapon: the cue that a blow is coming.
+    if (act < -0.55 && this.runtime.ctx.enemies.has(id)) {
+      const t = (-act - 0.55) / 0.45;
+      const g = this.dynamic;
+      g.fillStyle(colors.hit, 0.95 * t);
+      star(g, tip.x, tip.y, s * (0.18 + 0.22 * t), s * 0.06);
+    }
   }
 
   /** A building, the castle or a structure: its painted frame, else its code-drawn shape. */
@@ -1017,7 +1260,10 @@ export class PlayScene extends Phaser.Scene {
       ).setOrigin(origin[0], origin[1]);
       const hides = king && king.y < y && im.getBounds().contains(king.x, king.y);
       im.setAlpha(hides ? alpha * SEE_THROUGH : alpha);
-      if (this.runtime.state.phase === 'night') im.setTint(colors.nightArt);
+      im.setTint(sceneryTint(this.night));
+      // Lit windows: every standing building, never a ruin.
+      const glow = glowStrength(this.night);
+      if (glow > 0 && id !== 'ruin' && alpha >= 1) this.addWindowGlow(im, glow);
       if (flash > 0) this.painter.whiteout(im, flash * 0.7);
       return;
     }
@@ -1067,6 +1313,87 @@ export class PlayScene extends Phaser.Scene {
   }
 
   /** An actor's position in metres, to turn it toward the one it strikes. */
+  /**
+   * The tell of an attacker whose next blow is already decided: its cooldown is running out and
+   * its target stands within reach. Read from the core state only; the blow itself still comes
+   * from the core's events, so the tell never changes when or whether it lands.
+   */
+  private tell(
+    cooldown: number,
+    pos: Vec,
+    radius: number,
+    range: number,
+    target: Ref | null,
+  ): Tell {
+    const body = target && this.refBody(target);
+    if (cooldown <= 0 || !body) return { ...NO_TELL };
+    const gap = Math.hypot(body.pos.x - pos.x, body.pos.y - pos.y) - radius - body.radius;
+    if (gap > range + REACH_SLACK) return { ...NO_TELL };
+    return {
+      attack: (cooldown - this.runtime.tickProgress) * TICK_MS,
+      stomp: Infinity,
+      at: body.pos,
+    };
+  }
+
+  /** The king's tell: his spear strikes the nearest enemy in reach when his cooldown is over. */
+  private kingTell(): Tell {
+    const { state, ctx } = this.runtime;
+    let nearest: Ref | null = null;
+    let best = Infinity;
+    for (const e of state.enemies) {
+      if (e.hp <= 0) continue;
+      const gap = Math.hypot(e.pos.x - state.king.pos.x, e.pos.y - state.king.pos.y);
+      if (gap < best) {
+        best = gap;
+        nearest = { kind: 'enemy', id: e.id };
+      }
+    }
+    return this.tell(
+      state.king.cooldown,
+      state.king.pos,
+      ctx.king.radius,
+      ctx.weapon.attack.range,
+      nearest,
+    );
+  }
+
+  /** Ms before the warlord can stomp someone already in its reach, or Infinity. */
+  private untilStomp(cooldown: number, pos: Vec, reach: number): number {
+    const { state, ctx } = this.runtime;
+    const near = (p: Vec, r: number) => Math.hypot(p.x - pos.x, p.y - pos.y) - r <= reach;
+    const someone =
+      (state.king.alive && near(state.king.pos, ctx.king.radius)) ||
+      state.units.some((u) => u.hp > 0 && near(u.pos, ctx.units.get(u.type)!.radius));
+    // The stomp lands on the first tick that finds its cooldown already over.
+    return someone ? (cooldown + 1 - this.runtime.tickProgress) * TICK_MS : Infinity;
+  }
+
+  /** Where an attack target is drawn (metres) and how big its body is. */
+  private refBody(ref: Ref): { pos: Vec; radius: number } | null {
+    const { state, ctx } = this.runtime;
+    const pos = this.refWorld(ref);
+    if (!pos) return null;
+    switch (ref.kind) {
+      case 'king':
+        return state.king.alive ? { pos, radius: ctx.king.radius } : null;
+      case 'castle':
+        return { pos, radius: state.castle.radius };
+      case 'building': {
+        const b = state.buildings.find((x) => x.id === ref.id);
+        return b && !b.destroyed ? { pos, radius: ctx.buildings.get(b.type)!.radius } : null;
+      }
+      case 'unit': {
+        const u = state.units.find((x) => x.id === ref.id);
+        return u ? { pos, radius: ctx.units.get(u.type)!.radius } : null;
+      }
+      case 'enemy': {
+        const e = state.enemies.find((x) => x.id === ref.id);
+        return e ? { pos, radius: ctx.enemies.get(e.type)!.radius } : null;
+      }
+    }
+  }
+
   private refWorld(ref: Ref): Vec | null {
     const key = keyOf(ref);
     const s = this.runtime.state;
@@ -1111,6 +1438,46 @@ export class PlayScene extends Phaser.Scene {
         return at(s.enemies.find((x) => x.id === ref.id)?.pos);
     }
   }
+}
+
+/** Short rays out of a point: the spark of an impact or a release. */
+function burst(
+  g: Phaser.GameObjects.Graphics,
+  x: number,
+  y: number,
+  r: number,
+  width: number,
+  alpha: number,
+): void {
+  g.lineStyle(width, colors.hit, 0.9 * alpha);
+  for (let i = 0; i < 6; i++) {
+    const a = (i * Math.PI) / 3 + 0.3;
+    g.lineBetween(
+      x + Math.cos(a) * r * 0.35,
+      y + Math.sin(a) * r * 0.35,
+      x + Math.cos(a) * r,
+      y + Math.sin(a) * r,
+    );
+  }
+}
+
+/** A four-pointed glint. */
+function star(g: Phaser.GameObjects.Graphics, x: number, y: number, r: number, w: number): void {
+  const points = [
+    [0, -r],
+    [w, -w],
+    [r, 0],
+    [w, w],
+    [0, r],
+    [-w, w],
+    [-r, 0],
+    [-w, -w],
+  ] as const;
+  g.beginPath();
+  g.moveTo(x, y - r);
+  for (const [px, py] of points) g.lineTo(x + px, y + py);
+  g.closePath();
+  g.fillPath();
 }
 
 const darken = (c: number, f = 0.7) =>

@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { Art, atlasFiles, RIGS, textureFiles, weaponAngle } from '../src/game/art.ts';
+import {
+  Art,
+  atlasFiles,
+  RIGS,
+  textureFiles,
+  tipReach,
+  weaponAngle,
+  weaponReach,
+} from '../src/game/art.ts';
 import { seenFromBehind, STRIDE_M, KING_STRIDE_M } from '../src/game/animation.ts';
 
 const art = new Art([
@@ -103,12 +111,31 @@ describe('weapons', () => {
     // A sword painted pointing right and an axe painted pointing up end up the same way.
     const sword = RIGS.knight!;
     const axe = RIGS.raider!;
-    for (const swing of [0, 1])
-      expect(weaponAngle(sword, swing) + sword.points).toBeCloseTo(
-        weaponAngle(axe, swing) + axe.points,
+    for (const act of [-1, 0, 1])
+      expect(weaponAngle(sword, act) + sword.points).toBeCloseTo(
+        weaponAngle(axe, act) + axe.points,
       );
-    expect(weaponAngle(sword, 1)).toBeGreaterThan(weaponAngle(sword, 0));
+    // Raised back over the head on the tell, struck through to forward and down.
+    expect(weaponAngle(sword, -1)).toBeLessThan(-Math.PI / 2);
+    expect(weaponAngle(sword, 1)).toBeGreaterThan(0);
     expect(weaponAngle(RIGS.archer!, 1)).toBe(0);
+  });
+
+  it('levels the spear at its target and drives it well past the body', () => {
+    const spear = RIGS.king!;
+    expect(weaponAngle(spear, 0, 0.4)).toBeLessThan(-0.3); // at the slope at rest
+    expect(weaponAngle(spear, 1, 0.4)).toBeCloseTo(0.4);
+    expect(weaponAngle(spear, -1, -0.6)).toBeCloseTo(-0.6);
+    expect(weaponReach(spear, -1)).toBeLessThan(0); // drawn back
+    expect(weaponReach(spear, 1)).toBeGreaterThan(0.5); // thrust
+    expect(tipReach(spear)).toBeCloseTo(0.58);
+  });
+
+  it('tilts a bow toward its target as it draws, and kicks it back on release', () => {
+    const bow = RIGS.skirmisher!;
+    expect(weaponAngle(bow, 0, 0.5)).toBe(0);
+    expect(weaponAngle(bow, -1, 0.5)).toBeCloseTo(0.5);
+    expect(weaponReach(bow, 1)).toBeLessThan(0);
   });
 });
 
