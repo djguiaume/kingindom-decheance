@@ -1245,16 +1245,6 @@
       "num": 110,
       "asset": "bridge"
     },
-    "cliff_section": {
-      "atlas": "environment",
-      "num": 106,
-      "asset": "cliff_section"
-    },
-    "cliff_end": {
-      "atlas": "environment",
-      "num": 107,
-      "asset": "cliff_end"
-    },
     "lantern_post": {
       "atlas": "environment",
       "num": 96,
@@ -1284,6 +1274,16 @@
       "atlas": "environment",
       "num": 88,
       "asset": "bamboo_single"
+    },
+    "cliff_end": {
+      "atlas": "environment",
+      "num": 107,
+      "asset": "cliff_end"
+    },
+    "cliff_section": {
+      "atlas": "environment",
+      "num": 106,
+      "asset": "cliff_section"
     },
     "shrub": {
       "atlas": "environment",

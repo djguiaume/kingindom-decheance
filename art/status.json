@@ -2,7 +2,7 @@
   "modelId": "model_openai-gpt-image-2-5-flare",
   "referenceAssetId": "asset_RvvNgxiXxMS5HiHWN85YLtqS",
   "referenceSha256": "1ced3f125f8dd4584f33ed856a41dec5b679d0f7b65d0e95681f59689a4f65d8",
-  "spentCU": 3281,
+  "spentCU": 3333,
   "parts": {
     "archer": {
       "state": "validated",
@@ -361,25 +361,25 @@
     },
     "cliff_end": {
       "state": "validated",
-      "attempts": 2,
-      "promptHash": "28f9dd87219b",
-      "jobId": "job_zZPDWq8eNmDAPhfU3njncU3s",
-      "assetId": "asset_dmt5PiKKt5b4qrkQSUD3AqwK",
-      "costCU": 24,
-      "originalSha256": "4a4a3714db81d314840c7340e93527218ddc91a3145a7babb84db76c05ad5d26",
+      "attempts": 4,
+      "promptHash": "dcbd5855e703",
+      "jobId": "job_KuLdvBFtji1YasLqS42ZuBrH",
+      "assetId": "asset_i9F63xtssN8g5KeVuHu5Jc4E",
+      "costCU": 50,
+      "originalSha256": "63042ee47878872850b081c8b8b1435f47c0367ab5b7576d86e8deaf0b071d01",
       "issues": [],
-      "updatedAt": "2026-10-14T19:54:31.466Z"
+      "updatedAt": "2026-10-15T02:48:58.438Z"
     },
     "cliff_section": {
       "state": "validated",
-      "attempts": 2,
-      "promptHash": "d4a8e07c435c",
-      "jobId": "job_umkPCyvSHBpAbucxpcwfHkpK",
-      "assetId": "asset_w5acaNJeiDH9weMryTHu1kuo",
-      "costCU": 24,
-      "originalSha256": "b2027717dc92099b915b9b4754f8f1607563a484a1cdaca26c4552a1fb299f0e",
+      "attempts": 4,
+      "promptHash": "ffbc4566f9fb",
+      "jobId": "job_6PJXRYoNpe3ExJBjx9Grs9LC",
+      "assetId": "asset_bt4yj8HgF7MhwNSWvwv8acLa",
+      "costCU": 50,
+      "originalSha256": "75243ef06f61212460bc1049775a522a8673e2760c2a993a4467476af822f490",
       "issues": [],
-      "updatedAt": "2026-10-14T19:28:03.351Z"
+      "updatedAt": "2026-10-15T02:42:47.372Z"
     },
     "coin": {
       "state": "validated",
