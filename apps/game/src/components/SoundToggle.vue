@@ -5,7 +5,10 @@
  */
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { audio } from '../audio/engine.ts';
+import { useHudStore } from '../stores/hud.ts';
 import GameIcon from './GameIcon.vue';
+
+const store = useHudStore();
 
 const muted = ref(audio.muted);
 const off = audio.onMuted((m) => (muted.value = m));
@@ -27,6 +30,7 @@ onBeforeUnmount(() => {
 <template>
   <button
     class="sound panel round"
+    :class="{ combat: store.hud?.phase === 'night' }"
     :aria-label="muted ? 'Sound off' : 'Sound on'"
     :aria-pressed="!muted"
     data-battlefield-obstacle
@@ -58,5 +62,9 @@ onBeforeUnmount(() => {
   .sound {
     zoom: 1.3;
   }
+}
+/* At night the HUD's top row is compact (B0); the sound button stays level with pause. */
+.sound.combat {
+  zoom: 1;
 }
 </style>
