@@ -1,9 +1,9 @@
 <template>
   <section class="home" :class="{ painted: !!backdropUrl }" :style="backdrop">
     <div class="menu">
-      <div class="logo" aria-label="Throne falling">
-        <span class="t1 display">Throne<ArtSprite name="crown" icon="crown" class="tipped" /></span>
-        <span class="t2">falling</span>
+      <div class="logo" aria-label="Kingdom Déchéance">
+        <span class="t1 display">Kingdom<ArtSprite name="crown" icon="crown" class="tipped" /></span>
+        <span class="t2">Déchéance</span>
       </div>
       <p class="tagline">
         Build by day, defend by night. Greyhollow: six nights, three roads and an open sky.
