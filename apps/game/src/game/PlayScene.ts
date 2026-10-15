@@ -1150,7 +1150,7 @@ export class PlayScene extends Phaser.Scene {
     const weapon = () => {
       const im = this.image(rig.frame, at.x, at.y, w)
         .setOrigin(rig.grip[0], rig.grip[1])
-        .setScale(w * f, w)
+        .setScale(w * f * (rig.mirror ? -1 : 1), w)
         .setRotation(f * (angle + lean))
         .setAlpha(alpha);
       if (pose.flash > 0) this.painter.whiteout(im, pose.flash * 0.8);

@@ -95,6 +95,11 @@ export interface WeaponRig {
   length: number;
   /** Where it is held, when not the front hand (HAND): forward and up, fractions of the body. */
   hand?: [number, number];
+  /**
+   * Drawn mirrored: the bows were painted with the string on the right, so as painted the bow's
+   * belly faced away from the target. Mirrored, the string is on the archer's side.
+   */
+  mirror?: true;
 }
 
 /**
@@ -118,6 +123,7 @@ export const RIGS: Record<string, WeaponRig> = {
     points: UP,
     kind: 'aim',
     length: 1.0,
+    mirror: true,
   },
   footman: {
     frame: 'footman_weapon',
@@ -127,7 +133,14 @@ export const RIGS: Record<string, WeaponRig> = {
     length: 0.9,
   },
   knight: { frame: 'knight_weapon', grip: [0.24, 0.5], points: 0, kind: 'swing', length: 0.8 },
-  archer: { frame: 'archer_weapon', grip: [0.5, 0.5], points: UP, kind: 'aim', length: 0.75 },
+  archer: {
+    frame: 'archer_weapon',
+    grip: [0.5, 0.5],
+    points: UP,
+    kind: 'aim',
+    length: 0.75,
+    mirror: true,
+  },
   crossbowman: {
     frame: 'crossbowman_weapon',
     grip: [0.4, 0.55],
@@ -142,6 +155,7 @@ export const RIGS: Record<string, WeaponRig> = {
     points: UP,
     kind: 'aim',
     length: 0.75,
+    mirror: true,
   },
   brute: { frame: 'brute_weapon', grip: [0.14, 0.5], points: 0, kind: 'swing', length: 0.85 },
   // Carried in the talons, below the body.

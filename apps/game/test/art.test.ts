@@ -195,3 +195,10 @@ describe('king art actions', () => {
     expect(walk(0.4)).toBe('king_roll_walk.f1');
   });
 });
+
+describe('bows', () => {
+  it('are mirrored so the string is on the archer’s side; the crossbow is not', () => {
+    for (const id of ['archer', 'skirmisher', 'king_longbow']) expect(RIGS[id]!.mirror).toBe(true);
+    expect(RIGS.crossbowman!.mirror).toBeUndefined();
+  });
+});
