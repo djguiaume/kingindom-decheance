@@ -2,7 +2,9 @@
   <section class="home" :class="{ painted: !!backdropUrl }" :style="backdrop">
     <div class="menu">
       <div class="logo" aria-label="Kingdom Déchéance">
-        <span class="t1 display">Kingdom<ArtSprite name="crown" icon="crown" class="tipped" /></span>
+        <span class="t1 display"
+          >Kingdom<ArtSprite name="crown" icon="crown" class="tipped"
+        /></span>
         <span class="t2">Déchéance</span>
       </div>
       <p class="tagline">
