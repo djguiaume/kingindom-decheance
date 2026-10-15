@@ -32,14 +32,9 @@ import {
 } from './animation.ts';
 import { Art, ART_PX_PER_M, CATAPULT_ARM, HAND, loadArt, weaponAngle } from './art.ts';
 import { Painter } from './painter.ts';
+import { addCliffs, CLIFF_TEXTURE, type CliffSprite } from './cliffs.ts';
 import { bobHeight, shadow, spriteFor } from './sprites.ts';
-import {
-  addPaintedTerrain,
-  drawTerrain,
-  paintedPropFrame,
-  propNeedsDepth,
-  terrainSamples,
-} from './terrain.ts';
+import { addPaintedTerrain, drawTerrain, paintedPropFrame, propNeedsDepth } from './terrain.ts';
 import { emptyPlotIds, gateIsOpen, projectileFrame } from './presentation.ts';
 import { gatePlacement, gateView, GATE_RIGS, groundOrigin } from './groundRigs.ts';
 
@@ -110,6 +105,8 @@ export class PlayScene extends Phaser.Scene {
   private session: GameRuntime['session'] | null = null;
   private paintedPropKinds = new Set<string>();
   private paintedCliffs = false;
+  /** The painted cliffs, cut into pieces that sort with everything standing up. */
+  private cliffPieces: CliffSprite[] = [];
 
   constructor(
     private readonly runtime: GameRuntime,
@@ -302,7 +299,8 @@ export class PlayScene extends Phaser.Scene {
         .filter((prop) => paintedPropFrame(this.art, prop.kind))
         .map((prop) => prop.kind),
     );
-    this.paintedCliffs = this.art.has('cliff_section');
+    this.cliffPieces = addCliffs(this, ctx.map, this.art) ?? [];
+    this.paintedCliffs = this.cliffPieces.length > 0 || ctx.map.terrain.cliffs.length === 0;
     drawTerrain(g, ctx.map, {
       water: !painted.water,
       bridges: !painted.bridges,
@@ -391,17 +389,27 @@ export class PlayScene extends Phaser.Scene {
 
     // Everything that stands up is drawn back to front (painter's order by ground y).
     const items: { y: number; draw: () => void }[] = [];
-    if (this.paintedCliffs) {
-      const frame = this.art.still('cliff_section')!;
-      for (const cliff of ctx.map.terrain.cliffs) {
-        for (const at of terrainSamples(cliff.points, 3.2)) {
-          const p = this.px({ x: at[0], y: at[1] });
-          items.push({
-            y: p.y,
-            draw: () => this.image(frame, p.x, p.y, ART_SCALE * 0.82),
-          });
-        }
-      }
+    // The king's body (a little above his feet), to see him through buildings in front of him.
+    const kingAt = state.king.alive ? this.px(this.runtime.drawPos('king', state.king.pos)) : null;
+    if (kingAt) kingAt.y -= SCALE * 0.6;
+    for (const piece of this.cliffPieces) {
+      // The cliff turns see-through where the king walks behind it, as buildings do.
+      const hides =
+        kingAt !== null &&
+        kingAt.y < piece.sortY &&
+        kingAt.x >= piece.x &&
+        kingAt.x <= piece.x + piece.w &&
+        kingAt.y >= piece.y &&
+        kingAt.y <= piece.y + piece.h;
+      items.push({
+        y: piece.sortY,
+        draw: () =>
+          this.painter
+            .image(CLIFF_TEXTURE, piece.frame)
+            .setOrigin(0, 0)
+            .setPosition(piece.x, piece.y)
+            .setAlpha(hides ? SEE_THROUGH : 1),
+      });
     }
     for (const prop of ctx.map.terrain.props) {
       if (this.paintedPropKinds.has(prop.kind) && propNeedsDepth(prop.kind)) {
@@ -414,9 +422,6 @@ export class PlayScene extends Phaser.Scene {
         });
       }
     }
-    // The king's body (a little above his feet), to see him through buildings in front of him.
-    const kingAt = state.king.alive ? this.px(this.runtime.drawPos('king', state.king.pos)) : null;
-    if (kingAt) kingAt.y -= SCALE * 0.6;
     /** Health bars go over everything, after the sorted items. */
     const bars: (() => void)[] = [];
     const now = this.animationNow;

@@ -305,14 +305,21 @@ recipe for `{ url: 'sfx/….ogg' }` and nothing else changes. Music is three syn
 - Path rendering accepts every segment angle and both directions. Water keeps a narrow stone
   bank at its actual blocker boundary. Bridges select the nearest front/diagonal/side painting
   from their endpoints and scale to the declared span.
-- Cliff-section art is sampled along each declared cliff polyline at a bounded spacing. Tall
-  scenery uses atlas pivots and joins actors/buildings in ground-y depth sorting, so a king can
-  walk in front of or behind a tree. Ground-level grass, flowers, rocks and supplies stay in the
+- Cliffs (`game/cliffs.ts`, F22) are raised from each declared cliff line, for any map: a grass
+  top covering exactly the strip the core blocks, and a rock face, built from `cliff_section`'s
+  painted lip and rock, dropping 2.2 m wherever the edge faces the camera. Bends, rings and round
+  ends follow the line in every direction. The relief is painted once, then cut across the line
+  into pieces of at most 1.5 m, packed in one texture, that join the ground-y depth sort; the king
+  sees through a piece he walks behind. The contact shadow is baked into the ground canvas.
+- Tall scenery uses atlas pivots and joins actors/buildings in ground-y depth sorting, so a king
+  can walk in front of or behind a tree. Ground-level grass, flowers, rocks and supplies stay in the
   static layer to avoid needless per-frame work.
-- The reviewed inventory contains two mislabeled images: `grass_patch` is a panda guard and
-  `cliff_end` is a watchtower. The game does not show either under the wrong meaning; grass
-  patches retain their procedural fallback and cliffs use the repeatable section until corrected
-  art exists.
+- The reviewed inventory's `grass_patch` is a panda guard, so grass patches keep their
+  procedural fallback. `cliff_end` was repainted as a ramp but is not needed: cliff ends are
+  rounded like the blocked capsule.
+- F09 audit (2026-10-15): every Greyhollow blocker is natural (cliff or water) and now drawn over
+  exactly the ground it blocks; the man-made barriers are the buyable walls in the three passes,
+  which already have wall art and gates. No collision or balance data changed.
 
 ## Not built yet
 
