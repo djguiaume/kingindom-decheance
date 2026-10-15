@@ -74,6 +74,14 @@ const REACH_SLACK = 0.3;
 /** A body that does not move with an attack (the king mid-roll). */
 const STILL: BodyMotion = { lean: 0, shift: 0, lift: 0, stretch: 1, squash: 1 };
 const SHOT_MS = 180;
+/**
+ * How fast the king's bow arrows are drawn flying, in metres a second. His hits land at once
+ * in the core; flown at a tower bolt's speed they crossed 7 m in a few frames and nobody saw
+ * them, so they fly at about an archer's pace (a quarter of a second at his full range).
+ */
+const KING_ARROW_SPEED = 28;
+/** The king's arrows are drawn bigger than an archer's: they are the hero's shots. */
+const KING_ARROW_SIZE = 1.6;
 const DOUBLE_TAP_MS = 300;
 /** How far the camera looks ahead of a moving king, and how quickly it gets there. */
 const LEAD_PX = 2.5 * SCALE;
@@ -112,7 +120,7 @@ const SEE_THROUGH = 0.45;
 /** How long the ring of a boss stomp stays visible. */
 const STOMP_MS = 350;
 /** How long the Longbow king's volley streaks fly. */
-const VOLLEY_MS = 300;
+const VOLLEY_MS = 450;
 /** Length of a drawn arrow, in ticks of its flight (it looks about 1 m long at archer speed). */
 const ARROW_LENGTH = 4;
 /** How long the dust of a shot that missed stays visible. */
@@ -127,6 +135,8 @@ interface Flash {
   /** Towers and the castle fire a visible bolt; everyone else shows a short strike line. */
   shot: boolean;
   source: string;
+  /** How long it is drawn. */
+  ms: number;
 }
 
 export class PlayScene extends Phaser.Scene {
@@ -237,12 +247,18 @@ export class PlayScene extends Phaser.Scene {
           e.attacker.kind === 'building' ||
           e.attacker.kind === 'castle' ||
           (e.attacker.kind === 'king' && styleOf(this.kingGear) === 'shoot');
+        const metres = Math.hypot(to.x - from.x, (to.y - from.y) / SQUASH) / SCALE;
         this.flashes.push({
           from,
           to,
           start: this.animationNow,
           shot,
           source: this.sourceType(e.attacker),
+          ms: !shot
+            ? HIT_FLASH_MS
+            : e.attacker.kind === 'king'
+              ? Math.max(SHOT_MS, (metres / KING_ARROW_SPEED) * 1000)
+              : SHOT_MS,
         });
       }
     });
@@ -639,21 +655,31 @@ export class PlayScene extends Phaser.Scene {
     this.drawProjectiles();
     g = this.dynamic;
 
-    // The volley: pale arrow streaks fanning out over the cone, flying to the end of its range.
+    // The volley: arrows fanning out over the cone, arcing to the end of its range.
     this.volleys = this.volleys.filter((v) => now - v.start < VOLLEY_MS);
     for (const v of this.volleys) {
       const t = (now - v.start) / VOLLEY_MS;
       const facing = Math.atan2(v.dir.y, v.dir.x);
       const half = (v.cone / 2) * (Math.PI / 180);
-      g.lineStyle(3, 0xe8d9b0, 1 - t * 0.6);
+      const lift = (u: number) => SCALE * (0.9 - 0.6 * u + 1.2 * Math.sin(Math.PI * u));
       for (let i = 0; i < v.arrows; i++) {
         const a = facing - half + (2 * half * i) / Math.max(1, v.arrows - 1);
-        const at = (r: number) =>
-          this.px({ x: v.from.x + Math.cos(a) * r, y: v.from.y + Math.sin(a) * r });
-        const head = at(v.range * t);
-        const tail = at(Math.max(0, v.range * t - 1.2));
-        const lift = SCALE * 0.9;
-        g.lineBetween(tail.x, tail.y - lift, head.x, head.y - lift);
+        const at = (u: number) =>
+          this.px({
+            x: v.from.x + Math.cos(a) * v.range * u,
+            y: v.from.y + Math.sin(a) * v.range * u,
+          });
+        const back = Math.max(0, t - 0.12);
+        const ground = at(t);
+        const tail = at(back);
+        this.drawArrow(
+          ground,
+          { x: ground.x, y: ground.y - lift(t) },
+          { x: tail.x, y: tail.y - lift(back) },
+          false,
+          'arrow',
+          KING_ARROW_SIZE,
+        );
       }
     }
     this.stomps = this.stomps.filter((st) => now - st.start < STOMP_MS);
@@ -670,7 +696,7 @@ export class PlayScene extends Phaser.Scene {
       g.fillStyle(0xd8cfb8, 0.6 * (1 - t));
       g.fillEllipse(p.at.x, p.at.y, SCALE * (0.4 + 0.8 * t), SCALE * (0.4 + 0.8 * t) * SQUASH);
     }
-    this.flashes = this.flashes.filter((f) => now - f.start < (f.shot ? SHOT_MS : HIT_FLASH_MS));
+    this.flashes = this.flashes.filter((f) => now - f.start < f.ms);
     for (const f of this.flashes) {
       g = this.dynamic;
       if (!f.shot) {
@@ -698,7 +724,28 @@ export class PlayScene extends Phaser.Scene {
       }
       // A bolt flies from the top of the tower (or the king's bow) to the target. The damage is
       // already dealt in the core; this only shows where it came from.
-      const t = (now - f.start) / SHOT_MS;
+      const t = (now - f.start) / f.ms;
+      if (f.source === 'king') {
+        // The king's arrow: drawn like an archer's, low over the ground with a slight arc.
+        const ground = {
+          x: f.from.x + (f.to.x - f.from.x) * t,
+          y: f.from.y + (f.to.y - f.from.y) * t,
+        };
+        const lift = (u: number) => SCALE * (0.9 - 0.3 * u + 0.5 * Math.sin(Math.PI * u));
+        const back = Math.max(0, t - 0.15);
+        this.drawArrow(
+          ground,
+          { x: ground.x, y: ground.y - lift(t) },
+          {
+            x: f.from.x + (f.to.x - f.from.x) * back,
+            y: f.from.y + (f.to.y - f.from.y) * back - lift(back),
+          },
+          false,
+          'arrow',
+          KING_ARROW_SIZE,
+        );
+        continue;
+      }
       const ax = f.from.x;
       const ay = f.from.y - SCALE * (f.source === 'king' ? 0.9 : 1.8);
       const bx = f.to.x;
@@ -1035,6 +1082,51 @@ export class PlayScene extends Phaser.Scene {
     g.fillEllipse(x, y, SCALE * 0.5, SCALE * 0.2);
   }
 
+  /**
+   * One arrow in flight: its shadow on the ground below, so the player sees where it is going,
+   * and the shaft from tail to head. The player's own arrows are tinted pale, so they never
+   * read as shots to dodge.
+   */
+  private drawArrow(
+    ground: { x: number; y: number },
+    head: { x: number; y: number },
+    tail: { x: number; y: number },
+    enemy: boolean,
+    frame: string = 'arrow',
+    size = 1,
+  ): void {
+    const g = this.dynamic;
+    g.fillStyle(0x000000, 0.3);
+    g.fillEllipse(ground.x, ground.y, SCALE * 0.35, SCALE * 0.18);
+    const a = Math.atan2(head.y - tail.y, head.x - tail.x);
+    const arrow = this.art.still(frame);
+    if (size > 1) {
+      // A big arrow (the king's) leaves a faint streak, so a fast shot still reads.
+      g.lineStyle(2, 0xf4ecd6, 0.5);
+      g.lineBetween(tail.x, tail.y, head.x, head.y);
+    }
+    if (arrow) {
+      // The painted arrow's tip is its right end.
+      this.image(arrow, head.x, head.y, ART_SCALE * size)
+        .setOrigin(0.85, 0.5)
+        .setRotation(a)
+        .setTint(enemy ? 0xffffff : 0xc7dcff);
+      return;
+    }
+    g.lineStyle(4, enemy ? 0x3a2a1a : 0xe8d9b0, 1);
+    g.lineBetween(tail.x, tail.y, head.x, head.y);
+    const hs = SCALE * 0.3;
+    g.fillStyle(0xf2f2f2, 1);
+    g.fillTriangle(
+      head.x + Math.cos(a) * hs,
+      head.y + Math.sin(a) * hs,
+      head.x + Math.cos(a + 2.5) * hs * 0.7,
+      head.y + Math.sin(a + 2.5) * hs * 0.7,
+      head.x + Math.cos(a - 2.5) * hs * 0.7,
+      head.y + Math.sin(a - 2.5) * hs * 0.7,
+    );
+  }
+
   /** Enemy shots in flight: arrows fly flat and fast, catapult stones arc with a landing shadow. */
   private drawProjectiles(): void {
     const boulder = this.art.still('boulder');
@@ -1073,32 +1165,13 @@ export class PlayScene extends Phaser.Scene {
         x: p.from.x + (p.to.x - p.from.x) * t,
         y: p.from.y + (p.to.y - p.from.y) * t,
       });
-      g.fillStyle(0x000000, 0.3);
-      g.fillEllipse(ground.x, ground.y, SCALE * 0.35, SCALE * 0.18);
-      const head = at(t);
       const tail = at(Math.max(0, t - ARROW_LENGTH / Math.max(1, p.flight)));
-      const arrow = this.art.still(projectileFrame(this.shooters.get(p.id) ?? ''));
-      if (arrow) {
-        // The painted arrow's tip is its right end.
-        this.image(arrow, head.x, head.y, ART_SCALE)
-          .setOrigin(0.85, 0.5)
-          .setRotation(Math.atan2(head.y - tail.y, head.x - tail.x))
-          .setTint(p.attacker.kind === 'enemy' ? 0xffffff : 0xc7dcff);
-        continue;
-      }
-      // The player's own archers shoot pale arrows, so they never read as shots to dodge.
-      g.lineStyle(4, p.attacker.kind === 'enemy' ? 0x3a2a1a : 0xe8d9b0, 1);
-      g.lineBetween(tail.x, tail.y, head.x, head.y);
-      const a = Math.atan2(head.y - tail.y, head.x - tail.x);
-      const hs = SCALE * 0.3;
-      g.fillStyle(0xf2f2f2, 1);
-      g.fillTriangle(
-        head.x + Math.cos(a) * hs,
-        head.y + Math.sin(a) * hs,
-        head.x + Math.cos(a + 2.5) * hs * 0.7,
-        head.y + Math.sin(a + 2.5) * hs * 0.7,
-        head.x + Math.cos(a - 2.5) * hs * 0.7,
-        head.y + Math.sin(a - 2.5) * hs * 0.7,
+      this.drawArrow(
+        ground,
+        at(t),
+        tail,
+        p.attacker.kind === 'enemy',
+        projectileFrame(this.shooters.get(p.id) ?? ''),
       );
     }
     // Forget shooters of shots that are no longer flying (landed on a target).

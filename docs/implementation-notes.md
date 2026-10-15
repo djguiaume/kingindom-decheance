@@ -331,6 +331,11 @@ balance are untouched.
   pose, the royal bow layer; 169 CU of the 300 approved). The Volley plays its pose for
   `SHOOT_MS` (the bow is painted in it, so no weapon layer) and a fan of arrow streaks; his
   normal shots draw as arrows from the bow. Sound: bow release on the Volley, arrow impacts on hits.
+- **Visible arrows** (Guillaume, 2026-10-15: "no visible arrows"): drawn at a tower bolt's
+  0.18 s, his arrows crossed 7 m in a few frames at archer size and nobody saw them. They now
+  fly at 28 m/s (0.25 s at full range, while the damage still lands at once in the core), drawn
+  1.6x an archer's arrow with a faint streak and a ground shadow. The Volley draws seven real
+  arrows arcing over the cone for 0.45 s instead of thin lines.
 - **Sim**, balanced bot, 100 runs: Panda King 95%, Wolf Rider 93%, Longbow King 100% (5 arrows
   at 20 or 25 damage: still 100%). The bot cannot tell these apart; the end-of-Stage-A
   balancing pass decides with a harder baseline.
