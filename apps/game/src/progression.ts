@@ -37,8 +37,6 @@ export interface RunEntry {
 
 /** The choices of the run setup screen (13 §6.1), remembered for the next run. */
 export interface RunSetup {
-  /** The king's weapon. Absent in profiles saved before the Longbow, and on a first launch. */
-  weaponId?: string;
   /** Starting perks, at most STARTING_PERK_SLOTS (13 §4). */
   perkIds: string[];
   mutatorIds: string[];
@@ -111,11 +109,10 @@ export function isUnlocked(_profile: Profile, _entry: { unlock?: { level: number
 export function runSetup(
   profile: Profile,
   content: {
-    weapons: readonly { id: string; unlock?: { level: number } }[];
     mutators: readonly { id: string; unlock?: { level: number } }[];
     perks: readonly { id: string; unlock?: { level: number } }[];
   },
-): Required<RunSetup> {
+): RunSetup {
   type Entry = { id: string; unlock?: { level: number } };
   const keep = (ids: readonly string[] | undefined, list: readonly Entry[]) => [
     ...new Set(
@@ -125,13 +122,7 @@ export function runSetup(
       }),
     ),
   ];
-  // The first weapon in the content (the Spear) when the saved one is gone or locked.
-  const [weaponId = content.weapons[0]!.id] = keep(
-    profile.lastSetup.weaponId ? [profile.lastSetup.weaponId] : [],
-    content.weapons,
-  );
   return {
-    weaponId,
     perkIds: keep(profile.lastSetup.perkIds, content.perks).slice(0, STARTING_PERK_SLOTS),
     mutatorIds: keep(profile.lastSetup.mutatorIds, content.mutators),
   };

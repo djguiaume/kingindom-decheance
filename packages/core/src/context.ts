@@ -55,7 +55,7 @@ export interface LaneInfo {
 export interface GameContext {
   contentHash: string;
   map: GameMap;
-  /** The run's weapon, picked in RunConfig: the king never hard-codes one. */
+  /** The selected king's weapon (king.json `weapon`). */
   weapon: Weapon;
   king: KingSettings;
   /** Stable id selected in RunConfig and recorded in the run state/replay. */
@@ -99,7 +99,6 @@ export interface GameContext {
 
 export interface RunConfig {
   mapId: string;
-  weaponId: string;
   /** Defaults to the catalog's default king for old replays and direct callers. */
   kingId?: string;
   seed: number;
@@ -115,11 +114,11 @@ export const STARTING_PERK_SLOTS = 3;
 export function createContext(bundle: ContentBundle, config: RunConfig): GameContext {
   const map = bundle.maps.find((m) => m.id === config.mapId);
   if (!map) throw new Error(`Unknown map "${config.mapId}"`);
-  const weapon = bundle.weapons.find((w) => w.id === config.weaponId);
-  if (!weapon) throw new Error(`Unknown weapon "${config.weaponId}"`);
   const kingId = config.kingId ?? bundle.defaultKing;
   const king = bundle.kings.find((k) => k.id === kingId);
   if (!king) throw new Error(`Unknown king "${kingId}"`);
+  // The weapon comes with the king (validated with the content).
+  const weapon = req(new Map(bundle.weapons.map((w) => [w.id, w])), king.weapon);
   const mutators = (config.mutatorIds ?? []).map((id) => {
     const m = bundle.mutators.find((x) => x.id === id);
     if (!m) throw new Error(`Unknown mutator "${id}"`);
@@ -177,7 +176,6 @@ export function createContext(bundle: ContentBundle, config: RunConfig): GameCon
     ...bundle.castle.perks,
     ...bundle.mutators,
     ...bundle.perks,
-    ...bundle.weapons,
   ]);
   if (wrong.length > 0)
     throw new Error(`Perk or mutator stats that reach nothing: ${wrong.join(', ')}`);
@@ -234,8 +232,6 @@ function tunablesFor(
     },
     rules: { ...BASE_RULES },
   });
-  // The weapon's own king changes (the Longbow's lower HP) come first, like a base stat.
-  for (const mod of weapon.modifiers) applyModifier(t, mod, night);
   for (const m of ctx.mutators) {
     t.rules.scoreMultiplier += m.scoreBonus;
     for (const mod of m.modifiers) applyModifier(t, mod, night);

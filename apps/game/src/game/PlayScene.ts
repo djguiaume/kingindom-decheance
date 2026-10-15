@@ -15,6 +15,7 @@ import {
   WALL_HALF_SPAN,
   wallLine,
   type BuildingState,
+  type GameEvent,
   type Ref,
   type Vec,
 } from '@kd/core';
@@ -92,6 +93,8 @@ const SEE_THROUGH = 0.45;
 
 /** How long the ring of a boss stomp stays visible. */
 const STOMP_MS = 350;
+/** How long the Longbow king's volley streaks fly. */
+const VOLLEY_MS = 300;
 /** Length of a drawn arrow, in ticks of its flight (it looks about 1 m long at archer speed). */
 const ARROW_LENGTH = 4;
 /** How long the dust of a shot that missed stays visible. */
@@ -122,6 +125,7 @@ export class PlayScene extends Phaser.Scene {
   /** Warm lights to add over this frame's scene, in scene pixels. */
   private glows: { frame: string; x: number; y: number; scale: number; alpha: number }[] = [];
   private stomps: { at: { x: number; y: number }; radius: number; start: number }[] = [];
+  private volleys: (Extract<GameEvent, { type: 'volley' }> & { start: number })[] = [];
   private puffs: { at: { x: number; y: number }; start: number }[] = [];
   /** Who fired each shot in flight (the shooter may die before it lands). */
   private shooters = new Map<number, string>();
@@ -191,6 +195,10 @@ export class PlayScene extends Phaser.Scene {
             });
           continue;
         }
+        if (e.type === 'volley') {
+          this.volleys.push({ ...e, start: this.animationNow });
+          continue;
+        }
         if (e.type === 'fired') {
           this.shooters.set(e.id, this.sourceType(e.attacker));
           continue;
@@ -229,6 +237,7 @@ export class PlayScene extends Phaser.Scene {
       this.kingActions = new KingActions();
       this.flashes = [];
       this.stomps = [];
+      this.volleys = [];
       this.puffs = [];
       this.shooters.clear();
       this.animationNow = 0;
@@ -611,6 +620,23 @@ export class PlayScene extends Phaser.Scene {
     this.drawProjectiles();
     g = this.dynamic;
 
+    // The volley: pale arrow streaks fanning out over the cone, flying to the end of its range.
+    this.volleys = this.volleys.filter((v) => now - v.start < VOLLEY_MS);
+    for (const v of this.volleys) {
+      const t = (now - v.start) / VOLLEY_MS;
+      const facing = Math.atan2(v.dir.y, v.dir.x);
+      const half = (v.cone / 2) * (Math.PI / 180);
+      g.lineStyle(3, 0xe8d9b0, 1 - t * 0.6);
+      for (let i = 0; i < v.arrows; i++) {
+        const a = facing - half + (2 * half * i) / Math.max(1, v.arrows - 1);
+        const at = (r: number) =>
+          this.px({ x: v.from.x + Math.cos(a) * r, y: v.from.y + Math.sin(a) * r });
+        const head = at(v.range * t);
+        const tail = at(Math.max(0, v.range * t - 1.2));
+        const lift = SCALE * 0.9;
+        g.lineBetween(tail.x, tail.y - lift, head.x, head.y - lift);
+      }
+    }
     this.stomps = this.stomps.filter((st) => now - st.start < STOMP_MS);
     for (const st of this.stomps) {
       const t = (now - st.start) / STOMP_MS;

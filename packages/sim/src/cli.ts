@@ -13,7 +13,6 @@ const { values } = parseArgs({
   options: {
     policy: { type: 'string', default: 'greedy' },
     map: { type: 'string', default: prototypeRun.mapId },
-    weapon: { type: 'string', default: prototypeRun.weaponId },
     king: { type: 'string', default: prototypeRun.kingId },
     runs: { type: 'string', default: '100' },
     seed: { type: 'string', default: '1' },
@@ -49,7 +48,6 @@ const summaries = [];
 for (let i = 0; i < runs; i++) {
   const config = {
     mapId: values.map,
-    weaponId: values.weapon,
     kingId: values.king,
     seed: firstSeed + i,
     mutatorIds,

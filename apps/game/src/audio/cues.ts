@@ -207,6 +207,9 @@ export function cuesFor(
       case 'stomp':
         add('stomp', near({ kind: 'enemy', id: e.enemy }));
         break;
+      case 'volley':
+        add('bowRelease');
+        break;
       case 'kingRespawned':
         add('respawn');
         break;

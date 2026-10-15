@@ -1,7 +1,7 @@
 {
   "$schema": "../schema/weapons.schema.json",
   "schemaVersion": 1,
-  "notes": "Prototype design 11 §5. The run's weapon is picked in RunConfig; more weapons are new entries here.",
+  "notes": "Prototype design 11 §5. Each king carries one weapon (king.json `weapon`); a new weapon is a new entry here.",
   "weapons": [
     {
       "id": "spear",
@@ -13,26 +13,17 @@
         "arc": 90,
         "maxTargets": 3,
         "targets": ["ground", "air"]
-      },
-      "description": "Hits up to 3 enemies in front of the king."
+      }
     },
     {
       "id": "longbow",
       "name": "Longbow",
-      "description": "Shoots one enemy up to 7 m away, flyers too. King HP −20%.",
       "attack": {
         "damage": 40,
         "interval": 0.7,
         "range": 7,
         "targets": ["ground", "air"]
-      },
-      "modifiers": [
-        {
-          "stat": "king.hp",
-          "op": "mul",
-          "value": 0.8
-        }
-      ]
+      }
     }
   ]
 }

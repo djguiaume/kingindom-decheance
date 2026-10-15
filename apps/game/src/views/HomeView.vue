@@ -41,9 +41,7 @@
         <span class="kicker">Your king</span>
         <b class="display">{{ selectedKing.name }}</b>
         <small>{{ selectedKing.description }}</small>
-        <small class="ability" data-testid="king-loadout"
-          >{{ selectedKing.ability.name }} · {{ selectedWeapon.name }}</small
-        >
+        <small class="ability">{{ selectedKing.ability.name }}</small>
         <small v-if="best !== null" class="best" data-testid="home-best"
           >Best on Greyhollow: {{ best }}</small
         >
@@ -65,13 +63,9 @@
           <KingPicker
             :kings="prototypeContent.kings"
             :model-value="kingId"
-            :is-unlocked="(entry) => isUnlocked(profile, entry)"
-            :weapons="weapons"
-            :weapon-id="setup.weaponId"
+            :is-unlocked="(king) => isUnlocked(profile, king)"
             @update:model-value="selectKing"
-            @update:weapon-id="selectWeapon"
           />
-          <button class="primary done" data-testid="king-done" @click="sheet = null">Done</button>
         </template>
         <template v-else-if="sheet === 'how'">
           <h2 class="display">How to play</h2>
@@ -251,20 +245,14 @@ const selectedKing = computed(
 function selectKing(id: string): void {
   kingId.value = id;
   saveSelectedKingId(id);
-}
-/** The weapon is saved with the run setup, at once: the king menu has no Start button. */
-function selectWeapon(weaponId: string): void {
-  const saved = loadProfile();
-  profile.value = { ...saved, lastSetup: { ...saved.lastSetup, weaponId } };
-  saveProfile(profile.value);
+  sheet.value = null;
 }
 
 // The run setup (13 §6.1). Play starts with the remembered setup; a first launch has none.
-const { weapons, mutators, perks } = prototypeContent;
+const { mutators, perks } = prototypeContent;
 const named = <T extends { id: string }>(list: readonly T[], ids: readonly string[]) =>
   list.filter((x) => ids.includes(x.id));
 const setup = computed(() => runSetup(profile.value, prototypeContent));
-const selectedWeapon = computed(() => weapons.find((w) => w.id === setup.value.weaponId)!);
 /** What Play will start with, in one line under the button. */
 const setupLine = computed(() => {
   const parts = [...named(perks, setup.value.perkIds), ...named(mutators, setup.value.mutatorIds)];
@@ -291,11 +279,7 @@ function openSetup(): void {
   sheet.value = 'setup';
 }
 function startRun(): void {
-  const lastSetup = {
-    weaponId: setup.value.weaponId,
-    perkIds: [...draftPerks.value],
-    mutatorIds: [...draftMutators.value],
-  };
+  const lastSetup = { perkIds: [...draftPerks.value], mutatorIds: [...draftMutators.value] };
   profile.value = { ...loadProfile(), lastSetup };
   saveProfile(profile.value);
   void router.push('/play');
@@ -510,10 +494,6 @@ const backdrop = computed(() =>
   align-items: stretch;
   padding: 24px 28px 28px;
   text-align: left;
-}
-.king-sheet .done {
-  align-self: flex-end;
-  min-width: 140px;
 }
 .king-sheet :deep(.heading) {
   padding-right: 36px;

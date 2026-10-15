@@ -9,7 +9,7 @@ import { BASE_RULES } from './modifiers.ts';
 import { req, syncContext, type GameContext } from './context.ts';
 import type { GameEvent } from './events.ts';
 import type { BuildingState, GameState } from './state.ts';
-import { startDash } from './systems/king.ts';
+import { useAbility } from './systems/king.ts';
 import { refitHealth, startNight } from './systems/phase.ts';
 import { dist } from './vec.ts';
 
@@ -162,7 +162,7 @@ export function applyCommand(state: GameState, ctx: GameContext, cmd: Command): 
         if (!Number.isFinite(len)) return fail('invalid direction');
         if (len > 0) king.facing = { x: x / len, y: y / len };
       }
-      startDash(state, ctx);
+      useAbility(state, ctx, events);
       return { ok: true, events };
     }
 
