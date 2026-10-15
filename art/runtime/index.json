@@ -7,6 +7,19 @@
       "json": "kings.json",
       "frames": [
         "king_crown",
+        "king_longbow_bow",
+        "king_longbow_idle",
+        "king_longbow_idle.back",
+        "king_longbow_volley.f1",
+        "king_longbow_volley.f2",
+        "king_longbow_walk.back.f1",
+        "king_longbow_walk.back.f2",
+        "king_longbow_walk.back.f3",
+        "king_longbow_walk.back.f4",
+        "king_longbow_walk.f1",
+        "king_longbow_walk.f2",
+        "king_longbow_walk.f3",
+        "king_longbow_walk.f4",
         "king_portrait",
         "king_roll_anticipate",
         "king_roll_idle",
@@ -322,6 +335,12 @@
       "asset": "king_portrait",
       "contentId": "king"
     },
+    "king_longbow_bow": {
+      "atlas": "kings",
+      "num": 127,
+      "asset": "king_longbow_bow",
+      "contentId": "king"
+    },
     "king_wolf_walk.f1": {
       "atlas": "kings",
       "num": 8,
@@ -460,6 +479,12 @@
       "asset": "king_wolf_impact_fx",
       "contentId": "king"
     },
+    "king_longbow_volley.f2": {
+      "atlas": "kings",
+      "num": 126,
+      "asset": "king_longbow_volley",
+      "contentId": "king"
+    },
     "king_roll_uncurl.f2": {
       "atlas": "kings",
       "num": 6,
@@ -470,6 +495,12 @@
       "atlas": "kings",
       "num": 6,
       "asset": "king_roll_uncurl",
+      "contentId": "king"
+    },
+    "king_longbow_volley.f1": {
+      "atlas": "kings",
+      "num": 126,
+      "asset": "king_longbow_volley",
       "contentId": "king"
     },
     "king_roll_walk.f4": {
@@ -490,6 +521,24 @@
       "asset": "king_roll_walk",
       "contentId": "king"
     },
+    "king_longbow_walk.f4": {
+      "atlas": "kings",
+      "num": 125,
+      "asset": "king_longbow_walk",
+      "contentId": "king"
+    },
+    "king_longbow_walk.f1": {
+      "atlas": "kings",
+      "num": 125,
+      "asset": "king_longbow_walk",
+      "contentId": "king"
+    },
+    "king_longbow_idle": {
+      "atlas": "kings",
+      "num": 124,
+      "asset": "king_longbow_idle",
+      "contentId": "king"
+    },
     "king_roll_walk.f1": {
       "atlas": "kings",
       "num": 2,
@@ -500,6 +549,24 @@
       "atlas": "kings",
       "num": 1,
       "asset": "king_roll_idle",
+      "contentId": "king"
+    },
+    "king_longbow_walk.f3": {
+      "atlas": "kings",
+      "num": 125,
+      "asset": "king_longbow_walk",
+      "contentId": "king"
+    },
+    "king_longbow_walk.f2": {
+      "atlas": "kings",
+      "num": 125,
+      "asset": "king_longbow_walk",
+      "contentId": "king"
+    },
+    "king_longbow_walk.back.f2": {
+      "atlas": "kings",
+      "num": 125,
+      "asset": "king_longbow_walk",
       "contentId": "king"
     },
     "king_roll_walk.back.f1": {
@@ -514,6 +581,12 @@
       "asset": "king_roll_walk",
       "contentId": "king"
     },
+    "king_longbow_walk.back.f3": {
+      "atlas": "kings",
+      "num": 125,
+      "asset": "king_longbow_walk",
+      "contentId": "king"
+    },
     "king_roll_idle.back": {
       "atlas": "kings",
       "num": 1,
@@ -526,10 +599,28 @@
       "asset": "king_roll_walk",
       "contentId": "king"
     },
+    "king_longbow_walk.back.f1": {
+      "atlas": "kings",
+      "num": 125,
+      "asset": "king_longbow_walk",
+      "contentId": "king"
+    },
+    "king_longbow_walk.back.f4": {
+      "atlas": "kings",
+      "num": 125,
+      "asset": "king_longbow_walk",
+      "contentId": "king"
+    },
     "king_roll_walk.back.f4": {
       "atlas": "kings",
       "num": 2,
       "asset": "king_roll_walk",
+      "contentId": "king"
+    },
+    "king_longbow_idle.back": {
+      "atlas": "kings",
+      "num": 124,
+      "asset": "king_longbow_idle",
       "contentId": "king"
     },
     "king_roll_impact_fx.f2": {
@@ -1155,19 +1246,19 @@
     },
     "stone_wall_segment.diag": {
       "atlas": "structures",
-      "num": 124,
+      "num": 128,
       "asset": "stone_wall_segment",
       "contentId": "stone_wall"
     },
     "stone_wall_segment.side": {
       "atlas": "structures",
-      "num": 124,
+      "num": 128,
       "asset": "stone_wall_segment",
       "contentId": "stone_wall"
     },
     "stone_wall_segment": {
       "atlas": "structures",
-      "num": 124,
+      "num": 128,
       "asset": "stone_wall_segment",
       "contentId": "stone_wall"
     },

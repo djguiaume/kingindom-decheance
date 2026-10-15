@@ -1,0 +1,98 @@
+{
+  "token": "a71961493d",
+  "selector": "124-127",
+  "modelId": "model_openai-gpt-image-2-5-flare",
+  "createdAt": "2026-10-15T14:11:07.731Z",
+  "totalCU": 157,
+  "parts": [
+    {
+      "id": "king_longbow_idle",
+      "promptHash": "8dfe1dc553ea",
+      "estimateCU": 12
+    },
+    {
+      "id": "king_longbow_idle.back",
+      "promptHash": "3ac388e793db",
+      "estimateCU": 12
+    },
+    {
+      "id": "king_longbow_walk.f1",
+      "promptHash": "ff01b35542ee",
+      "estimateCU": 12
+    },
+    {
+      "id": "king_longbow_walk.f2",
+      "promptHash": "823a9154751f",
+      "estimateCU": 12
+    },
+    {
+      "id": "king_longbow_walk.f3",
+      "promptHash": "4c65538e4e7b",
+      "estimateCU": 12
+    },
+    {
+      "id": "king_longbow_walk.f4",
+      "promptHash": "c9a9dbe80e7b",
+      "estimateCU": 12
+    },
+    {
+      "id": "king_longbow_walk.back.f1",
+      "promptHash": "4dea17dd886b",
+      "estimateCU": 12
+    },
+    {
+      "id": "king_longbow_walk.back.f2",
+      "promptHash": "e90b8933eb81",
+      "estimateCU": 12
+    },
+    {
+      "id": "king_longbow_walk.back.f3",
+      "promptHash": "49bb6a6f7413",
+      "estimateCU": 12
+    },
+    {
+      "id": "king_longbow_walk.back.f4",
+      "promptHash": "5b92da4f6a95",
+      "estimateCU": 12
+    },
+    {
+      "id": "king_longbow_volley.f1",
+      "promptHash": "c58f72ca2c0c",
+      "estimateCU": 12
+    },
+    {
+      "id": "king_longbow_volley.f2",
+      "promptHash": "e35fd9b09999",
+      "estimateCU": 12
+    },
+    {
+      "id": "king_longbow_bow",
+      "promptHash": "b6c41d901202",
+      "estimateCU": 13
+    }
+  ],
+  "skipped": [],
+  "runs": [
+    {
+      "at": "2026-10-15T14:18:23.197Z",
+      "budgetCU": 300,
+      "spentCU": 169,
+      "done": [
+        "king_longbow_idle",
+        "king_longbow_idle.back",
+        "king_longbow_walk.f1",
+        "king_longbow_walk.f2",
+        "king_longbow_walk.f3",
+        "king_longbow_walk.f4",
+        "king_longbow_walk.back.f1",
+        "king_longbow_walk.back.f2",
+        "king_longbow_walk.back.f3",
+        "king_longbow_walk.back.f4",
+        "king_longbow_volley.f1",
+        "king_longbow_volley.f2",
+        "king_longbow_bow"
+      ],
+      "failed": []
+    }
+  ]
+}

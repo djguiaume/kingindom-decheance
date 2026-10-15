@@ -531,7 +531,7 @@
         "y": 0.9
       },
       "asset": "stone_wall_segment",
-      "num": 124,
+      "num": 128,
       "contentId": "stone_wall"
     },
     "stone_wall_segment.diag": {
@@ -558,7 +558,7 @@
         "y": 0.9
       },
       "asset": "stone_wall_segment",
-      "num": 124,
+      "num": 128,
       "contentId": "stone_wall"
     },
     "stone_wall_segment.side": {
@@ -585,7 +585,7 @@
         "y": 0.9
       },
       "asset": "stone_wall_segment",
-      "num": 124,
+      "num": 128,
       "contentId": "stone_wall"
     },
     "wall_post": {

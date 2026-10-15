@@ -28,8 +28,9 @@ export interface Policy {
 export const KING_DECISION_TICKS = 6;
 
 /**
- * Walks the king toward the nearest enemy, stands still once in reach, and uses the weapon's
- * active ability when an enemy is within its dash distance.
+ * Walks the king toward the nearest enemy, stands still once in reach, and uses the king's
+ * ability: a roll or lunge when an enemy is within its distance, a volley aimed at the nearest
+ * enemy when at least two are within its range.
  */
 export function chaseNearestEnemy(state: GameState, ctx: GameContext): Command[] {
   const king = state.king;
@@ -44,6 +45,17 @@ export function chaseNearestEnemy(state: GameState, ctx: GameContext): Command[]
     }
   }
   const reach = ctx.weapon.attack.range + ctx.king.radius;
+  const ability = ctx.king.ability;
+  const round = (v: number) => Math.round(v * 100) / 100;
+  if (best && ability.kind === 'volley' && king.abilityCooldown === 0) {
+    const near = state.enemies.filter(
+      (e) => Math.hypot(e.pos.x - king.pos.x, e.pos.y - king.pos.y) <= ability.range,
+    ).length;
+    if (near >= 2)
+      return [
+        { type: 'ability', dir: { x: round(best.x - king.pos.x), y: round(best.y - king.pos.y) } },
+      ];
+  }
   if (!best || bestD <= reach) {
     return king.intent.x === 0 && king.intent.y === 0 ? [] : [{ type: 'move', x: 0, y: 0 }];
   }
@@ -52,7 +64,6 @@ export function chaseNearestEnemy(state: GameState, ctx: GameContext): Command[]
   const around = walkAim(ctx.blockers, ctx.ways, king.pos, best, ctx.king.radius);
   const aim = throughGate(state, ctx, king.pos, around, ctx.king.radius);
   const aimD = Math.sqrt((aim.x - king.pos.x) ** 2 + (aim.y - king.pos.y) ** 2) || 1;
-  const round = (v: number) => Math.round(v * 100) / 100;
   const commands: Command[] = [
     {
       type: 'move',
@@ -60,8 +71,8 @@ export function chaseNearestEnemy(state: GameState, ctx: GameContext): Command[]
       y: round((aim.y - king.pos.y) / aimD),
     },
   ];
-  const ability = ctx.king.ability;
-  if (king.abilityCooldown === 0 && bestD <= ability.distance) commands.push({ type: 'ability' });
+  if (ability.kind !== 'volley' && king.abilityCooldown === 0 && bestD <= ability.distance)
+    commands.push({ type: 'ability' });
   return commands;
 }
 

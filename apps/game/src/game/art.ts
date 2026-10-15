@@ -12,7 +12,7 @@
  */
 import type Phaser from 'phaser';
 import type { KingArt } from '@kd/content';
-import type { KingAction } from './animation.ts';
+import { SHOOT_MS, type KingAction } from './animation.ts';
 
 const files = import.meta.glob(
   ['../../../../art/runtime/*.{json,webp}', '!../../../../art/runtime/index.json'],
@@ -95,7 +95,19 @@ export interface WeaponRig {
   length: number;
   /** Where it is held, when not the front hand (HAND): forward and up, fractions of the body. */
   hand?: [number, number];
+  /**
+   * Drawn mirrored: the bows were painted with the string on the right, so as painted the bow's
+   * belly faced away from the target. Mirrored, the string is on the archer's side.
+   */
+  mirror?: true;
 }
+
+/**
+ * The id the king's weapon is drawn, animated and heard by: `king` for the spear he was painted
+ * with, `king_<weapon>` for any other weapon.
+ */
+export const kingGear = (weaponId: string): string =>
+  weaponId === 'spear' ? 'king' : `king_${weaponId}`;
 
 /** The front hand, as a fraction of the body's drawn width (forward) and height (up). */
 export const HAND: [number, number] = [0.28, 0.42];
@@ -104,6 +116,15 @@ const UP = -Math.PI / 2;
 
 export const RIGS: Record<string, WeaponRig> = {
   king: { frame: 'king_spear', grip: [0.42, 0.5], points: 0, kind: 'thrust', length: 1.3 },
+  // The Longbow king's own royal bow (catalog 127).
+  king_longbow: {
+    frame: 'king_longbow_bow',
+    grip: [0.5, 0.5],
+    points: UP,
+    kind: 'aim',
+    length: 1.0,
+    mirror: true,
+  },
   footman: {
     frame: 'footman_weapon',
     grip: [0.5, 0.5],
@@ -112,7 +133,14 @@ export const RIGS: Record<string, WeaponRig> = {
     length: 0.9,
   },
   knight: { frame: 'knight_weapon', grip: [0.24, 0.5], points: 0, kind: 'swing', length: 0.8 },
-  archer: { frame: 'archer_weapon', grip: [0.5, 0.5], points: UP, kind: 'aim', length: 0.75 },
+  archer: {
+    frame: 'archer_weapon',
+    grip: [0.5, 0.5],
+    points: UP,
+    kind: 'aim',
+    length: 0.75,
+    mirror: true,
+  },
   crossbowman: {
     frame: 'crossbowman_weapon',
     grip: [0.4, 0.55],
@@ -127,6 +155,7 @@ export const RIGS: Record<string, WeaponRig> = {
     points: UP,
     kind: 'aim',
     length: 0.75,
+    mirror: true,
   },
   brute: { frame: 'brute_weapon', grip: [0.14, 0.5], points: 0, kind: 'swing', length: 0.85 },
   // Carried in the talons, below the body.
@@ -280,13 +309,15 @@ export class Art {
   ): string | null {
     if (id === 'king' && action && kingArt) {
       const frame =
-        action.phase === 'anticipate'
-          ? this.still(kingArt.ability.anticipate ?? kingArt.ability.active)
-          : action.phase === 'roll'
-            ? this.pick(kingArt.ability.active, () => Math.floor(action.elapsed / 60))
-            : kingArt.ability.recover
-              ? this.at(kingArt.ability.recover, action.elapsed / 160)
-              : this.still(kingArt.idle);
+        action.phase === 'shoot'
+          ? this.at(kingArt.ability.active, action.elapsed / SHOOT_MS)
+          : action.phase === 'anticipate'
+            ? this.still(kingArt.ability.anticipate ?? kingArt.ability.active)
+            : action.phase === 'roll'
+              ? this.pick(kingArt.ability.active, () => Math.floor(action.elapsed / 60))
+              : kingArt.ability.recover
+                ? this.at(kingArt.ability.recover, action.elapsed / 160)
+                : this.still(kingArt.idle);
       if (frame) return frame;
     }
     const step = (n: number) =>

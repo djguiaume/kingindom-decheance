@@ -178,10 +178,30 @@ const DashAbility = z.object({
   cooldown: Positive,
 });
 
-/** The roll clears every touched enemy; the wolf lunge stops on one target for focused damage. */
+/** A fan of arrows: one each at the nearest enemies in the cone ahead, up to `arrows`. */
+export const VolleyAbility = z.object({
+  id: Id,
+  name: z.string(),
+  kind: z.literal('volley'),
+  arrows: z.number().int().positive(),
+  /** The cone ahead of the king, in degrees, the arrows fly into. */
+  cone: z.number().positive().max(360),
+  /** Metres an arrow reaches. */
+  range: Positive,
+  /** Damage per arrow. */
+  damage: Positive,
+  targets: z.array(TargetLayer).min(1),
+  cooldown: Positive,
+});
+
+/**
+ * The roll clears every touched enemy; the wolf lunge stops on one target for focused damage;
+ * the archer's volley fans arrows over the crowd ahead.
+ */
 export const Ability = z.discriminatedUnion('kind', [
   DashAbility.extend({ kind: z.literal('roll') }),
   DashAbility.extend({ kind: z.literal('lunge') }),
+  VolleyAbility,
 ]);
 
 /**
@@ -261,7 +281,7 @@ export const KingArt = z.object({
   weapon: z.boolean().default(true),
 });
 
-/** One selectable king. The weapon owns normal attacks; the king owns the active ability. */
+/** One selectable king, with his own weapon (normal attacks) and active ability. */
 export const KingSettings = z.object({
   id: Id,
   name: z.string(),
@@ -277,6 +297,8 @@ export const KingSettings = z.object({
   respawnSeconds: NonNegative,
   /** How close the king must stand to a slot to build there (used by the input layer). */
   buildReach: Positive,
+  /** The weapon this king fights with (weapons.json): it comes with the king, never picked. */
+  weapon: Id,
   ability: Ability,
   art: KingArt,
 });

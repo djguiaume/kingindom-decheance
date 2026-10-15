@@ -2,8 +2,8 @@
   "frames": {
     "king_crown": {
       "frame": {
-        "x": 1535,
-        "y": 382,
+        "x": 638,
+        "y": 509,
         "w": 50,
         "h": 44
       },
@@ -25,6 +25,357 @@
       },
       "asset": "king_crown",
       "num": 14,
+      "contentId": "king"
+    },
+    "king_longbow_bow": {
+      "frame": {
+        "x": 196,
+        "y": 2,
+        "w": 17,
+        "h": 177
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 24,
+        "y": 8,
+        "w": 17,
+        "h": 177
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "asset": "king_longbow_bow",
+      "num": 127,
+      "contentId": "king"
+    },
+    "king_longbow_idle": {
+      "frame": {
+        "x": 421,
+        "y": 382,
+        "w": 94,
+        "h": 125
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 49,
+        "y": 48,
+        "w": 94,
+        "h": 125
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "king_longbow_idle",
+      "num": 124,
+      "contentId": "king"
+    },
+    "king_longbow_idle.back": {
+      "frame": {
+        "x": 1607,
+        "y": 382,
+        "w": 70,
+        "h": 125
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 61,
+        "y": 48,
+        "w": 70,
+        "h": 125
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "king_longbow_idle",
+      "num": 124,
+      "contentId": "king"
+    },
+    "king_longbow_volley.f1": {
+      "frame": {
+        "x": 1807,
+        "y": 240,
+        "w": 119,
+        "h": 125
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 37,
+        "y": 48,
+        "w": 119,
+        "h": 125
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "king_longbow_volley",
+      "num": 126,
+      "contentId": "king"
+    },
+    "king_longbow_volley.f2": {
+      "frame": {
+        "x": 1393,
+        "y": 240,
+        "w": 150,
+        "h": 125
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 21,
+        "y": 48,
+        "w": 150,
+        "h": 125
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "king_longbow_volley",
+      "num": 126,
+      "contentId": "king"
+    },
+    "king_longbow_walk.back.f1": {
+      "frame": {
+        "x": 1375,
+        "y": 382,
+        "w": 76,
+        "h": 125
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 58,
+        "y": 48,
+        "w": 76,
+        "h": 125
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "king_longbow_walk",
+      "num": 125,
+      "contentId": "king"
+    },
+    "king_longbow_walk.back.f2": {
+      "frame": {
+        "x": 882,
+        "y": 382,
+        "w": 83,
+        "h": 125
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 55,
+        "y": 48,
+        "w": 83,
+        "h": 125
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "king_longbow_walk",
+      "num": 125,
+      "contentId": "king"
+    },
+    "king_longbow_walk.back.f3": {
+      "frame": {
+        "x": 1133,
+        "y": 382,
+        "w": 81,
+        "h": 125
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 56,
+        "y": 48,
+        "w": 81,
+        "h": 125
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "king_longbow_walk",
+      "num": 125,
+      "contentId": "king"
+    },
+    "king_longbow_walk.back.f4": {
+      "frame": {
+        "x": 1453,
+        "y": 382,
+        "w": 76,
+        "h": 125
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 58,
+        "y": 48,
+        "w": 76,
+        "h": 125
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "king_longbow_walk",
+      "num": 125,
+      "contentId": "king"
+    },
+    "king_longbow_walk.f1": {
+      "frame": {
+        "x": 324,
+        "y": 382,
+        "w": 95,
+        "h": 125
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 49,
+        "y": 48,
+        "w": 95,
+        "h": 125
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "king_longbow_walk",
+      "num": 125,
+      "contentId": "king"
+    },
+    "king_longbow_walk.f2": {
+      "frame": {
+        "x": 795,
+        "y": 382,
+        "w": 85,
+        "h": 125
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 54,
+        "y": 48,
+        "w": 85,
+        "h": 125
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "king_longbow_walk",
+      "num": 125,
+      "contentId": "king"
+    },
+    "king_longbow_walk.f3": {
+      "frame": {
+        "x": 703,
+        "y": 382,
+        "w": 90,
+        "h": 125
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 51,
+        "y": 48,
+        "w": 90,
+        "h": 125
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "king_longbow_walk",
+      "num": 125,
+      "contentId": "king"
+    },
+    "king_longbow_walk.f4": {
+      "frame": {
+        "x": 219,
+        "y": 382,
+        "w": 103,
+        "h": 125
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 45,
+        "y": 48,
+        "w": 103,
+        "h": 125
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "king_longbow_walk",
+      "num": 125,
       "contentId": "king"
     },
     "king_portrait": {
@@ -56,8 +407,8 @@
     },
     "king_roll_anticipate": {
       "frame": {
-        "x": 1042,
-        "y": 382,
+        "x": 145,
+        "y": 509,
         "w": 126,
         "h": 110
       },
@@ -83,7 +434,7 @@
     },
     "king_roll_idle": {
       "frame": {
-        "x": 96,
+        "x": 611,
         "y": 382,
         "w": 90,
         "h": 125
@@ -110,7 +461,7 @@
     },
     "king_roll_idle.back": {
       "frame": {
-        "x": 354,
+        "x": 1216,
         "y": 382,
         "w": 78,
         "h": 125
@@ -137,8 +488,8 @@
     },
     "king_roll_impact_fx.f1": {
       "frame": {
-        "x": 899,
-        "y": 382,
+        "x": 2,
+        "y": 509,
         "w": 141,
         "h": 118
       },
@@ -164,7 +515,7 @@
     },
     "king_roll_impact_fx.f2": {
       "frame": {
-        "x": 589,
+        "x": 1679,
         "y": 382,
         "w": 161,
         "h": 118
@@ -191,7 +542,7 @@
     },
     "king_roll_impact_fx.f3": {
       "frame": {
-        "x": 752,
+        "x": 1842,
         "y": 382,
         "w": 145,
         "h": 118
@@ -218,8 +569,8 @@
     },
     "king_roll_roll.f1": {
       "frame": {
-        "x": 1448,
-        "y": 382,
+        "x": 551,
+        "y": 509,
         "w": 85,
         "h": 96
       },
@@ -245,8 +596,8 @@
     },
     "king_roll_roll.f2": {
       "frame": {
-        "x": 1360,
-        "y": 382,
+        "x": 463,
+        "y": 509,
         "w": 86,
         "h": 96
       },
@@ -272,8 +623,8 @@
     },
     "king_roll_roll.f3": {
       "frame": {
-        "x": 1170,
-        "y": 382,
+        "x": 273,
+        "y": 509,
         "w": 95,
         "h": 96
       },
@@ -299,8 +650,8 @@
     },
     "king_roll_roll.f4": {
       "frame": {
-        "x": 1267,
-        "y": 382,
+        "x": 370,
+        "y": 509,
         "w": 91,
         "h": 96
       },
@@ -326,7 +677,7 @@
     },
     "king_roll_uncurl.f1": {
       "frame": {
-        "x": 1526,
+        "x": 1678,
         "y": 240,
         "w": 127,
         "h": 125
@@ -353,7 +704,7 @@
     },
     "king_roll_uncurl.f2": {
       "frame": {
-        "x": 1393,
+        "x": 1545,
         "y": 240,
         "w": 131,
         "h": 125
@@ -380,7 +731,7 @@
     },
     "king_roll_walk.back.f1": {
       "frame": {
-        "x": 188,
+        "x": 967,
         "y": 382,
         "w": 81,
         "h": 125
@@ -407,7 +758,7 @@
     },
     "king_roll_walk.back.f2": {
       "frame": {
-        "x": 271,
+        "x": 1050,
         "y": 382,
         "w": 81,
         "h": 125
@@ -434,7 +785,7 @@
     },
     "king_roll_walk.back.f3": {
       "frame": {
-        "x": 434,
+        "x": 1296,
         "y": 382,
         "w": 77,
         "h": 125
@@ -461,7 +812,7 @@
     },
     "king_roll_walk.back.f4": {
       "frame": {
-        "x": 513,
+        "x": 1531,
         "y": 382,
         "w": 74,
         "h": 125
@@ -488,7 +839,7 @@
     },
     "king_roll_walk.f1": {
       "frame": {
-        "x": 2,
+        "x": 517,
         "y": 382,
         "w": 92,
         "h": 125
@@ -515,8 +866,8 @@
     },
     "king_roll_walk.f2": {
       "frame": {
-        "x": 1768,
-        "y": 240,
+        "x": 2,
+        "y": 382,
         "w": 110,
         "h": 125
       },
@@ -542,8 +893,8 @@
     },
     "king_roll_walk.f3": {
       "frame": {
-        "x": 1880,
-        "y": 240,
+        "x": 114,
+        "y": 382,
         "w": 103,
         "h": 125
       },
@@ -569,7 +920,7 @@
     },
     "king_roll_walk.f4": {
       "frame": {
-        "x": 1655,
+        "x": 1928,
         "y": 240,
         "w": 111,
         "h": 125
@@ -596,8 +947,8 @@
     },
     "king_spear": {
       "frame": {
-        "x": 1587,
-        "y": 382,
+        "x": 690,
+        "y": 509,
         "w": 177,
         "h": 20
       },
@@ -623,7 +974,7 @@
     },
     "king_wolf_idle": {
       "frame": {
-        "x": 507,
+        "x": 526,
         "y": 2,
         "w": 140,
         "h": 150
@@ -650,7 +1001,7 @@
     },
     "king_wolf_idle.back": {
       "frame": {
-        "x": 1026,
+        "x": 1045,
         "y": 2,
         "w": 94,
         "h": 150
@@ -677,7 +1028,7 @@
     },
     "king_wolf_impact_fx.f1": {
       "frame": {
-        "x": 1556,
+        "x": 1575,
         "y": 2,
         "w": 171,
         "h": 147
@@ -704,7 +1055,7 @@
     },
     "king_wolf_impact_fx.f2": {
       "frame": {
-        "x": 1382,
+        "x": 1401,
         "y": 2,
         "w": 172,
         "h": 147
@@ -974,7 +1325,7 @@
     },
     "king_wolf_run.f3": {
       "frame": {
-        "x": 1729,
+        "x": 1748,
         "y": 2,
         "w": 194,
         "h": 140
@@ -1028,7 +1379,7 @@
     },
     "king_wolf_walk.back.f1": {
       "frame": {
-        "x": 1304,
+        "x": 1323,
         "y": 2,
         "w": 76,
         "h": 150
@@ -1055,7 +1406,7 @@
     },
     "king_wolf_walk.back.f2": {
       "frame": {
-        "x": 925,
+        "x": 944,
         "y": 2,
         "w": 99,
         "h": 150
@@ -1082,7 +1433,7 @@
     },
     "king_wolf_walk.back.f3": {
       "frame": {
-        "x": 1122,
+        "x": 1141,
         "y": 2,
         "w": 90,
         "h": 150
@@ -1109,7 +1460,7 @@
     },
     "king_wolf_walk.back.f4": {
       "frame": {
-        "x": 1214,
+        "x": 1233,
         "y": 2,
         "w": 88,
         "h": 150
@@ -1136,7 +1487,7 @@
     },
     "king_wolf_walk.f1": {
       "frame": {
-        "x": 196,
+        "x": 215,
         "y": 2,
         "w": 159,
         "h": 150
@@ -1163,7 +1514,7 @@
     },
     "king_wolf_walk.f2": {
       "frame": {
-        "x": 357,
+        "x": 376,
         "y": 2,
         "w": 148,
         "h": 150
@@ -1190,7 +1541,7 @@
     },
     "king_wolf_walk.f3": {
       "frame": {
-        "x": 649,
+        "x": 668,
         "y": 2,
         "w": 139,
         "h": 150
@@ -1217,7 +1568,7 @@
     },
     "king_wolf_walk.f4": {
       "frame": {
-        "x": 790,
+        "x": 809,
         "y": 2,
         "w": 133,
         "h": 150
@@ -1249,8 +1600,8 @@
     "image": "kings.webp",
     "format": "RGBA8888",
     "size": {
-      "w": 1985,
-      "h": 509
+      "w": 2041,
+      "h": 629
     },
     "scale": "1"
   }

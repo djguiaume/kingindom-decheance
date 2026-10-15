@@ -1,10 +1,12 @@
 /**
- * The king: respawn, regeneration, walking and the selected king's active ability.
+ * The king: respawn, regeneration, walking and the selected king's active ability (a roll, a
+ * lunge or a volley of arrows).
  */
 import { perTick, secondsToTicks } from '../constants.ts';
 import type { GameContext } from '../context.ts';
 import type { GameEvent } from '../events.ts';
 import type { GameState } from '../state.ts';
+import { cosDegrees, dist } from '../vec.ts';
 import { enemyTargets, gap } from './targets.ts';
 import { hit } from './combat.ts';
 import { blockByTerrain } from './terrain.ts';
@@ -60,9 +62,61 @@ function moveBy(state: GameState, ctx: GameContext, dx: number, dy: number): voi
   blockByTerrain(ctx.blockers, pos, ctx.king.radius);
 }
 
-/** Starts the selected king's roll or lunge. Validation is done by the command. */
-export function startDash(state: GameState, ctx: GameContext): void {
+type Ability = GameContext['king']['ability'];
+type DashAbility = Exclude<Ability, { kind: 'volley' }>;
+type VolleyAbility = Extract<Ability, { kind: 'volley' }>;
+
+/** Uses the selected king's ability along his facing. Validation is done by the command. */
+export function useAbility(state: GameState, ctx: GameContext, events: GameEvent[]): void {
   const ability = ctx.king.ability;
+  if (ability.kind === 'volley') {
+    volley(state, ctx, ability, events);
+    state.king.abilityCooldown = secondsToTicks(ability.cooldown, 1);
+  } else startDash(state, ability);
+}
+
+/**
+ * Looses the volley: one arrow at each of the nearest enemies inside the cone ahead, up to
+ * `arrows`. Like the king's other shots, the arrows always land (only enemy shots can miss).
+ */
+function volley(
+  state: GameState,
+  ctx: GameContext,
+  ability: VolleyAbility,
+  events: GameEvent[],
+): void {
+  const king = state.king;
+  // Inside the cone: the direction to the target is within cone/2 of the facing (a dot
+  // product, as for weapon arcs, so it stays bit-exact).
+  const minDot = cosDegrees(ability.cone / 2);
+  const inCone = enemyTargets(state, ctx).filter((t) => {
+    if (!ability.targets.includes(t.layer)) return false;
+    if (gap(king.pos, ctx.king.radius, t) > ability.range) return false;
+    const dx = t.pos.x - king.pos.x;
+    const dy = t.pos.y - king.pos.y;
+    const len = Math.sqrt(dx * dx + dy * dy);
+    return len === 0 || (dx * king.facing.x + dy * king.facing.y) / len >= minDot;
+  });
+  // Nearest first; ids break ties so replays stay exact.
+  inCone.sort(
+    (a, b) =>
+      dist(king.pos, a.pos) - dist(king.pos, b.pos) ||
+      (a.ref as { id: number }).id - (b.ref as { id: number }).id,
+  );
+  events.push({
+    type: 'volley',
+    from: { ...king.pos },
+    dir: { ...king.facing },
+    cone: ability.cone,
+    range: ability.range,
+    arrows: ability.arrows,
+  });
+  for (const t of inCone.slice(0, ability.arrows))
+    hit(state, { kind: 'king' }, t, ability.damage, events);
+}
+
+/** Starts the king's roll or lunge. */
+function startDash(state: GameState, ability: DashAbility): void {
   state.king.dash = {
     dir: { ...state.king.facing },
     ticksLeft: secondsToTicks(ability.duration, 1),
@@ -72,7 +126,7 @@ export function startDash(state: GameState, ctx: GameContext): void {
 }
 
 function dashStep(state: GameState, ctx: GameContext, events: GameEvent[]): void {
-  const ability = ctx.king.ability;
+  const ability = ctx.king.ability as DashAbility;
   const dash = state.king.dash!;
   const step = ability.distance / secondsToTicks(ability.duration, 1);
   moveBy(state, ctx, dash.dir.x * step, dash.dir.y * step);

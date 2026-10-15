@@ -43,7 +43,7 @@ these rig improvements do not constitute new attack sequences or pre-hit gamepla
 - The validated king catalog contains stable `roll` and `wolf` IDs. The home screen selects and
   remembers one independently of the mutator/perk setup; old configs and direct Play default to
   `roll`. Restart keeps the run's resolved king.
-- The run weapon owns the automatic normal attack. The selected king owns the manual active
+- The king's weapon owns the automatic normal attack. The selected king owns the manual active
   ability and its HUD label: Royal Roll damages every touched enemy, while Hunting Lunge travels
   farther, deals focused damage and stops on its first target.
 - Runtime rendering reads idle, walk and ability sequences from the selected king's content.
@@ -313,6 +313,27 @@ balance are untouched.
   Mint 77%, Early Start 94%, Stonemasons 62%, Eagle Eyes 81%, Scarecrows 94%, Drill Sergeant
   94%, Veterans 95%, Light Cavalry 87%. No perk lifts the bot above its 95% ceiling, so their
   upside needs a harder baseline (a mutator) in the end-of-stage balancing pass.
+
+## Stage A, Longbow King (2026-10-15, corpus 11 §5)
+
+- Guillaume: weapons are part of the king, never picked. Each king in `king.json` names his
+  `weapon`; `RunConfig.weaponId` and the sim's `--weapon` are gone. Panda King and Wolf Rider
+  carry the Spear, the new Longbow King the Longbow. A later Brawler King is another entry with
+  a short melee "fists" weapon and `art.weapon: false`.
+- **Longbow**: 40 damage every 0.7 s, one target, 7 m, ground and air. It hits at once like a
+  tower: as a projectile it missed raiders on the move (bot 0%). 36 / 0.6 s gave 40%: the jump
+  sits where one arrow stops killing a raider.
+- **Longbow King**: 160 HP, speed 7. **Volley** (new ability kind `volley`): 7 arrows at the
+  nearest enemies in a 60° cone, 8 m, 25 damage each, 8 s cooldown. Arrows always land; the
+  cone test is a dot product against `cosDegrees`, like weapon arcs, so it stays bit-exact. The
+  bot fires it when two enemies are within range.
+- **Art**: his own sprites (catalog 124-127: idle and walk with back views, a two-frame Volley
+  pose, the royal bow layer; 169 CU of the 300 approved). The Volley plays its pose for
+  `SHOOT_MS` (the bow is painted in it, so no weapon layer) and a fan of arrow streaks; his
+  normal shots draw as arrows from the bow. Sound: bow release on the Volley, arrow impacts on hits.
+- **Sim**, balanced bot, 100 runs: Panda King 95%, Wolf Rider 93%, Longbow King 100% (5 arrows
+  at 20 or 25 damage: still 100%). The bot cannot tell these apart; the end-of-Stage-A
+  balancing pass decides with a harder baseline.
 
 ## Balance (first playtest, 2026-10-13)
 

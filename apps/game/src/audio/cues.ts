@@ -17,6 +17,8 @@ export interface World {
   kingPos: Vec;
   /** True while the king rolls (his dash), and for the batch right after it ends. */
   kingRolling: boolean;
+  /** The king's weapon id (spear, longbow). */
+  kingWeapon: string;
   /** Must still answer for an enemy killed this tick (see EnemyTypes). */
   enemyType(id: number): string | undefined;
   unitType(id: number): string | undefined;
@@ -70,7 +72,8 @@ const WEAPONS: Record<string, Weapon> = {
 export function weaponOf(world: World, ref: Ref): Weapon {
   switch (ref.kind) {
     case 'king':
-      return world.kingRolling ? 'roll' : 'spear';
+      if (world.kingRolling) return 'roll';
+      return world.kingWeapon === 'longbow' ? 'bow' : 'spear';
     case 'castle':
       return 'tower';
     case 'building':
@@ -204,6 +207,9 @@ export function cuesFor(
       case 'stomp':
         add('stomp', near({ kind: 'enemy', id: e.enemy }));
         break;
+      case 'volley':
+        add('bowRelease');
+        break;
       case 'kingRespawned':
         add('respawn');
         break;
@@ -287,11 +293,13 @@ export function worldOf(
   enemies: EnemyTypes,
   wasRolling = false,
   rollAbility = true,
+  kingWeapon = 'spear',
 ): World {
   return {
     kingPos: state.king.pos,
     // The dash's last tick both hits and ends it, so a roll seen just before still counts.
     kingRolling: (rollAbility && state.king.dash !== null) || wasRolling,
+    kingWeapon,
     enemyType: (id) => enemies.get(id) ?? state.enemies.find((e) => e.id === id)?.type,
     unitType: (id) => state.units.find((u) => u.id === id)?.type,
     buildingType: (id) => state.buildings.find((b) => b.id === id)?.type,
