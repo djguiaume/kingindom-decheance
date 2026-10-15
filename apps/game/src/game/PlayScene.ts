@@ -33,7 +33,7 @@ import {
 import { Art, ART_PX_PER_M, CATAPULT_ARM, HAND, loadArt, weaponAngle } from './art.ts';
 import { Painter } from './painter.ts';
 import { bobHeight, shadow, spriteFor } from './sprites.ts';
-import { drawTerrain } from './terrain.ts';
+import { addPaintedTerrain, drawTerrain, paintedPropFrame, terrainSamples } from './terrain.ts';
 import { emptyPlotIds, gateIsOpen, projectileFrame } from './presentation.ts';
 import { gatePlacement, gateView, GATE_RIGS, groundOrigin } from './groundRigs.ts';
 
@@ -102,6 +102,8 @@ export class PlayScene extends Phaser.Scene {
   private kingActions = new KingActions();
   private animationNow = 0;
   private session: GameRuntime['session'] | null = null;
+  private paintedPropKinds = new Set<string>();
+  private paintedCliffs = false;
 
   constructor(
     private readonly runtime: GameRuntime,
@@ -270,21 +272,37 @@ export class PlayScene extends Phaser.Scene {
   private drawStatic(): void {
     const ctx = this.runtime.ctx;
     const [w, h] = ctx.map.size;
-    const g = this.add.graphics();
-    g.fillStyle(colors.grass, 1);
-    g.fillRect(0, 0, w * SCALE, h * SCALE * SQUASH);
-    for (const lane of ctx.lanes.values()) {
-      if (lane.air) continue;
-      g.lineStyle(SCALE * 1.4, colors.lane, 1);
-      for (let i = 1; i < lane.points.length; i++) {
-        const a = this.px(lane.points[i - 1]!);
-        const b = this.px(lane.points[i]!);
-        g.lineBetween(a.x, a.y, b.x, b.y);
-        g.fillStyle(colors.lane, 1);
-        g.fillCircle(b.x, b.y, SCALE * 0.7);
+    const painted = addPaintedTerrain(this, ctx.map, ctx.lanes.values(), this.art);
+    const g = this.add.graphics().setDepth(0);
+    if (!painted.ground) {
+      g.fillStyle(colors.grass, 1);
+      g.fillRect(0, 0, w * SCALE, h * SCALE * SQUASH);
+    }
+    if (!painted.paths) {
+      for (const lane of ctx.lanes.values()) {
+        if (lane.air) continue;
+        g.lineStyle(SCALE * 1.4, colors.lane, 1);
+        for (let i = 1; i < lane.points.length; i++) {
+          const a = this.px(lane.points[i - 1]!);
+          const b = this.px(lane.points[i]!);
+          g.lineBetween(a.x, a.y, b.x, b.y);
+          g.fillStyle(colors.lane, 1);
+          g.fillCircle(b.x, b.y, SCALE * 0.7);
+        }
       }
     }
-    drawTerrain(g, ctx.map);
+    this.paintedPropKinds = new Set(
+      ctx.map.terrain.props
+        .filter((prop) => paintedPropFrame(this.art, prop.kind))
+        .map((prop) => prop.kind),
+    );
+    this.paintedCliffs = this.art.has('cliff_section');
+    drawTerrain(g, ctx.map, {
+      water: !painted.water,
+      bridges: !painted.bridges,
+      cliffs: !this.paintedCliffs,
+      paintedProps: this.paintedPropKinds,
+    });
     for (const lane of ctx.lanes.values()) {
       const s = this.px(lane.points[0]!);
       g.fillStyle(lane.air ? colors.enemies.flyer : colors.enemies.swarm, 0.6);
@@ -355,6 +373,29 @@ export class PlayScene extends Phaser.Scene {
 
     // Everything that stands up is drawn back to front (painter's order by ground y).
     const items: { y: number; draw: () => void }[] = [];
+    if (this.paintedCliffs) {
+      const frame = this.art.still('cliff_section')!;
+      for (const cliff of ctx.map.terrain.cliffs) {
+        for (const at of terrainSamples(cliff.points, 3.2)) {
+          const p = this.px({ x: at[0], y: at[1] });
+          items.push({
+            y: p.y,
+            draw: () => this.image(frame, p.x, p.y, ART_SCALE * 0.82),
+          });
+        }
+      }
+    }
+    for (const prop of ctx.map.terrain.props) {
+      if (this.paintedPropKinds.has(prop.kind)) {
+        const frame = paintedPropFrame(this.art, prop.kind)!;
+        const p = this.px({ x: prop.pos[0], y: prop.pos[1] });
+        items.push({
+          y: p.y,
+          draw: () =>
+            this.image(frame, p.x, p.y, ART_SCALE * prop.scale).setFlipX(Boolean(prop.flip)),
+        });
+      }
+    }
     // The king's body (a little above his feet), to see him through buildings in front of him.
     const kingAt = state.king.alive ? this.px(this.runtime.drawPos('king', state.king.pos)) : null;
     if (kingAt) kingAt.y -= SCALE * 0.6;

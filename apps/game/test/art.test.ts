@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { Art, atlasFiles, RIGS, weaponAngle } from '../src/game/art.ts';
+import { Art, atlasFiles, RIGS, textureFiles, weaponAngle } from '../src/game/art.ts';
 import { seenFromBehind, STRIDE_M, KING_STRIDE_M } from '../src/game/animation.ts';
 
 const art = new Art([
@@ -32,6 +32,20 @@ describe('atlas files', () => {
         '/a/lonely.json': 'l.json',
       }),
     ).toEqual([{ key: 'art:friendly', image: 'f.webp', json: 'f.json' }]);
+  });
+
+  it('loads standalone terrain textures separately from atlas pages', () => {
+    expect(
+      textureFiles({
+        '/a/friendly.webp': 'f.webp',
+        '/a/friendly.json': 'f.json',
+        '/a/tile_grass.webp': 'grass.webp',
+        '/a/map_background.webp': 'map.webp',
+      }),
+    ).toEqual([
+      { key: 'art:map_background', image: 'map.webp' },
+      { key: 'art:tile_grass', image: 'grass.webp' },
+    ]);
   });
 });
 

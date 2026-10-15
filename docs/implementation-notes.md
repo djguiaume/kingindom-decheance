@@ -297,6 +297,22 @@ recipe for `{ url: 'sfx/….ogg' }` and nothing else changes. Music is three syn
 - The Charge has no event of its own, so the layer watches the king's dash start.
 - Sound on/off: the top-right button or M, remembered on the device.
 
+## Painted terrain and paths (2026-10-15)
+
+- Standalone runtime textures load alongside atlases. Grass tiles cover any validated map size;
+  path and water textures are clipped to the map's lane and terrain polylines with rounded joins.
+  No route, collision or balance data changes during the art pass.
+- Path rendering accepts every segment angle and both directions. Water keeps a narrow stone
+  bank at its actual blocker boundary. Bridges select the nearest front/diagonal/side painting
+  from their endpoints and scale to the declared span.
+- Cliff-section art is sampled along each declared cliff polyline at a bounded spacing. Scenery
+  props use their atlas pivots and join actors/buildings in ground-y depth sorting, so a king can
+  walk in front of or behind a tree.
+- The reviewed inventory contains two mislabeled images: `grass_patch` is a panda guard and
+  `cliff_end` is a watchtower. The game does not show either under the wrong meaning; grass
+  patches retain their procedural fallback and cliffs use the repeatable section until corrected
+  art exists.
+
 ## Not built yet
 
 - Day/night lighting, object pools for effects; the real audio (recorded sounds and music).
