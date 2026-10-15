@@ -6,9 +6,29 @@
 import type Phaser from 'phaser';
 import type { GameMap, Prop } from '@kd/content';
 import { SCALE, SQUASH } from './camera.ts';
+import type { Art } from './art.ts';
 
 type Graphics = Phaser.GameObjects.Graphics;
 type Pt = readonly [number, number];
+
+export interface GroundLane {
+  air: boolean;
+  points: readonly { x: number; y: number }[];
+}
+
+export interface PaintedTerrain {
+  ground: boolean;
+  paths: boolean;
+  water: boolean;
+  bridges: boolean;
+}
+
+export interface TerrainFallbacks {
+  water?: boolean;
+  bridges?: boolean;
+  cliffs?: boolean;
+  paintedProps?: ReadonlySet<string>;
+}
 
 const tint = {
   bank: 0xcbb98a,
@@ -37,6 +57,145 @@ const tint = {
 const CLIFF_HEIGHT = 1.3;
 
 const px = (p: Pt) => ({ x: p[0] * SCALE, y: p[1] * SCALE * SQUASH });
+
+const screen = (p: { x: number; y: number }) => ({ x: p.x * SCALE, y: p.y * SCALE * SQUASH });
+
+/** Selects the nearest painted bridge perspective for any map-space direction. */
+export function bridgeFrame(from: Pt, to: Pt): string {
+  const dx = Math.abs(to[0] - from[0]);
+  const dy = Math.abs(to[1] - from[1]);
+  if (dy < dx * 0.45) return 'bridge';
+  if (dx < dy * 0.45) return 'bridge.side';
+  return 'bridge.diag';
+}
+
+/** Evenly samples a polyline, including each end, for repeatable scenery at any orientation. */
+export function terrainSamples(points: readonly Pt[], spacing: number): Pt[] {
+  if (points.length === 0) return [];
+  const out: Pt[] = [points[0]!];
+  let carry = 0;
+  for (let i = 1; i < points.length; i++) {
+    const [ax, ay] = points[i - 1]!;
+    const [bx, by] = points[i]!;
+    const length = Math.hypot(bx - ax, by - ay);
+    if (length === 0) continue;
+    for (let at = spacing - carry; at < length; at += spacing) {
+      const t = at / length;
+      out.push([ax + (bx - ax) * t, ay + (by - ay) * t]);
+    }
+    carry = (carry + length) % spacing;
+  }
+  const last = points[points.length - 1]!;
+  if (out[out.length - 1] !== last) out.push(last);
+  return out;
+}
+
+/** Assets reviewed as matching their prop id; grass_patch currently contains a panda guard. */
+export function paintedPropFrame(art: Art, kind: string): string | null {
+  if (kind === 'grass_patch') return null;
+  return art.still(kind);
+}
+
+function paintBands(
+  scene: Phaser.Scene,
+  key: string,
+  textureKey: string,
+  size: readonly [number, number],
+  bands: readonly { points: readonly { x: number; y: number }[]; width: number }[],
+  depth: number,
+): boolean {
+  if (!scene.textures.exists(textureKey) || bands.length === 0) return false;
+  const width = Math.ceil(size[0] * SCALE);
+  const height = Math.ceil(size[1] * SCALE * SQUASH);
+  if (scene.textures.exists(key)) scene.textures.remove(key);
+  const texture = scene.textures.createCanvas(key, width, height);
+  if (!texture) return false;
+  const ctx = texture.context;
+  const source = scene.textures.get(textureKey).getSourceImage();
+  if (!(source instanceof HTMLImageElement || source instanceof HTMLCanvasElement)) return false;
+  const pattern = ctx.createPattern(source, 'repeat');
+  if (!pattern) return false;
+  ctx.strokeStyle = pattern;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  for (const strip of bands) {
+    if (strip.points.length < 2) continue;
+    ctx.lineWidth = strip.width * SCALE;
+    ctx.beginPath();
+    const first = screen(strip.points[0]!);
+    ctx.moveTo(first.x, first.y);
+    for (const point of strip.points.slice(1)) {
+      const p = screen(point);
+      ctx.lineTo(p.x, p.y);
+    }
+    ctx.stroke();
+  }
+  texture.refresh();
+  scene.add.image(0, 0, key).setOrigin(0).setDepth(depth);
+  return true;
+}
+
+/**
+ * Adds the reviewed repeatable ground/path/water textures and bridge art under gameplay. The
+ * geometry still comes entirely from the validated map, so new lane angles and map sizes work
+ * without a hand-painted background or route-specific coordinates.
+ */
+export function addPaintedTerrain(
+  scene: Phaser.Scene,
+  map: GameMap,
+  lanes: Iterable<GroundLane>,
+  art: Art,
+): PaintedTerrain {
+  const [mw, mh] = map.size;
+  const width = mw * SCALE;
+  const height = mh * SCALE * SQUASH;
+  const ground = scene.textures.exists('art:tile_grass');
+  if (ground)
+    scene.add.tileSprite(width / 2, height / 2, width, height, 'art:tile_grass').setDepth(-4);
+
+  const pathBands = [...lanes]
+    .filter((lane) => !lane.air)
+    .map((lane) => ({ points: lane.points, width: 1.4 }));
+  const paths = paintBands(scene, 'painted:paths', 'art:tile_path', map.size, pathBands, -3);
+
+  const waters = map.terrain.water.map((water) => ({
+    points: water.points.map(([x, y]) => ({ x, y })),
+    width: water.width,
+  }));
+  // A narrow stone bank keeps the collision boundary legible before the water is laid over it.
+  paintBands(
+    scene,
+    'painted:water-bank',
+    'art:tile_stone',
+    map.size,
+    waters.map((water) => ({ ...water, width: water.width + 0.6 })),
+    -2,
+  );
+  const water = paintBands(scene, 'painted:water', 'art:tile_water', map.size, waters, -1.9);
+
+  const bridges = map.terrain.bridges.every((bridge) =>
+    art.has(bridgeFrame(bridge.from, bridge.to)),
+  );
+  if (bridges)
+    for (const bridge of map.terrain.bridges) {
+      const frame = bridgeFrame(bridge.from, bridge.to);
+      const atlas = art.atlas(frame)!;
+      const a = px(bridge.from);
+      const b = px(bridge.to);
+      const dx = b.x - a.x;
+      const dy = b.y - a.y;
+      const source = scene.textures.getFrame(atlas, frame).realWidth;
+      const target = Math.hypot(dx, dy) + bridge.width * SCALE * 0.35;
+      const image = scene.add
+        .image((a.x + b.x) / 2, (a.y + b.y) / 2, atlas, frame)
+        .setDepth(-1)
+        .setScale(target / source);
+      const base =
+        frame === 'bridge.side' ? Math.PI / 2 : frame === 'bridge.diag' ? Math.PI / 4 : 0;
+      image.setRotation(Math.atan2(dy, dx) - base);
+    }
+  return { ground, paths, water, bridges };
+}
 
 /** Fills a four-cornered shape in the current fill style. */
 function fillQuad(g: Graphics, q: readonly { x: number; y: number }[]) {
@@ -74,32 +233,35 @@ function band(g: Graphics, points: readonly Pt[], width: number, color: number, 
   }
 }
 
-export function drawTerrain(g: Graphics, map: GameMap): void {
+export function drawTerrain(g: Graphics, map: GameMap, fallback: TerrainFallbacks = {}): void {
   const { water, bridges, cliffs, props } = map.terrain;
 
-  for (const w of water) band(g, w.points, w.width + 0.6, tint.bank);
-  for (const w of water) band(g, w.points, w.width, tint.water);
-  for (const w of water) {
-    g.lineStyle(2, tint.waterLight, 0.6);
-    const at = w.points.map(px);
-    for (let i = 1; i < at.length; i++)
-      g.lineBetween(at[i - 1]!.x, at[i - 1]!.y, at[i]!.x, at[i]!.y);
-  }
+  if (fallback.water !== false) for (const w of water) band(g, w.points, w.width + 0.6, tint.bank);
+  if (fallback.water !== false) for (const w of water) band(g, w.points, w.width, tint.water);
+  if (fallback.water !== false)
+    for (const w of water) {
+      g.lineStyle(2, tint.waterLight, 0.6);
+      const at = w.points.map(px);
+      for (let i = 1; i < at.length; i++)
+        g.lineBetween(at[i - 1]!.x, at[i - 1]!.y, at[i]!.x, at[i]!.y);
+    }
 
-  for (const b of bridges) drawBridge(g, b.from, b.to, b.width);
+  if (fallback.bridges !== false) for (const b of bridges) drawBridge(g, b.from, b.to, b.width);
 
   // Cliffs: a dark foot, a stone face rising CLIFF_HEIGHT, and a lighter mossy top.
   const rise = CLIFF_HEIGHT * SCALE;
-  for (const c of cliffs) {
-    const w = c.width;
-    band(g, c.points, w, tint.cliffFoot);
-    for (let k = 1; k <= 4; k++) band(g, c.points, w, tint.cliffFace, (rise * k) / 5);
-    band(g, c.points, w * 0.95, tint.cliffTop, rise);
-    band(g, c.points, w * 0.55, tint.cliffMoss, rise + 2);
-  }
+  if (fallback.cliffs !== false)
+    for (const c of cliffs) {
+      const w = c.width;
+      band(g, c.points, w, tint.cliffFoot);
+      for (let k = 1; k <= 4; k++) band(g, c.points, w, tint.cliffFace, (rise * k) / 5);
+      band(g, c.points, w * 0.95, tint.cliffTop, rise);
+      band(g, c.points, w * 0.55, tint.cliffMoss, rise + 2);
+    }
 
   // Props back to front, so nearer ones overlap farther ones.
-  for (const p of [...props].sort((a, b) => a.pos[1] - b.pos[1])) drawProp(g, p);
+  for (const p of [...props].sort((a, b) => a.pos[1] - b.pos[1]))
+    if (!fallback.paintedProps?.has(p.kind)) drawProp(g, p);
 }
 
 function drawBridge(g: Graphics, from: Pt, to: Pt, width: number) {

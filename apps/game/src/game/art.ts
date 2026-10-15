@@ -22,6 +22,11 @@ const files = import.meta.glob(
   },
 ) as Record<string, string>;
 
+export interface TextureFile {
+  key: string;
+  image: string;
+}
+
 /** Art pixels per metre (the pipeline's scale). */
 export const ART_PX_PER_M = 64;
 
@@ -48,11 +53,29 @@ export function atlasFiles(urls: Record<string, string>): AtlasFiles[] {
   return out.sort((a, b) => a.key.localeCompare(b.key));
 }
 
+/** Standalone runtime images (terrain tiles and map plates) that are not atlas pages. */
+export function textureFiles(urls: Record<string, string>): TextureFile[] {
+  const json = new Set(
+    Object.keys(urls)
+      .filter((path) => path.endsWith('.json'))
+      .map((path) => path.replace(/\.json$/, '')),
+  );
+  return Object.entries(urls)
+    .filter(([path]) => path.endsWith('.webp') && !json.has(path.replace(/\.webp$/, '')))
+    .map(([path, image]) => ({
+      key: `art:${/([^/]+)\.webp$/.exec(path)![1]}`,
+      image,
+    }))
+    .sort((a, b) => a.key.localeCompare(b.key));
+}
+
 export const ATLASES = atlasFiles(files);
+export const TEXTURES = textureFiles(files);
 
 /** Queues the atlases on a scene's loader (a no-op without art). */
 export function loadArt(load: Phaser.Loader.LoaderPlugin): void {
   for (const a of ATLASES) load.atlas(a.key, a.image, a.json);
+  for (const texture of TEXTURES) load.image(texture.key, texture.image);
 }
 
 /** How a weapon layer is held and swung (the drawing points as the pipeline laid it out). */
