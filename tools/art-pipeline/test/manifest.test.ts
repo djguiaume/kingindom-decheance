@@ -87,6 +87,8 @@ describe('manifest', () => {
         'king_wolf_idle',
         'king_wolf_walk',
         'king_wolf_run',
+        'king_longbow_idle',
+        'king_longbow_walk',
         'footman',
         'knight',
         'archer',
