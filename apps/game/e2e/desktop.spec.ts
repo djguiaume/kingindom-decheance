@@ -4,8 +4,8 @@ import { collectErrors } from './errors.ts';
 test('desktop: keyboard holds buy and start the night', async ({ page }) => {
   const errors = collectErrors(page);
   await page.goto('./');
-  // The title screen (F16): the king, and accurate controls one click away.
-  await expect(page.getByTestId('king-card')).toBeVisible();
+  // The title screen (F03/F16): the king picker, and accurate controls one click away.
+  await expect(page.getByTestId('king-picker')).toBeVisible();
   await page.getByTestId('how-to-play').click();
   await expect(page.getByTestId('controls')).toContainText('Call the night');
   await page.getByRole('button', { name: 'Close' }).click();
