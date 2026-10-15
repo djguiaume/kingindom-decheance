@@ -12,43 +12,188 @@
     "notes": {
       "type": "string"
     },
-    "hp": {
-      "type": "number",
-      "exclusiveMinimum": 0
+    "defaultKing": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]*$"
     },
-    "speed": {
-      "type": "number",
-      "exclusiveMinimum": 0
-    },
-    "radius": {
-      "default": 0.5,
-      "type": "number",
-      "exclusiveMinimum": 0
-    },
-    "regen": {
-      "default": 0,
-      "type": "number",
-      "minimum": 0
-    },
-    "regenDelay": {
-      "default": 0,
-      "type": "number",
-      "minimum": 0
-    },
-    "respawnSeconds": {
-      "type": "number",
-      "minimum": 0
-    },
-    "buildReach": {
-      "type": "number",
-      "exclusiveMinimum": 0
+    "kings": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "unlock": {
+            "type": "object",
+            "properties": {
+              "level": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": ["level"]
+          },
+          "hp": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "speed": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "radius": {
+            "default": 0.5,
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "regen": {
+            "default": 0,
+            "type": "number",
+            "minimum": 0
+          },
+          "regenDelay": {
+            "default": 0,
+            "type": "number",
+            "minimum": 0
+          },
+          "respawnSeconds": {
+            "type": "number",
+            "minimum": 0
+          },
+          "buildReach": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "ability": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "distance": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "duration": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "damage": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "cooldown": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "kind": {
+                    "type": "string",
+                    "const": "roll"
+                  }
+                },
+                "required": ["id", "name", "distance", "duration", "damage", "cooldown", "kind"]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "distance": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "duration": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "damage": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "cooldown": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "kind": {
+                    "type": "string",
+                    "const": "lunge"
+                  }
+                },
+                "required": ["id", "name", "distance", "duration", "damage", "cooldown", "kind"]
+              }
+            ]
+          },
+          "art": {
+            "type": "object",
+            "properties": {
+              "idle": {
+                "type": "string",
+                "pattern": "^[a-z0-9][a-z0-9_-]*$"
+              },
+              "walk": {
+                "type": "string",
+                "pattern": "^[a-z0-9][a-z0-9_-]*$"
+              },
+              "ability": {
+                "type": "object",
+                "properties": {
+                  "active": {
+                    "type": "string",
+                    "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                  },
+                  "anticipate": {
+                    "type": "string",
+                    "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                  },
+                  "recover": {
+                    "type": "string",
+                    "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                  }
+                },
+                "required": ["active"]
+              },
+              "weapon": {
+                "default": true,
+                "type": "boolean"
+              }
+            },
+            "required": ["idle", "walk", "ability"]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "hp",
+          "speed",
+          "respawnSeconds",
+          "buildReach",
+          "ability",
+          "art"
+        ]
+      }
     }
   },
-  "required": [
-    "schemaVersion",
-    "hp",
-    "speed",
-    "respawnSeconds",
-    "buildReach"
-  ]
+  "required": ["schemaVersion", "defaultKing", "kings"]
 }

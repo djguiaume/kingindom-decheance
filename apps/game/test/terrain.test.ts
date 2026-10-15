@@ -2,7 +2,12 @@ import { describe, expect, it } from 'vitest';
 import { Art } from '../src/game/art.ts';
 import { SCALE, SQUASH } from '../src/game/camera.ts';
 import { CLIFF_HEIGHT, cliffPieces } from '../src/game/cliffs.ts';
-import { bridgeFrame, paintedPropFrame, propNeedsDepth } from '../src/game/terrain.ts';
+import {
+  bridgeFrame,
+  bridgeRotation,
+  paintedPropFrame,
+  propNeedsDepth,
+} from '../src/game/terrain.ts';
 
 describe('painted terrain orientation', () => {
   it('selects bridge perspectives from geometry in either direction', () => {
@@ -26,6 +31,13 @@ describe('painted terrain orientation', () => {
         ),
       ).toBe(true);
     }
+  });
+
+  it('treats bridge endpoints as an undirected axis instead of turning art upside down', () => {
+    const from = [61.2, 18.6] as const;
+    const to = [54.9, 17.2] as const;
+    expect(bridgeRotation(from, to)).toBeCloseTo(bridgeRotation(to, from));
+    expect(Math.abs(bridgeRotation(from, to))).toBeLessThan(Math.PI / 2);
   });
 });
 

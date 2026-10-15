@@ -72,10 +72,7 @@
                 "type": "array",
                 "items": {
                   "type": "string",
-                  "enum": [
-                    "ground",
-                    "air"
-                  ]
+                  "enum": ["ground", "air"]
                 }
               },
               "projectile": {
@@ -86,58 +83,10 @@
                     "exclusiveMinimum": 0
                   }
                 },
-                "required": [
-                  "speed"
-                ]
+                "required": ["speed"]
               }
             },
-            "required": [
-              "damage",
-              "interval",
-              "range",
-              "targets"
-            ]
-          },
-          "ability": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string",
-                "pattern": "^[a-z0-9][a-z0-9_-]*$"
-              },
-              "name": {
-                "type": "string"
-              },
-              "kind": {
-                "type": "string",
-                "const": "dash"
-              },
-              "distance": {
-                "type": "number",
-                "exclusiveMinimum": 0
-              },
-              "duration": {
-                "type": "number",
-                "exclusiveMinimum": 0
-              },
-              "damage": {
-                "type": "number",
-                "minimum": 0
-              },
-              "cooldown": {
-                "type": "number",
-                "exclusiveMinimum": 0
-              }
-            },
-            "required": [
-              "id",
-              "name",
-              "kind",
-              "distance",
-              "duration",
-              "damage",
-              "cooldown"
-            ]
+            "required": ["damage", "interval", "range", "targets"]
           },
           "unlock": {
             "type": "object",
@@ -148,21 +97,12 @@
                 "maximum": 9007199254740991
               }
             },
-            "required": [
-              "level"
-            ]
+            "required": ["level"]
           }
         },
-        "required": [
-          "id",
-          "name",
-          "attack"
-        ]
+        "required": ["id", "name", "attack"]
       }
     }
   },
-  "required": [
-    "schemaVersion",
-    "weapons"
-  ]
+  "required": ["schemaVersion", "weapons"]
 }

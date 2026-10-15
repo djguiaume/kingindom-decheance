@@ -47,7 +47,7 @@ export interface KingState extends Combatant {
   facing: Vec;
   /** Ticks since the king last took damage; regeneration starts after a delay. */
   calm: number;
-  /** Ticks before the weapon ability can be used again. */
+  /** Ticks before the selected king's ability can be used again. */
   abilityCooldown: number;
   dash: DashState | null;
 }
@@ -128,6 +128,7 @@ export interface GameState {
   contentHash: string;
   mapId: string;
   weaponId: string;
+  kingId: string;
   seed: number;
   rng: RngState;
   phase: Phase;

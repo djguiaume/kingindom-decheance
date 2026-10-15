@@ -23,6 +23,8 @@ export interface RunEntry {
   /** Nights held to the dawn. */
   nights: number;
   weaponId: string;
+  /** Selected king; absent only on profiles saved before king selection existed. */
+  kingId?: string;
   /** Castle perks picked during the run. */
   perks: string[];
   /** Starting perks and mutators the run was played with. */

@@ -25,8 +25,8 @@ export type Command =
   /** Day or night: where the king walks; a vector of length 0–1 (analog), held until changed. */
   | { type: 'move'; x: number; y: number }
   /**
-   * Night: the weapon's ability (the spear's Charge), along `dir` if given, else along the
-   * current movement or facing direction. Named generically: other weapons bring other abilities.
+   * Night: the selected king's ability, along `dir` if given, else along the current movement or
+   * facing direction. The command stays device- and king-neutral for deterministic replays.
    */
   | { type: 'ability'; dir?: { x: number; y: number } }
   /** Day: buy option `option` at a slot: a building on an empty slot, an upgrade on a built one. */
@@ -154,7 +154,6 @@ export function applyCommand(state: GameState, ctx: GameContext, cmd: Command): 
 
     case 'ability': {
       if (state.phase !== 'night') return fail('abilities are for the night');
-      if (!ctx.weapon.ability) return fail('this weapon has no ability');
       if (!king.alive) return fail('the king is down');
       if (king.dash || king.abilityCooldown > 0) return fail('ability is not ready');
       if (cmd.dir) {

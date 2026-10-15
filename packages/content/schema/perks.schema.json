@@ -39,10 +39,7 @@
                 },
                 "op": {
                   "type": "string",
-                  "enum": [
-                    "add",
-                    "mul"
-                  ]
+                  "enum": ["add", "mul"]
                 },
                 "value": {
                   "type": "number"
@@ -56,11 +53,7 @@
                   }
                 }
               },
-              "required": [
-                "stat",
-                "op",
-                "value"
-              ]
+              "required": ["stat", "op", "value"]
             }
           },
           "grantsAttack": {
@@ -118,10 +111,7 @@
                     "type": "array",
                     "items": {
                       "type": "string",
-                      "enum": [
-                        "ground",
-                        "air"
-                      ]
+                      "enum": ["ground", "air"]
                     }
                   },
                   "projectile": {
@@ -132,32 +122,17 @@
                         "exclusiveMinimum": 0
                       }
                     },
-                    "required": [
-                      "speed"
-                    ]
+                    "required": ["speed"]
                   }
                 },
-                "required": [
-                  "damage",
-                  "interval",
-                  "range",
-                  "targets"
-                ]
+                "required": ["damage", "interval", "range", "targets"]
               }
             },
-            "required": [
-              "buildings",
-              "attack"
-            ]
+            "required": ["buildings", "attack"]
           },
           "family": {
             "type": "string",
-            "enum": [
-              "economy",
-              "defense",
-              "units",
-              "king"
-            ]
+            "enum": ["economy", "defense", "units", "king"]
           },
           "unlock": {
             "type": "object",
@@ -168,21 +143,12 @@
                 "maximum": 9007199254740991
               }
             },
-            "required": [
-              "level"
-            ]
+            "required": ["level"]
           }
         },
-        "required": [
-          "id",
-          "name",
-          "description"
-        ]
+        "required": ["id", "name", "description"]
       }
     }
   },
-  "required": [
-    "schemaVersion",
-    "perks"
-  ]
+  "required": ["schemaVersion", "perks"]
 }

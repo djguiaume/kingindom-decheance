@@ -58,6 +58,8 @@ export interface GameContext {
   /** The run's weapon, picked in RunConfig: the king never hard-codes one. */
   weapon: Weapon;
   king: KingSettings;
+  /** Stable id selected in RunConfig and recorded in the run state/replay. */
+  kingId: string;
   buildings: ReadonlyMap<string, Building>;
   units: ReadonlyMap<string, Unit>;
   enemies: ReadonlyMap<string, Enemy>;
@@ -77,6 +79,7 @@ export interface GameContext {
   base: {
     bundle: ContentBundle;
     weapon: Weapon;
+    king: KingSettings;
     derivedFor: string;
     level: number;
     perks: readonly string[];
@@ -97,6 +100,8 @@ export interface GameContext {
 export interface RunConfig {
   mapId: string;
   weaponId: string;
+  /** Defaults to the catalog's default king for old replays and direct callers. */
+  kingId?: string;
   seed: number;
   /** Mutator ids (13 §3); none when absent. The app checks unlocks before a run starts. */
   mutatorIds?: string[];
@@ -112,6 +117,9 @@ export function createContext(bundle: ContentBundle, config: RunConfig): GameCon
   if (!map) throw new Error(`Unknown map "${config.mapId}"`);
   const weapon = bundle.weapons.find((w) => w.id === config.weaponId);
   if (!weapon) throw new Error(`Unknown weapon "${config.weaponId}"`);
+  const kingId = config.kingId ?? bundle.defaultKing;
+  const king = bundle.kings.find((k) => k.id === kingId);
+  if (!king) throw new Error(`Unknown king "${kingId}"`);
   const mutators = (config.mutatorIds ?? []).map((id) => {
     const m = bundle.mutators.find((x) => x.id === id);
     if (!m) throw new Error(`Unknown mutator "${id}"`);
@@ -141,7 +149,8 @@ export function createContext(bundle: ContentBundle, config: RunConfig): GameCon
     contentHash: bundle.hash,
     map,
     weapon,
-    king: bundle.king,
+    king,
+    kingId,
     buildings: new Map(),
     units: new Map(),
     enemies: new Map(),
@@ -152,7 +161,7 @@ export function createContext(bundle: ContentBundle, config: RunConfig): GameCon
     mutators,
     startingPerks,
     closedClasses: new Set(mutators.flatMap((m) => m.closesClasses)),
-    base: { bundle, weapon, derivedFor: '', level: 1, perks: [], rulesByNight: new Map() },
+    base: { bundle, weapon, king, derivedFor: '', level: 1, perks: [], rulesByNight: new Map() },
     nodes,
     lanes: new Map(
       map.lanes.map((l) => [l.id, { id: l.id, air: l.air, nodes: l.path, points: l.path.map(at) }]),
@@ -206,7 +215,7 @@ function tunablesFor(
   perks: readonly string[],
   night: number,
 ): Tunables {
-  const { bundle, weapon } = ctx.base;
+  const { bundle, weapon, king } = ctx.base;
   const mapCastle = ctx.map.castle;
   const atLevel = level > 1 ? ctx.castleLevels[level - 2] : undefined;
   const attack = atLevel?.attack ?? mapCastle.attack;
@@ -215,7 +224,7 @@ function tunablesFor(
     units: bundle.units,
     enemies: bundle.enemies,
     weapon,
-    king: bundle.king,
+    king,
     castle: {
       hp: atLevel?.hp ?? mapCastle.hp,
       radius: mapCastle.radius,

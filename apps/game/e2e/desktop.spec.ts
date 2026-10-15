@@ -4,7 +4,7 @@ import { collectErrors } from './errors.ts';
 test('desktop: keyboard holds buy and start the night', async ({ page }) => {
   const errors = collectErrors(page);
   await page.goto('./');
-  // The title screen (F16): the king, and accurate controls one click away.
+  // The title screen (F03/F16): the compact king card, and accurate controls one click away.
   await expect(page.getByTestId('king-card')).toBeVisible();
   await page.getByTestId('how-to-play').click();
   await expect(page.getByTestId('controls')).toContainText('Call the night');
@@ -38,6 +38,22 @@ test('desktop: keyboard holds buy and start the night', async ({ page }) => {
   await page.waitForTimeout(600);
   await page.keyboard.up('e');
   await expect(page.getByTestId('gold')).toHaveText('50');
+  const watchtower = page.getByTestId('buy-0');
+  await expect(watchtower).toContainText('Watchtower');
+  await expect(watchtower).toContainText('35');
+  expect(
+    await watchtower.evaluate((card) => {
+      const box = card.getBoundingClientRect();
+      return (
+        box.left >= 0 &&
+        box.top >= 0 &&
+        box.right <= innerWidth &&
+        box.bottom <= innerHeight &&
+        card.scrollWidth <= card.clientWidth &&
+        card.scrollHeight <= card.clientHeight
+      );
+    }),
+  ).toBe(true);
 
   // Walk up to the castle: its card offers level 2; holding E opens the perk picker.
   await page.keyboard.down('w');

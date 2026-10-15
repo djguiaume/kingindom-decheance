@@ -99,10 +99,7 @@
                 "type": "array",
                 "items": {
                   "type": "string",
-                  "enum": [
-                    "ground",
-                    "air"
-                  ]
+                  "enum": ["ground", "air"]
                 }
               },
               "projectile": {
@@ -113,33 +110,15 @@
                     "exclusiveMinimum": 0
                   }
                 },
-                "required": [
-                  "speed"
-                ]
+                "required": ["speed"]
               }
             },
-            "required": [
-              "damage",
-              "interval",
-              "range",
-              "targets"
-            ]
+            "required": ["damage", "interval", "range", "targets"]
           }
         },
-        "required": [
-          "id",
-          "name",
-          "hp",
-          "speed",
-          "guardRadius",
-          "leash",
-          "attack"
-        ]
+        "required": ["id", "name", "hp", "speed", "guardRadius", "leash", "attack"]
       }
     }
   },
-  "required": [
-    "schemaVersion",
-    "units"
-  ]
+  "required": ["schemaVersion", "units"]
 }

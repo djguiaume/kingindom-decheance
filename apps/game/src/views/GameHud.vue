@@ -69,6 +69,7 @@ function finish(): void {
     won: score.won,
     nights: score.nightsHeld,
     weaponId: state.weaponId,
+    kingId: state.kingId,
     perks: [...state.perks],
     startingPerks: ctx.startingPerks.map((p) => p.id),
     mutators: ctx.mutators.map((m) => m.id),
@@ -360,7 +361,7 @@ const pct = (v: number, max: number) =>
       >
         <span class="ring" :style="cooldownStyle" />
         <span class="face panel round">
-          <ArtSprite name="king_roll_roll.f1" icon="spear" class="charge-art" />
+          <ArtSprite :name="`${store.hud.abilityArt}.f1`" icon="spear" class="charge-art" />
           <span>{{ store.hud.abilityName }}</span>
           <kbd v-if="!touch">Space</kbd>
         </span>
@@ -783,7 +784,7 @@ const pct = (v: number, max: number) =>
   gap: 8px;
 }
 .card {
-  width: 156px;
+  width: 184px;
   padding: 8px 10px 9px;
   text-align: left;
   font-weight: 500;
@@ -797,10 +798,12 @@ const pct = (v: number, max: number) =>
   display: flex;
   align-items: center;
   gap: 5px;
+  min-width: 0;
   font-size: 14px;
 }
 .offer-head b {
   flex: 1;
+  min-width: 0;
   /* Long names ("Archery range", "Crossbow range") wrap instead of being cut. */
   line-height: 1.1;
 }

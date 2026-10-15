@@ -33,8 +33,8 @@ describe('starting perks (13 §4)', () => {
     expect(withPerks('veterans').ctx.units.get('footman')!.hp).toBe(
       base.ctx.units.get('footman')!.hp * 1.5,
     );
-    expect(withPerks('light_cavalry').ctx.weapon.ability!.cooldown).toBe(
-      base.ctx.weapon.ability!.cooldown + 2,
+    expect(withPerks('light_cavalry').ctx.king.ability.cooldown).toBe(
+      base.ctx.king.ability.cooldown + 2,
     );
   });
 

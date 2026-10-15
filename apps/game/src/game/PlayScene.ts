@@ -55,7 +55,7 @@ import { addCliffs, CLIFF_TEXTURE, type CliffSprite } from './cliffs.ts';
 import { bobHeight, shadow, spriteFor } from './sprites.ts';
 import { addPaintedTerrain, drawTerrain, paintedPropFrame, propNeedsDepth } from './terrain.ts';
 import { emptyPlotIds, gateIsOpen, projectileFrame, ruinFrame } from './presentation.ts';
-import { gatePlacement, gateView, GATE_RIGS, groundOrigin } from './groundRigs.ts';
+import { gatePlacement, gateView, GATE_RIGS, groundOrigin, wallPostMatrix } from './groundRigs.ts';
 
 const HIT_FLASH_MS = 160;
 const TICK_MS = 1000 / TICK_RATE;
@@ -698,10 +698,18 @@ export class PlayScene extends Phaser.Scene {
           const p = this.px(at(sign * (GATE_HALF_WIDTH + (span * (i + 0.5)) / count)));
           items.push({
             y: p.y,
-            draw: () =>
-              this.image(post, p.x, p.y, ART_SCALE)
-                .setAlpha(alpha)
-                .setTint(sceneryTint(this.night)),
+            draw: () => {
+              const image = stone
+                ? this.painter.projectedImage(
+                    this.art.atlas(post)!,
+                    post,
+                    p.x,
+                    p.y,
+                    wallPostMatrix(line.across, ART_SCALE, SQUASH),
+                  )
+                : this.image(post, p.x, p.y, ART_SCALE);
+              image.setAlpha(alpha).setTint(sceneryTint(this.night));
+            },
           });
         }
     }
@@ -1018,7 +1026,14 @@ export class PlayScene extends Phaser.Scene {
             this.animationNow,
           )
         : null;
-    const frame = this.art.body(id, pose, strideFor(id), this.animationNow, action);
+    const frame = this.art.body(
+      id,
+      pose,
+      strideFor(id),
+      this.animationNow,
+      action,
+      id === 'king' ? this.runtime.ctx.king.art : undefined,
+    );
     if (!frame) return false;
     const k = ART_SCALE * ACTOR_SIZE;
     const f = pose.facing;
@@ -1069,7 +1084,8 @@ export class PlayScene extends Phaser.Scene {
       if (pose.flash > 0) this.painter.whiteout(im, pose.flash * 0.8);
       return true;
     }
-    const rig = action ? null : this.art.rig(id);
+    const rig =
+      action || (id === 'king' && !this.runtime.ctx.king.art.weapon) ? null : this.art.rig(id);
     if (!rig) {
       body();
       return true;
@@ -1295,7 +1311,14 @@ export class PlayScene extends Phaser.Scene {
   ): void {
     const g = this.dynamic;
     shadow(g, x, y, s * (1 - 0.3 * fall.tip));
-    const frame = this.art.body(id, { back: false, walked: 0, moving: false }, STRIDE_M, 0);
+    const frame = this.art.body(
+      id,
+      { back: false, walked: 0, moving: false },
+      STRIDE_M,
+      0,
+      null,
+      id === 'king' ? this.runtime.ctx.king.art : undefined,
+    );
     if (frame) {
       const k = ART_SCALE * ACTOR_SIZE;
       const lift = id === 'harpy' ? s * 2.2 * (1 - fall.tip) : 0;

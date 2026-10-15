@@ -282,11 +282,16 @@ export class EnemyTypes {
 }
 
 /** A World view of the live state (read-only). */
-export function worldOf(state: GameState, enemies: EnemyTypes, wasRolling = false): World {
+export function worldOf(
+  state: GameState,
+  enemies: EnemyTypes,
+  wasRolling = false,
+  rollAbility = true,
+): World {
   return {
     kingPos: state.king.pos,
     // The dash's last tick both hits and ends it, so a roll seen just before still counts.
-    kingRolling: state.king.dash !== null || wasRolling,
+    kingRolling: (rollAbility && state.king.dash !== null) || wasRolling,
     enemyType: (id) => enemies.get(id) ?? state.enemies.find((e) => e.id === id)?.type,
     unitType: (id) => state.units.find((u) => u.id === id)?.type,
     buildingType: (id) => state.buildings.find((b) => b.id === id)?.type,

@@ -2,10 +2,11 @@
   "name": "king-only",
   "why": "no buildings: the king and the castle alone fall on night 5",
   "replay": {
-    "contentHash": "0e8d60a2be455e",
+    "contentHash": "131e244ab1d24a",
     "config": {
       "mapId": "greyhollow",
       "weaponId": "spear",
+      "kingId": "roll",
       "seed": 1
     },
     "commands": [
@@ -1680,11 +1681,12 @@
     ]
   },
   "expected": {
-    "contentHash": "0e8d60a2be455e",
+    "contentHash": "131e244ab1d24a",
     "policy": "king-only",
     "config": {
       "mapId": "greyhollow",
       "weaponId": "spear",
+      "kingId": "roll",
       "seed": 1
     },
     "outcome": "lost",
@@ -1694,6 +1696,6 @@
     "enemiesKilled": 109,
     "score": 600,
     "ticks": 4037,
-    "finalHash": "02e865d43596c7"
+    "finalHash": "1f7ad6e31715aa"
   }
 }

@@ -7,6 +7,7 @@ import {
   GATE_RIGS,
   groundOrigin,
   GROUND_ANCHORS,
+  wallPostMatrix,
 } from '../src/game/groundRigs.ts';
 import { GATE_HALF_WIDTH, wallLine, Session } from '@kd/core';
 import { prototypeContent, prototypeRun } from '@kd/content/prototype';
@@ -153,6 +154,23 @@ describe('gate placement', () => {
         }
       }
     }
+  });
+});
+
+describe('stone wall placement', () => {
+  it('projects blocks along arbitrary wall axes and is stable when a lane reverses', () => {
+    for (const across of [
+      { x: 1, y: 0 },
+      { x: 0.7, y: 0.7 },
+      { x: 0, y: 1 },
+    ]) {
+      const placement = wallPostMatrix(across, 0.5, SQUASH);
+      expect(placement).toEqual(wallPostMatrix({ x: -across.x, y: -across.y }, 0.5, SQUASH));
+      expect(Math.hypot(placement.a, placement.b)).toBeGreaterThan(0);
+      expect(placement.d).toBe(0.5);
+    }
+    expect(wallPostMatrix({ x: 1, y: 0 }, 1, SQUASH).b).toBe(0);
+    expect(wallPostMatrix({ x: 0, y: 1 }, 1, SQUASH).b).not.toBe(0);
   });
 });
 

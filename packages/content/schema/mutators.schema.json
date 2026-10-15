@@ -44,10 +44,7 @@
                 },
                 "op": {
                   "type": "string",
-                  "enum": [
-                    "add",
-                    "mul"
-                  ]
+                  "enum": ["add", "mul"]
                 },
                 "value": {
                   "type": "number"
@@ -61,11 +58,7 @@
                   }
                 }
               },
-              "required": [
-                "stat",
-                "op",
-                "value"
-              ]
+              "required": ["stat", "op", "value"]
             }
           },
           "closesClasses": {
@@ -73,12 +66,7 @@
             "type": "array",
             "items": {
               "type": "string",
-              "enum": [
-                "eco",
-                "tower",
-                "wall",
-                "military"
-              ]
+              "enum": ["eco", "tower", "wall", "military"]
             }
           },
           "unlock": {
@@ -90,22 +78,12 @@
                 "maximum": 9007199254740991
               }
             },
-            "required": [
-              "level"
-            ]
+            "required": ["level"]
           }
         },
-        "required": [
-          "id",
-          "name",
-          "description",
-          "scoreBonus"
-        ]
+        "required": ["id", "name", "description", "scoreBonus"]
       }
     }
   },
-  "required": [
-    "schemaVersion",
-    "mutators"
-  ]
+  "required": ["schemaVersion", "mutators"]
 }

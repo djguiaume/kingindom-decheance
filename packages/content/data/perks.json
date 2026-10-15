@@ -85,10 +85,10 @@
       "id": "light_cavalry",
       "name": "Light Cavalry",
       "family": "king",
-      "description": "King moves 20% faster. Charge recharges 2 s slower.",
+      "description": "King moves 20% faster. His ability recharges 2 s slower.",
       "modifiers": [
         { "stat": "king.speed", "op": "mul", "value": 1.2 },
-        { "stat": "weapon.ability.cooldown", "op": "add", "value": 2 }
+        { "stat": "king.ability.cooldown", "op": "add", "value": 2 }
       ]
     }
   ]

@@ -1,6 +1,5 @@
 /**
- * The king: respawn, regeneration, walking along the move intent, and the weapon's dash ability.
- * Everything weapon-specific is read from ctx.weapon (content), never hard-coded.
+ * The king: respawn, regeneration, walking and the selected king's active ability.
  */
 import { perTick, secondsToTicks } from '../constants.ts';
 import type { GameContext } from '../context.ts';
@@ -61,9 +60,9 @@ function moveBy(state: GameState, ctx: GameContext, dx: number, dy: number): voi
   blockByTerrain(ctx.blockers, pos, ctx.king.radius);
 }
 
-/** Starts the weapon's dash along the facing direction. Validation is done by the command. */
+/** Starts the selected king's roll or lunge. Validation is done by the command. */
 export function startDash(state: GameState, ctx: GameContext): void {
-  const ability = ctx.weapon.ability!;
+  const ability = ctx.king.ability;
   state.king.dash = {
     dir: { ...state.king.facing },
     ticksLeft: secondsToTicks(ability.duration, 1),
@@ -73,7 +72,7 @@ export function startDash(state: GameState, ctx: GameContext): void {
 }
 
 function dashStep(state: GameState, ctx: GameContext, events: GameEvent[]): void {
-  const ability = ctx.weapon.ability!;
+  const ability = ctx.king.ability;
   const dash = state.king.dash!;
   const step = ability.distance / secondsToTicks(ability.duration, 1);
   moveBy(state, ctx, dash.dir.x * step, dash.dir.y * step);
@@ -82,6 +81,11 @@ function dashStep(state: GameState, ctx: GameContext, events: GameEvent[]): void
     if (dash.hit.includes(id) || gap(state.king.pos, ctx.king.radius, t) > 0) continue;
     dash.hit.push(id);
     hit(state, { kind: 'king' }, t, ability.damage, events);
+    // A lunge is a focused bite: it ends on the first target instead of rolling through a crowd.
+    if (ability.kind === 'lunge') {
+      dash.ticksLeft = 0;
+      break;
+    }
   }
   dash.ticksLeft--;
   if (dash.ticksLeft <= 0) state.king.dash = null;
