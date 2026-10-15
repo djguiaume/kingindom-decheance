@@ -59,8 +59,14 @@ export function requestFor(
   };
 }
 
-/** The frame-1 part a later frame must match, for assets that follow their first frame. */
-export function firstFrameOf(asset: Asset, part: Part): Part | undefined {
+/**
+ * The part whose master this part must match: frame 1 of the same view for assets that follow
+ * their first frame, or the main part of the asset named by `followAsset`.
+ */
+export function firstFrameOf(manifest: Manifest, asset: Asset, part: Part): Part | undefined {
+  if (asset.followAsset) {
+    return manifest.assets.find((a) => a.id === asset.followAsset)?.parts[0];
+  }
   if (!asset.followFirstFrame || part.frame === 0) return undefined;
   return asset.parts.find((p) => p.view === part.view && p.frame === 0);
 }
@@ -75,7 +81,7 @@ async function firstFrameReference(
   part: Part,
   cache: Map<string, string>,
 ): Promise<string | undefined> {
-  const first = firstFrameOf(asset, part);
+  const first = firstFrameOf(ws.manifest, asset, part);
   if (!first) return undefined;
   const png = await readFile(join(ws.root, first.master)).catch(() => undefined);
   if (!png) return undefined;
