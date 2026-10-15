@@ -334,7 +334,7 @@ recipe for `{ url: 'sfx/….ogg' }` and nothing else changes. Music is three syn
 
 ## Not built yet
 
-- Day/night lighting, object pools for effects; the real audio (recorded sounds and music).
+- Object pools for effects; the real audio (recorded sounds and music).
 - Web Worker pool and Comlink (ADR-003): the runner is ready to be moved into a worker.
 - Tier 3 nightly balance assertions (ADR-007) and the ECharts dashboard (ADR-005).
 - Starting perks, mutators, research (Gambler's Oath already stores its multiplier).

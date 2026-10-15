@@ -1018,7 +1018,6 @@ export class PlayScene extends Phaser.Scene {
     return true;
   }
 
-  /** A building, the castle or a structure: its painted frame, else its code-drawn shape. */
   /** A warm window light over a painted building, in its lower half where the windows are. */
   private addWindowGlow(im: Phaser.GameObjects.Image, strength: number): void {
     const frame = this.art.still('window_glow');
@@ -1059,6 +1058,7 @@ export class PlayScene extends Phaser.Scene {
         .setBlendMode(Phaser.BlendModes.ADD);
   }
 
+  /** A building, the castle or a structure: its painted frame, else its code-drawn shape. */
   private drawStill(
     id: string,
     x: number,
