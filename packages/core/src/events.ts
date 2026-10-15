@@ -21,6 +21,8 @@ export type GameEvent =
   | { type: 'buildingDestroyed'; id: number; slot: string }
   | { type: 'kingRespawned' }
   | { type: 'stomp'; enemy: number; hits: number }
+  /** The king's volley: arrows fanning out over `cone` degrees; its hits follow as `hit`s. */
+  | { type: 'volley'; from: Vec; dir: Vec; cone: number; range: number; arrows: number }
   | { type: 'rallied'; units: number }
   | { type: 'unitsDropped'; units: number }
   | { type: 'flagTaken'; building: number }

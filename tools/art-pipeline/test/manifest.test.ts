@@ -78,7 +78,8 @@ describe('manifest', () => {
 
   it('adds back views for the king and every unit body, without changing the front prompts', () => {
     const back = manifest.assets.flatMap((a) => a.parts.filter((p) => p.view === 'back'));
-    expect(back).toHaveLength(28);
+    // 28, plus the Longbow king's idle and four walk frames.
+    expect(back).toHaveLength(33);
     expect(new Set(back.map((p) => p.id.split('.')[0]))).toEqual(
       new Set([
         'king_roll_idle',
@@ -86,6 +87,8 @@ describe('manifest', () => {
         'king_wolf_idle',
         'king_wolf_walk',
         'king_wolf_run',
+        'king_longbow_idle',
+        'king_longbow_walk',
         'footman',
         'knight',
         'archer',

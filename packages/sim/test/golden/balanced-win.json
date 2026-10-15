@@ -2,10 +2,9 @@
   "name": "balanced-win",
   "why": "eco early, then towers, walls and an active king win Greyhollow",
   "replay": {
-    "contentHash": "131e244ab1d24a",
+    "contentHash": "197379e0bdc85a",
     "config": {
       "mapId": "greyhollow",
-      "weaponId": "spear",
       "kingId": "roll",
       "seed": 1
     },
@@ -2999,11 +2998,10 @@
     ]
   },
   "expected": {
-    "contentHash": "131e244ab1d24a",
+    "contentHash": "197379e0bdc85a",
     "policy": "balanced",
     "config": {
       "mapId": "greyhollow",
-      "weaponId": "spear",
       "kingId": "roll",
       "seed": 1
     },
@@ -3014,6 +3012,6 @@
     "enemiesKilled": 207,
     "score": 900,
     "ticks": 7154,
-    "finalHash": "12ddc36cb0f08c"
+    "finalHash": "06336760e0ae2b"
   }
 }

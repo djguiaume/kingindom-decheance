@@ -74,6 +74,10 @@
             "type": "number",
             "exclusiveMinimum": 0
           },
+          "weapon": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+          },
           "ability": {
             "oneOf": [
               {
@@ -141,6 +145,63 @@
                   }
                 },
                 "required": ["id", "name", "distance", "duration", "damage", "cooldown", "kind"]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "kind": {
+                    "type": "string",
+                    "const": "volley"
+                  },
+                  "arrows": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "cone": {
+                    "type": "number",
+                    "exclusiveMinimum": 0,
+                    "maximum": 360
+                  },
+                  "range": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "damage": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "targets": {
+                    "minItems": 1,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": ["ground", "air"]
+                    }
+                  },
+                  "cooldown": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  }
+                },
+                "required": [
+                  "id",
+                  "name",
+                  "kind",
+                  "arrows",
+                  "cone",
+                  "range",
+                  "damage",
+                  "targets",
+                  "cooldown"
+                ]
               }
             ]
           },
@@ -189,6 +250,7 @@
           "speed",
           "respawnSeconds",
           "buildReach",
+          "weapon",
           "ability",
           "art"
         ]

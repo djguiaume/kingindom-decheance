@@ -15,6 +15,7 @@ import {
   WALL_HALF_SPAN,
   wallLine,
   type BuildingState,
+  type GameEvent,
   type Ref,
   type Vec,
 } from '@kd/core';
@@ -45,6 +46,7 @@ import {
   ART_PX_PER_M,
   CATAPULT_ARM,
   HAND,
+  kingGear,
   loadArt,
   tipReach,
   weaponAngle,
@@ -91,6 +93,8 @@ const SEE_THROUGH = 0.45;
 
 /** How long the ring of a boss stomp stays visible. */
 const STOMP_MS = 350;
+/** How long the Longbow king's volley streaks fly. */
+const VOLLEY_MS = 300;
 /** Length of a drawn arrow, in ticks of its flight (it looks about 1 m long at archer speed). */
 const ARROW_LENGTH = 4;
 /** How long the dust of a shot that missed stays visible. */
@@ -121,6 +125,7 @@ export class PlayScene extends Phaser.Scene {
   /** Warm lights to add over this frame's scene, in scene pixels. */
   private glows: { frame: string; x: number; y: number; scale: number; alpha: number }[] = [];
   private stomps: { at: { x: number; y: number }; radius: number; start: number }[] = [];
+  private volleys: (Extract<GameEvent, { type: 'volley' }> & { start: number })[] = [];
   private puffs: { at: { x: number; y: number }; start: number }[] = [];
   /** Who fired each shot in flight (the shooter may die before it lands). */
   private shooters = new Map<number, string>();
@@ -129,6 +134,8 @@ export class PlayScene extends Phaser.Scene {
   /** Walk bob, swings, hit flashes and falling bodies (view-only). */
   private animator = new Animator();
   private kingActions = new KingActions();
+  /** The id the king's weapon is drawn and swung by (`king`, or `king_longbow`). */
+  private readonly kingGear: string;
   private animationNow = 0;
   private session: GameRuntime['session'] | null = null;
   private paintedPropKinds = new Set<string>();
@@ -141,6 +148,7 @@ export class PlayScene extends Phaser.Scene {
     private readonly view: ViewOptions,
   ) {
     super('play');
+    this.kingGear = kingGear(runtime.ctx.weapon.id);
   }
 
   preload(): void {
@@ -187,6 +195,11 @@ export class PlayScene extends Phaser.Scene {
             });
           continue;
         }
+        if (e.type === 'volley') {
+          this.volleys.push({ ...e, start: this.animationNow });
+          this.kingActions.shot(this.animationNow);
+          continue;
+        }
         if (e.type === 'fired') {
           this.shooters.set(e.id, this.sourceType(e.attacker));
           continue;
@@ -201,7 +214,11 @@ export class PlayScene extends Phaser.Scene {
         const from = this.refPos(e.attacker);
         const to = this.refPos(e.target);
         if (!from || !to) continue;
-        const shot = e.attacker.kind === 'building' || e.attacker.kind === 'castle';
+        // Towers shoot; so does a king with a bow (his arrows land at once, like a tower's).
+        const shot =
+          e.attacker.kind === 'building' ||
+          e.attacker.kind === 'castle' ||
+          (e.attacker.kind === 'king' && styleOf(this.kingGear) === 'shoot');
         this.flashes.push({
           from,
           to,
@@ -221,6 +238,7 @@ export class PlayScene extends Phaser.Scene {
       this.kingActions = new KingActions();
       this.flashes = [];
       this.stomps = [];
+      this.volleys = [];
       this.puffs = [];
       this.shooters.clear();
       this.animationNow = 0;
@@ -495,7 +513,8 @@ export class PlayScene extends Phaser.Scene {
       if (key) {
         seen.add(key);
         if (actor) {
-          pose = this.animator.pose(key, pos, { sprite: id, radius }, now, tell);
+          const gear = id === 'king' ? this.kingGear : undefined;
+          pose = this.animator.pose(key, pos, { sprite: id, radius, gear }, now, tell);
           flash = pose.flash;
         } else {
           this.animator.still(key, pos);
@@ -602,6 +621,23 @@ export class PlayScene extends Phaser.Scene {
     this.drawProjectiles();
     g = this.dynamic;
 
+    // The volley: pale arrow streaks fanning out over the cone, flying to the end of its range.
+    this.volleys = this.volleys.filter((v) => now - v.start < VOLLEY_MS);
+    for (const v of this.volleys) {
+      const t = (now - v.start) / VOLLEY_MS;
+      const facing = Math.atan2(v.dir.y, v.dir.x);
+      const half = (v.cone / 2) * (Math.PI / 180);
+      g.lineStyle(3, 0xe8d9b0, 1 - t * 0.6);
+      for (let i = 0; i < v.arrows; i++) {
+        const a = facing - half + (2 * half * i) / Math.max(1, v.arrows - 1);
+        const at = (r: number) =>
+          this.px({ x: v.from.x + Math.cos(a) * r, y: v.from.y + Math.sin(a) * r });
+        const head = at(v.range * t);
+        const tail = at(Math.max(0, v.range * t - 1.2));
+        const lift = SCALE * 0.9;
+        g.lineBetween(tail.x, tail.y - lift, head.x, head.y - lift);
+      }
+    }
     this.stomps = this.stomps.filter((st) => now - st.start < STOMP_MS);
     for (const st of this.stomps) {
       const t = (now - st.start) / STOMP_MS;
@@ -642,11 +678,11 @@ export class PlayScene extends Phaser.Scene {
         g.strokePath();
         continue;
       }
-      // A bolt flies from the top of the tower to the target. The damage is already dealt in
-      // the core; this only shows where it came from.
+      // A bolt flies from the top of the tower (or the king's bow) to the target. The damage is
+      // already dealt in the core; this only shows where it came from.
       const t = (now - f.start) / SHOT_MS;
       const ax = f.from.x;
-      const ay = f.from.y - SCALE * 1.8;
+      const ay = f.from.y - SCALE * (f.source === 'king' ? 0.9 : 1.8);
       const bx = f.to.x;
       const by = f.to.y - SCALE * 0.5;
       const x = ax + (bx - ax) * t;
@@ -1039,7 +1075,8 @@ export class PlayScene extends Phaser.Scene {
     const f = pose.facing;
     const size = this.textures.getFrame(this.art.atlas(frame)!, frame);
     // The body moves with its attack: rears back on the tell, throws its weight into the blow.
-    const style = styleOf(id);
+    const gear = id === 'king' ? this.kingGear : id;
+    const style = styleOf(gear);
     const m = action ? STILL : bodyAt(style, pose.act, pose.stomp);
     // Where the attack is aimed, in radians below the horizontal (facing right): a spear or bow
     // aimed up or down the screen lunges and leans that way, not sideways.
@@ -1085,7 +1122,7 @@ export class PlayScene extends Phaser.Scene {
       return true;
     }
     const rig =
-      action || (id === 'king' && !this.runtime.ctx.king.art.weapon) ? null : this.art.rig(id);
+      action || (id === 'king' && !this.runtime.ctx.king.art.weapon) ? null : this.art.rig(gear);
     if (!rig) {
       body();
       return true;
@@ -1113,7 +1150,7 @@ export class PlayScene extends Phaser.Scene {
     const weapon = () => {
       const im = this.image(rig.frame, at.x, at.y, w)
         .setOrigin(rig.grip[0], rig.grip[1])
-        .setScale(w * f, w)
+        .setScale(w * f * (rig.mirror ? -1 : 1), w)
         .setRotation(f * (angle + lean))
         .setAlpha(alpha);
       if (pose.flash > 0) this.painter.whiteout(im, pose.flash * 0.8);
@@ -1125,7 +1162,7 @@ export class PlayScene extends Phaser.Scene {
       body();
       weapon();
     }
-    this.drawStrike(id, rig.kind, at, angle + lean, f, length * tipReach(rig), s, pose, act);
+    this.drawStrike(gear, rig.kind, at, angle + lean, f, length * tipReach(rig), s, pose, act);
     return true;
   }
 

@@ -28,9 +28,11 @@ const world = (
   buildings: Record<number, string> = {},
   units: Record<number, string> = {},
   kingRolling = false,
+  kingWeapon = 'spear',
 ): World => ({
   kingPos: { x: 0, y: 0 },
   kingRolling,
+  kingWeapon,
   enemyType: (id) => types[id],
   unitType: (id) => units[id],
   buildingType: (id) => buildings[id],
@@ -103,6 +105,11 @@ describe('audio cues', () => {
     const e = [hit({ kind: 'king' }, { kind: 'enemy', id: 1 })];
     expect(cuesFor(e, world({}, {}, {}, true))[0]!.id).toBe('rollHit');
     expect(cuesFor(e, world())[0]!.id).toBe('spearThrust');
+  });
+
+  it('gives the Longbow king an arrow impact, not a spear thrust', () => {
+    const e = [hit({ kind: 'king' }, { kind: 'enemy', id: 1 })];
+    expect(cuesFor(e, world({}, {}, {}, false, 'longbow'))[0]!.id).toBe('arrowHit');
   });
 
   it('plays the release when a shot leaves, then the impact or the miss when it lands', () => {

@@ -10,6 +10,7 @@ test('desktop: king choice is explicit and remembered', async ({ page }) => {
   await page.getByTestId('king-card').click();
   await expect(page.getByTestId('king-roll')).toHaveAttribute('aria-pressed', 'true');
   await expect(page.getByTestId('king-wolf')).toContainText('Hunting Lunge');
+  await expect(page.getByTestId('king-longbow')).toContainText('Volley');
   await page.getByTestId('king-wolf').click();
   await expect(page.getByTestId('king-picker')).toBeHidden();
   await expect(page.getByTestId('king-card')).toContainText('Wolf Rider');

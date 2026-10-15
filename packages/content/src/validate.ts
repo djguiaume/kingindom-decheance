@@ -131,6 +131,10 @@ export function checkSemantics(bundle: Omit<ContentBundle, 'hash'>): ContentErro
   );
   if (!kingIds.has(bundle.defaultKing))
     err('king.json', 'defaultKing', `unknown king "${bundle.defaultKing}"`);
+  const weaponIds = new Set(bundle.weapons.map((w) => w.id));
+  for (const k of bundle.kings)
+    if (!weaponIds.has(k.weapon))
+      err('king.json', `${k.id}.weapon`, `unknown weapon "${k.weapon}"`);
   unique(
     'weapons.json',
     bundle.weapons.map((w) => w.id),
