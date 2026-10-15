@@ -999,14 +999,22 @@ export class PlayScene extends Phaser.Scene {
     const f = pose.facing;
     const size = this.textures.getFrame(this.art.atlas(frame)!, frame);
     // The body moves with its attack: rears back on the tell, throws its weight into the blow.
-    const m = action ? STILL : bodyAt(styleOf(id), pose.act, pose.stomp);
-    const lean = m.lean;
-    const bx = x + f * m.shift * size.cutWidth * k;
+    const style = styleOf(id);
+    const m = action ? STILL : bodyAt(style, pose.act, pose.stomp);
+    // Where the attack is aimed, in radians below the horizontal (facing right): a spear or bow
+    // aimed up or down the screen lunges and leans that way, not sideways.
+    const aim = pose.target ? this.aimAngle(x, y, pose.target) : 0;
+    const aimed = style === 'thrust' || style === 'shoot';
+    const lean = aimed ? m.lean * Math.abs(Math.cos(aim)) : m.lean;
+    const shiftX = aimed ? Math.cos(aim) : 1;
+    const shiftY = aimed ? Math.sin(aim) : 0;
+    const bx = x + f * m.shift * shiftX * size.cutWidth * k;
     // A flyer hovers high above its shadow; walkers hop with their step.
     const by =
       y -
       (id === 'harpy' ? s * 2.2 : action ? 0 : pose.bob * bobHeight(id) * s) -
-      m.lift * size.cutHeight * k;
+      m.lift * size.cutHeight * k +
+      m.shift * shiftY * size.cutWidth * k * SQUASH;
     const body = () => {
       const im = this.image(frame, bx, by, k)
         .setScale(k * f * m.stretch, k * m.squash)
@@ -1043,13 +1051,24 @@ export class PlayScene extends Phaser.Scene {
     }
     // The warlord raises its weapon for the stomp too.
     const act = pose.stomp < 0 ? Math.min(pose.act, pose.stomp) : pose.act;
-    const aim = pose.target ? this.aimAngle(x, y, f, pose.target) : 0;
     const hand = rig.hand ?? HAND;
-    const at = onBody((hand[0] + weaponReach(rig, act)) * size.cutWidth, -hand[1] * size.cutHeight);
+    const angle = weaponAngle(rig, act, aim);
+    // A blade's reach is sideways; a spear or bow moves along where it points, so a thrust up or
+    // down the screen drives the spear at its target. Held that way, the hand comes in toward
+    // the body's middle.
+    const reach = weaponReach(rig, act) * size.cutWidth;
+    const along = rig.kind === 'aim' ? angle : angle + rig.points;
+    const forward = rig.kind === 'thrust' ? Math.max(0.3, Math.abs(Math.cos(aim))) : 1;
+    const at =
+      rig.kind === 'swing'
+        ? onBody(hand[0] * size.cutWidth + reach, -hand[1] * size.cutHeight)
+        : onBody(
+            hand[0] * forward * size.cutWidth + Math.cos(along) * reach,
+            -hand[1] * size.cutHeight + Math.sin(along) * reach,
+          );
     const held = this.textures.getFrame(this.art.atlas(rig.frame)!, rig.frame);
     const length = k * rig.length * size.cutHeight;
     const w = length / Math.max(held.cutWidth, held.cutHeight);
-    const angle = weaponAngle(rig, act, aim);
     const weapon = () => {
       const im = this.image(rig.frame, at.x, at.y, w)
         .setOrigin(rig.grip[0], rig.grip[1])
@@ -1070,13 +1089,12 @@ export class PlayScene extends Phaser.Scene {
   }
 
   /**
-   * The aim toward a target, in radians below the horizontal for an actor facing `f`: steep
-   * targets are capped so a weapon never points straight up or down past the body.
+   * The aim toward a target, in radians below the horizontal for an actor facing it: straight up
+   * the screen is -π/2, straight down π/2.
    */
-  private aimAngle(x: number, y: number, f: 1 | -1, target: Vec): number {
+  private aimAngle(x: number, y: number, target: Vec): number {
     const t = this.px(target);
-    const dx = Math.max(Math.abs(t.x - x), SCALE * 0.3);
-    return Phaser.Math.Clamp(Math.atan2(t.y - y, dx), -1.05, 0.9);
+    return Math.atan2(t.y - y, Math.abs(t.x - x));
   }
 
   /**
