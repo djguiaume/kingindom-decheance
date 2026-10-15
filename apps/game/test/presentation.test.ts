@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { CameraView, SCALE, SQUASH } from '../src/game/camera.ts';
-import { emptyPlotIds, projectileFrame } from '../src/game/presentation.ts';
+import { emptyPlotIds, gateIsOpen, projectileFrame } from '../src/game/presentation.ts';
 
 describe('plot presentation', () => {
   it('removes an empty foundation while occupied, including ruins and repaired buildings', () => {
@@ -29,4 +29,21 @@ it('projects indicators into page coordinates when the night canvas starts below
   camera.offsetTop = 64;
   camera.zoom = 0.5;
   expect(camera.toScreen({ x: 2, y: 3 })).toEqual({ x: SCALE, y: 64 + 3 * SCALE * SQUASH * 0.5 });
+});
+
+it('opens a standing gate for friendly approach from either side at arbitrary map orientations', () => {
+  const at = { x: 12, y: 18 };
+  for (let degrees = 0; degrees < 360; degrees++) {
+    const angle = (degrees * Math.PI) / 180;
+    for (const side of [-1, 1]) {
+      const pos = {
+        x: at.x + Math.cos(angle) * side * 1.5,
+        y: at.y + Math.sin(angle) * side * 1.5,
+      };
+      expect(gateIsOpen(at, false, { alive: true, pos }, [])).toBe(true);
+      expect(gateIsOpen(at, false, { alive: false, pos }, [{ pos }])).toBe(true);
+      expect(gateIsOpen(at, false, { alive: false, pos }, [])).toBe(false);
+      expect(gateIsOpen(at, true, { alive: true, pos }, [{ pos }])).toBe(false);
+    }
+  }
 });

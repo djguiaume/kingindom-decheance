@@ -40,6 +40,23 @@ night lighting, real audio, king selection and tutorial remain in the remediatio
 quality still needs playtest feedback; these rig improvements do not constitute new attack
 sequences or pre-hit gameplay telegraphs.
 
+## Panda gates and ground anchors (2026-10-14)
+
+Existing-asset batch 2, view-only:
+
+- `game/groundRigs.ts` records building/ruin ground centres and gate hinge points on the
+  untrimmed masters. Building footprints now centre on their slot, rather than placing the
+  canvas's generic 90% pivot at the slot. Roof HP bars follow the same anchor.
+- Gates fit the core's projected 2.2 m passage. Their ground plane stretches/shears to the
+  lane direction while posts remain upright; `Painter.projectedImage` pools a parent container
+  and image, decomposing the affine matrix into normal Phaser rotation/scale transforms.
+- Side and diagonal gate perspectives both mirror when required. The same source hinge
+  calibration is used for open/closed frames, and reversing lane direction cannot change
+  placement. Near-vertical custom-map gates use a small depth projection so the side painting remains
+  visible while both hinge endpoints still match the exact passage. Tests cover all 360 degrees
+  of presentation and 24 rotated paths with actual king, footman and enemy movement.
+- No PNG masters, runtime atlas files, collision dimensions, content or balance changed.
+
 ## PRNG
 
 sfc32 (four 32-bit integers of state), seeded through splitmix32 and warmed up 12 rounds.

@@ -330,44 +330,50 @@ describe('runtime atlases and review', () => {
     }
   });
 
-  it('builds Phaser JSON Hash atlases with pivots, a contact sheet and an honest audit', async () => {
-    const { w, manifest } = await ws();
-    const batch = await estimate(w, '35-36,102');
-    await generateBatch(w, batch.token, batch.totalCU);
-    const out = paths(root).runtime;
-    const index = await buildRuntime(root, manifest, out);
+  // This integration test rasterizes and compresses full-catalog PNG review sheets. Keep the
+  // normal unit-test timeout elsewhere; image processing needs headroom on shared CI runners.
+  it(
+    'builds Phaser JSON Hash atlases with pivots, a contact sheet and an honest audit',
+    { timeout: 20_000 },
+    async () => {
+      const { w, manifest } = await ws();
+      const batch = await estimate(w, '35-36,102');
+      await generateBatch(w, batch.token, batch.totalCU);
+      const out = paths(root).runtime;
+      const index = await buildRuntime(root, manifest, out);
 
-    const atlas = JSON.parse(await readFile(join(out, 'enemies.json'), 'utf8'));
-    expect(atlas.meta).toMatchObject({ image: 'enemies.webp', format: 'RGBA8888' });
-    expect(Object.keys(atlas.frames).sort()).toEqual([
-      'catapult_arm.f1',
-      'catapult_arm.f2',
-      'catapult_chassis',
-    ]);
-    const chassis = atlas.frames.catapult_chassis;
-    expect(chassis).toMatchObject({
-      rotated: false,
-      trimmed: true,
-      sourceSize: { w: 256, h: 256 },
-      pivot: { x: 0.5, y: 0.9 },
-      contentId: 'catapult',
-    });
-    const meta = await sharp(join(out, 'enemies.webp')).metadata();
-    expect(meta.format).toBe('webp');
-    expect(meta.hasAlpha).toBe(true);
-    expect(index.images.map((i) => i.key)).toEqual(['tile_grass']);
-    expect(index.frames['catapult_arm.f2']).toMatchObject({ atlas: 'enemies', num: 36 });
+      const atlas = JSON.parse(await readFile(join(out, 'enemies.json'), 'utf8'));
+      expect(atlas.meta).toMatchObject({ image: 'enemies.webp', format: 'RGBA8888' });
+      expect(Object.keys(atlas.frames).sort()).toEqual([
+        'catapult_arm.f1',
+        'catapult_arm.f2',
+        'catapult_chassis',
+      ]);
+      const chassis = atlas.frames.catapult_chassis;
+      expect(chassis).toMatchObject({
+        rotated: false,
+        trimmed: true,
+        sourceSize: { w: 256, h: 256 },
+        pivot: { x: 0.5, y: 0.9 },
+        contentId: 'catapult',
+      });
+      const meta = await sharp(join(out, 'enemies.webp')).metadata();
+      expect(meta.format).toBe('webp');
+      expect(meta.hasAlpha).toBe(true);
+      expect(index.images.map((i) => i.key)).toEqual(['tile_grass']);
+      expect(index.frames['catapult_arm.f2']).toMatchObject({ atlas: 'enemies', num: 36 });
 
-    const review = paths(root).review;
-    await mkdir(review, { recursive: true });
-    await contactSheet(root, manifest, w.status.data, join(review, 'contact-sheet.png'));
-    await animationSheet(root, manifest, join(review, 'animation-frames.png'));
-    expect(existsSync(join(review, 'contact-sheet.png'))).toBe(true);
-    expect(existsSync(join(review, 'animation-frames.png'))).toBe(true);
+      const review = paths(root).review;
+      await mkdir(review, { recursive: true });
+      await contactSheet(root, manifest, w.status.data, join(review, 'contact-sheet.png'));
+      await animationSheet(root, manifest, join(review, 'animation-frames.png'));
+      expect(existsSync(join(review, 'contact-sheet.png'))).toBe(true);
+      expect(existsSync(join(review, 'animation-frames.png'))).toBe(true);
 
-    const result = audit(root, manifest, w.status.data, index);
-    expect(result.complete).toBe(false);
-    const done = result.rows.filter((r) => r.problems.length === 0).map((r) => r.id);
-    expect(done).toEqual(['catapult_chassis', 'catapult_arm', 'tile_grass']);
-  });
+      const result = audit(root, manifest, w.status.data, index);
+      expect(result.complete).toBe(false);
+      const done = result.rows.filter((r) => r.problems.length === 0).map((r) => r.id);
+      expect(done).toEqual(['catapult_chassis', 'catapult_arm', 'tile_grass']);
+    },
+  );
 });

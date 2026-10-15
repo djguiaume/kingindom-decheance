@@ -1,7 +1,8 @@
 # Panda Kingdom playtest remediation strategy
 
-Status: first existing-asset batch implemented on `fix/panda-playtest-existing-assets`; pending
-PR review and playtest. Remaining batches are planned.
+Status: ongoing. [PR #43](https://github.com/djguiaume/kingindom-decheance/pull/43) is merged.
+[PR #44](https://github.com/djguiaume/kingindom-decheance/pull/44) contains the gate and
+ground-anchor fixes on `fix/panda-gates-ground-anchors`, awaiting review and merge. No assets have been generated for either batch.
 
 Reported by Guillaume after testing the latest `main` on 2026-10-14. Code reviewed at
 `1de7567a91912545aa9343791f21aab43d53b104` (PR #39, “Bring the panda art into main”).
@@ -25,7 +26,7 @@ Priorities: P0 = battlefield visibility blocker; P1 = integration/feedback defec
 feature or broader presentation improvement. These are implementation priorities, not claims
 that every observation has the same severity.
 
-### What the current code establishes
+### What the reviewed playtest baseline established
 
 - `game/art.ts` chooses only the on-foot king's idle/walk frames. It never chooses the existing
   roll, anticipation, uncurl or wolf sequences. Walk frames advance from distance with four
@@ -57,46 +58,73 @@ that every observation has the same severity.
   `dash`, and `systems/king.ts` implements that dash. Different dash parameters are feasible;
   crowd control or new special-ability types require core/content work.
 
-## First batch progress
+## Fix history and status
 
-Implemented on the feature branch: F01 walk cadence, F02 rolling charge, F11 occupied-plot
-foundation visibility, F20 source-specific projectile art and F21 compact night toolbar with
-separate battlefield viewport. F05/F06 receive stronger thrust/swing/recoil and target-facing
-improvements, but animation quality remains subject to in-game review. No finding is closed
-before the next playtest. No assets were generated and no simulation stats were changed.
+This register is the running list of all 21 findings. **Fixed** means implemented and tested;
+the status also states whether it is merged or awaiting merge. **Partial** means the finding
+still needs additional work. A merged PR is not a claim that a new user playtest has passed;
+reopen any fixed finding if the next playtest still shows the issue.
 
-F07/F08 gate scale/orientation and F10 per-building anchor calibration remain open; hiding the
-empty plot foundation does not establish that every building's ground anchor is correct.
-The remaining findings and batch dependencies below are unchanged.
+| Batch | Delivery                                                                                         | Findings                | Result                                                                                                                                                                   |
+| ----- | ------------------------------------------------------------------------------------------------ | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1     | [PR #43](https://github.com/djguiaume/kingindom-decheance/pull/43), merged into main (`f1e9097`) | F01, F02, F11, F20, F21 | Fixed: walk cadence, rolling charge, foundation visibility, projectile mapping, night battlefield/HUD separation.                                                        |
+| 1     | PR #43, merged                                                                                   | F05, F06                | Partial: stronger attacks/recoil and correct target facing; broader attack animation quality remains open.                                                               |
+| 2     | [PR #44](https://github.com/djguiaume/kingindom-decheance/pull/44), awaiting merge               | F07, F08, F10           | Fixed in branch: gate hinge span fits projected core passage, front/side/diagonal perspective and mirroring, upright posts, and calibrated building/ruin ground centres. |
+
+### CI follow-up for PR #44
+
+The new orientation, scale/anchor and rotated-map tests passed on GitHub Actions. The failing
+check was the existing atlas/contact-sheet integration test exceeding its default 5 s limit
+while rasterizing and compressing full-catalog PNG review sheets. That single integration
+test now has a 20 s timeout, with all assertions retained; ordinary tests keep their existing
+limits. Verification uses the standard `pnpm test` command without a global timeout override.
+
+### Batch 2 details
+
+- Gate placement uses measured ground hinge points from the existing closed master, shared
+  between closed/open frames. The hinge segment is fitted to the core's 2.2 m opening after
+  projection. The ground axis can stretch/shear while the vertical axis stays upright; pooled
+  Phaser containers/images implement this with standard transforms in WebGL and Canvas.
+- Side views mirror as well as diagonal views. Reversing the wall axis leaves presentation
+  unchanged. Near-vertical custom-map gates include a small depth projection to keep the side painting
+  visible while fitting both hinge endpoints exactly. All orientations use the same lane-derived
+  geometry; no Greyhollow coordinates or angles are hard-coded. Presentation tests cover
+  every degree and both wall-axis directions. Validated map fixtures rotate the incoming path
+  through 24 orientations, verifying king passage from either side, blocked wall wings,
+  following soldiers routing through the opening, ground enemy blocking and flyers ignoring
+  the wall. Friendly proximity opens the gate from either side at all angles.
+- Each current building and castle tier has a ground centre measured on its untrimmed master.
+  Trimmed atlas bounds do not become the anchor. Ruins and roof HP bars use the same convention.
+  Building size, collision, routes and gameplay rules remain unchanged.
 
 ## Complete finding register
 
 Every original finding has one ID. Design questions remain questions until their recommended
 resolution below is adopted; do not silently mark them as fixed.
 
-| ID  | Playtest finding                                             | Priority / batch | Required result and acceptance                                                                                                                                                       |
-| --- | ------------------------------------------------------------ | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| F01 | King walk animation too fast                                 | P1 / B2          | Tune per-king cadence independently of movement speed; full-speed walking looks deliberate, settles cleanly, and behaves consistently at 30/60/120 render FPS.                       |
-| F02 | King does not roll during charge                             | P1 / B2          | Use existing anticipation/roll/impact/uncurl art; roll visibly covers the actual dash, exits cleanly, and never leaves a spear floating beside a curled body.                        |
-| F03 | Is a king selection menu planned?                            | P2 / B6          | Yes in the approved art decision, absent in code. Add an explicit pre-run choice of on-foot/wolf king with portrait, ability description and selected state.                         |
-| F04 | Can selected kings have different charges/special abilities? | P2 / B6          | Extend deterministic run configuration and validated content; same seed/config/commands replay identically for each king. Do not promise non-dash abilities with the present schema. |
-| F05 | King attack too basic                                        | P1 / B2          | Clear spear thrust with body anticipation/recoil and correctly placed weapon/impact effect, readable at phone scale in front/back views.                                             |
-| F06 | Enemies appear to have no attack animation                   | P1 / B2          | Each implemented enemy visibly strikes, draws/releases, throws or stomps; weapon pivots and body motion align; one shot release never animates twice on landing.                     |
-| F07 | Door scale completely wrong                                  | P1 / B1          | Gate opening matches the core's 2.2 m passage at every gate view and tier; neighboring wall wings meet it without gaps/overlap.                                                      |
-| F08 | Door orientation slightly wrong                              | P1 / B1          | Front/side/diagonal view and mirror selection match the projected wall line; open/closed frames keep hinges and ground anchors stable.                                               |
-| F09 | Terrain acts as wall instead of actual walls                 | P1 / B3          | Audit map barriers and replace intended fortifications with wall geometry/art; retain genuine cliffs/water. The visible blocker and actual collision agree.                          |
-| F10 | Buildings not aligned with bases                             | P1 / B1          | Every building/upgrade is centered on its plot's ground anchor and footprint, including castle tiers; no unexplained drift from trimming or scale.                                   |
-| F11 | Base still visible after construction                        | P1 / B1          | Hide the empty-plot art when occupied; upgrades, destruction, dawn repair and restart display the intended occupied/ruined/empty state without duplicate foundations.                |
-| F12 | Should buildings/enemies change at night?                    | P2 / B3          | Use lighting, not alternate identity: subtle cool ambient tint and warm building glows; preserve enemy silhouette, attack readability and faction distinction.                       |
-| F13 | Generic sounds do not match actions                          | P1 / B4          | Distinct roll/lunge, spear, sword/axe/club, bow/crossbow, ballista and boulder cues; release and impact timing match the visible action; mute/limits still work.                     |
-| F14 | HUD does not use assets                                      | P2 / B5          | Wire suitable approved portraits/icons into Vue through a shared UI asset map; create only demonstrably missing UI assets.                                                           |
-| F15 | HUD does not match panda theme                               | P2 / B5          | Consistent blue/gold/bamboo/stone visual language across HUD, panels, pause, perk, wave and result screens; readable live text and usable touch targets.                             |
-| F16 | No themed main menu                                          | P2 / B5          | Theme the existing home screen using backdrop/panda identity, Play/Tutorial/settings access, and accurate instructions.                                                              |
-| F17 | No tutorial like Thronefall                                  | P2 / B7          | Short optional playable introduction teaches move, build, night, autoattack, ability and rally; supports keyboard/touch, skip/replay and progress only after the action succeeds.    |
-| F18 | Terrain does not match assets                                | P1 / B3          | Integrate reviewed grass/water/cliff/bridge/prop art over the authoritative map geometry; collision stays recognizable and scenery does not bury actors.                             |
-| F19 | Paths do not match assets                                    | P1 / B3          | Use reviewed path tile/edge treatment aligned to lanes, without seams, abrupt joins, or changing travel routes during the art pass.                                                  |
-| F20 | Projectiles appear not to use corresponding assets           | P1 / B2          | Verify arrow, crossbow bolt, ballista bolt and boulder per source; use corresponding art for friendly/enemy/tower/castle shots with distinct faction treatment.                      |
-| F21 | Top HUD hides enemies at night                               | P0 / B0          | Compact night HUD and camera framing keep approaching enemies/telegraphs out from under opaque panels; boss bar/toasts and edge indicators remain usable on short landscape phones.  |
+| ID  | Status                                  | Playtest finding                                             | Priority / batch | Required result and acceptance                                                                                                                                                       |
+| --- | --------------------------------------- | ------------------------------------------------------------ | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| F01 | Fixed · PR #43 merged                   | King walk animation too fast                                 | P1 / B2          | Tune per-king cadence independently of movement speed; full-speed walking looks deliberate, settles cleanly, and behaves consistently at 30/60/120 render FPS.                       |
+| F02 | Fixed · PR #43 merged                   | King does not roll during charge                             | P1 / B2          | Use existing anticipation/roll/impact/uncurl art; roll visibly covers the actual dash, exits cleanly, and never leaves a spear floating beside a curled body.                        |
+| F03 | Open                                    | Is a king selection menu planned?                            | P2 / B6          | Yes in the approved art decision, absent in code. Add an explicit pre-run choice of on-foot/wolf king with portrait, ability description and selected state.                         |
+| F04 | Open                                    | Can selected kings have different charges/special abilities? | P2 / B6          | Extend deterministic run configuration and validated content; same seed/config/commands replay identically for each king. Do not promise non-dash abilities with the present schema. |
+| F05 | Partial · PR #43 merged                 | King attack too basic                                        | P1 / B2          | Clear spear thrust with body anticipation/recoil and correctly placed weapon/impact effect, readable at phone scale in front/back views.                                             |
+| F06 | Partial · PR #43 merged                 | Enemies appear to have no attack animation                   | P1 / B2          | Each implemented enemy visibly strikes, draws/releases, throws or stomps; weapon pivots and body motion align; one shot release never animates twice on landing.                     |
+| F07 | Fixed · awaiting merge                  | Door scale completely wrong                                  | P1 / B1          | Gate opening matches the core's 2.2 m passage at every gate view and tier; neighboring wall wings meet it without gaps/overlap.                                                      |
+| F08 | Fixed · awaiting merge                  | Door orientation slightly wrong                              | P1 / B1          | Front/side/diagonal view and mirror selection match the projected wall line; open/closed frames keep hinges and ground anchors stable.                                               |
+| F09 | Open                                    | Terrain acts as wall instead of actual walls                 | P1 / B3          | Audit map barriers and replace intended fortifications with wall geometry/art; retain genuine cliffs/water. The visible blocker and actual collision agree.                          |
+| F10 | Fixed · awaiting merge                  | Buildings not aligned with bases                             | P1 / B1          | Every building/upgrade is centered on its plot's ground anchor and footprint, including castle tiers; no unexplained drift from trimming or scale.                                   |
+| F11 | Fixed · PR #43 merged                   | Base still visible after construction                        | P1 / B1          | Hide the empty-plot art when occupied; upgrades, destruction, dawn repair and restart display the intended occupied/ruined/empty state without duplicate foundations.                |
+| F12 | Decision recorded · implementation open | Should buildings/enemies change at night?                    | P2 / B3          | Use lighting, not alternate identity: subtle cool ambient tint and warm building glows; preserve enemy silhouette, attack readability and faction distinction.                       |
+| F13 | Open                                    | Generic sounds do not match actions                          | P1 / B4          | Distinct roll/lunge, spear, sword/axe/club, bow/crossbow, ballista and boulder cues; release and impact timing match the visible action; mute/limits still work.                     |
+| F14 | Open                                    | HUD does not use assets                                      | P2 / B5          | Wire suitable approved portraits/icons into Vue through a shared UI asset map; create only demonstrably missing UI assets.                                                           |
+| F15 | Open                                    | HUD does not match panda theme                               | P2 / B5          | Consistent blue/gold/bamboo/stone visual language across HUD, panels, pause, perk, wave and result screens; readable live text and usable touch targets.                             |
+| F16 | Open                                    | No themed main menu                                          | P2 / B5          | Theme the existing home screen using backdrop/panda identity, Play/Tutorial/settings access, and accurate instructions.                                                              |
+| F17 | Open                                    | No tutorial like Thronefall                                  | P2 / B7          | Short optional playable introduction teaches move, build, night, autoattack, ability and rally; supports keyboard/touch, skip/replay and progress only after the action succeeds.    |
+| F18 | Open                                    | Terrain does not match assets                                | P1 / B3          | Integrate reviewed grass/water/cliff/bridge/prop art over the authoritative map geometry; collision stays recognizable and scenery does not bury actors.                             |
+| F19 | Open                                    | Paths do not match assets                                    | P1 / B3          | Use reviewed path tile/edge treatment aligned to lanes, without seams, abrupt joins, or changing travel routes during the art pass.                                                  |
+| F20 | Fixed · PR #43 merged                   | Projectiles appear not to use corresponding assets           | P1 / B2          | Verify arrow, crossbow bolt, ballista bolt and boulder per source; use corresponding art for friendly/enemy/tower/castle shots with distinct faction treatment.                      |
+| F21 | Fixed · PR #43 merged                   | Top HUD hides enemies at night                               | P0 / B0          | Compact night HUD and camera framing keep approaching enemies/telegraphs out from under opaque panels; boss bar/toasts and edge indicators remain usable on short landscape phones.  |
 
 ## Implementation batches, in order
 
@@ -301,9 +329,9 @@ skip/replay work, and ordinary runs stay unchanged.
 
 ## Review and validation policy
 
-For this documentation-only strategy commit: verify all 21 findings are represented, source
-paths/links exist, and Markdown formatting passes. No gameplay tests are needed to establish
-that a plan is valid; this commit does not claim the reported defects were reproduced or fixed.
+For strategy updates: verify all 21 findings remain represented, source paths/links exist,
+and Markdown formatting passes. Fix status must identify the delivered code and its merge
+state; preserve partial findings and record regressions instead of silently dropping entries.
 
 For implementation batches:
 
@@ -323,12 +351,12 @@ For implementation batches:
 - Record mobile render performance before/after atlas terrain, glow and richer effects; use
   pools/static layers where appropriate, and ensure pause/restart does not leak scene objects.
 - Re-play after B0–B2 before spending on replacement art; after B3–B5 for style/audio; after
-  B6–B7 for the complete new-player flow. A finding closes only after its acceptance condition
-  passes in-game and Guillaume's next playtest confirms it.
+  B6–B7 for the complete new-player flow. Mark a finding fixed after implementation and verification, with its PR/merge status recorded.
+  Reopen it if Guillaume's next playtest shows that its acceptance condition is still unmet.
 
 ## Start here
 
-The first implementation PR should be **B0: compact night HUD and visible threats**. Follow it
-with **B1: foundations, anchors and gates**, then **B2: king roll, attack readability and shots**.
-These three give the next playtest a readable battlefield and coherent existing assets before
-larger feature or art-production commitments.
+PR #43 delivered the first visibility, animation, foundation and projectile fixes. Batch 2
+finishes gate placement and building ground anchors. Next, integrate the existing painted
+terrain/path/environment assets (F18/F19), while keeping F09's map semantics and gameplay
+changes separate. Continue marking each finding and recording its PR as batches land.
