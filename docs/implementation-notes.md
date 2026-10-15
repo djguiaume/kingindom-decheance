@@ -321,9 +321,9 @@ balance are untouched.
   Volley ability was dropped; a bow ability can come back with a bow-carrying king.
 - 40 damage every 0.7 s, one target, 7 m, ground and air. It hits at once like a tower: as a
   projectile it missed raiders on the move and the bot won 0% of runs.
-- **Setup screen**: a Weapon tab before Perks; `RunSetup.weaponId` is saved in the profile
-  (older profiles fall back to the first weapon, the Spear). The title line names the weapon
-  only when it is not the Spear.
+- **King menu**: the weapon is picked under the kings (Guillaume, 2026-10-15), saved at once in
+  `RunSetup.weaponId` (older profiles fall back to the first weapon, the Spear). Picking a king
+  no longer closes the menu; Done does. The "Your king" card reads "ability · weapon".
 - **Art**: no paid art. The king holds the archers' bow (`king_longbow` rig) and his shots
   draw as arrows from the bow; the Wolf Rider's painted grip shows no bow, as with the spear.
 - **Sim**, balanced bot, 100 runs: Spear 95% (Wolf 93%), Longbow 98% (Wolf 99%). Earlier tries:

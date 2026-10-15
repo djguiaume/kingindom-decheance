@@ -1,13 +1,16 @@
 <script setup lang="ts">
-import type { KingSettings } from '@kd/content';
+import type { KingSettings, Weapon } from '@kd/content';
 import ArtSprite from './ArtSprite.vue';
 
 defineProps<{
   kings: readonly KingSettings[];
   modelValue: string;
-  isUnlocked: (king: KingSettings) => boolean;
+  isUnlocked: (entry: { unlock?: { level: number } }) => boolean;
+  /** The weapons the king can carry; the row is left out when absent. */
+  weapons?: readonly Weapon[];
+  weaponId?: string;
 }>();
-defineEmits<{ 'update:modelValue': [id: string] }>();
+defineEmits<{ 'update:modelValue': [id: string]; 'update:weaponId': [id: string] }>();
 </script>
 
 <template>
@@ -38,6 +41,22 @@ defineEmits<{ 'update:modelValue': [id: string] }>();
         </span>
       </button>
     </div>
+    <div v-if="weapons" class="weapons" data-testid="weapon-picker">
+      <span class="kicker">Weapon</span>
+      <button
+        v-for="w in weapons"
+        :key="w.id"
+        class="weapon"
+        :class="{ selected: weaponId === w.id }"
+        :aria-pressed="weaponId === w.id"
+        :disabled="!isUnlocked(w)"
+        :data-testid="`weapon-${w.id}`"
+        @click="$emit('update:weaponId', w.id)"
+      >
+        <b>{{ w.name }}</b>
+        <small>{{ w.description }}</small>
+      </button>
+    </div>
   </section>
 </template>
 
@@ -47,7 +66,8 @@ defineEmits<{ 'update:modelValue': [id: string] }>();
   min-height: 0;
   flex: 1;
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, auto) auto;
+  align-content: start;
   gap: 16px;
 }
 .heading {
@@ -88,6 +108,31 @@ defineEmits<{ 'update:modelValue': [id: string] }>();
   align-items: center;
   text-align: left;
 }
+.weapons {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(250px, 100%), 1fr));
+  gap: 8px 12px;
+  padding: 2px;
+}
+.weapons .kicker {
+  grid-column: 1 / -1;
+}
+.weapon {
+  min-width: 0;
+  padding: 8px 10px;
+  border: 2px solid color-mix(in srgb, var(--ink) 22%, transparent);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--paper) 86%, transparent);
+  color: var(--ink);
+  display: grid;
+  gap: 2px;
+  text-align: left;
+}
+.weapon small {
+  line-height: 1.25;
+  color: var(--muted);
+}
+.weapon.selected,
 .king.selected {
   border-color: var(--gold);
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--gold) 25%, transparent);
