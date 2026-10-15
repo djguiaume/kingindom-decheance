@@ -2,7 +2,7 @@
   "modelId": "model_openai-gpt-image-2-5-flare",
   "referenceAssetId": "asset_RvvNgxiXxMS5HiHWN85YLtqS",
   "referenceSha256": "1ced3f125f8dd4584f33ed856a41dec5b679d0f7b65d0e95681f59689a4f65d8",
-  "spentCU": 3541,
+  "spentCU": 3554,
   "parts": {
     "archer": {
       "state": "validated",
@@ -1741,13 +1741,13 @@
     "ruin_archery_range": {
       "state": "validated",
       "attempts": 1,
-      "costCU": 13,
-      "issues": [],
       "promptHash": "fafc6f968118",
-      "updatedAt": "2026-10-15T08:36:11.586Z",
       "jobId": "job_B97hRgxXvRzUQj4dtVUCoabQ",
       "assetId": "asset_wiFuTA6PwFJc2acPE3vhww1D",
-      "originalSha256": "8c5a988b85613c09dab3903ec1be2905e349bc9d9233f9467132fe4943f04dda"
+      "costCU": 13,
+      "originalSha256": "8c5a988b85613c09dab3903ec1be2905e349bc9d9233f9467132fe4943f04dda",
+      "issues": [],
+      "updatedAt": "2026-10-15T08:36:11.586Z"
     },
     "ruin_ballista_tower": {
       "state": "validated",
@@ -1770,6 +1770,17 @@
       "originalSha256": "8289ebf3ba535b923e7b427bd616a0b1e1f3b2e8746533acfdf7820a6d464222",
       "issues": [],
       "updatedAt": "2026-10-15T08:29:48.097Z"
+    },
+    "ruin_crossbow_range": {
+      "state": "validated",
+      "attempts": 1,
+      "costCU": 13,
+      "issues": [],
+      "promptHash": "879a430f990e",
+      "updatedAt": "2026-10-15T08:40:25.334Z",
+      "jobId": "job_w3dyzQNyoKVM4qrjrMnTAXCb",
+      "assetId": "asset_eHfravRrY8GYYZxUvXoF5bby",
+      "originalSha256": "d335b0fcf1b646a465ad6e7880a500df74234e981125ba65aa8727dfca2ed2dd"
     },
     "ruin_garrison": {
       "state": "validated",
@@ -1829,13 +1840,13 @@
     "ruin_marksmen": {
       "state": "validated",
       "attempts": 2,
-      "costCU": 26,
-      "issues": [],
       "promptHash": "b46b5a5c5e0f",
-      "updatedAt": "2026-10-15T08:37:10.409Z",
       "jobId": "job_sT3w6pyjryfPu8nvnkL1y1mW",
       "assetId": "asset_r9eSx4KqE14V1H9LnqXn7kEx",
-      "originalSha256": "ffcd8a8cf5b887a2775abd8fde5a7afe73fb06502e77fc13fd90aa6f79d83f52"
+      "costCU": 26,
+      "originalSha256": "ffcd8a8cf5b887a2775abd8fde5a7afe73fb06502e77fc13fd90aa6f79d83f52",
+      "issues": [],
+      "updatedAt": "2026-10-15T08:37:10.409Z"
     },
     "ruin_tower": {
       "state": "validated",

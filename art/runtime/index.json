@@ -137,6 +137,7 @@
         "ruin_archery_range",
         "ruin_ballista_tower",
         "ruin_barracks",
+        "ruin_crossbow_range",
         "ruin_garrison",
         "ruin_gold_mine",
         "ruin_house",
@@ -857,6 +858,12 @@
       "num": 40,
       "asset": "castle_1",
       "contentId": "castle"
+    },
+    "ruin_crossbow_range": {
+      "atlas": "buildings",
+      "num": 123,
+      "asset": "ruin_crossbow_range",
+      "contentId": "crossbow_range"
     },
     "barracks": {
       "atlas": "buildings",
