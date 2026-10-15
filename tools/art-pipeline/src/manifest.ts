@@ -208,6 +208,8 @@ export const AssetSchema = z.object({
   noReference: z.literal(true).optional(),
   /** Later frames are painted from the first frame of the same view, so only the pose changes. */
   followFirstFrame: z.literal(true).optional(),
+  /** Painted from the master of this other asset, so the pieces join (a cliff end and its section). */
+  followAsset: z.string().optional(),
   parts: z.array(PartSchema).min(1),
 });
 export type Asset = z.infer<typeof AssetSchema>;
@@ -243,6 +245,8 @@ export interface CatalogLike {
   noReference?: true;
   /** Paint later frames from the first frame's master, e.g. a gate's open doors. */
   followFirstFrame?: true;
+  /** Paint from this other asset's master, so the two pieces match and join. */
+  followAsset?: string;
 }
 
 /** Scenario output size: square for most, landscape for wide canvases and backdrops. */
@@ -278,6 +282,7 @@ export function buildManifest(catalog: readonly CatalogLike[]): Manifest {
         ...(e.inferred ? { inferred: e.inferred } : {}),
         ...(e.noReference ? { noReference: true as const } : {}),
         ...(e.followFirstFrame ? { followFirstFrame: true as const } : {}),
+        ...(e.followAsset ? { followAsset: e.followAsset } : {}),
         parts: [undefined, ...(e.back ? (['back'] as const) : []), ...(e.views ?? [])].flatMap(
           (view) =>
             frames.map((pose, i) => {

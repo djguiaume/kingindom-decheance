@@ -80,12 +80,16 @@ export function promptFor(asset: Asset, part: Part): string {
     ? ` Animation frame ${part.frame + 1} of ${asset.parts.filter((p) => p.view === part.view).length}: ${part.pose}.`
     : '';
   const follow = asset.followFirstFrame && part.frame > 0;
+  const piece = asset.followAsset
+    ? `The second attached image is the ${asset.followAsset.replaceAll('_', ' ')} this piece joins. Match its rock, grass, colours, height, depth and scale exactly, so the two sit side by side as one continuous piece of terrain.`
+    : undefined;
   return [
     `Game sprite: ${asset.subject}.${pose}`,
     framing(asset, part),
     STYLE_BIBLE,
     asset.noReference ? NO_REFERENCE_RULE : REFERENCE_RULE,
     ...(follow ? [FOLLOW_RULE] : []),
+    ...(piece ? [piece] : []),
   ].join('\n');
 }
 

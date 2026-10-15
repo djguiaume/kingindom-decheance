@@ -193,6 +193,16 @@ describe('generation', () => {
     expect(open!.prompt).toMatch(/frame 1 of this very subject in this same view/);
   });
 
+  it('paints the cliff end from the cliff section, so the two pieces join', async () => {
+    const { w, state } = await ws();
+    await generateSelection(w, 'cliff_section,cliff_end', 100);
+    const [section, end] = state.generations;
+    expect(section!.body.referenceImages).toEqual([w.status.data.referenceAssetId]);
+    expect(end!.body.referenceImages as string[]).toHaveLength(2);
+    expect(state.uploads.map((u) => u.name)).toContain('cliff_section.png');
+    expect(end!.prompt).toMatch(/the cliff section this piece joins/);
+  });
+
   it('generates ground decals and lights without the reference sheet, so no figures leak in', async () => {
     const { w, state } = await ws();
     const batch = await estimate(w, 'grass_patch,window_glow');
