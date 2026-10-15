@@ -78,10 +78,7 @@
                 "type": "array",
                 "items": {
                   "type": "string",
-                  "enum": [
-                    "ground",
-                    "air"
-                  ]
+                  "enum": ["ground", "air"]
                 }
               },
               "projectile": {
@@ -92,17 +89,10 @@
                     "exclusiveMinimum": 0
                   }
                 },
-                "required": [
-                  "speed"
-                ]
+                "required": ["speed"]
               }
             },
-            "required": [
-              "damage",
-              "interval",
-              "range",
-              "targets"
-            ]
+            "required": ["damage", "interval", "range", "targets"]
           },
           "perks": {
             "minItems": 1,
@@ -113,12 +103,7 @@
             }
           }
         },
-        "required": [
-          "level",
-          "cost",
-          "hp",
-          "perks"
-        ]
+        "required": ["level", "cost", "hp", "perks"]
       }
     },
     "perks": {
@@ -148,10 +133,7 @@
                 },
                 "op": {
                   "type": "string",
-                  "enum": [
-                    "add",
-                    "mul"
-                  ]
+                  "enum": ["add", "mul"]
                 },
                 "value": {
                   "type": "number"
@@ -165,11 +147,7 @@
                   }
                 }
               },
-              "required": [
-                "stat",
-                "op",
-                "value"
-              ]
+              "required": ["stat", "op", "value"]
             }
           },
           "unlock": {
@@ -181,23 +159,12 @@
                 "maximum": 9007199254740991
               }
             },
-            "required": [
-              "level"
-            ]
+            "required": ["level"]
           }
         },
-        "required": [
-          "id",
-          "name",
-          "description",
-          "modifiers"
-        ]
+        "required": ["id", "name", "description", "modifiers"]
       }
     }
   },
-  "required": [
-    "schemaVersion",
-    "levels",
-    "perks"
-  ]
+  "required": ["schemaVersion", "levels", "perks"]
 }

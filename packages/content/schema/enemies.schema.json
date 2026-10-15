@@ -26,16 +26,7 @@
           },
           "archetype": {
             "type": "string",
-            "enum": [
-              "swarm",
-              "tank",
-              "siege",
-              "flyer",
-              "ranged",
-              "fast",
-              "exploder",
-              "boss"
-            ]
+            "enum": ["swarm", "tank", "siege", "flyer", "ranged", "fast", "exploder", "boss"]
           },
           "hp": {
             "type": "number",
@@ -112,10 +103,7 @@
                 "type": "array",
                 "items": {
                   "type": "string",
-                  "enum": [
-                    "ground",
-                    "air"
-                  ]
+                  "enum": ["ground", "air"]
                 }
               },
               "projectile": {
@@ -126,32 +114,17 @@
                     "exclusiveMinimum": 0
                   }
                 },
-                "required": [
-                  "speed"
-                ]
+                "required": ["speed"]
               }
             },
-            "required": [
-              "damage",
-              "interval",
-              "range",
-              "targets"
-            ]
+            "required": ["damage", "interval", "range", "targets"]
           },
           "targetPriority": {
             "minItems": 1,
             "type": "array",
             "items": {
               "type": "string",
-              "enum": [
-                "wall",
-                "eco",
-                "tower",
-                "building",
-                "unit",
-                "king",
-                "castle"
-              ]
+              "enum": ["wall", "eco", "tower", "building", "unit", "king", "castle"]
             }
           },
           "ability": {
@@ -178,29 +151,12 @@
                 "exclusiveMinimum": 0
               }
             },
-            "required": [
-              "id",
-              "kind",
-              "radius",
-              "damage",
-              "cooldown"
-            ]
+            "required": ["id", "kind", "radius", "damage", "cooldown"]
           }
         },
-        "required": [
-          "id",
-          "name",
-          "archetype",
-          "hp",
-          "speed",
-          "attack",
-          "targetPriority"
-        ]
+        "required": ["id", "name", "archetype", "hp", "speed", "attack", "targetPriority"]
       }
     }
   },
-  "required": [
-    "schemaVersion",
-    "enemies"
-  ]
+  "required": ["schemaVersion", "enemies"]
 }

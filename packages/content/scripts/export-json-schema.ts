@@ -2,6 +2,7 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { format, resolveConfig } from 'prettier';
 import { z } from 'zod';
 import {
   BuildingCatalog,
@@ -29,6 +30,15 @@ const files: Record<string, z.ZodType> = {
 };
 for (const [name, schema] of Object.entries(files)) {
   const json = z.toJSONSchema(schema, { io: 'input' });
-  writeFileSync(join(outDir, name), JSON.stringify(json, null, 2) + '\n');
+  const path = join(outDir, name);
+  const raw = JSON.stringify(json, null, 2) + '\n';
+  // CI runs the repository format check immediately before verifying generated schemas. Apply
+  // that same formatter here so both checks agree byte-for-byte.
+  const output = await format(raw, {
+    ...(await resolveConfig(path)),
+    filepath: path,
+    parser: 'json',
+  });
+  writeFileSync(path, output);
   console.log(`wrote schema/${name}`);
 }

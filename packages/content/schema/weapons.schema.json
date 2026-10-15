@@ -72,10 +72,7 @@
                 "type": "array",
                 "items": {
                   "type": "string",
-                  "enum": [
-                    "ground",
-                    "air"
-                  ]
+                  "enum": ["ground", "air"]
                 }
               },
               "projectile": {
@@ -86,17 +83,10 @@
                     "exclusiveMinimum": 0
                   }
                 },
-                "required": [
-                  "speed"
-                ]
+                "required": ["speed"]
               }
             },
-            "required": [
-              "damage",
-              "interval",
-              "range",
-              "targets"
-            ]
+            "required": ["damage", "interval", "range", "targets"]
           },
           "unlock": {
             "type": "object",
@@ -107,21 +97,12 @@
                 "maximum": 9007199254740991
               }
             },
-            "required": [
-              "level"
-            ]
+            "required": ["level"]
           }
         },
-        "required": [
-          "id",
-          "name",
-          "attack"
-        ]
+        "required": ["id", "name", "attack"]
       }
     }
   },
-  "required": [
-    "schemaVersion",
-    "weapons"
-  ]
+  "required": ["schemaVersion", "weapons"]
 }
