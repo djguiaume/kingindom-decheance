@@ -31,6 +31,10 @@ export const icons = {
   alert: '<path d="M12 2l10 18H2zm-1 7v6h2V9zm0 8v2h2v-2z"/>',
   dice: '<path fill-rule="evenodd" d="M6 3h12a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3zm2 3.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm4 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm4 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z"/>',
   turn: '<path d="M12 4a8 8 0 1 1-7.4 5H2l3.5-4.5L9 9H6.8A6 6 0 1 0 12 6z"/>',
+  gear: '<path fill-rule="evenodd" d="M10.3 2h3.4l.5 2.6 1.7.8 2.2-1.5 2.4 2.4-1.5 2.2.8 1.7 2.6.5v3.4l-2.6.5-.8 1.7 1.5 2.2-2.4 2.4-2.2-1.5-1.7.8-.5 2.6h-3.4l-.5-2.6-1.7-.8-2.2 1.5-2.4-2.4 1.5-2.2-.8-1.7L2 13.7v-3.4l2.6-.5.8-1.7-1.5-2.2 2.4-2.4 2.2 1.5 1.7-.8zM12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z"/>',
+  book: '<path d="M3 4.5C5.5 3.6 8.6 3.7 11 5.2V20c-2.4-1.4-5.5-1.5-8-.6zm10 .7c2.4-1.5 5.5-1.6 8-.7v14.9c-2.5-.9-5.6-.8-8 .6z"/>',
+  close:
+    '<path fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" d="M6 6l12 12M18 6L6 18"/>',
 } as const;
 
 export type IconId = keyof typeof icons;

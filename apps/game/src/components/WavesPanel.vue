@@ -7,6 +7,7 @@
 import { computed, ref } from 'vue';
 import type { NightPlan } from '../stores/hud.ts';
 import { enemyIcon } from '../theme.ts';
+import ArtSprite from './ArtSprite.vue';
 import GameIcon from './GameIcon.vue';
 
 const props = defineProps<{ plans: NightPlan[]; tonight: number }>();
@@ -37,7 +38,7 @@ const when = (n: number) =>
       <span v-for="l in p.lanes" :key="l.lane" class="lane">
         <em>{{ laneName[l.lane] ?? l.lane }}</em>
         <span v-for="e in l.enemies" :key="e.id" class="foe" :title="e.name"
-          ><GameIcon :name="enemyIcon(e.id)" />{{ e.count }}</span
+          ><ArtSprite :name="e.id" :icon="enemyIcon(e.id)" class="foe-art" />{{ e.count }}</span
         >
       </span>
     </div>
@@ -100,6 +101,11 @@ const when = (n: number) =>
 .foe .gi {
   color: var(--enemy);
   font-size: 15px;
+}
+/* The enemy's own painting, so the player learns its look before it arrives. */
+.foe-art:not(.gi) {
+  font-size: 24px;
+  margin: -5px 0;
 }
 .more {
   align-self: flex-start;

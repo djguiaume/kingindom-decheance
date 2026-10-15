@@ -6,22 +6,34 @@
  * it never touches the live game state.
  */
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import HoldButton from '../components/HoldButton.vue';
 import NightTrack from '../components/NightTrack.vue';
 import VirtualJoystick from '../components/VirtualJoystick.vue';
 import WavesPanel from '../components/WavesPanel.vue';
 import GameIcon from '../components/GameIcon.vue';
+import ArtSprite from '../components/ArtSprite.vue';
 import { HOLD_BUY_MS, HOLD_NIGHT_MS, type InputHub } from '../game/input/hub.ts';
 import type { GameRuntime } from '../game/runtime.ts';
 import { scoreOf, type ScoreBreakdown } from '@kd/core';
 import { loadProfile, recordRun, saveProfile } from '../progression.ts';
 import { nightPlans, snapshot, useHudStore } from '../stores/hud.ts';
 import { enemyIcon, perkIcon } from '../theme.ts';
+import { castleArt, uiFrame } from '../ui-art.ts';
 
 const props = defineProps<{ runtime: GameRuntime; hub: InputHub }>();
 const emit = defineEmits<{ restart: []; fullscreen: [] }>();
 const store = useHudStore();
 const touch = computed(() => store.device === 'touch');
+const router = useRouter();
+/** Back to the title screen; the run is abandoned (PlayView tears it down). */
+function home(): void {
+  store.paused = false;
+  store.pickerOpen = false;
+  store.waveOpen = false;
+  store.message = '';
+  void router.push('/');
+}
 const keyHint = (key: string) => (touch.value ? '' : key);
 
 let stick = { x: 0, y: 0 };
@@ -37,6 +49,10 @@ const plans = nightPlans(props.runtime.ctx);
 const bosses = Object.fromEntries(
   plans.filter((p) => p.boss).map((p) => [p.night, enemyIcon(p.boss!)]),
 );
+/** The last night's boss, painted on the boss bar. */
+const bossId = [...plans].reverse().find((p) => p.boss)?.boss ?? 'warlord';
+/** Without the art the coin is drawn in CSS (`.coin.plain`). */
+const paintedCoin = !!uiFrame('coin');
 function rally(e: PointerEvent) {
   props.hub.rally(e.pointerType === 'mouse' ? 'keyboard' : 'touch');
 }
@@ -130,7 +146,9 @@ const pct = (v: number, max: number) =>
 
     <!-- Zone 1, top left: the treasury. Gold, then castle and king health as bars. -->
     <div class="treasury panel zone" data-battlefield-obstacle>
-      <span class="coin"><GameIcon name="coin" /></span>
+      <span class="coin" :class="{ plain: !paintedCoin }"
+        ><ArtSprite name="coin" icon="coin"
+      /></span>
       <span class="gold display" data-testid="gold">{{ store.hud.gold }}</span>
       <span class="health">
         <span class="row" :title="`Castle ${store.hud.castleHp} / ${store.hud.castleMaxHp}`">
@@ -149,7 +167,7 @@ const pct = (v: number, max: number) =>
           :class="{ down: !store.hud.kingAlive }"
           :title="`King ${store.hud.kingHp} / ${store.hud.kingMaxHp}`"
         >
-          <GameIcon name="crown" />
+          <ArtSprite name="portrait" icon="crown" class="face-art" />
           <span v-if="store.hud.kingAlive" class="bar king" data-testid="king-hp"
             ><i :style="{ width: pct(store.hud.kingHp, store.hud.kingMaxHp) }"
           /></span>
@@ -180,7 +198,7 @@ const pct = (v: number, max: number) =>
         data-battlefield-obstacle
         data-testid="boss-bar"
       >
-        <GameIcon :name="bosses[store.hud.nights] ?? 'helm'" />
+        <ArtSprite :name="bossId" :icon="bosses[store.hud.nights] ?? 'helm'" class="boss-art" />
         <strong class="display">{{ store.hud.boss.name }}</strong>
         <span class="bar"
           ><i :style="{ width: pct(store.hud.boss.hp, store.hud.boss.maxHp) }"
@@ -258,7 +276,12 @@ const pct = (v: number, max: number) =>
         >
           <span class="offer">
             <span class="offer-head">
-              <GameIcon v-if="o.kind === 'upgrade'" name="up" class="up" />
+              <span class="thumb"
+                ><ArtSprite :name="o.building" /><GameIcon
+                  v-if="o.kind === 'upgrade'"
+                  name="up"
+                  class="up"
+              /></span>
               <b class="display">{{ o.name }}</b>
               <span class="cost"><i />{{ o.cost }}</span>
               <kbd v-if="!touch">{{ store.hud.nearby.rally || o.option === 1 ? 'R' : 'E' }}</kbd>
@@ -292,7 +315,11 @@ const pct = (v: number, max: number) =>
         >
           <span class="offer">
             <span class="offer-head">
-              <GameIcon name="keep" class="up" />
+              <span class="thumb castle-thumb"
+                ><ArtSprite :name="castleArt(store.hud.castle.next.level)" icon="keep" /><GameIcon
+                  name="up"
+                  class="up"
+              /></span>
               <b class="display">Level {{ store.hud.castle.next.level }}</b>
               <span class="cost"><i />{{ store.hud.castle.next.cost }}</span>
               <kbd v-if="!touch">E</kbd>
@@ -331,7 +358,7 @@ const pct = (v: number, max: number) =>
       >
         <span class="ring" :style="cooldownStyle" />
         <span class="face panel round">
-          <GameIcon name="spear" />
+          <ArtSprite name="king_roll_roll.f1" icon="spear" class="charge-art" />
           <span>{{ store.hud.abilityName }}</span>
           <kbd v-if="!touch">Space</kbd>
         </span>
@@ -362,7 +389,7 @@ const pct = (v: number, max: number) =>
       data-testid="perk-picker"
       @click.self="hub.closePicker()"
     >
-      <div class="sheet panel">
+      <div class="sheet panel capped">
         <span class="kicker">Castle level {{ store.hud.castle.next.level }}</span>
         <h2 class="display">Choose a perk</h2>
         <p>It lasts for the whole run.</p>
@@ -406,7 +433,8 @@ const pct = (v: number, max: number) =>
       class="modal"
       data-testid="outcome"
     >
-      <div class="sheet panel">
+      <div class="sheet panel capped outcome" :class="store.hud.phase">
+        <ArtSprite name="portrait" icon="crown" class="outcome-art" />
         <h2 class="display">
           {{ store.hud.phase === 'won' ? 'Greyhollow stands' : 'Greyhollow has fallen' }}
         </h2>
@@ -451,18 +479,22 @@ const pct = (v: number, max: number) =>
         </p>
         <p v-else-if="result" class="best">Best on this map: {{ result.best }}</p>
         <button class="primary big" @click="emit('restart')">Play again</button>
+        <button class="big" data-testid="home" @click="home">Main menu</button>
       </div>
     </div>
 
     <div v-else-if="store.paused" class="modal" data-testid="pause-menu">
-      <div class="sheet panel">
+      <div class="sheet panel capped">
         <h2 class="display">Paused</h2>
         <p v-if="store.hud.perks.length > 0" data-testid="perks-taken">
           Castle perks: {{ store.hud.perks.join(', ') }}
         </p>
         <button class="primary big" @click="hub.togglePause()">Resume</button>
         <button class="big" @click="emit('fullscreen')">Full screen</button>
-        <button class="big" @click="emit('restart')">Restart run</button>
+        <div class="pair">
+          <button class="big" @click="emit('restart')">Restart run</button>
+          <button class="big" data-testid="home" @click="home">Main menu</button>
+        </div>
         <p class="hint">
           {{
             keyHint(
@@ -509,6 +541,9 @@ const pct = (v: number, max: number) =>
 .combat .coin {
   width: 24px;
   height: 24px;
+  font-size: 24px;
+}
+.combat .coin.plain {
   font-size: 15px;
 }
 .combat .gold {
@@ -563,13 +598,18 @@ const pct = (v: number, max: number) =>
 .coin {
   width: 34px;
   height: 34px;
-  border-radius: 50%;
   display: grid;
   place-items: center;
+  font-size: 34px;
+  filter: drop-shadow(0 1px 1px rgba(60, 40, 4, 0.35));
+}
+.coin.plain {
+  border-radius: 50%;
   background: radial-gradient(circle at 35% 30%, #ffe9a0, var(--gold) 60%, #8a6410);
   color: #5a3d06;
   font-size: 18px;
   box-shadow: inset 0 0 0 2px rgba(90, 60, 6, 0.4);
+  filter: none;
 }
 .gold {
   font-size: 26px;
@@ -592,6 +632,15 @@ const pct = (v: number, max: number) =>
 }
 .bar.king i {
   background: var(--gold);
+}
+/* The king's painted face beside his health. */
+.face-art {
+  font-size: 20px;
+  margin: -3px -1px -3px -3px;
+}
+.down .face-art {
+  filter: grayscale(1);
+  opacity: 0.6;
 }
 .respawn {
   font-size: 11px;
@@ -621,6 +670,13 @@ const pct = (v: number, max: number) =>
   padding: 6px 12px;
   color: var(--enemy);
   font-size: 18px;
+}
+.boss-art {
+  font-size: 28px;
+  margin: -6px 0;
+}
+.combat .boss-art {
+  font-size: 22px;
 }
 .boss-bar strong {
   font-size: 14px;
@@ -746,8 +802,24 @@ const pct = (v: number, max: number) =>
   /* Long names ("Archery range", "Crossbow range") wrap instead of being cut. */
   line-height: 1.1;
 }
-.up {
+/* The building it becomes, painted, with a green arrow when it is an upgrade. */
+.thumb {
+  position: relative;
+  flex: none;
+  font-size: 30px;
+  margin: -6px 0 -4px -2px;
+}
+.thumb .up {
+  position: absolute;
+  right: -5px;
+  bottom: -1px;
+  font-size: 13px;
   color: var(--moss);
+  background: var(--linen);
+  border-radius: 50%;
+}
+.castle-thumb {
+  font-size: 36px;
 }
 .cost {
   display: inline-flex;
@@ -838,8 +910,13 @@ const pct = (v: number, max: number) =>
   gap: 1px;
   font-size: 11px;
 }
-.face .gi {
+.face .gi,
+.charge-art {
   font-size: 28px;
+}
+.face .charge-art {
+  font-size: 36px;
+  margin: -4px 0 -2px;
 }
 .face kbd {
   margin: 1px 0 0;
@@ -978,6 +1055,18 @@ const pct = (v: number, max: number) =>
   margin: 0;
   font-size: 26px;
 }
+/* The end of a run: the king's portrait on the roof of the sheet, greyed in defeat. */
+.outcome {
+  padding-top: 8px;
+}
+.outcome-art {
+  font-size: 84px;
+  margin: -58px 0 -6px;
+  filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.35));
+}
+.outcome.lost .outcome-art {
+  filter: grayscale(0.85) drop-shadow(0 3px 4px rgba(0, 0, 0, 0.35));
+}
 .sheet p {
   margin: 0;
   color: var(--muted);
@@ -985,6 +1074,15 @@ const pct = (v: number, max: number) =>
 .big {
   min-width: 200px;
   min-height: 48px;
+}
+.pair {
+  display: flex;
+  gap: 8px;
+}
+.pair .big {
+  min-width: 0;
+  flex: 1 1 0;
+  white-space: nowrap;
 }
 /* The score breakdown on the end screen (13 §2.2): label, working, points. */
 .score {
