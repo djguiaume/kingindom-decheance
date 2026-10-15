@@ -80,9 +80,12 @@ export function promptFor(asset: Asset, part: Part): string {
     ? ` Animation frame ${part.frame + 1} of ${asset.parts.filter((p) => p.view === part.view).length}: ${part.pose}.`
     : '';
   const follow = asset.followFirstFrame && part.frame > 0;
-  const piece = asset.followAsset
-    ? `The second attached image is the ${asset.followAsset.replaceAll('_', ' ')} this piece joins. Match its rock, grass, colours, height, depth and scale exactly, so the two sit side by side as one continuous piece of terrain.`
-    : undefined;
+  const followed = asset.followAsset?.replaceAll('_', ' ');
+  const piece = !followed
+    ? undefined
+    : asset.id.startsWith('ruin_')
+      ? `The second attached image is this ${followed} before the attack. Paint that very building destroyed: the same base, footprint, materials, colours, camera angle, scale and position on the canvas, so the ruin sits exactly where the building stood and is still recognisably the ${followed}.`
+      : `The second attached image is the ${followed} this piece joins. Match its rock, grass, colours, height, depth and scale exactly, so the two sit side by side as one continuous piece of terrain.`;
   return [
     `Game sprite: ${asset.subject}.${pose}`,
     framing(asset, part),

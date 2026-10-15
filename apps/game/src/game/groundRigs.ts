@@ -83,7 +83,8 @@ export const GATE_RIGS: Record<string, GateRig> = {
 };
 
 export function groundOrigin(frame: string, width: number, height: number): [number, number] {
-  const anchor = GROUND_ANCHORS[frame];
+  // A building's ruin is painted from its master on the same canvas and footing.
+  const anchor = GROUND_ANCHORS[frame] ?? GROUND_ANCHORS[frame.replace(/^ruin_/, '')];
   return anchor ? [anchor[0] / width, anchor[1] / height] : [0.5, 0.9];
 }
 

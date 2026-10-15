@@ -2,7 +2,7 @@
   "frames": {
     "archery_range": {
       "frame": {
-        "x": 520,
+        "x": 1305,
         "y": 446,
         "w": 249,
         "h": 276
@@ -29,8 +29,8 @@
     },
     "ballista_tower": {
       "frame": {
-        "x": 1250,
-        "y": 446,
+        "x": 476,
+        "y": 724,
         "w": 180,
         "h": 276
       },
@@ -57,7 +57,7 @@
     "ballista_tower_base": {
       "frame": {
         "x": 2,
-        "y": 724,
+        "y": 1002,
         "w": 236,
         "h": 258
       },
@@ -83,8 +83,8 @@
     },
     "ballista_turret": {
       "frame": {
-        "x": 1263,
-        "y": 724,
+        "x": 2,
+        "y": 1262,
         "w": 128,
         "h": 118
       },
@@ -110,7 +110,7 @@
     },
     "barracks": {
       "frame": {
-        "x": 1186,
+        "x": 1478,
         "y": 2,
         "w": 266,
         "h": 276
@@ -218,7 +218,7 @@
     },
     "crossbow_range": {
       "frame": {
-        "x": 2,
+        "x": 532,
         "y": 446,
         "w": 262,
         "h": 276
@@ -245,8 +245,8 @@
     },
     "garrison": {
       "frame": {
-        "x": 1698,
-        "y": 446,
+        "x": 1374,
+        "y": 724,
         "w": 294,
         "h": 274
       },
@@ -272,8 +272,8 @@
     },
     "gold_mine": {
       "frame": {
-        "x": 675,
-        "y": 724,
+        "x": 827,
+        "y": 1002,
         "w": 219,
         "h": 221
       },
@@ -299,7 +299,7 @@
     },
     "guardian_bastion": {
       "frame": {
-        "x": 266,
+        "x": 1051,
         "y": 446,
         "w": 252,
         "h": 276
@@ -325,7 +325,7 @@
     },
     "guardian_lodge": {
       "frame": {
-        "x": 1454,
+        "x": 1746,
         "y": 2,
         "w": 264,
         "h": 276
@@ -351,8 +351,8 @@
     },
     "house": {
       "frame": {
-        "x": 896,
-        "y": 724,
+        "x": 1473,
+        "y": 1002,
         "w": 194,
         "h": 221
       },
@@ -378,8 +378,8 @@
     },
     "knight_hall": {
       "frame": {
-        "x": 1720,
-        "y": 2,
+        "x": 2,
+        "y": 446,
         "w": 263,
         "h": 276
       },
@@ -405,8 +405,8 @@
     },
     "manor": {
       "frame": {
-        "x": 1092,
-        "y": 724,
+        "x": 1669,
+        "y": 1002,
         "w": 169,
         "h": 221
       },
@@ -432,8 +432,8 @@
     },
     "marksmen": {
       "frame": {
-        "x": 1013,
-        "y": 446,
+        "x": 2,
+        "y": 724,
         "w": 235,
         "h": 276
       },
@@ -459,7 +459,7 @@
     },
     "monastery": {
       "frame": {
-        "x": 771,
+        "x": 1806,
         "y": 446,
         "w": 240,
         "h": 276
@@ -485,8 +485,8 @@
     },
     "monk_sanctuary": {
       "frame": {
-        "x": 379,
-        "y": 724,
+        "x": 531,
+        "y": 1002,
         "w": 294,
         "h": 247
       },
@@ -509,10 +509,361 @@
       "asset": "monk_sanctuary",
       "num": 60
     },
-    "tower": {
+    "ruin_archery_range": {
+      "frame": {
+        "x": 239,
+        "y": 724,
+        "w": 235,
+        "h": 276
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 43,
+        "y": 12,
+        "w": 235,
+        "h": 276
+      },
+      "sourceSize": {
+        "w": 320,
+        "h": 320
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "ruin_archery_range",
+      "num": 121,
+      "contentId": "archery_range"
+    },
+    "ruin_ballista_tower": {
+      "frame": {
+        "x": 658,
+        "y": 724,
+        "w": 173,
+        "h": 276
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 42,
+        "y": 12,
+        "w": 173,
+        "h": 276
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 320
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "ruin_ballista_tower",
+      "num": 116,
+      "contentId": "ballista_tower"
+    },
+    "ruin_barracks": {
+      "frame": {
+        "x": 267,
+        "y": 446,
+        "w": 263,
+        "h": 276
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 29,
+        "y": 12,
+        "w": 263,
+        "h": 276
+      },
+      "sourceSize": {
+        "w": 320,
+        "h": 320
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "ruin_barracks",
+      "num": 118,
+      "contentId": "barracks"
+    },
+    "ruin_crossbow_range": {
+      "frame": {
+        "x": 1186,
+        "y": 2,
+        "w": 290,
+        "h": 276
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 15,
+        "y": 12,
+        "w": 290,
+        "h": 276
+      },
+      "sourceSize": {
+        "w": 320,
+        "h": 320
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "ruin_crossbow_range",
+      "num": 123,
+      "contentId": "crossbow_range"
+    },
+    "ruin_garrison": {
+      "frame": {
+        "x": 1670,
+        "y": 724,
+        "w": 294,
+        "h": 270
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 13,
+        "y": 18,
+        "w": 294,
+        "h": 270
+      },
+      "sourceSize": {
+        "w": 320,
+        "h": 320
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "ruin_garrison",
+      "num": 119,
+      "contentId": "garrison"
+    },
+    "ruin_gold_mine": {
+      "frame": {
+        "x": 1263,
+        "y": 1002,
+        "w": 208,
+        "h": 221
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 24,
+        "y": 9,
+        "w": 208,
+        "h": 221
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "ruin_gold_mine",
+      "num": 113,
+      "contentId": "gold_mine"
+    },
+    "ruin_house": {
+      "frame": {
+        "x": 1048,
+        "y": 1002,
+        "w": 213,
+        "h": 221
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 22,
+        "y": 9,
+        "w": 213,
+        "h": 221
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "ruin_house",
+      "num": 111,
+      "contentId": "house"
+    },
+    "ruin_knight_hall": {
+      "frame": {
+        "x": 1556,
+        "y": 446,
+        "w": 248,
+        "h": 276
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 36,
+        "y": 12,
+        "w": 248,
+        "h": 276
+      },
+      "sourceSize": {
+        "w": 320,
+        "h": 320
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "ruin_knight_hall",
+      "num": 120,
+      "contentId": "knight_hall"
+    },
+    "ruin_manor": {
+      "frame": {
+        "x": 1840,
+        "y": 1002,
+        "w": 162,
+        "h": 221
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 47,
+        "y": 9,
+        "w": 162,
+        "h": 221
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "ruin_manor",
+      "num": 112,
+      "contentId": "manor"
+    },
+    "ruin_marksmen": {
+      "frame": {
+        "x": 796,
+        "y": 446,
+        "w": 253,
+        "h": 276
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 34,
+        "y": 12,
+        "w": 253,
+        "h": 276
+      },
+      "sourceSize": {
+        "w": 320,
+        "h": 320
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "ruin_marksmen",
+      "num": 122,
+      "contentId": "marksmen"
+    },
+    "ruin_tower": {
       "frame": {
         "x": 240,
+        "y": 1002,
+        "w": 150,
+        "h": 249
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 21,
+        "y": 10,
+        "w": 150,
+        "h": 249
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 288
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "ruin_tower",
+      "num": 114,
+      "contentId": "tower"
+    },
+    "ruin_volley_tower": {
+      "frame": {
+        "x": 1117,
         "y": 724,
+        "w": 127,
+        "h": 276
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 65,
+        "y": 12,
+        "w": 127,
+        "h": 276
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 320
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "ruin_volley_tower",
+      "num": 117,
+      "contentId": "volley_tower"
+    },
+    "ruin_watchtower": {
+      "frame": {
+        "x": 833,
+        "y": 724,
+        "w": 144,
+        "h": 276
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 40,
+        "y": 12,
+        "w": 144,
+        "h": 276
+      },
+      "sourceSize": {
+        "w": 224,
+        "h": 320
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "ruin_watchtower",
+      "num": 115,
+      "contentId": "watchtower"
+    },
+    "tower": {
+      "frame": {
+        "x": 392,
+        "y": 1002,
         "w": 137,
         "h": 249
       },
@@ -538,8 +889,8 @@
     },
     "volley_tower": {
       "frame": {
-        "x": 1432,
-        "y": 446,
+        "x": 979,
+        "y": 724,
         "w": 136,
         "h": 276
       },
@@ -565,8 +916,8 @@
     },
     "watchtower": {
       "frame": {
-        "x": 1570,
-        "y": 446,
+        "x": 1246,
+        "y": 724,
         "w": 126,
         "h": 276
       },
@@ -597,8 +948,8 @@
     "image": "buildings.webp",
     "format": "RGBA8888",
     "size": {
-      "w": 1994,
-      "h": 984
+      "w": 2048,
+      "h": 1382
     },
     "scale": "1"
   }
