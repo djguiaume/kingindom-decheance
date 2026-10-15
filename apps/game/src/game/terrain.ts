@@ -67,6 +67,23 @@ export function bridgeFrame(from: Pt, to: Pt): string {
   return 'bridge.diag';
 }
 
+/**
+ * Rotation relative to the chosen bridge painting. A bridge has no front/back direction, so
+ * reversing its map endpoints must not turn the painting upside down.
+ */
+export function bridgeRotation(from: Pt, to: Pt, frame = bridgeFrame(from, to)): number {
+  const dx = (to[0] - from[0]) * SCALE;
+  const dy = (to[1] - from[1]) * SCALE * SQUASH;
+  let axis = Math.atan2(dy, dx);
+  if (axis <= -Math.PI / 2) axis += Math.PI;
+  if (axis > Math.PI / 2) axis -= Math.PI;
+  const base = frame === 'bridge.side' ? Math.PI / 2 : frame === 'bridge.diag' ? Math.PI / 4 : 0;
+  let rotation = axis - base;
+  if (rotation <= -Math.PI / 2) rotation += Math.PI;
+  if (rotation > Math.PI / 2) rotation -= Math.PI;
+  return rotation;
+}
+
 /** Selects painted scenery when the runtime atlas contains a frame for the map prop. */
 export function paintedPropFrame(art: Art, kind: string): string | null {
   return art.still(kind);
@@ -203,9 +220,7 @@ export function addPaintedTerrain(
         .image((a.x + b.x) / 2, (a.y + b.y) / 2, atlas, frame)
         .setDepth(-1)
         .setScale(target / source);
-      const base =
-        frame === 'bridge.side' ? Math.PI / 2 : frame === 'bridge.diag' ? Math.PI / 4 : 0;
-      image.setRotation(Math.atan2(dy, dx) - base);
+      image.setRotation(bridgeRotation(bridge.from, bridge.to, frame));
     }
   return { ground, paths, water, bridges };
 }
