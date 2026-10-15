@@ -89,6 +89,16 @@ export interface ViewOptions {
 /** Scene pixels per art pixel at the art's own scale (1 m = 64 px). */
 const ART_SCALE = SCALE / ART_PX_PER_M;
 /**
+ * Stone wall faces, metres either side of the wall line (the core wall is 0.7 m thick). A wall
+ * running up the screen sets its faces side by side, so they stay closer there to overlap
+ * into one thick wall instead of two thin ones with grass between.
+ */
+const STONE_FACES: Record<string, number[]> = {
+  '': [-0.3, 0.3],
+  '.diag': [-0.3, 0.3],
+  '.side': [-0.1, 0.1],
+};
+/**
  * How big the art is drawn, relative to its painted size: characters a little smaller so crowds
  * stay readable, buildings so neighbouring slots (3 m apart) do not overlap much.
  */
@@ -712,35 +722,42 @@ export class PlayScene extends Phaser.Scene {
     };
     const segment = stone ? this.wallSegment(line.across) : null;
     if (segment) {
-      // Stone wings: painted wall sections laid end to end from the gate to the wing's end.
+      // Stone wings: painted wall sections laid end to end from the gate to the wing's end, in
+      // two faces (front and back of the wall) so the wall shows its thickness like the gate.
       for (const sign of [-1, 1]) {
         const start = wingStart(sign);
         const end = this.px(at(sign * WALL_HALF_SPAN));
         const length = Math.hypot(end.x - start.x, end.y - start.y);
         const count = Math.max(1, Math.round(length / segmentLength(segment.rig, SCALE)));
-        let cursor = start;
-        for (let i = 0; i < count; i++) {
-          const t = (i + 1) / count;
-          const to = { x: start.x + (end.x - start.x) * t, y: start.y + (end.y - start.y) * t };
-          const p = segmentPlacement(segment.rig, cursor, to, segment.mirror, SCALE);
-          cursor = p.end;
-          items.push({
-            y: p.at.y,
-            draw: () => {
-              const size = this.textures.getFrame(this.art.atlas(segment.frame)!, segment.frame);
-              this.painter
-                .projectedImage(
-                  this.art.atlas(segment.frame)!,
-                  segment.frame,
-                  p.at.x,
-                  p.at.y,
-                  p.matrix,
-                )
-                .setOrigin(p.anchor[0] / size.realWidth, p.anchor[1] / size.realHeight)
-                .setAlpha(alpha)
-                .setTint(sceneryTint(this.night));
-            },
-          });
+        for (const offset of STONE_FACES[segment.view]!) {
+          const shift = { x: alongPx.x * offset, y: alongPx.y * offset };
+          let cursor = { x: start.x + shift.x, y: start.y + shift.y };
+          for (let i = 0; i < count; i++) {
+            const t = (i + 1) / count;
+            const to = {
+              x: start.x + (end.x - start.x) * t + shift.x,
+              y: start.y + (end.y - start.y) * t + shift.y,
+            };
+            const p = segmentPlacement(segment.rig, cursor, to, segment.mirror, SCALE);
+            cursor = p.end;
+            items.push({
+              y: p.at.y,
+              draw: () => {
+                const size = this.textures.getFrame(this.art.atlas(segment.frame)!, segment.frame);
+                this.painter
+                  .projectedImage(
+                    this.art.atlas(segment.frame)!,
+                    segment.frame,
+                    p.at.x,
+                    p.at.y,
+                    p.matrix,
+                  )
+                  .setOrigin(p.anchor[0] / size.realWidth, p.anchor[1] / size.realHeight)
+                  .setAlpha(alpha)
+                  .setTint(sceneryTint(this.night));
+              },
+            });
+          }
         }
       }
     } else if (post) {
@@ -858,12 +875,12 @@ export class PlayScene extends Phaser.Scene {
   /** The painted stone wall section in the view closest to the wall's angle, if painted. */
   private wallSegment(
     across: Vec,
-  ): { frame: string; mirror: boolean; rig: (typeof SEGMENT_RIGS)[string] } | null {
+  ): { frame: string; view: string; mirror: boolean; rig: (typeof SEGMENT_RIGS)[string] } | null {
     const { view, mirror } = gateView(across, SQUASH);
     const name = `stone_wall_segment${view}`;
     const frame = this.art.still(name);
     const rig = SEGMENT_RIGS[name];
-    return frame && rig ? { frame, mirror, rig } : null;
+    return frame && rig ? { frame, view, mirror, rig } : null;
   }
 
   /** Fills a polygon with the current fill style. */
