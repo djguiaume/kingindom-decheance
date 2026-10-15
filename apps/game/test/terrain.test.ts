@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
+import { Art } from '../src/game/art.ts';
 import { SCALE, SQUASH } from '../src/game/camera.ts';
 import { CLIFF_HEIGHT, cliffPieces } from '../src/game/cliffs.ts';
-import { bridgeFrame, propNeedsDepth } from '../src/game/terrain.ts';
+import { bridgeFrame, paintedPropFrame, propNeedsDepth } from '../src/game/terrain.ts';
 
 describe('painted terrain orientation', () => {
   it('selects bridge perspectives from geometry in either direction', () => {
@@ -90,6 +91,12 @@ describe('painted cliffs', () => {
 });
 
 describe('scenery depth', () => {
+  it('uses corrected painted scenery instead of an obsolete procedural fallback', () => {
+    const art = new Art([['art:environment', ['grass_patch']]]);
+    expect(paintedPropFrame(art, 'grass_patch')).toBe('grass_patch');
+    expect(paintedPropFrame(art, 'missing')).toBeNull();
+  });
+
   it('sorts tall occluders while leaving ground decoration static', () => {
     expect(propNeedsDepth('tree')).toBe(true);
     expect(propNeedsDepth('bamboo_large')).toBe(true);

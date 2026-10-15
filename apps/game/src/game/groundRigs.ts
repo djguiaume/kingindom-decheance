@@ -30,7 +30,12 @@ export const GROUND_ANCHORS: Record<string, readonly [number, number]> = {
 export interface GateRig {
   /** Ground hinges of the closed gate, reused for open art to avoid changing placement. */
   hinges: readonly [readonly [number, number], readonly [number, number]];
+  /** Painted alpha height in the closed/open masters, used to keep their apparent height stable. */
+  visibleHeights: readonly [closed: number, open: number];
 }
+
+/** Gates are landmarks: a little over twice the king's visible height, like the reference. */
+export const GATE_UPRIGHT_SCALE = 1.5;
 
 export const GATE_RIGS: Record<string, GateRig> = {
   gate_wood: {
@@ -38,36 +43,42 @@ export const GATE_RIGS: Record<string, GateRig> = {
       [60, 146],
       [136, 158],
     ],
+    visibleHeights: [150, 137],
   },
   'gate_wood.diag': {
     hinges: [
       [62, 150],
       [128, 112],
     ],
+    visibleHeights: [160, 145],
   },
   'gate_wood.side': {
     hinges: [
       [78, 149],
       [111, 81],
     ],
+    visibleHeights: [166, 166],
   },
   gate_stone: {
     hinges: [
       [51, 156],
       [141, 156],
     ],
+    visibleHeights: [166, 166],
   },
   'gate_stone.diag': {
     hinges: [
       [56, 154],
       [136, 116],
     ],
+    visibleHeights: [163, 147],
   },
   'gate_stone.side': {
     hinges: [
       [79, 149],
       [113, 80],
     ],
+    visibleHeights: [166, 166],
   },
 };
 
@@ -97,6 +108,7 @@ export function gatePlacement(
   gapM: number,
   pixelsPerM: number,
   squash: number,
+  open = false,
 ) {
   const [a, b] = rig.hinges;
   const dx = b[0] - a[0];
@@ -106,7 +118,10 @@ export function gatePlacement(
   const side = dy < 0;
   const tx = mirror ? -targetX : targetX;
   const ty = side ? -targetY : (across.x * across.y > 0 ? 1 : -1) * targetY;
-  const uprightScale = pixelsPerM / 64;
+  // The source canvases match, but some open paintings have a shorter occupied alpha region.
+  // Normalize that difference around the fixed hinges so opening never shrinks the structure.
+  const stateScale = open ? rig.visibleHeights[0] / rig.visibleHeights[1] : 1;
+  const uprightScale = (pixelsPerM / 64) * GATE_UPRIGHT_SCALE * stateScale;
   // At an edge-on view the wall axis and upright axis project onto the same line. A small
   // depth component keeps the side art visible without moving either hinge off the passage.
   const depth = (mirror ? -1 : 1) * 0.02 * Math.max(0, 1 - Math.abs(across.x) / 0.1);
