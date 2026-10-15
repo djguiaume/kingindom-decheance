@@ -2,7 +2,7 @@
   "frames": {
     "archery_range": {
       "frame": {
-        "x": 785,
+        "x": 1040,
         "y": 446,
         "w": 249,
         "h": 276
@@ -29,8 +29,8 @@
     },
     "ballista_tower": {
       "frame": {
-        "x": 1765,
-        "y": 446,
+        "x": 239,
+        "y": 724,
         "w": 180,
         "h": 276
       },
@@ -56,7 +56,7 @@
     },
     "ballista_tower_base": {
       "frame": {
-        "x": 1310,
+        "x": 1729,
         "y": 724,
         "w": 236,
         "h": 258
@@ -83,7 +83,7 @@
     },
     "ballista_turret": {
       "frame": {
-        "x": 1475,
+        "x": 1766,
         "y": 1002,
         "w": 128,
         "h": 118
@@ -245,7 +245,7 @@
     },
     "garrison": {
       "frame": {
-        "x": 718,
+        "x": 1137,
         "y": 724,
         "w": 294,
         "h": 274
@@ -272,7 +272,7 @@
     },
     "gold_mine": {
       "frame": {
-        "x": 298,
+        "x": 589,
         "y": 1002,
         "w": 219,
         "h": 221
@@ -299,7 +299,7 @@
     },
     "guardian_bastion": {
       "frame": {
-        "x": 531,
+        "x": 786,
         "y": 446,
         "w": 252,
         "h": 276
@@ -351,7 +351,7 @@
     },
     "house": {
       "frame": {
-        "x": 944,
+        "x": 1235,
         "y": 1002,
         "w": 194,
         "h": 221
@@ -405,7 +405,7 @@
     },
     "manor": {
       "frame": {
-        "x": 1140,
+        "x": 1431,
         "y": 1002,
         "w": 169,
         "h": 221
@@ -432,7 +432,7 @@
     },
     "marksmen": {
       "frame": {
-        "x": 1528,
+        "x": 1783,
         "y": 446,
         "w": 235,
         "h": 276
@@ -459,7 +459,7 @@
     },
     "monastery": {
       "frame": {
-        "x": 1286,
+        "x": 1541,
         "y": 446,
         "w": 240,
         "h": 276
@@ -485,7 +485,7 @@
     },
     "monk_sanctuary": {
       "frame": {
-        "x": 2,
+        "x": 293,
         "y": 1002,
         "w": 294,
         "h": 247
@@ -509,9 +509,36 @@
       "asset": "monk_sanctuary",
       "num": 60
     },
-    "ruin_ballista_tower": {
+    "ruin_archery_range": {
       "frame": {
         "x": 2,
+        "y": 724,
+        "w": 235,
+        "h": 276
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 43,
+        "y": 12,
+        "w": 235,
+        "h": 276
+      },
+      "sourceSize": {
+        "w": 320,
+        "h": 320
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "ruin_archery_range",
+      "num": 121,
+      "contentId": "archery_range"
+    },
+    "ruin_ballista_tower": {
+      "frame": {
+        "x": 421,
         "y": 724,
         "w": 173,
         "h": 276
@@ -565,7 +592,7 @@
     },
     "ruin_garrison": {
       "frame": {
-        "x": 1014,
+        "x": 1433,
         "y": 724,
         "w": 294,
         "h": 270
@@ -592,7 +619,7 @@
     },
     "ruin_gold_mine": {
       "frame": {
-        "x": 734,
+        "x": 1025,
         "y": 1002,
         "w": 208,
         "h": 221
@@ -619,7 +646,7 @@
     },
     "ruin_house": {
       "frame": {
-        "x": 519,
+        "x": 810,
         "y": 1002,
         "w": 213,
         "h": 221
@@ -646,7 +673,7 @@
     },
     "ruin_knight_hall": {
       "frame": {
-        "x": 1036,
+        "x": 1291,
         "y": 446,
         "w": 248,
         "h": 276
@@ -673,7 +700,7 @@
     },
     "ruin_manor": {
       "frame": {
-        "x": 1311,
+        "x": 1602,
         "y": 1002,
         "w": 162,
         "h": 221
@@ -698,10 +725,37 @@
       "num": 112,
       "contentId": "manor"
     },
+    "ruin_marksmen": {
+      "frame": {
+        "x": 531,
+        "y": 446,
+        "w": 253,
+        "h": 276
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 34,
+        "y": 12,
+        "w": 253,
+        "h": 276
+      },
+      "sourceSize": {
+        "w": 320,
+        "h": 320
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "ruin_marksmen",
+      "num": 122,
+      "contentId": "marksmen"
+    },
     "ruin_tower": {
       "frame": {
-        "x": 1548,
-        "y": 724,
+        "x": 2,
+        "y": 1002,
         "w": 150,
         "h": 249
       },
@@ -727,7 +781,7 @@
     },
     "ruin_volley_tower": {
       "frame": {
-        "x": 461,
+        "x": 880,
         "y": 724,
         "w": 127,
         "h": 276
@@ -754,7 +808,7 @@
     },
     "ruin_watchtower": {
       "frame": {
-        "x": 177,
+        "x": 596,
         "y": 724,
         "w": 144,
         "h": 276
@@ -781,8 +835,8 @@
     },
     "tower": {
       "frame": {
-        "x": 1700,
-        "y": 724,
+        "x": 154,
+        "y": 1002,
         "w": 137,
         "h": 249
       },
@@ -808,7 +862,7 @@
     },
     "volley_tower": {
       "frame": {
-        "x": 323,
+        "x": 742,
         "y": 724,
         "w": 136,
         "h": 276
@@ -835,7 +889,7 @@
     },
     "watchtower": {
       "frame": {
-        "x": 590,
+        "x": 1009,
         "y": 724,
         "w": 126,
         "h": 276
@@ -867,8 +921,8 @@
     "image": "buildings.webp",
     "format": "RGBA8888",
     "size": {
-      "w": 1985,
-      "h": 1251
+      "w": 2020,
+      "h": 1253
     },
     "scale": "1"
   }

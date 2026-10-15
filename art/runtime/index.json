@@ -134,6 +134,7 @@
         "marksmen",
         "monastery",
         "monk_sanctuary",
+        "ruin_archery_range",
         "ruin_ballista_tower",
         "ruin_barracks",
         "ruin_garrison",
@@ -141,6 +142,7 @@
         "ruin_house",
         "ruin_knight_hall",
         "ruin_manor",
+        "ruin_marksmen",
         "ruin_tower",
         "ruin_volley_tower",
         "ruin_watchtower",
@@ -885,6 +887,12 @@
       "asset": "crossbow_range",
       "contentId": "crossbow_range"
     },
+    "ruin_marksmen": {
+      "atlas": "buildings",
+      "num": 122,
+      "asset": "ruin_marksmen",
+      "contentId": "marksmen"
+    },
     "guardian_bastion": {
       "atlas": "buildings",
       "num": 59,
@@ -912,6 +920,12 @@
       "num": 56,
       "asset": "marksmen",
       "contentId": "marksmen"
+    },
+    "ruin_archery_range": {
+      "atlas": "buildings",
+      "num": 121,
+      "asset": "ruin_archery_range",
+      "contentId": "archery_range"
     },
     "ballista_tower": {
       "atlas": "buildings",
