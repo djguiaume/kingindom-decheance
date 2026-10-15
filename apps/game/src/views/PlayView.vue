@@ -16,6 +16,7 @@ import EdgeArrows from '../components/EdgeArrows.vue';
 import SoundToggle from '../components/SoundToggle.vue';
 import GameIcon from '../components/GameIcon.vue';
 import { attachAudio } from '../audio/attach.ts';
+import { fullscreen } from '../fullscreen.ts';
 import { audio } from '../audio/engine.ts';
 import { InputHub } from '../game/input/hub.ts';
 import { attachKeyboard } from '../game/input/keyboard.ts';
@@ -99,19 +100,6 @@ function restart(): void {
   runtime.restart();
   store.paused = false;
   store.message = '';
-}
-
-/** Full screen, plus a landscape lock where the browser allows it (a convenience, ADR-009). */
-async function fullscreen(): Promise<void> {
-  try {
-    await document.documentElement.requestFullscreen?.();
-    const orientation = screen.orientation as ScreenOrientation & {
-      lock?: (o: string) => Promise<void>;
-    };
-    await orientation.lock?.('landscape');
-  } catch {
-    // Not supported (e.g. iOS Safari): the game works without it.
-  }
 }
 </script>
 

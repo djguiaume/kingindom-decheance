@@ -3,7 +3,9 @@
 @import '@fontsource/figtree/500.css';
 @import '@fontsource/figtree/700.css';
 
-/* Identity tokens, direction A "Linen and ink" (corpus 14 §2.1); theme.ts `ui` holds the same values. */
+/* Identity tokens, direction A "Linen and ink" (corpus 14 §2.1) dressed in the panda kingdom's
+   livery (F15): lacquer blue and gold trim from the painted roofs, bamboo green, grey stone.
+   theme.ts `ui` holds the same values. */
 :root {
   --linen: #f4efe4;
   --linen-deep: #e7e0d1;
@@ -13,6 +15,12 @@
   --enemy: #c4412f;
   --night: #34507a;
   --moss: #5d7a4c;
+  /* The panda kingdom: blue lacquer with gold trim (buttons, frames), bamboo, stone. */
+  --livery: #2d4c93;
+  --livery-deep: #1b2f63;
+  --trim: #e0b54a;
+  --bamboo: #7a9e45;
+  --stone: #8e918b;
   --line: rgba(36, 39, 44, 0.16);
   --shadow: 0 3px 10px rgba(20, 24, 30, 0.28);
   --display: 'Fraunces Variable', Georgia, serif;
@@ -42,7 +50,8 @@ footer {
   font-size: 12px;
 }
 button,
-a.primary {
+a.primary,
+a.button {
   font: inherit;
   font-weight: 700;
   min-height: 44px;
@@ -55,9 +64,25 @@ a.primary {
   cursor: pointer;
   text-decoration: none;
 }
-.primary {
-  background: var(--night);
+button:focus-visible,
+a:focus-visible {
+  outline: 3px solid var(--trim);
+  outline-offset: 2px;
+}
+/* The main action: blue lacquer with a gold trim line, like the kingdom's roofs. */
+.primary,
+a.primary {
+  background: linear-gradient(180deg, var(--livery), var(--livery-deep));
   color: var(--linen);
+  box-shadow:
+    inset 0 0 0 2px var(--trim),
+    inset 0 0 0 4px var(--livery-deep),
+    inset 0 2px 0 4px rgba(255, 255, 255, 0.12),
+    var(--shadow);
+}
+.primary:disabled {
+  filter: saturate(0.4);
+  opacity: 0.7;
 }
 /* A linen panel: paper grain and a thin inner ink rule (corpus 14 §2.1). */
 .panel {
@@ -72,9 +97,31 @@ a.primary {
   content: '';
   position: absolute;
   inset: 3px;
-  border: 1px solid rgba(36, 39, 44, 0.18);
+  /* A gold trim line inside the paper edge: the panda livery on every panel. */
+  border: 1px solid rgba(176, 132, 30, 0.45);
   border-radius: 11px;
   pointer-events: none;
+}
+/* A sheet (pause, perks, results) is capped like a pagoda roof: a blue lacquer band, gold edge. */
+.panel.capped {
+  border-top: 7px solid var(--livery);
+  box-shadow:
+    inset 0 2px 0 var(--trim),
+    var(--shadow);
+}
+.panel.capped::after {
+  top: 5px;
+}
+/* A bamboo rule between groups: a cane with its nodes. */
+.bamboo-rule {
+  display: block;
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 34px, rgba(40, 60, 20, 0.55) 34px 36px),
+    linear-gradient(180deg, #a3c467, var(--bamboo) 60%, #5b7d2f);
+  opacity: 0.8;
 }
 .panel.round,
 .panel.round::after {
