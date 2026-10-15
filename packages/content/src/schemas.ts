@@ -192,6 +192,10 @@ export const Weapon = z.object({
   id: Id,
   name: z.string(),
   attack: Attack,
+  /** King stat changes this weapon brings, in the modifier shape (the Longbow's lower HP). */
+  modifiers: z.array(Modifier).default([]),
+  /** One line for the weapon card on the setup screen. */
+  description: z.string().default(''),
   unlock: Unlock.optional(),
 });
 

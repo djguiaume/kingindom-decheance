@@ -177,6 +177,7 @@ export function createContext(bundle: ContentBundle, config: RunConfig): GameCon
     ...bundle.castle.perks,
     ...bundle.mutators,
     ...bundle.perks,
+    ...bundle.weapons,
   ]);
   if (wrong.length > 0)
     throw new Error(`Perk or mutator stats that reach nothing: ${wrong.join(', ')}`);
@@ -233,6 +234,8 @@ function tunablesFor(
     },
     rules: { ...BASE_RULES },
   });
+  // The weapon's own king changes (the Longbow's lower HP) come first, like a base stat.
+  for (const mod of weapon.modifiers) applyModifier(t, mod, night);
   for (const m of ctx.mutators) {
     t.rules.scoreMultiplier += m.scoreBonus;
     for (const mod of m.modifiers) applyModifier(t, mod, night);

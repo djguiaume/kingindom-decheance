@@ -2,7 +2,7 @@
   "name": "idle-loss",
   "why": "no buildings, no king: the castle falls",
   "replay": {
-    "contentHash": "131e244ab1d24a",
+    "contentHash": "10526a0cd94e64",
     "config": {
       "mapId": "greyhollow",
       "weaponId": "spear",
@@ -31,7 +31,7 @@
     ]
   },
   "expected": {
-    "contentHash": "131e244ab1d24a",
+    "contentHash": "10526a0cd94e64",
     "policy": "idle",
     "config": {
       "mapId": "greyhollow",
@@ -46,6 +46,6 @@
     "enemiesKilled": 34,
     "score": 300,
     "ticks": 3735,
-    "finalHash": "1ce9748257f751"
+    "finalHash": "0ffcb4c0625027"
   }
 }

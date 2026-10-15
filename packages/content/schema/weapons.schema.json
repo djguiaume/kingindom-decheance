@@ -88,6 +88,39 @@
             },
             "required": ["damage", "interval", "range", "targets"]
           },
+          "modifiers": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "stat": {
+                  "type": "string",
+                  "pattern": "^((building|unit|enemy)\\.(\\*|class:[a-z]+|[a-z0-9][a-z0-9_-]*)|king|weapon|castle|rules)(\\.[a-zA-Z]+)+$"
+                },
+                "op": {
+                  "type": "string",
+                  "enum": ["add", "mul"]
+                },
+                "value": {
+                  "type": "number"
+                },
+                "nights": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                }
+              },
+              "required": ["stat", "op", "value"]
+            }
+          },
+          "description": {
+            "default": "",
+            "type": "string"
+          },
           "unlock": {
             "type": "object",
             "properties": {

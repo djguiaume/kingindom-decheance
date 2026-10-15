@@ -117,6 +117,14 @@
           <div class="tabs" role="tablist">
             <button
               role="tab"
+              :aria-selected="tab === 'weapon'"
+              data-testid="tab-weapon"
+              @click="tab = 'weapon'"
+            >
+              {{ named(weapons, [draftWeapon])[0]?.name ?? 'Weapon' }}
+            </button>
+            <button
+              role="tab"
               :aria-selected="tab === 'perks'"
               data-testid="tab-perks"
               @click="tab = 'perks'"
@@ -132,7 +140,28 @@
               Mutators {{ draftMutators.length ? `×${draftMultiplier.toFixed(2)}` : '' }}
             </button>
           </div>
-          <template v-if="tab === 'perks'">
+          <template v-if="tab === 'weapon'">
+            <p class="setup-intro">The king's own attack. His ability comes with the king.</p>
+            <div class="picks" data-testid="weapons">
+              <button
+                v-for="w in weapons"
+                :key="w.id"
+                class="pick"
+                :class="{ on: draftWeapon === w.id }"
+                :aria-pressed="draftWeapon === w.id"
+                :disabled="!isUnlocked(profile, w)"
+                :data-testid="`weapon-${w.id}`"
+                @click="draftWeapon = w.id"
+              >
+                <span class="head">
+                  <b>{{ w.name }}</b>
+                  <span class="family">{{ w.attack.range }} m</span>
+                </span>
+                <small>{{ w.description }}</small>
+              </button>
+            </div>
+          </template>
+          <template v-else-if="tab === 'perks'">
             <p class="setup-intro">
               Pick up to {{ STARTING_PERK_SLOTS }}. A perk that helps everywhere has a cost.
             </p>
@@ -249,20 +278,28 @@ function selectKing(id: string): void {
 }
 
 // The run setup (13 §6.1). Play starts with the remembered setup; a first launch has none.
-const { mutators, perks } = prototypeContent;
+const { weapons, mutators, perks } = prototypeContent;
 const named = <T extends { id: string }>(list: readonly T[], ids: readonly string[]) =>
   list.filter((x) => ids.includes(x.id));
 const setup = computed(() => runSetup(profile.value, prototypeContent));
 /** What Play will start with, in one line under the button. */
 const setupLine = computed(() => {
-  const parts = [...named(perks, setup.value.perkIds), ...named(mutators, setup.value.mutatorIds)];
+  // The Spear is the default, so a first launch shows no line.
+  const weapon =
+    setup.value.weaponId === weapons[0]!.id ? [] : named(weapons, [setup.value.weaponId]);
+  const parts = [
+    ...weapon,
+    ...named(perks, setup.value.perkIds),
+    ...named(mutators, setup.value.mutatorIds),
+  ];
   if (parts.length === 0) return '';
   const chosen = named(mutators, setup.value.mutatorIds);
   const mult = mutatorMultiplier(chosen, SCORE.multiplierFloor);
   const names = parts.map((x) => x.name).join(', ');
   return chosen.length ? `${names} · score ×${mult.toFixed(2)}` : names;
 });
-const tab = ref<'perks' | 'mutators'>('perks');
+const tab = ref<'weapon' | 'perks' | 'mutators'>('weapon');
+const draftWeapon = ref('');
 const draftPerks = ref<string[]>([]);
 const draftMutators = ref<string[]>([]);
 const draftMultiplier = computed(() =>
@@ -274,12 +311,17 @@ const toggled = (list: readonly string[], id: string) =>
   list.includes(id) ? list.filter((x) => x !== id) : [...list, id];
 
 function openSetup(): void {
+  draftWeapon.value = setup.value.weaponId;
   draftPerks.value = [...setup.value.perkIds];
   draftMutators.value = [...setup.value.mutatorIds];
   sheet.value = 'setup';
 }
 function startRun(): void {
-  const lastSetup = { perkIds: [...draftPerks.value], mutatorIds: [...draftMutators.value] };
+  const lastSetup = {
+    weaponId: draftWeapon.value,
+    perkIds: [...draftPerks.value],
+    mutatorIds: [...draftMutators.value],
+  };
   profile.value = { ...loadProfile(), lastSetup };
   saveProfile(profile.value);
   void router.push('/play');

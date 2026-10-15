@@ -314,6 +314,21 @@ balance are untouched.
   94%, Veterans 95%, Light Cavalry 87%. No perk lifts the bot above its 95% ceiling, so their
   upside needs a harder baseline (a mutator) in the end-of-stage balancing pass.
 
+## Stage A, Longbow (2026-10-15, corpus 11 §5)
+
+- Since #64 abilities belong to kings, so the Longbow is a weapon only: its attack and a
+  `modifiers` list (King HP −20%) that applies before mutators and perks. The first draft's
+  Volley ability was dropped; a bow ability can come back with a bow-carrying king.
+- 40 damage every 0.7 s, one target, 7 m, ground and air. It hits at once like a tower: as a
+  projectile it missed raiders on the move and the bot won 0% of runs.
+- **Setup screen**: a Weapon tab before Perks; `RunSetup.weaponId` is saved in the profile
+  (older profiles fall back to the first weapon, the Spear). The title line names the weapon
+  only when it is not the Spear.
+- **Art**: no paid art. The king holds the archers' bow (`king_longbow` rig) and his shots
+  draw as arrows from the bow; the Wolf Rider's painted grip shows no bow, as with the spear.
+- **Sim**, balanced bot, 100 runs: Spear 95% (Wolf 93%), Longbow 98% (Wolf 99%). Earlier tries:
+  14 dmg / 0.7 s 0%, 36 / 0.6 s 40%; the jump sits where one arrow stops killing a raider.
+
 ## Balance (first playtest, 2026-10-13)
 
 Gold felt scarce in play while the simulator found the game easy (the king alone reached

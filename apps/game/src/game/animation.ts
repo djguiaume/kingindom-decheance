@@ -48,6 +48,7 @@ export type AttackStyle = 'thrust' | 'chop' | 'shoot' | 'throw' | 'dive';
 
 const STYLES: Record<string, AttackStyle> = {
   king: 'thrust',
+  king_longbow: 'shoot',
   archer: 'shoot',
   crossbowman: 'shoot',
   skirmisher: 'shoot',
@@ -398,7 +399,7 @@ export class Animator {
   pose(
     key: string,
     pos: { x: number; y: number },
-    look: { sprite: string; radius: number },
+    look: { sprite: string; radius: number; gear?: string },
     now: number,
     tell: Tell = NO_TELL,
   ): Pose {
@@ -407,7 +408,7 @@ export class Animator {
       track = newTrack(pos, now);
       this.tracks.set(key, track);
     }
-    const timing = TIMING[styleOf(look.sprite)];
+    const timing = TIMING[styleOf(look.gear ?? look.sprite)];
     const sinceBlow = now - track.blowStart;
     const striking = blowAt(timing, sinceBlow) !== null;
     const telling = tellAt(timing, tell.attack);

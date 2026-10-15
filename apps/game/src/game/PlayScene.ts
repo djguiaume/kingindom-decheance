@@ -45,6 +45,7 @@ import {
   ART_PX_PER_M,
   CATAPULT_ARM,
   HAND,
+  kingGear,
   loadArt,
   tipReach,
   weaponAngle,
@@ -129,6 +130,8 @@ export class PlayScene extends Phaser.Scene {
   /** Walk bob, swings, hit flashes and falling bodies (view-only). */
   private animator = new Animator();
   private kingActions = new KingActions();
+  /** The id the king's weapon is drawn and swung by (`king`, or `king_longbow`). */
+  private readonly kingGear: string;
   private animationNow = 0;
   private session: GameRuntime['session'] | null = null;
   private paintedPropKinds = new Set<string>();
@@ -141,6 +144,7 @@ export class PlayScene extends Phaser.Scene {
     private readonly view: ViewOptions,
   ) {
     super('play');
+    this.kingGear = kingGear(runtime.ctx.weapon.id);
   }
 
   preload(): void {
@@ -201,7 +205,11 @@ export class PlayScene extends Phaser.Scene {
         const from = this.refPos(e.attacker);
         const to = this.refPos(e.target);
         if (!from || !to) continue;
-        const shot = e.attacker.kind === 'building' || e.attacker.kind === 'castle';
+        // Towers shoot; so does a king with a bow (his arrows land at once, like a tower's).
+        const shot =
+          e.attacker.kind === 'building' ||
+          e.attacker.kind === 'castle' ||
+          (e.attacker.kind === 'king' && styleOf(this.kingGear) === 'shoot');
         this.flashes.push({
           from,
           to,
@@ -495,7 +503,8 @@ export class PlayScene extends Phaser.Scene {
       if (key) {
         seen.add(key);
         if (actor) {
-          pose = this.animator.pose(key, pos, { sprite: id, radius }, now, tell);
+          const gear = id === 'king' ? this.kingGear : undefined;
+          pose = this.animator.pose(key, pos, { sprite: id, radius, gear }, now, tell);
           flash = pose.flash;
         } else {
           this.animator.still(key, pos);
@@ -642,11 +651,11 @@ export class PlayScene extends Phaser.Scene {
         g.strokePath();
         continue;
       }
-      // A bolt flies from the top of the tower to the target. The damage is already dealt in
-      // the core; this only shows where it came from.
+      // A bolt flies from the top of the tower (or the king's bow) to the target. The damage is
+      // already dealt in the core; this only shows where it came from.
       const t = (now - f.start) / SHOT_MS;
       const ax = f.from.x;
-      const ay = f.from.y - SCALE * 1.8;
+      const ay = f.from.y - SCALE * (f.source === 'king' ? 0.9 : 1.8);
       const bx = f.to.x;
       const by = f.to.y - SCALE * 0.5;
       const x = ax + (bx - ax) * t;
@@ -1039,7 +1048,8 @@ export class PlayScene extends Phaser.Scene {
     const f = pose.facing;
     const size = this.textures.getFrame(this.art.atlas(frame)!, frame);
     // The body moves with its attack: rears back on the tell, throws its weight into the blow.
-    const style = styleOf(id);
+    const gear = id === 'king' ? this.kingGear : id;
+    const style = styleOf(gear);
     const m = action ? STILL : bodyAt(style, pose.act, pose.stomp);
     // Where the attack is aimed, in radians below the horizontal (facing right): a spear or bow
     // aimed up or down the screen lunges and leans that way, not sideways.
@@ -1085,7 +1095,7 @@ export class PlayScene extends Phaser.Scene {
       return true;
     }
     const rig =
-      action || (id === 'king' && !this.runtime.ctx.king.art.weapon) ? null : this.art.rig(id);
+      action || (id === 'king' && !this.runtime.ctx.king.art.weapon) ? null : this.art.rig(gear);
     if (!rig) {
       body();
       return true;
@@ -1125,7 +1135,7 @@ export class PlayScene extends Phaser.Scene {
       body();
       weapon();
     }
-    this.drawStrike(id, rig.kind, at, angle + lean, f, length * tipReach(rig), s, pose, act);
+    this.drawStrike(gear, rig.kind, at, angle + lean, f, length * tipReach(rig), s, pose, act);
     return true;
   }
 

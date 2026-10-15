@@ -118,25 +118,36 @@ describe('progression (all open in Stage A)', () => {
     const profile = {
       ...loadProfile(null),
       lastSetup: {
+        weaponId: 'longbow',
         perkIds: ['veterans', 'gone', 'gold_rush', 'scarecrows', 'stonemasons'],
         mutatorIds: ['swarm', 'gone', 'mercy'],
       },
     };
     const content = {
+      weapons: [{ id: 'spear' }, { id: 'longbow' }],
       mutators: [{ id: 'swarm' }, { id: 'mercy' }],
       perks: ['veterans', 'gold_rush', 'scarecrows', 'stonemasons'].map((id) => ({ id })),
     };
     expect(runSetup(profile, content)).toEqual({
+      weaponId: 'longbow',
       perkIds: ['veterans', 'gold_rush', 'scarecrows'],
       mutatorIds: ['swarm', 'mercy'],
     });
-    expect(runSetup(loadProfile(null), content)).toEqual({ perkIds: [], mutatorIds: [] });
+    expect(runSetup(loadProfile(null), content)).toEqual({
+      weaponId: 'spear',
+      perkIds: [],
+      mutatorIds: [],
+    });
+    const gone = { ...profile, lastSetup: { ...profile.lastSetup, weaponId: 'trident' } };
+    expect(runSetup(gone, content).weaponId).toBe('spear');
   });
 
   it('reads a profile saved before starting perks existed', () => {
     const old = JSON.stringify({ schemaVersion: 1, lastSetup: { mutatorIds: ['swarm'] } });
     const profile = loadProfile({ getItem: () => old });
-    expect(runSetup(profile, { mutators: [{ id: 'swarm' }], perks: [] })).toEqual({
+    const content = { weapons: [{ id: 'spear' }], mutators: [{ id: 'swarm' }], perks: [] };
+    expect(runSetup(profile, content)).toEqual({
+      weaponId: 'spear',
       perkIds: [],
       mutatorIds: ['swarm'],
     });

@@ -39,7 +39,13 @@ export function attachAudio(runtime: GameRuntime, engine: AudioEngine): () => vo
     enemies.learn(events);
     for (const cue of cuesFor(
       events,
-      worldOf(runtime.state, enemies, wasRolling, runtime.ctx.king.ability.kind === 'roll'),
+      worldOf(
+        runtime.state,
+        enemies,
+        wasRolling,
+        runtime.ctx.king.ability.kind === 'roll',
+        runtime.ctx.weapon.id,
+      ),
       shots,
     ))
       engine.play(cue.id, cue.gain);

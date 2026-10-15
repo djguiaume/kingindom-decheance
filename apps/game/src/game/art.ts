@@ -97,6 +97,13 @@ export interface WeaponRig {
   hand?: [number, number];
 }
 
+/**
+ * The id the king's weapon is drawn, animated and heard by: `king` for the spear he was painted
+ * with, `king_<weapon>` for any other weapon.
+ */
+export const kingGear = (weaponId: string): string =>
+  weaponId === 'spear' ? 'king' : `king_${weaponId}`;
+
 /** The front hand, as a fraction of the body's drawn width (forward) and height (up). */
 export const HAND: [number, number] = [0.28, 0.42];
 
@@ -104,6 +111,14 @@ const UP = -Math.PI / 2;
 
 export const RIGS: Record<string, WeaponRig> = {
   king: { frame: 'king_spear', grip: [0.42, 0.5], points: 0, kind: 'thrust', length: 1.3 },
+  // The Longbow king carries the archers' bow, drawn larger, until the art pass paints his own.
+  king_longbow: {
+    frame: 'archer_weapon',
+    grip: [0.5, 0.5],
+    points: UP,
+    kind: 'aim',
+    length: 0.95,
+  },
   footman: {
     frame: 'footman_weapon',
     grip: [0.5, 0.5],
