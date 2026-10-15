@@ -58,7 +58,7 @@ function framing(asset: Asset, part: Part): string {
               : ' Same camera angle, but turned 90 degrees: its length runs straight up the screen, away from the viewer.'
             : part.view === 'diag'
               ? gate
-                ? ' Same camera angle, but the gate is turned 45 degrees: its wall line runs diagonally from bottom-left to top-right, so the gateway is seen at an angle.'
+                ? ` Same camera angle, but the gate is turned 45 degrees: its wall line runs diagonally from bottom-left to top-right, so the gateway is seen at an angle.${part.pose === 'open' ? ' Both doors are swung wide open, square to the wall, so the gateway is clearly empty and you can see the ground through it.' : ''}`
                 : ' Same camera angle, but turned 45 degrees: its length runs diagonally from bottom-left to top-right.'
               : turnable && !gate
                 ? ' Its length runs straight left to right across the frame.'
@@ -80,12 +80,16 @@ export function promptFor(asset: Asset, part: Part): string {
     ? ` Animation frame ${part.frame + 1} of ${asset.parts.filter((p) => p.view === part.view).length}: ${part.pose}.`
     : '';
   const follow = asset.followFirstFrame && part.frame > 0;
+  const piece = asset.followAsset
+    ? `The second attached image is the ${asset.followAsset.replaceAll('_', ' ')} this piece joins. Match its rock, grass, colours, height, depth and scale exactly, so the two sit side by side as one continuous piece of terrain.`
+    : undefined;
   return [
     `Game sprite: ${asset.subject}.${pose}`,
     framing(asset, part),
     STYLE_BIBLE,
     asset.noReference ? NO_REFERENCE_RULE : REFERENCE_RULE,
     ...(follow ? [FOLLOW_RULE] : []),
+    ...(piece ? [piece] : []),
   ].join('\n');
 }
 

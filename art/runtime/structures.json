@@ -2,7 +2,7 @@
   "frames": {
     "castle_flag": {
       "frame": {
-        "x": 814,
+        "x": 810,
         "y": 2,
         "w": 72,
         "h": 166
@@ -54,7 +54,7 @@
     },
     "gate_stone.diag.f1": {
       "frame": {
-        "x": 1080,
+        "x": 1074,
         "y": 2,
         "w": 177,
         "h": 163
@@ -81,18 +81,18 @@
     },
     "gate_stone.diag.f2": {
       "frame": {
-        "x": 1259,
+        "x": 1611,
         "y": 2,
         "w": 177,
-        "h": 163
+        "h": 147
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
         "x": 8,
-        "y": 10,
+        "y": 26,
         "w": 177,
-        "h": 163
+        "h": 147
       },
       "sourceSize": {
         "w": 192,
@@ -108,7 +108,7 @@
     },
     "gate_stone.f1": {
       "frame": {
-        "x": 577,
+        "x": 573,
         "y": 2,
         "w": 161,
         "h": 166
@@ -137,15 +137,15 @@
       "frame": {
         "x": 406,
         "y": 2,
-        "w": 169,
+        "w": 165,
         "h": 166
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 12,
+        "x": 14,
         "y": 7,
-        "w": 169,
+        "w": 165,
         "h": 166
       },
       "sourceSize": {
@@ -162,7 +162,7 @@
     },
     "gate_stone.side.f1": {
       "frame": {
-        "x": 955,
+        "x": 884,
         "y": 2,
         "w": 62,
         "h": 166
@@ -189,17 +189,17 @@
     },
     "gate_stone.side.f2": {
       "frame": {
-        "x": 1019,
+        "x": 948,
         "y": 2,
-        "w": 59,
+        "w": 62,
         "h": 166
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 67,
+        "x": 65,
         "y": 7,
-        "w": 59,
+        "w": 62,
         "h": 166
       },
       "sourceSize": {
@@ -216,7 +216,7 @@
     },
     "gate_wood.diag.f1": {
       "frame": {
-        "x": 1438,
+        "x": 1253,
         "y": 2,
         "w": 177,
         "h": 160
@@ -243,18 +243,18 @@
     },
     "gate_wood.diag.f2": {
       "frame": {
-        "x": 1617,
+        "x": 1790,
         "y": 2,
         "w": 177,
-        "h": 154
+        "h": 145
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
         "x": 8,
-        "y": 19,
+        "y": 28,
         "w": 177,
-        "h": 154
+        "h": 145
       },
       "sourceSize": {
         "w": 192,
@@ -270,8 +270,8 @@
     },
     "gate_wood.f1": {
       "frame": {
-        "x": 2,
-        "y": 225,
+        "x": 1432,
+        "y": 2,
         "w": 177,
         "h": 150
       },
@@ -297,18 +297,18 @@
     },
     "gate_wood.f2": {
       "frame": {
-        "x": 1796,
-        "y": 2,
+        "x": 2,
+        "y": 225,
         "w": 177,
-        "h": 151
+        "h": 137
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
         "x": 8,
-        "y": 22,
+        "y": 36,
         "w": 177,
-        "h": 151
+        "h": 137
       },
       "sourceSize": {
         "w": 192,
@@ -324,7 +324,7 @@
     },
     "gate_wood.side.f1": {
       "frame": {
-        "x": 740,
+        "x": 736,
         "y": 2,
         "w": 72,
         "h": 166
@@ -351,17 +351,17 @@
     },
     "gate_wood.side.f2": {
       "frame": {
-        "x": 888,
+        "x": 1012,
         "y": 2,
-        "w": 65,
+        "w": 60,
         "h": 166
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
-        "x": 64,
+        "x": 66,
         "y": 7,
-        "w": 65,
+        "w": 60,
         "h": 166
       },
       "sourceSize": {
@@ -378,7 +378,7 @@
     },
     "lantern_glow": {
       "frame": {
-        "x": 236,
+        "x": 181,
         "y": 225,
         "w": 118,
         "h": 114
@@ -404,8 +404,8 @@
     },
     "panda_banner": {
       "frame": {
-        "x": 181,
-        "y": 225,
+        "x": 1969,
+        "y": 2,
         "w": 53,
         "h": 138
       },
@@ -456,7 +456,7 @@
     },
     "slot_empty": {
       "frame": {
-        "x": 384,
+        "x": 329,
         "y": 225,
         "w": 111,
         "h": 88
@@ -482,7 +482,7 @@
     },
     "stone_wall_post": {
       "frame": {
-        "x": 583,
+        "x": 529,
         "y": 225,
         "w": 59,
         "h": 81
@@ -509,7 +509,7 @@
     },
     "wall_post": {
       "frame": {
-        "x": 356,
+        "x": 301,
         "y": 225,
         "w": 26,
         "h": 111
@@ -536,9 +536,9 @@
     },
     "window_glow": {
       "frame": {
-        "x": 497,
+        "x": 442,
         "y": 225,
-        "w": 84,
+        "w": 85,
         "h": 88
       },
       "rotated": false,
@@ -546,7 +546,7 @@
       "spriteSourceSize": {
         "x": 6,
         "y": 4,
-        "w": 84,
+        "w": 85,
         "h": 88
       },
       "sourceSize": {
@@ -567,8 +567,8 @@
     "image": "structures.webp",
     "format": "RGBA8888",
     "size": {
-      "w": 1975,
-      "h": 377
+      "w": 2024,
+      "h": 364
     },
     "scale": "1"
   }
