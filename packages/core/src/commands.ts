@@ -101,13 +101,19 @@ export function buyOptions(state: GameState, ctx: GameContext, slot: string): Bu
   };
   const built = state.buildings.find((b) => b.slot === slot);
   if (!built) {
-    return node.slot.options.map((id, option) => ({
-      option,
-      kind: 'build' as const,
-      building: id,
-      cost: req(ctx.buildings, id).cost,
-      needsCastle: needs(id),
-    }));
+    return node.slot.options.flatMap((id, option) =>
+      closed(ctx, id)
+        ? []
+        : [
+            {
+              option,
+              kind: 'build' as const,
+              building: id,
+              cost: req(ctx.buildings, id).cost,
+              needsCastle: needs(id),
+            },
+          ],
+    );
   }
   return req(ctx.buildings, built.type).upgrades.map((u, option) => ({
     option,
@@ -116,6 +122,16 @@ export function buyOptions(state: GameState, ctx: GameContext, slot: string): Bu
     cost: u.cost,
     needsCastle: needs(u.to),
   }));
+}
+
+/** True when a mutator forbids this building (No Walls). */
+const closed = (ctx: GameContext, building: string) =>
+  ctx.closedClasses.has(req(ctx.buildings, building).class);
+
+/** True when nothing can ever be built on this slot this run: the view hides it. */
+export function slotClosed(ctx: GameContext, slot: string): boolean {
+  const options = ctx.map.nodes.find((n) => n.id === slot)?.slot?.options ?? [];
+  return options.length > 0 && options.every((id) => closed(ctx, id));
 }
 
 const fail = (reason: string): CommandResult => ({ ok: false, reason });

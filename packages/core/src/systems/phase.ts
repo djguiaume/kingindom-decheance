@@ -6,7 +6,7 @@
  * castle, buildings and king, and fallen units return the next night (design 11 §8.1).
  */
 import { secondsToTicks } from '../constants.ts';
-import { req, syncContext, type GameContext } from '../context.ts';
+import { req, rulesOn, syncContext, type GameContext } from '../context.ts';
 import type { GameEvent } from '../events.ts';
 import type { BuildingState, GameState, NightStats, SpawnOrder } from '../state.ts';
 import type { Vec } from '../vec.ts';
@@ -65,8 +65,9 @@ export function buildSpawnQueue(ctx: GameContext, night: number): SpawnOrder[] {
   const wave = ctx.map.waves.find((w) => w.night === night);
   if (!wave) return [];
   const orders: SpawnOrder[] = [];
+  const size = rulesOn(ctx, night).waveSize;
   for (const g of wave.groups) {
-    for (let k = 0; k < g.count; k++) {
+    for (let k = 0; k < groupCount(g.count, size); k++) {
       orders.push({ at: secondsToTicks(g.delay + k * g.interval), lane: g.lane, enemy: g.enemy });
     }
   }
@@ -92,6 +93,7 @@ function dawn(state: GameState, ctx: GameContext, events: GameEvent[]): void {
   for (const b of state.buildings) {
     if (!b.destroyed) income += req(ctx.buildings, b.type).income;
   }
+  income = Math.round(income * ctx.rules.incomeRate);
   state.gold += income;
   state.current.income = income;
   state.current.ticks = state.nightTick;
@@ -150,10 +152,15 @@ export function telegraph(
 ): { lane: string; enemy: string; count: number }[] {
   const wave = ctx.map.waves.find((w) => w.night === night);
   const out: { lane: string; enemy: string; count: number }[] = [];
+  const size = rulesOn(ctx, night).waveSize;
   for (const g of wave?.groups ?? []) {
+    const count = groupCount(g.count, size);
     const same = out.find((o) => o.lane === g.lane && o.enemy === g.enemy);
-    if (same) same.count += g.count;
-    else out.push({ lane: g.lane, enemy: g.enemy, count: g.count });
+    if (same) same.count += count;
+    else out.push({ lane: g.lane, enemy: g.enemy, count });
   }
   return out;
 }
+
+/** A wave group's size after the run's wave size rule: rounded, never below one. */
+const groupCount = (count: number, size: number) => Math.max(1, Math.round(count * size));

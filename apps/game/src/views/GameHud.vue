@@ -70,6 +70,7 @@ function finish(): void {
     nights: score.nightsHeld,
     weaponId: state.weaponId,
     perks: [...state.perks],
+    mutators: ctx.mutators.map((m) => m.id),
     seed: state.seed,
     date: new Date().toISOString(),
   };

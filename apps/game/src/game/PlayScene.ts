@@ -9,6 +9,7 @@ import {
   atCastle,
   GATE_HALF_WIDTH,
   guardSpot,
+  slotClosed,
   telegraph,
   TICK_RATE,
   WALL_HALF_SPAN,
@@ -375,7 +376,7 @@ export class PlayScene extends Phaser.Scene {
       state.buildings,
     );
     for (const node of ctx.map.nodes) {
-      if (!node.slot || !empty.has(node.id)) continue;
+      if (!node.slot || !empty.has(node.id) || slotClosed(ctx, node.id)) continue;
       const p = this.px({ x: node.pos[0], y: node.pos[1] });
       if (plot) {
         // Only empty plots have a foundation marker; buildings carry their own base.

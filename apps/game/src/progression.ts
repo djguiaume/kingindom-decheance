@@ -24,9 +24,16 @@ export interface RunEntry {
   weaponId: string;
   /** Castle perks picked during the run. */
   perks: string[];
+  /** Mutators the run was played with. */
+  mutators: string[];
   seed: number;
   /** ISO date and time the run ended. */
   date: string;
+}
+
+/** The choices of the run setup screen (13 §6.1), remembered for the next run. */
+export interface RunSetup {
+  mutatorIds: string[];
 }
 
 /** The player's profile in this browser. Versioned so later formats can migrate it. */
@@ -40,6 +47,8 @@ export interface Profile {
   records: Record<string, RunEntry>;
   /** The last runs, newest first. */
   recent: RunEntry[];
+  /** The last run setup; Play starts with it. Nothing picked on a first launch (quick start). */
+  lastSetup: RunSetup;
 }
 
 /** How many past runs the profile keeps. */
@@ -54,6 +63,7 @@ const fresh = (): Profile => ({
   unlocked: [],
   records: {},
   recent: [],
+  lastSetup: { mutatorIds: [] },
 });
 
 /** Reads the profile, or a fresh one when there is none, it is unreadable or storage is off. */
@@ -84,6 +94,32 @@ export function saveProfile(
  */
 export function isUnlocked(_profile: Profile, _entry: { unlock?: { level: number } }): boolean {
   return true;
+}
+
+/**
+ * The remembered setup, minus anything the content no longer has or the player cannot pick:
+ * content changes between visits must never stop a run from starting.
+ */
+export function runSetup(
+  profile: Profile,
+  content: { mutators: readonly { id: string; unlock?: { level: number } }[] },
+): RunSetup {
+  const mutatorIds = profile.lastSetup.mutatorIds.filter((id) => {
+    const m = content.mutators.find((x) => x.id === id);
+    return m !== undefined && isUnlocked(profile, m);
+  });
+  return { mutatorIds: [...new Set(mutatorIds)] };
+}
+
+/**
+ * The score multiplier a won run gets from these mutators (13 §3): their bonuses add up, and the
+ * total never falls below the core's floor. Castle perks may change it during the run.
+ */
+export function mutatorMultiplier(
+  mutators: readonly { scoreBonus: number }[],
+  floor: number,
+): number {
+  return Math.max(floor, 1 + mutators.reduce((n, m) => n + m.scoreBonus, 0));
 }
 
 /**

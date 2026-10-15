@@ -8,6 +8,7 @@ import {
   buyOptions,
   castleOffer,
   militaryAt,
+  slotClosed,
   telegraph,
   type GameContext,
   type GameState,
@@ -134,7 +135,7 @@ export function nearbySlotId(state: GameState, ctx: GameContext): string | null 
   let best: string | null = null;
   let bestD = ctx.king.buildReach + ctx.king.radius;
   for (const n of ctx.map.nodes) {
-    if (!n.slot) continue;
+    if (!n.slot || slotClosed(ctx, n.id)) continue;
     const d = dist(state.king.pos, { x: n.pos[0], y: n.pos[1] });
     if (d <= bestD) {
       best = n.id;

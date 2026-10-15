@@ -1,5 +1,5 @@
 /**
- * Modifiers (13 §6.2): perks, and later mutators and weapons, change content numbers through
+ * Modifiers (13 §6.2): perks, mutators, and later weapons, change content numbers through
  * one shape, `{ stat, op, value, nights? }`. This file resolves a stat path to the numbers it
  * names and applies a modifier to them. The content schema checks a path's shape; whether it
  * reaches a number is checked here, when a run's context is built (`checkModifiers`). Nothing
@@ -25,11 +25,21 @@ export interface Rules {
   rallyReach: number;
   /** Damage multiplier for units following the king. */
   rallyDamage: number;
-  /** Multiplies the run's score (Stage A score). */
+  /** Multiplies the run's score (Stage A score). Mutator bonuses are added to it first. */
   scoreMultiplier: number;
+  /** Multiplies the number of enemies in each wave group (rounded). */
+  waveSize: number;
+  /** Multiplies all gold paid at dawn, castle and buildings (rounded). */
+  incomeRate: number;
 }
 
-export const BASE_RULES: Readonly<Rules> = { rallyReach: 6, rallyDamage: 1, scoreMultiplier: 1 };
+export const BASE_RULES: Readonly<Rules> = {
+  rallyReach: 6,
+  rallyDamage: 1,
+  scoreMultiplier: 1,
+  waveSize: 1,
+  incomeRate: 1,
+};
 
 /** The castle's numbers for the current level, before or after modifiers. */
 export interface CastleStats {
@@ -107,8 +117,11 @@ export function applyModifier(t: Tunables, m: Modifier, night: number): void {
   }
 }
 
-/** "perk-id: stat" for every modifier of `perks` whose path reaches no number in `t`. */
-export function checkModifiers(t: Tunables, perks: readonly Perk[]): string[] {
+/** "id: stat" for every modifier of `perks` (or mutators) whose path reaches no number in `t`. */
+export function checkModifiers(
+  t: Tunables,
+  perks: readonly Pick<Perk, 'id' | 'modifiers'>[],
+): string[] {
   return perks.flatMap((p) =>
     p.modifiers.filter((m) => countTargets(t, m.stat) === 0).map((m) => `${p.id}: ${m.stat}`),
   );

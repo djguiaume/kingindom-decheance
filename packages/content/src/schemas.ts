@@ -203,6 +203,23 @@ export const Perk = z.object({
 });
 
 /**
+ * A mutator (13 §3): a run-wide handicap, picked on the setup screen, that strains one part of
+ * the game and raises the score of a won run. An easier mutator has a negative bonus.
+ */
+export const Mutator = z.object({
+  id: Id,
+  name: z.string(),
+  /** One line saying exactly what changes, shown on the mutator card. */
+  description: z.string(),
+  /** Added to the run's score multiplier, e.g. 0.3 for +30%. Bonuses of several mutators add up. */
+  scoreBonus: z.number().min(-0.9).max(5),
+  modifiers: z.array(Modifier).default([]),
+  /** Building classes that cannot be built during the run (No Walls closes the wall slots). */
+  closesClasses: z.array(BuildingClass).default([]),
+  unlock: Unlock.optional(),
+});
+
+/**
  * A castle level above the first (the map's castle is level 1). Each is bought with gold by
  * day, makes the castle stronger, unlocks buildings of its tier and offers a pick of one perk.
  */
@@ -349,6 +366,7 @@ export const BuildingCatalog = z.object({ ...Meta, buildings: z.array(Building) 
 export const UnitCatalog = z.object({ ...Meta, units: z.array(Unit) });
 export const EnemyCatalog = z.object({ ...Meta, enemies: z.array(Enemy) });
 export const WeaponCatalog = z.object({ ...Meta, weapons: z.array(Weapon) });
+export const MutatorCatalog = z.object({ ...Meta, mutators: z.array(Mutator) });
 export const CastleCatalog = z.object({
   ...Meta,
   levels: z.array(CastleLevel),
@@ -367,6 +385,7 @@ export type Weapon = z.infer<typeof Weapon>;
 export type Unlock = z.infer<typeof Unlock>;
 export type Modifier = z.infer<typeof Modifier>;
 export type Perk = z.infer<typeof Perk>;
+export type Mutator = z.infer<typeof Mutator>;
 export type CastleLevel = z.infer<typeof CastleLevel>;
 export type CastleCatalog = z.infer<typeof CastleCatalog>;
 export type Ability = z.infer<typeof Ability>;
@@ -389,6 +408,7 @@ export interface ContentBundle {
   weapons: Weapon[];
   king: KingSettings;
   castle: { levels: CastleLevel[]; perks: Perk[] };
+  mutators: Mutator[];
   maps: GameMap[];
   /** Stable hash of the validated content, recorded in every run (ADR-006). */
   hash: string;
@@ -402,5 +422,6 @@ export interface RawContent {
   weapons: unknown;
   king: unknown;
   castle: unknown;
+  mutators: unknown;
   maps: unknown[];
 }
