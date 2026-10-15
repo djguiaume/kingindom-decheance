@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { CameraView, SCALE, SQUASH } from '../src/game/camera.ts';
-import { emptyPlotIds, gateIsOpen, projectileFrame } from '../src/game/presentation.ts';
+import { emptyPlotIds, gateIsOpen, projectileFrame, ruinFrame } from '../src/game/presentation.ts';
 
 describe('plot presentation', () => {
   it('removes an empty foundation while occupied, including ruins and repaired buildings', () => {
@@ -11,6 +11,15 @@ describe('plot presentation', () => {
       expect([...emptyPlotIds(slots, buildings)]).toEqual(['tower']);
     }
     expect([...emptyPlotIds(slots, [])]).toEqual(slots); // restart
+  });
+});
+
+describe('ruin presentation', () => {
+  it('keeps a destroyed building identifiable by its own ruin, falling back to the shared one', () => {
+    const has = (frames: string[]) => (f: string) => frames.includes(f);
+    expect(ruinFrame('tower', has(['ruin', 'ruin_tower']))).toBe('ruin_tower');
+    expect(ruinFrame('house', has(['ruin', 'ruin_tower']))).toBe('ruin');
+    expect(ruinFrame('house', has([]))).toBeNull();
   });
 });
 

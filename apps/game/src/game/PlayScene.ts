@@ -35,7 +35,7 @@ import { Painter } from './painter.ts';
 import { addCliffs, CLIFF_TEXTURE, type CliffSprite } from './cliffs.ts';
 import { bobHeight, shadow, spriteFor } from './sprites.ts';
 import { addPaintedTerrain, drawTerrain, paintedPropFrame, propNeedsDepth } from './terrain.ts';
-import { emptyPlotIds, gateIsOpen, projectileFrame } from './presentation.ts';
+import { emptyPlotIds, gateIsOpen, projectileFrame, ruinFrame } from './presentation.ts';
 import { gatePlacement, gateView, GATE_RIGS, groundOrigin } from './groundRigs.ts';
 
 const HIT_FLASH_MS = 160;
@@ -479,15 +479,15 @@ export class PlayScene extends Phaser.Scene {
       1,
       [state.castle.hp, state.castle.maxHp],
     );
-    const ruin = this.art.has('ruin');
     for (const b of state.buildings) {
       const def = ctx.buildings.get(b.type)!;
       if (def.class === 'wall' && this.addWall(items, b)) continue;
+      // A destroyed building is a ruin until it is rebuilt.
+      const ruin = b.destroyed ? ruinFrame(b.type, (f) => this.art.has(f)) : null;
       add(
         b.pos,
         def.radius,
-        // A destroyed building is a ruin until it is rebuilt.
-        b.destroyed && ruin ? 'ruin' : b.type,
+        ruin ?? b.type,
         b.destroyed && !ruin ? 0.3 : 1,
         b.destroyed ? undefined : [b.hp, b.maxHp],
         `b${b.id}`,

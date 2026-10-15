@@ -1,0 +1,96 @@
+{
+  "token": "dbacb9c450",
+  "selector": "111-123",
+  "modelId": "model_openai-gpt-image-2-5-flare",
+  "createdAt": "2026-10-15T08:23:22.865Z",
+  "totalCU": 169,
+  "parts": [
+    {
+      "id": "ruin_house",
+      "promptHash": "ac864fe43ad8",
+      "estimateCU": 13
+    },
+    {
+      "id": "ruin_manor",
+      "promptHash": "7b075f1d876d",
+      "estimateCU": 13
+    },
+    {
+      "id": "ruin_gold_mine",
+      "promptHash": "11e0f4c64f06",
+      "estimateCU": 13
+    },
+    {
+      "id": "ruin_tower",
+      "promptHash": "58845abeb98f",
+      "estimateCU": 13
+    },
+    {
+      "id": "ruin_watchtower",
+      "promptHash": "87103f57506b",
+      "estimateCU": 13
+    },
+    {
+      "id": "ruin_ballista_tower",
+      "promptHash": "7117abfe1b9c",
+      "estimateCU": 13
+    },
+    {
+      "id": "ruin_volley_tower",
+      "promptHash": "065df6e426ea",
+      "estimateCU": 13
+    },
+    {
+      "id": "ruin_barracks",
+      "promptHash": "1c547e5f2368",
+      "estimateCU": 13
+    },
+    {
+      "id": "ruin_garrison",
+      "promptHash": "c19d748b0c8b",
+      "estimateCU": 13
+    },
+    {
+      "id": "ruin_knight_hall",
+      "promptHash": "80008f4c710b",
+      "estimateCU": 13
+    },
+    {
+      "id": "ruin_archery_range",
+      "promptHash": "fafc6f968118",
+      "estimateCU": 13
+    },
+    {
+      "id": "ruin_marksmen",
+      "promptHash": "b46b5a5c5e0f",
+      "estimateCU": 13
+    },
+    {
+      "id": "ruin_crossbow_range",
+      "promptHash": "879a430f990e",
+      "estimateCU": 13
+    }
+  ],
+  "skipped": [],
+  "runs": [
+    {
+      "at": "2026-10-15T08:30:52.921Z",
+      "budgetCU": 169,
+      "spentCU": 169,
+      "done": [
+        "ruin_house",
+        "ruin_manor",
+        "ruin_gold_mine",
+        "ruin_tower",
+        "ruin_watchtower",
+        "ruin_ballista_tower",
+        "ruin_volley_tower",
+        "ruin_barracks",
+        "ruin_garrison",
+        "ruin_knight_hall"
+      ],
+      "failed": [],
+      "stoppedFor": "budget: 169 CU spent, ruin_archery_range needs 13 more of 169"
+    }
+  ]
+}

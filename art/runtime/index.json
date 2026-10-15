@@ -134,6 +134,16 @@
         "marksmen",
         "monastery",
         "monk_sanctuary",
+        "ruin_ballista_tower",
+        "ruin_barracks",
+        "ruin_garrison",
+        "ruin_gold_mine",
+        "ruin_house",
+        "ruin_knight_hall",
+        "ruin_manor",
+        "ruin_tower",
+        "ruin_volley_tower",
+        "ruin_watchtower",
         "tower",
         "volley_tower",
         "watchtower"
@@ -863,6 +873,12 @@
       "asset": "knight_hall",
       "contentId": "knight_hall"
     },
+    "ruin_barracks": {
+      "atlas": "buildings",
+      "num": 118,
+      "asset": "ruin_barracks",
+      "contentId": "barracks"
+    },
     "crossbow_range": {
       "atlas": "buildings",
       "num": 57,
@@ -879,6 +895,12 @@
       "num": 55,
       "asset": "archery_range",
       "contentId": "archery_range"
+    },
+    "ruin_knight_hall": {
+      "atlas": "buildings",
+      "num": 120,
+      "asset": "ruin_knight_hall",
+      "contentId": "knight_hall"
     },
     "monastery": {
       "atlas": "buildings",
@@ -897,10 +919,28 @@
       "asset": "ballista_tower",
       "contentId": "ballista_tower"
     },
+    "ruin_ballista_tower": {
+      "atlas": "buildings",
+      "num": 116,
+      "asset": "ruin_ballista_tower",
+      "contentId": "ballista_tower"
+    },
+    "ruin_watchtower": {
+      "atlas": "buildings",
+      "num": 115,
+      "asset": "ruin_watchtower",
+      "contentId": "watchtower"
+    },
     "volley_tower": {
       "atlas": "buildings",
       "num": 49,
       "asset": "volley_tower",
+      "contentId": "volley_tower"
+    },
+    "ruin_volley_tower": {
+      "atlas": "buildings",
+      "num": 117,
+      "asset": "ruin_volley_tower",
       "contentId": "volley_tower"
     },
     "watchtower": {
@@ -915,11 +955,23 @@
       "asset": "garrison",
       "contentId": "garrison"
     },
+    "ruin_garrison": {
+      "atlas": "buildings",
+      "num": 119,
+      "asset": "ruin_garrison",
+      "contentId": "garrison"
+    },
     "ballista_tower_base": {
       "atlas": "buildings",
       "num": 50,
       "asset": "ballista_tower_base",
       "contentId": "ballista_tower"
+    },
+    "ruin_tower": {
+      "atlas": "buildings",
+      "num": 114,
+      "asset": "ruin_tower",
+      "contentId": "tower"
     },
     "tower": {
       "atlas": "buildings",
@@ -938,6 +990,18 @@
       "asset": "gold_mine",
       "contentId": "gold_mine"
     },
+    "ruin_house": {
+      "atlas": "buildings",
+      "num": 111,
+      "asset": "ruin_house",
+      "contentId": "house"
+    },
+    "ruin_gold_mine": {
+      "atlas": "buildings",
+      "num": 113,
+      "asset": "ruin_gold_mine",
+      "contentId": "gold_mine"
+    },
     "house": {
       "atlas": "buildings",
       "num": 43,
@@ -948,6 +1012,12 @@
       "atlas": "buildings",
       "num": 44,
       "asset": "manor",
+      "contentId": "manor"
+    },
+    "ruin_manor": {
+      "atlas": "buildings",
+      "num": 112,
+      "asset": "ruin_manor",
       "contentId": "manor"
     },
     "ballista_turret": {

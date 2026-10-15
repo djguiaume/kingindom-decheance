@@ -45,6 +45,20 @@ describe('building ground anchors', () => {
     expect(groundOrigin('house', 256, 256)).toEqual([0.5, 198 / 256]);
     expect(groundOrigin('unpainted', 256, 256)).toEqual([0.5, 0.9]);
   });
+
+  it('stands each building ruin on its building footing, inside the painted ruin', () => {
+    const frames = atlas('buildings');
+    for (const id of Object.keys(frames).filter((f) => f.startsWith('ruin_'))) {
+      const f = frames[id]!;
+      const [ox, oy] = groundOrigin(id, f.sourceSize.w, f.sourceSize.h);
+      expect([ox, oy], id).toEqual(
+        groundOrigin(id.slice('ruin_'.length), f.sourceSize.w, f.sourceSize.h),
+      );
+      expect(ox * f.sourceSize.w).toBeGreaterThan(f.spriteSourceSize.x);
+      expect(ox * f.sourceSize.w).toBeLessThan(f.spriteSourceSize.x + f.spriteSourceSize.w);
+      expect(oy * f.sourceSize.h).toBeLessThan(f.spriteSourceSize.y + f.spriteSourceSize.h);
+    }
+  });
 });
 
 describe('gate placement', () => {
