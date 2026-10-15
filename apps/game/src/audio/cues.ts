@@ -15,8 +15,11 @@ export interface Cue {
 /** The little the cue table needs to know about the world, read at the moment events arrive. */
 export interface World {
   kingPos: Vec;
+  /** True while the king rolls (his dash), and for the batch right after it ends. */
+  kingRolling: boolean;
   /** Must still answer for an enemy killed this tick (see EnemyTypes). */
   enemyType(id: number): string | undefined;
+  unitType(id: number): string | undefined;
   buildingType(id: number): string | undefined;
   /** Where an entity stands, if it still exists. */
   posOf(ref: Ref): Vec | undefined;
@@ -37,30 +40,113 @@ export function distanceGain(from: Vec, to: Vec | undefined): number {
 
 const BOSS = 'warlord';
 
-function hitSound(world: World, attacker: Ref, target: Ref): SoundId {
-  switch (attacker.kind) {
+/** What an attacker strikes or shoots with: it decides the sound, not the attacker's side. */
+export type Weapon =
+  | 'spear'
+  | 'roll'
+  | 'sword'
+  | 'axe'
+  | 'club'
+  | 'bow'
+  | 'crossbow'
+  | 'tower'
+  | 'ballista'
+  | 'boulder';
+
+/** Each unit and enemy by the weapon its art carries (art-pipeline catalog). */
+const WEAPONS: Record<string, Weapon> = {
+  footman: 'sword',
+  knight: 'sword',
+  archer: 'bow',
+  crossbowman: 'crossbow',
+  raider: 'axe',
+  harpy: 'axe',
+  warlord: 'axe',
+  brute: 'club',
+  skirmisher: 'bow',
+  catapult: 'boulder',
+};
+
+export function weaponOf(world: World, ref: Ref): Weapon {
+  switch (ref.kind) {
     case 'king':
-      return 'spearHit';
-    case 'unit':
-      return 'swordHit';
-    case 'building':
-      return world.buildingType(attacker.id) === 'ballista_tower' ? 'ballista' : 'arrowHit';
+      return world.kingRolling ? 'roll' : 'spear';
     case 'castle':
-      return 'arrowHit';
-    case 'enemy': {
-      if (world.enemyType(attacker.id) === 'catapult') return 'boulder';
-      if (target.kind === 'king') return 'kingHurt';
-      if (target.kind === 'castle') return 'castleHit';
-      if (target.kind === 'building') return 'woodHit';
-      return world.enemyType(attacker.id) === 'skirmisher' ? 'arrowHit' : 'swordHit';
-    }
+      return 'tower';
+    case 'building':
+      return world.buildingType(ref.id) === 'ballista_tower' ? 'ballista' : 'tower';
+    case 'unit':
+      return WEAPONS[world.unitType(ref.id) ?? ''] ?? 'sword';
+    case 'enemy':
+      return WEAPONS[world.enemyType(ref.id) ?? ''] ?? 'axe';
   }
 }
 
-export function cuesFor(events: readonly GameEvent[], world: World): Cue[] {
+/** The sound of letting a shot go, when the attacker draws, loads or swings it. */
+const RELEASE: Partial<Record<Weapon, SoundId>> = {
+  bow: 'bowRelease',
+  crossbow: 'crossbowRelease',
+  boulder: 'catapultLaunch',
+};
+
+/** A shot that lands on nothing: it thuds into the ground instead of striking flesh or wood. */
+const MISS: Partial<Record<Weapon, SoundId>> = {
+  bow: 'arrowMiss',
+  crossbow: 'arrowMiss',
+  boulder: 'boulderLand',
+};
+
+const STRIKE: Record<Weapon, SoundId> = {
+  spear: 'spearThrust',
+  roll: 'rollHit',
+  sword: 'swordHit',
+  axe: 'axeHit',
+  club: 'clubHit',
+  bow: 'arrowHit',
+  crossbow: 'boltHit',
+  tower: 'towerShot',
+  ballista: 'ballista',
+  boulder: 'boulder',
+};
+
+const STONE = new Set(['stone_wall']);
+
+/** The impact: the weapon on a body, or the struck material for a melee blow on a structure. */
+function strikeSound(world: World, weapon: Weapon, target: Ref, projectile: boolean): SoundId {
+  const melee = !projectile && RELEASE[weapon] === undefined;
+  if (melee && target.kind === 'castle') return 'stoneHit';
+  if (melee && target.kind === 'building')
+    return STONE.has(world.buildingType(target.id) ?? '') ? 'stoneHit' : 'woodHit';
+  return STRIKE[weapon];
+}
+
+const refKey = (ref: Ref) => ('id' in ref ? `${ref.kind}${ref.id}` : ref.kind);
+
+export function cuesFor(
+  events: readonly GameEvent[],
+  world: World,
+  shots: Shots = new Shots(),
+): Cue[] {
   const cues: Cue[] = [];
   const near = (ref: Ref) => distanceGain(world.kingPos, world.posOf(ref));
   const add = (id: SoundId, gain = 1) => cues.push({ id, gain });
+  // One attack that strikes three enemies (spear arc, volley tower) is one sound, not three.
+  const struck = new Map<string, Cue>();
+  const once = (by: Ref, id: SoundId, gain: number) => {
+    const key = `${refKey(by)}:${id}`;
+    const cue = struck.get(key);
+    if (cue) cue.gain = Math.max(cue.gain, gain);
+    else {
+      const fresh = { id, gain };
+      struck.set(key, fresh);
+      cues.push(fresh);
+    }
+  };
+
+  // A stomp also reports each one it hits as a hit: those are the stomp, not axe blows.
+  const stompers = new Set(
+    events.flatMap((e) => (e.type === 'stomp' ? [refKey({ kind: 'enemy', id: e.enemy })] : [])),
+  );
 
   for (const e of events) {
     switch (e.type) {
@@ -81,9 +167,31 @@ export function cuesFor(events: readonly GameEvent[], world: World): Cue[] {
       case 'enemySpawned':
         if (e.enemy === BOSS) add('bossRoar');
         break;
-      case 'hit':
-        add(hitSound(world, e.attacker, e.target), near(e.target));
+      case 'fired': {
+        const weapon = weaponOf(world, e.attacker);
+        shots.fired(e.id, weapon);
+        const release = RELEASE[weapon];
+        if (release) once(e.attacker, release, near(e.attacker));
         break;
+      }
+      case 'missed': {
+        const miss = MISS[shots.take(e.id) ?? 'bow'];
+        if (miss) add(miss, distanceGain(world.kingPos, e.at));
+        break;
+      }
+      case 'hit': {
+        if (stompers.has(refKey(e.attacker))) {
+          if (e.target.kind === 'king') add('kingHurt');
+          break;
+        }
+        let weapon = weaponOf(world, e.attacker);
+        // A shooter killed while its shot flew no longer answers: it still landed an arrow.
+        if (e.projectile && !RELEASE[weapon]) weapon = 'bow';
+        once(e.attacker, strikeSound(world, weapon, e.target, !!e.projectile), near(e.target));
+        // The blow is heard first; the king's grunt rides on top so danger stays audible.
+        if (e.target.kind === 'king') add('kingHurt');
+        break;
+      }
       case 'killed':
         if (e.target.kind === 'king') add('kingDown');
         else if (e.target.kind === 'unit') add('unitDie', near(e.target));
@@ -120,6 +228,34 @@ export function cuesFor(events: readonly GameEvent[], world: World): Cue[] {
 }
 
 /**
+ * Remembers what each shot in flight is (arrow, bolt, boulder) from its `fired` event: a
+ * `missed` event names only the shot, and the shooter may be dead by the time it lands.
+ */
+export class Shots {
+  private weapons = new Map<number, Weapon>();
+
+  fired(id: number, weapon: Weapon): void {
+    this.weapons.set(id, weapon);
+  }
+
+  take(id: number): Weapon | undefined {
+    const weapon = this.weapons.get(id);
+    this.weapons.delete(id);
+    return weapon;
+  }
+
+  /** Forgets shots that are no longer flying (hits do not name their shot). */
+  keepOnly(flying: readonly { id: number }[]): void {
+    const ids = new Set(flying.map((p) => p.id));
+    for (const id of this.weapons.keys()) if (!ids.has(id)) this.weapons.delete(id);
+  }
+
+  clear(): void {
+    this.weapons.clear();
+  }
+}
+
+/**
  * Remembers each enemy's type from its spawn event: by the time a `killed` event arrives the
  * enemy has already left the state, and the boss's death still needs its own sound.
  */
@@ -146,10 +282,13 @@ export class EnemyTypes {
 }
 
 /** A World view of the live state (read-only). */
-export function worldOf(state: GameState, enemies: EnemyTypes): World {
+export function worldOf(state: GameState, enemies: EnemyTypes, wasRolling = false): World {
   return {
     kingPos: state.king.pos,
+    // The dash's last tick both hits and ends it, so a roll seen just before still counts.
+    kingRolling: state.king.dash !== null || wasRolling,
     enemyType: (id) => enemies.get(id) ?? state.enemies.find((e) => e.id === id)?.type,
+    unitType: (id) => state.units.find((u) => u.id === id)?.type,
     buildingType: (id) => state.buildings.find((b) => b.id === id)?.type,
     posOf: (ref) => {
       switch (ref.kind) {
