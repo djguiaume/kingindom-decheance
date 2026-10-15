@@ -32,6 +32,13 @@ import {
   type Tunables,
 } from './modifiers.ts';
 import type { GameState } from './state.ts';
+import {
+  terrainBlockers,
+  walkable,
+  wayGraph,
+  type Capsule,
+  type WayGraph,
+} from './systems/terrain.ts';
 import type { Vec } from './vec.ts';
 
 export interface LaneInfo {
@@ -76,6 +83,10 @@ export interface GameContext {
   kingSpawn: Vec;
   /** The map area; the king stays inside it. */
   bounds: { minX: number; minY: number; maxX: number; maxY: number };
+  /** Cliffs and water as capsules nobody on the ground walks through (systems/terrain.ts). */
+  blockers: readonly Capsule[];
+  /** Every map node and the walks between them: how ground bodies find their way round terrain. */
+  ways: WayGraph;
 }
 
 export interface RunConfig {
@@ -106,6 +117,7 @@ export function createContext(bundle: ContentBundle, config: RunConfig): GameCon
     return p;
   };
 
+  const blockers = terrainBlockers(map);
   const ctx: GameContext = {
     contentHash: bundle.hash,
     map,
@@ -127,7 +139,11 @@ export function createContext(bundle: ContentBundle, config: RunConfig): GameCon
     ),
     kingSpawn: at(map.kingSpawn),
     bounds: { minX: 0, minY: 0, maxX: map.size[0], maxY: map.size[1] },
+    blockers,
+    ways: wayGraph(blockers, [...nodes.values()]),
   };
+  const blocked = checkTerrain(ctx);
+  if (blocked.length > 0) throw new Error(`Terrain in the way: ${blocked.join(', ')}`);
   const wrong = checkModifiers(tunablesFor(ctx, 1, [], 1), [
     ...bundle.castle.perks,
     ...bundle.mutators,
@@ -230,4 +246,27 @@ export function req<K, V>(map: ReadonlyMap<K, V>, key: K): V {
   const value = map.get(key);
   if (value === undefined) throw new Error(`Missing content entry "${String(key)}"`);
   return value;
+}
+
+/**
+ * Terrain must leave the map playable: every node clear of cliffs and water, and every ground
+ * lane walkable from node to node by the biggest enemy. Returns what is in the way.
+ */
+export function checkTerrain(ctx: GameContext): string[] {
+  const out: string[] = [];
+  const biggest = Math.max(
+    0,
+    ...ctx.base.bundle.enemies.filter((e) => !e.flying).map((e) => e.radius),
+  );
+  for (const [id, p] of ctx.nodes) {
+    if (!walkable(ctx.blockers, p, p, 0.3)) out.push(`node ${id}`);
+  }
+  for (const lane of ctx.lanes.values()) {
+    if (lane.air) continue;
+    for (let i = 1; i < lane.points.length; i++) {
+      if (!walkable(ctx.blockers, lane.points[i - 1]!, lane.points[i]!, biggest))
+        out.push(`lane ${lane.id} ${lane.nodes[i - 1]}→${lane.nodes[i]}`);
+    }
+  }
+  return out;
 }

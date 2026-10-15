@@ -1,0 +1,220 @@
+{
+  "token": "b783088826",
+  "selector": "slash,charge,stomp,window_glow,lantern_glow,ballista_turret,ballista_tower_base,boulder,castle_1,gate_wood.side.f1,gate_wood.side.f2,gate_wood.diag.f1,gate_wood.diag.f2,gate_stone.side.f1,gate_stone.side.f2,gate_stone.diag.f1,gate_stone.diag.f2,path_edge,water_edge,ground_greyhollow,tile_grass,tile_path,tile_stone,map_background,cliff_section,cliff_end,grass_patch,tile_water",
+  "modelId": "model_openai-gpt-image-2-5-flare",
+  "createdAt": "2026-10-14T18:59:33.194Z",
+  "totalCU": 416,
+  "parts": [
+    {
+      "id": "castle_1",
+      "promptHash": "dba8581292d9",
+      "estimateCU": 12
+    },
+    {
+      "id": "ballista_tower_base",
+      "promptHash": "d0d625b0b06d",
+      "estimateCU": 12
+    },
+    {
+      "id": "ballista_turret",
+      "promptHash": "f7a9261007cb",
+      "estimateCU": 13
+    },
+    {
+      "id": "gate_wood.side.f1",
+      "promptHash": "c8263efcbb80",
+      "estimateCU": 12
+    },
+    {
+      "id": "gate_wood.side.f2",
+      "promptHash": "23c07d6f2667",
+      "estimateCU": 12
+    },
+    {
+      "id": "gate_wood.diag.f1",
+      "promptHash": "cfd821e4970f",
+      "estimateCU": 12
+    },
+    {
+      "id": "gate_wood.diag.f2",
+      "promptHash": "201fae2adad8",
+      "estimateCU": 12
+    },
+    {
+      "id": "gate_stone.side.f1",
+      "promptHash": "909d3cee8466",
+      "estimateCU": 12
+    },
+    {
+      "id": "gate_stone.side.f2",
+      "promptHash": "6eff5c4a5d8d",
+      "estimateCU": 12
+    },
+    {
+      "id": "gate_stone.diag.f1",
+      "promptHash": "d140daebc2cd",
+      "estimateCU": 12
+    },
+    {
+      "id": "gate_stone.diag.f2",
+      "promptHash": "ae5349ef1d3a",
+      "estimateCU": 12
+    },
+    {
+      "id": "window_glow",
+      "promptHash": "664715fc286b",
+      "estimateCU": 12
+    },
+    {
+      "id": "lantern_glow",
+      "promptHash": "a4c65f585858",
+      "estimateCU": 12
+    },
+    {
+      "id": "boulder",
+      "promptHash": "54da76d27f20",
+      "estimateCU": 12
+    },
+    {
+      "id": "slash.f1",
+      "promptHash": "57f7fffa1ebf",
+      "estimateCU": 12
+    },
+    {
+      "id": "slash.f2",
+      "promptHash": "c8a0fef402c7",
+      "estimateCU": 12
+    },
+    {
+      "id": "slash.f3",
+      "promptHash": "51008145c2dc",
+      "estimateCU": 12
+    },
+    {
+      "id": "charge.f1",
+      "promptHash": "78c6b0d258eb",
+      "estimateCU": 13
+    },
+    {
+      "id": "charge.f2",
+      "promptHash": "383226372d0c",
+      "estimateCU": 13
+    },
+    {
+      "id": "charge.f3",
+      "promptHash": "56da55138709",
+      "estimateCU": 13
+    },
+    {
+      "id": "stomp.f1",
+      "promptHash": "185d03edea5d",
+      "estimateCU": 12
+    },
+    {
+      "id": "stomp.f2",
+      "promptHash": "ec85f08b7c43",
+      "estimateCU": 12
+    },
+    {
+      "id": "stomp.f3",
+      "promptHash": "c7f2b17ceeba",
+      "estimateCU": 12
+    },
+    {
+      "id": "path_edge",
+      "promptHash": "aca587abf246",
+      "estimateCU": 12
+    },
+    {
+      "id": "water_edge",
+      "promptHash": "d942cac52d5d",
+      "estimateCU": 13
+    },
+    {
+      "id": "ground_greyhollow",
+      "promptHash": "174569c4256a",
+      "estimateCU": 13
+    },
+    {
+      "id": "tile_grass",
+      "promptHash": "985adc8aabf2",
+      "estimateCU": 12
+    },
+    {
+      "id": "tile_path",
+      "promptHash": "398ec10f244f",
+      "estimateCU": 12
+    },
+    {
+      "id": "tile_stone",
+      "promptHash": "3e17c7c30503",
+      "estimateCU": 12
+    },
+    {
+      "id": "map_background",
+      "promptHash": "65e092bccf20",
+      "estimateCU": 13
+    },
+    {
+      "id": "cliff_section",
+      "promptHash": "d4a8e07c435c",
+      "estimateCU": 12
+    },
+    {
+      "id": "cliff_end",
+      "promptHash": "c64474710339",
+      "estimateCU": 12
+    },
+    {
+      "id": "grass_patch",
+      "promptHash": "3a12aa52e926",
+      "estimateCU": 13
+    },
+    {
+      "id": "tile_water",
+      "promptHash": "18f72cc7e968",
+      "estimateCU": 12
+    }
+  ],
+  "skipped": [],
+  "runs": [
+    {
+      "at": "2026-10-14T19:18:29.288Z",
+      "budgetCU": 450,
+      "spentCU": 450,
+      "done": [
+        "castle_1",
+        "ballista_tower_base",
+        "ballista_turret",
+        "gate_wood.side.f1",
+        "gate_wood.side.f2",
+        "gate_wood.diag.f1",
+        "gate_wood.diag.f2",
+        "gate_stone.side.f1",
+        "gate_stone.side.f2",
+        "gate_stone.diag.f1",
+        "gate_stone.diag.f2",
+        "lantern_glow",
+        "boulder",
+        "slash.f1",
+        "slash.f2",
+        "slash.f3",
+        "charge.f1",
+        "charge.f2",
+        "charge.f3",
+        "stomp.f1",
+        "stomp.f2",
+        "stomp.f3",
+        "path_edge",
+        "water_edge",
+        "ground_greyhollow",
+        "tile_grass",
+        "tile_path"
+      ],
+      "failed": [
+        "window_glow"
+      ],
+      "stoppedFor": "budget: 450 CU spent, tile_stone needs 12 more of 450"
+    }
+  ]
+}

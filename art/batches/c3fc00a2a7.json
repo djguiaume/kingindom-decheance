@@ -1,0 +1,33 @@
+{
+  "token": "c3fc00a2a7",
+  "selector": "cliff_section,cliff_end",
+  "modelId": "model_openai-gpt-image-2-5-flare",
+  "createdAt": "2026-10-15T02:41:50.761Z",
+  "totalCU": 26,
+  "parts": [
+    {
+      "id": "cliff_section",
+      "promptHash": "ffbc4566f9fb",
+      "estimateCU": 13
+    },
+    {
+      "id": "cliff_end",
+      "promptHash": "dcbd5855e703",
+      "estimateCU": 13
+    }
+  ],
+  "skipped": [],
+  "redo": true,
+  "runs": [
+    {
+      "at": "2026-10-15T02:43:19.861Z",
+      "budgetCU": 50,
+      "spentCU": 39,
+      "done": [
+        "cliff_section"
+      ],
+      "failed": [],
+      "stoppedFor": "budget: 39 CU spent, cliff_end needs 13 more of 50"
+    }
+  ]
+}

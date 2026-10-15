@@ -11,6 +11,7 @@ export interface Projection {
   toScreen(p: Vec): Vec;
   width: number;
   height: number;
+  offsetTop?: number;
 }
 
 export interface Rect {
@@ -120,10 +121,6 @@ export function enemyGroups(state: GameState, exclude?: (id: number) => boolean)
 }
 
 const dist2 = (a: Vec, b: Vec) => (a.x - b.x) ** 2 + (a.y - b.y) ** 2;
-const clampInside = (p: Vec, r: Rect): Vec => ({
-  x: Math.min(r.right, Math.max(r.left, p.x)),
-  y: Math.min(r.bottom, Math.max(r.top, p.y)),
-});
 
 /** Room for the tip outside the marker body, in CSS px. */
 const TIP = 14;
@@ -137,12 +134,21 @@ const TIP = 14;
  */
 export function placeArrow(
   target: Vec,
-  view: { width: number; height: number },
+  view: { width: number; height: number; offsetTop?: number },
   layout: ArrowLayout,
   half: { w: number; h: number } = { w: 0, h: 0 },
+  /** Place it on the edge even if the point is just on screen. */
+  force = false,
 ): { x: number; y: number; angle: number } | null {
   const { width: w, height: h } = view;
-  if (target.x >= 0 && target.x <= w && target.y >= 0 && target.y <= h) return null;
+  if (
+    !force &&
+    target.x >= 0 &&
+    target.x <= w &&
+    target.y >= (view.offsetTop ?? 0) &&
+    target.y <= h
+  )
+    return null;
   const inner = innerRect(view, layout, half);
   const cx = w / 2;
   const cy = h / 2;
@@ -263,30 +269,24 @@ export function buildArrows(
   ) => {
     const { width, height } = pinSize(size, parts);
     const screen = view.toScreen(world);
-    const at = placeArrow(screen, view, layout, { w: width / 2 + TIP, h: height / 2 + TIP });
+    const half = { w: width / 2 + TIP, h: height / 2 + TIP };
     const label = parts.map((p) => `${p.icon}${p.count ?? ''}`).join(' ');
-    if (at)
-      out.push({ key, kind, ...at, size, color, label, parts, width, height, onScreen: false });
+    const base = { key, kind, size, color, label, parts, width, height };
+    const at = placeArrow(screen, view, layout, half);
+    if (at) {
+      out.push({ ...base, ...at, onScreen: false });
+      return;
+    }
+    if (kind !== 'spawn') return;
     // By day a spawn on screen keeps its marker, standing over the spawn, so the player can
-    // still read what comes from there.
-    else if (kind === 'spawn')
-      out.push({
-        key,
-        kind,
-        // Kept inside the screen when the spawn sits near an edge.
-        ...clampInside(
-          { x: screen.x, y: screen.y - height / 2 - TIP - 6 },
-          innerRect(view, layout, { w: width / 2, h: height / 2 }),
-        ),
-        angle: Math.PI / 2,
-        size,
-        color,
-        label,
-        parts,
-        width,
-        height,
-        onScreen: true,
-      });
+    // still read what comes from there. Only when the marker fits there: a spawn just on screen
+    // at an edge keeps an edge marker, like the other edges, instead of one pushed inwards.
+    const over = { x: screen.x, y: screen.y - height / 2 - TIP - 6 };
+    const room = innerRect(view, layout, { w: width / 2, h: height / 2 });
+    const fits =
+      over.x >= room.left && over.x <= room.right && over.y >= room.top && over.y <= room.bottom;
+    if (fits) out.push({ ...base, ...over, angle: Math.PI / 2, onScreen: true });
+    else out.push({ ...base, ...placeArrow(screen, view, layout, half, true)!, onScreen: false });
   };
 
   if (state.phase === 'day') {

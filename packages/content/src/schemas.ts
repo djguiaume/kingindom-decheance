@@ -284,6 +284,60 @@ export const Wave = z.object({
   groups: z.array(WaveGroup).min(1),
 });
 
+/**
+ * A strip of terrain nobody walks through: a polyline of points with a width (a ridge of cliffs,
+ * a river). One point makes a round patch (a pond, a boulder field).
+ */
+export const TerrainStrip = z.object({
+  points: z.array(Vec2).min(1),
+  width: Positive,
+});
+
+/** A bridge deck from bank to bank: water under it can be walked over. */
+export const Bridge = z.object({
+  from: Vec2,
+  to: Vec2,
+  width: Positive,
+});
+
+/** Scenery the view draws; it never blocks anything. Kinds match the environment sprites. */
+export const PropKind = z.enum([
+  'tree',
+  'pine',
+  'bamboo_small',
+  'bamboo_large',
+  'bamboo_single',
+  'rock_small',
+  'rock_large',
+  'grass',
+  'grass_patch',
+  'flowers',
+  'shrub',
+  'lantern_post',
+  'barrel',
+  'crate',
+  'panda_banner',
+]);
+
+export const Prop = z.object({
+  kind: PropKind,
+  pos: Vec2,
+  scale: Positive.default(1),
+  /** Mirrored left to right, for variety. */
+  flip: z.boolean().default(false),
+});
+
+/**
+ * The lie of the land (rework of Greyhollow): cliffs and water block walking for everyone on the
+ * ground; bridges open water to walking; props are scenery only. Roads are drawn along the lanes.
+ */
+export const Terrain = z.object({
+  cliffs: z.array(TerrainStrip).default([]),
+  water: z.array(TerrainStrip).default([]),
+  bridges: z.array(Bridge).default([]),
+  props: z.array(Prop).default([]),
+});
+
 export const GameMap = z.object({
   ...Meta,
   id: Id,
@@ -305,6 +359,7 @@ export const GameMap = z.object({
   nodes: z.array(MapNode).min(1),
   lanes: z.array(Lane).min(1),
   waves: z.array(Wave).min(1),
+  terrain: Terrain.default({ cliffs: [], water: [], bridges: [], props: [] }),
 });
 
 export const BuildingCatalog = z.object({ ...Meta, buildings: z.array(Building) });
@@ -339,6 +394,11 @@ export type MapNode = z.infer<typeof MapNode>;
 export type Lane = z.infer<typeof Lane>;
 export type WaveGroup = z.infer<typeof WaveGroup>;
 export type GameMap = z.infer<typeof GameMap>;
+export type Terrain = z.infer<typeof Terrain>;
+export type TerrainStrip = z.infer<typeof TerrainStrip>;
+export type Bridge = z.infer<typeof Bridge>;
+export type Prop = z.infer<typeof Prop>;
+export type PropKind = z.infer<typeof PropKind>;
 
 /** Everything a run needs, after validation. */
 export interface ContentBundle {

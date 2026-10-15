@@ -4,7 +4,7 @@
  */
 import type { GameState } from '@kd/core';
 import type { GameRuntime } from '../game/runtime.ts';
-import { cuesFor, EnemyTypes, worldOf } from './cues.ts';
+import { cuesFor, EnemyTypes, Shots, worldOf } from './cues.ts';
 import type { AudioEngine } from './engine.ts';
 import type { TrackId } from './music.ts';
 
@@ -21,26 +21,36 @@ export function trackFor(state: GameState, nights: number, paused: boolean): Tra
 export function attachAudio(runtime: GameRuntime, engine: AudioEngine): () => void {
   engine.install();
   const enemies = new EnemyTypes();
+  const shots = new Shots();
+
+  // The roll (the Charge) has no event of its own: the command only starts a dash. Watch the
+  // dash both here and on every event batch, so the roll sounds the moment it starts.
+  let dashing = false;
+  const watchDash = () => {
+    const dash = runtime.state.king.dash !== null;
+    if (dash && !dashing) engine.play('roll');
+    dashing = dash;
+  };
 
   const offEvents = runtime.onEvents((events) => {
+    const wasRolling = dashing;
+    watchDash();
     enemies.learn(events);
-    for (const cue of cuesFor(events, worldOf(runtime.state, enemies)))
+    for (const cue of cuesFor(events, worldOf(runtime.state, enemies, wasRolling), shots))
       engine.play(cue.id, cue.gain);
     enemies.forget(events);
+    shots.keepOnly(runtime.state.projectiles);
   });
 
-  // The Charge has no event of its own (the command only starts a dash): watch for it starting.
   let session = runtime.session;
-  let dashing = false;
   const timer = window.setInterval(() => {
     if (runtime.session !== session) {
       session = runtime.session;
       enemies.clear();
+      shots.clear();
     }
     const state = runtime.state;
-    const dash = state.king.dash !== null;
-    if (dash && !dashing) engine.play('charge');
-    dashing = dash;
+    watchDash();
     engine.setTrack(trackFor(state, runtime.ctx.map.nights, runtime.paused));
   }, POLL_MS);
 

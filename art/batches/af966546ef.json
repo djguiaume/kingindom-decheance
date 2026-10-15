@@ -1,0 +1,51 @@
+{
+  "token": "af966546ef",
+  "selector": "bridge,grass_patch,gate_wood.diag.f2",
+  "modelId": "model_openai-gpt-image-2-5-flare",
+  "createdAt": "2026-10-14T20:25:56.299Z",
+  "totalCU": 61,
+  "parts": [
+    {
+      "id": "gate_wood.diag.f2",
+      "promptHash": "7450e3de2d58",
+      "estimateCU": 13
+    },
+    {
+      "id": "grass_patch",
+      "promptHash": "788cdeb45c45",
+      "estimateCU": 12
+    },
+    {
+      "id": "bridge",
+      "promptHash": "39b9d2443d8d",
+      "estimateCU": 12
+    },
+    {
+      "id": "bridge.side",
+      "promptHash": "2eaf87ca2183",
+      "estimateCU": 12
+    },
+    {
+      "id": "bridge.diag",
+      "promptHash": "440c428a06f6",
+      "estimateCU": 12
+    }
+  ],
+  "skipped": [],
+  "redo": true,
+  "runs": [
+    {
+      "at": "2026-10-14T20:28:48.241Z",
+      "budgetCU": 75,
+      "spentCU": 74,
+      "done": [
+        "gate_wood.diag.f2",
+        "grass_patch",
+        "bridge",
+        "bridge.side"
+      ],
+      "failed": [],
+      "stoppedFor": "budget: 74 CU spent, bridge.diag needs 12 more of 75"
+    }
+  ]
+}

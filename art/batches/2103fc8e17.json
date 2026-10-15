@@ -1,0 +1,110 @@
+{
+  "token": "2103fc8e17",
+  "selector": "tile_stone,map_background,cliff_section,cliff_end,grass_patch,tile_water,window_glow,tile_path,path_edge,water_edge,gate_wood.diag.f1,gate_wood.diag.f2,bridge",
+  "modelId": "model_openai-gpt-image-2-5-flare",
+  "createdAt": "2026-10-14T19:24:56.196Z",
+  "totalCU": 183,
+  "parts": [
+    {
+      "id": "gate_wood.diag.f1",
+      "promptHash": "6061a2bef49b",
+      "estimateCU": 12
+    },
+    {
+      "id": "gate_wood.diag.f2",
+      "promptHash": "05a4e4c49711",
+      "estimateCU": 12
+    },
+    {
+      "id": "window_glow",
+      "promptHash": "05ddfa4a05f9",
+      "estimateCU": 12
+    },
+    {
+      "id": "path_edge",
+      "promptHash": "33d3c08a701e",
+      "estimateCU": 12
+    },
+    {
+      "id": "water_edge",
+      "promptHash": "18bbe188f7ef",
+      "estimateCU": 13
+    },
+    {
+      "id": "tile_path",
+      "promptHash": "6ad1614f4610",
+      "estimateCU": 12
+    },
+    {
+      "id": "tile_stone",
+      "promptHash": "b375b08e52ad",
+      "estimateCU": 12
+    },
+    {
+      "id": "map_background",
+      "promptHash": "65e092bccf20",
+      "estimateCU": 13
+    },
+    {
+      "id": "cliff_section",
+      "promptHash": "d4a8e07c435c",
+      "estimateCU": 12
+    },
+    {
+      "id": "cliff_end",
+      "promptHash": "c64474710339",
+      "estimateCU": 12
+    },
+    {
+      "id": "grass_patch",
+      "promptHash": "3a12aa52e926",
+      "estimateCU": 13
+    },
+    {
+      "id": "tile_water",
+      "promptHash": "f38549049a8b",
+      "estimateCU": 12
+    },
+    {
+      "id": "bridge",
+      "promptHash": "21e74b4bb16d",
+      "estimateCU": 12
+    },
+    {
+      "id": "bridge.side",
+      "promptHash": "2967a126dbe8",
+      "estimateCU": 12
+    },
+    {
+      "id": "bridge.diag",
+      "promptHash": "604e6b7d1d55",
+      "estimateCU": 12
+    }
+  ],
+  "skipped": [],
+  "runs": [
+    {
+      "at": "2026-10-14T19:31:04.471Z",
+      "budgetCU": 250,
+      "spentCU": 146,
+      "done": [
+        "gate_wood.diag.f1",
+        "gate_wood.diag.f2",
+        "window_glow",
+        "path_edge",
+        "water_edge",
+        "tile_path",
+        "tile_stone",
+        "map_background",
+        "cliff_section",
+        "cliff_end",
+        "grass_patch",
+        "tile_water",
+        "bridge",
+        "bridge.side",
+        "bridge.diag"
+      ],
+      "failed": []
+    }
+  ]
+}

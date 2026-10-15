@@ -80,7 +80,7 @@ describe('targeting and movement', () => {
     const wall = s.state.buildings[0]!;
     // Just behind the wall: in a raider's aggro range, out of the king's own reach.
     s.state.king.pos = { x: wall.pos.x + 2, y: wall.pos.y + 2 };
-    const raider = placeEnemy(s, 'raider', 15.5, 27.5, { cooldown: 0, waypoint: 2 });
+    const raider = placeEnemy(s, 'raider', 15.5, 27.5, { cooldown: 0, waypoint: 3 });
     for (let i = 0; i < TICK_RATE * 5; i++) {
       s.step();
       expect(raider.pos.x).toBeLessThan(wall.pos.x);
@@ -94,7 +94,7 @@ describe('targeting and movement', () => {
     s.submit({ type: 'buy', slot: 'ww', option: 0 });
     emptyNight(s, 10_000);
     benchKing(s);
-    const brute = placeEnemy(s, 'brute', 13, 27, { cooldown: 0, waypoint: 2 });
+    const brute = placeEnemy(s, 'brute', 13, 27, { cooldown: 0, waypoint: 3 });
     stepUntil(s, () => s.state.buildings[0]!.hp < 500);
     expect(brute.target).toEqual({ kind: 'building', id: s.state.buildings[0]!.id });
   });
@@ -160,10 +160,10 @@ describe('combat', () => {
   it('the spear hits up to three enemies in a 90° arc, not behind the king', () => {
     const s = newSession();
     emptyNight(s, 10_000);
-    s.state.king.pos = { x: 10, y: 42 };
-    const front1 = placeEnemy(s, 'raider', 11.5, 42);
-    const front2 = placeEnemy(s, 'raider', 11.5, 42.9);
-    const behind = placeEnemy(s, 'raider', 8.2, 42);
+    s.state.king.pos = { x: 30, y: 44 };
+    const front1 = placeEnemy(s, 'raider', 31.5, 44);
+    const front2 = placeEnemy(s, 'raider', 31.5, 44.9);
+    const behind = placeEnemy(s, 'raider', 28.2, 44);
     const targets = hitsBy(s.step(), 'king').map((h) => (h.target as { id: number }).id);
     expect(targets).toEqual(expect.arrayContaining([front1.id, front2.id]));
     expect(targets).not.toContain(behind.id);
@@ -293,7 +293,7 @@ describe('siege, boss and rally', () => {
     emptyNight(s, 10_000);
     benchKing(s);
     const [tower, wall] = s.state.buildings;
-    const catapult = placeEnemy(s, 'catapult', 12, 27.5, { cooldown: 0, waypoint: 2 });
+    const catapult = placeEnemy(s, 'catapult', 12, 27.5, { cooldown: 0, waypoint: 3 });
     const events = collectUntil(s, () => tower!.hp < tower!.maxHp, TICK_RATE * 10);
     expect(catapult.target).toEqual({ kind: 'building', id: tower!.id });
     expect(catapult.pos.x).toBeLessThan(wall!.pos.x);
@@ -306,7 +306,7 @@ describe('siege, boss and rally', () => {
     const s = newSession();
     emptyNight(s, 10_000);
     const king = s.state.king;
-    placeEnemy(s, 'warlord', king.pos.x + 2, king.pos.y, { waypoint: 4 });
+    placeEnemy(s, 'warlord', king.pos.x + 2, king.pos.y, { waypoint: 5 });
     const stomps = () => s.step().filter((e) => e.type === 'stomp').length;
     let count = stomps();
     expect(count).toBe(1);
@@ -325,7 +325,7 @@ describe('siege, boss and rally', () => {
     expect(s.state.buildings[0]!.type).toBe('ballista_tower');
     emptyNight(s, 10_000);
     benchKing(s);
-    const warlord = placeEnemy(s, 'warlord', 19, 26, { waypoint: 3 });
+    const warlord = placeEnemy(s, 'warlord', 19, 26, { waypoint: 4 });
     const events = collectUntil(s, () => warlord.hp < warlord.maxHp, TICK_RATE * 5);
     expect(events).toContainEqual(
       expect.objectContaining({ type: 'hit', attacker: { kind: 'building', id: 1 }, damage: 64 }),

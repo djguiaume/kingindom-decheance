@@ -95,3 +95,35 @@ test('phone: portrait asks to rotate', async ({ page }) => {
   await page.goto('./#/play');
   await expect(page.getByTestId('rotate')).toBeVisible();
 });
+
+test('phone: short night battlefield clears the toolbar and returns to full height on restart', async ({
+  page,
+}) => {
+  const errors = collectErrors(page);
+  await page.setViewportSize({ width: 740, height: 330 });
+  const finger = await Finger.on(page);
+  await page.goto('./#/play');
+  const game = page.getByTestId('game');
+  await expect.poll(async () => (await game.boundingBox())!.y).toBe(0);
+  await finger.hold(page, page.getByTestId('start-night'), 1300);
+  await expect(page.getByTestId('night')).toContainText('Night 1');
+
+  async function clearsToolbar(): Promise<boolean> {
+    const top = (await game.boundingBox())!.y;
+    const panels = await page.locator('[data-battlefield-obstacle]').all();
+    for (const panel of panels) {
+      const box = await panel.boundingBox();
+      if (box && top < box.y + box.height) return false;
+    }
+    return top > 0 && top < 90;
+  }
+  await expect.poll(clearsToolbar).toBe(true);
+  await page.screenshot({ path: 'test-results/phone-short-night.png' });
+  await page.setViewportSize({ width: 660, height: 360 });
+  await expect.poll(clearsToolbar).toBe(true);
+  await page.getByTestId('pause').tap();
+  await page.getByRole('button', { name: 'Restart run' }).tap();
+  await expect(page.getByTestId('night')).toContainText('Day 1');
+  await expect.poll(async () => (await game.boundingBox())!.y).toBe(0);
+  expect(errors).toEqual([]);
+});

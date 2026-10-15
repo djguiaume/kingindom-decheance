@@ -13,6 +13,8 @@ export class CameraView {
   left = 0;
   top = 0;
   zoom = 1;
+  /** CSS offset of the canvas below the combat toolbar. */
+  offsetTop = 0;
   /** Visible size in CSS pixels. */
   width = 0;
   height = 0;
@@ -21,7 +23,7 @@ export class CameraView {
   toScreen(p: Vec): Vec {
     return {
       x: (p.x * SCALE - this.left) * this.zoom,
-      y: (p.y * SCALE * SQUASH - this.top) * this.zoom,
+      y: (p.y * SCALE * SQUASH - this.top) * this.zoom + this.offsetTop,
     };
   }
 }

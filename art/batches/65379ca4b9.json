@@ -1,0 +1,27 @@
+{
+  "token": "65379ca4b9",
+  "selector": "bridge.diag",
+  "modelId": "model_openai-gpt-image-2-5-flare",
+  "createdAt": "2026-10-15T02:32:56.180Z",
+  "totalCU": 12,
+  "parts": [
+    {
+      "id": "bridge.diag",
+      "promptHash": "440c428a06f6",
+      "estimateCU": 12
+    }
+  ],
+  "skipped": [],
+  "redo": true,
+  "runs": [
+    {
+      "at": "2026-10-15T02:33:28.622Z",
+      "budgetCU": 50,
+      "spentCU": 12,
+      "done": [
+        "bridge.diag"
+      ],
+      "failed": []
+    }
+  ]
+}

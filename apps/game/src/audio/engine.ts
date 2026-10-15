@@ -3,18 +3,21 @@
  *
  * Browsers, phones above all, keep audio silent until the player touches or presses something,
  * so the context is created and resumed on the first gesture. Before that, sounds are dropped.
- * Mute is remembered on this device. Effects and music have their own volume so either can be
+ * Recorded effects load after that; until they do, or if one fails, its synthesized recipe
+ * plays instead. Mute is remembered on this device. Effects and music have their own volume so either can be
  * rebalanced in the final audio pass.
  */
 import { Limiter } from './cues.ts';
 import { MusicPlayer, type TrackId } from './music.ts';
-import { SOUNDS, type Layer, type SoundId } from './sounds.ts';
+import { SFX_DIR, SOUNDS, type Layer, type SoundId } from './sounds.ts';
 
 const MUTE_KEY = 'kd.muted';
 const SFX_VOLUME = 0.55;
 const MUSIC_VOLUME = 0.3;
 /** Never more than this many effects at once: a big fight stays a sound, not noise. */
 const MAX_VOICES = 14;
+/** Extra voices only priority sounds (danger, abilities) may take. */
+const PRIORITY_VOICES = 4;
 
 type AudioContextCtor = typeof AudioContext;
 
@@ -32,7 +35,8 @@ export class AudioEngine {
   private sfx: GainNode | null = null;
   private musicBus: GainNode | null = null;
   private noise: AudioBuffer | null = null;
-  private files = new Map<SoundId, AudioBuffer | 'loading'>();
+  /** Decoded recordings by file name; a file that failed to load is simply never here. */
+  private files = new Map<string, AudioBuffer>();
   private limiter = new Limiter();
   private voices = 0;
   private music: MusicPlayer | null = null;
@@ -84,6 +88,7 @@ export class AudioEngine {
       silent.connect(ctx.destination);
       silent.start();
       if (this.wantedTrack) this.music.play(this.wantedTrack);
+      this.preload();
     }
     if (this.ctx.state !== 'running' && !document.hidden) void this.ctx.resume();
   }
@@ -114,7 +119,7 @@ export class AudioEngine {
     const ctx = this.ctx;
     if (!ctx || !this.sfx || !this.noise || ctx.state !== 'running' || this.muted) return;
     const def = SOUNDS[id];
-    if (this.voices >= MAX_VOICES) return;
+    if (this.voices >= MAX_VOICES + (def.priority ? PRIORITY_VOICES : 0)) return;
     if (!this.limiter.allow(id, performance.now(), def.minGapMs ?? 0)) return;
 
     const out = ctx.createGain();
@@ -124,10 +129,11 @@ export class AudioEngine {
     const start = ctx.currentTime;
     let end = start;
 
-    if ('url' in def) {
-      const buffer = this.files.get(id);
-      if (!buffer) this.load(id, def.url);
-      if (!(buffer instanceof AudioBuffer)) return;
+    // A recording when one has loaded (a random take, so repeats differ); the synthesized
+    // recipe while files are still loading, or if they never load.
+    const takes = (def.files ?? []).flatMap((f) => this.files.get(f) ?? []);
+    const buffer = takes[Math.floor(Math.random() * takes.length)];
+    if (buffer) {
       const src = ctx.createBufferSource();
       src.buffer = buffer;
       src.playbackRate.value = rate;
@@ -190,14 +196,21 @@ export class AudioEngine {
     return end;
   }
 
-  private load(id: SoundId, url: string): void {
+  /** Fetches every recording once audio is unlocked; small files, so all at once. */
+  private preload(): void {
     const ctx = this.ctx!;
-    this.files.set(id, 'loading');
-    fetch(new URL(url, document.baseURI))
-      .then((r) => r.arrayBuffer())
-      .then((data) => ctx.decodeAudioData(data))
-      .then((buffer) => this.files.set(id, buffer))
-      .catch(() => this.files.delete(id));
+    const names = new Set(Object.values(SOUNDS).flatMap((def) => def.files ?? []));
+    for (const name of names)
+      fetch(new URL(`${SFX_DIR}${name}`, document.baseURI))
+        .then((r) => {
+          if (!r.ok) throw new Error(`${r.status} ${name}`);
+          return r.arrayBuffer();
+        })
+        .then((data) => ctx.decodeAudioData(data))
+        .then((buffer) => this.files.set(name, buffer))
+        .catch(() => {
+          // Missing or undecodable: this sound keeps its synthesized recipe.
+        });
   }
 }
 

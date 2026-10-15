@@ -1,0 +1,26 @@
+{
+  "token": "07affc21db",
+  "selector": "ruin_crossbow_range",
+  "modelId": "model_openai-gpt-image-2-5-flare",
+  "createdAt": "2026-10-15T08:39:49.177Z",
+  "totalCU": 13,
+  "parts": [
+    {
+      "id": "ruin_crossbow_range",
+      "promptHash": "879a430f990e",
+      "estimateCU": 13
+    }
+  ],
+  "skipped": [],
+  "runs": [
+    {
+      "at": "2026-10-15T08:40:25.337Z",
+      "budgetCU": 30,
+      "spentCU": 13,
+      "done": [
+        "ruin_crossbow_range"
+      ],
+      "failed": []
+    }
+  ]
+}

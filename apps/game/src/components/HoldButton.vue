@@ -10,11 +10,13 @@ const props = defineProps<{ duration: number; disabled?: boolean; externalHoldin
 const emit = defineEmits<{ confirm: [] }>();
 const holding = ref(false);
 let timer: number | undefined;
+let started = 0;
 
 function start(e: PointerEvent) {
   if (props.disabled) return;
   (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
   holding.value = true;
+  started = e.timeStamp;
   timer = window.setTimeout(() => {
     holding.value = false;
     emit('confirm');
@@ -23,6 +25,16 @@ function start(e: PointerEvent) {
 function cancel() {
   holding.value = false;
   clearTimeout(timer);
+}
+/**
+ * Letting go: on a busy page the release can arrive before the timer gets to run although the
+ * button was held long enough (the browser handles input before timers); the hold still counts.
+ */
+function release(e: PointerEvent) {
+  // Event times, not handling times, so a quick tap handled late never counts as a hold.
+  const full = holding.value && e.timeStamp - started >= props.duration;
+  cancel();
+  if (full) emit('confirm');
 }
 onBeforeUnmount(cancel);
 </script>
@@ -33,7 +45,7 @@ onBeforeUnmount(cancel);
     :class="{ holding: holding || externalHolding, disabled }"
     :style="{ '--hold-ms': `${duration}ms` }"
     @pointerdown.prevent="start"
-    @pointerup="cancel"
+    @pointerup="release"
     @pointercancel="cancel"
     @pointerleave="cancel"
     @contextmenu.prevent

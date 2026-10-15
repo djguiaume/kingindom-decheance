@@ -1,0 +1,529 @@
+{
+  "token": "fcbf743f5d",
+  "selector": "warlord_weapon,warlord_bodyguard,buildings,structures,effects,environment,map",
+  "modelId": "model_openai-gpt-image-2-5-flare",
+  "createdAt": "2026-10-14T16:35:03.445Z",
+  "totalCU": 1046,
+  "parts": [
+    {
+      "id": "warlord_weapon",
+      "promptHash": "745ab4de28be",
+      "estimateCU": 13
+    },
+    {
+      "id": "warlord_bodyguard",
+      "promptHash": "16b7c7c7fcdd",
+      "estimateCU": 12
+    },
+    {
+      "id": "warlord_bodyguard.back",
+      "promptHash": "240a088fc4f9",
+      "estimateCU": 12
+    },
+    {
+      "id": "castle_1",
+      "promptHash": "51bbdeab8725",
+      "estimateCU": 12
+    },
+    {
+      "id": "castle_2",
+      "promptHash": "76d03f09c6ce",
+      "estimateCU": 12
+    },
+    {
+      "id": "castle_3",
+      "promptHash": "7f14c498ba24",
+      "estimateCU": 12
+    },
+    {
+      "id": "manor",
+      "promptHash": "065bc56c3c59",
+      "estimateCU": 12
+    },
+    {
+      "id": "gold_mine",
+      "promptHash": "daf87cd0b777",
+      "estimateCU": 12
+    },
+    {
+      "id": "tower",
+      "promptHash": "d3c981068492",
+      "estimateCU": 13
+    },
+    {
+      "id": "watchtower",
+      "promptHash": "0661b2a23eb6",
+      "estimateCU": 13
+    },
+    {
+      "id": "ballista_tower",
+      "promptHash": "2a21f0bf43af",
+      "estimateCU": 12
+    },
+    {
+      "id": "volley_tower",
+      "promptHash": "28bf0581724f",
+      "estimateCU": 12
+    },
+    {
+      "id": "ballista_tower_base",
+      "promptHash": "f1cfb78db521",
+      "estimateCU": 12
+    },
+    {
+      "id": "ballista_turret",
+      "promptHash": "646da12b6ec2",
+      "estimateCU": 13
+    },
+    {
+      "id": "barracks",
+      "promptHash": "3a56a176e92a",
+      "estimateCU": 12
+    },
+    {
+      "id": "garrison",
+      "promptHash": "42c882b62ce2",
+      "estimateCU": 12
+    },
+    {
+      "id": "knight_hall",
+      "promptHash": "17e416ad180a",
+      "estimateCU": 12
+    },
+    {
+      "id": "archery_range",
+      "promptHash": "75a2c9d614d5",
+      "estimateCU": 12
+    },
+    {
+      "id": "marksmen",
+      "promptHash": "e8f36f5854d5",
+      "estimateCU": 12
+    },
+    {
+      "id": "crossbow_range",
+      "promptHash": "953a682f27fb",
+      "estimateCU": 12
+    },
+    {
+      "id": "guardian_lodge",
+      "promptHash": "abf81d93a5c5",
+      "estimateCU": 12
+    },
+    {
+      "id": "guardian_bastion",
+      "promptHash": "8420f86e37d0",
+      "estimateCU": 12
+    },
+    {
+      "id": "monk_sanctuary",
+      "promptHash": "f69d83466f78",
+      "estimateCU": 12
+    },
+    {
+      "id": "monastery",
+      "promptHash": "f46a92b2dd9f",
+      "estimateCU": 12
+    },
+    {
+      "id": "wall_post",
+      "promptHash": "485a27fe5d56",
+      "estimateCU": 13
+    },
+    {
+      "id": "stone_wall_post",
+      "promptHash": "1e3a9d3faa41",
+      "estimateCU": 13
+    },
+    {
+      "id": "gate_wood.f1",
+      "promptHash": "2914788bd4a9",
+      "estimateCU": 12
+    },
+    {
+      "id": "gate_wood.f2",
+      "promptHash": "0f8a7d8bf151",
+      "estimateCU": 12
+    },
+    {
+      "id": "gate_stone.f1",
+      "promptHash": "e29f9fda299a",
+      "estimateCU": 12
+    },
+    {
+      "id": "gate_stone.f2",
+      "promptHash": "fef13f53418b",
+      "estimateCU": 12
+    },
+    {
+      "id": "slot_empty",
+      "promptHash": "c600b79d2380",
+      "estimateCU": 13
+    },
+    {
+      "id": "construction",
+      "promptHash": "05df71d9925f",
+      "estimateCU": 12
+    },
+    {
+      "id": "ruin",
+      "promptHash": "8cb43cde4f06",
+      "estimateCU": 12
+    },
+    {
+      "id": "window_glow",
+      "promptHash": "dd9a5cc618ca",
+      "estimateCU": 12
+    },
+    {
+      "id": "lantern_glow",
+      "promptHash": "63d2121490e4",
+      "estimateCU": 12
+    },
+    {
+      "id": "panda_banner",
+      "promptHash": "41d3cd6cdd20",
+      "estimateCU": 13
+    },
+    {
+      "id": "castle_flag",
+      "promptHash": "4924b1071de5",
+      "estimateCU": 13
+    },
+    {
+      "id": "arrow",
+      "promptHash": "8046deaf9205",
+      "estimateCU": 13
+    },
+    {
+      "id": "bolt",
+      "promptHash": "22757ae2ec9c",
+      "estimateCU": 13
+    },
+    {
+      "id": "ballista_bolt",
+      "promptHash": "e70383341103",
+      "estimateCU": 13
+    },
+    {
+      "id": "boulder",
+      "promptHash": "9cdf0d727526",
+      "estimateCU": 12
+    },
+    {
+      "id": "hit_spark.f1",
+      "promptHash": "ca7720544944",
+      "estimateCU": 12
+    },
+    {
+      "id": "hit_spark.f2",
+      "promptHash": "cfadd8703114",
+      "estimateCU": 12
+    },
+    {
+      "id": "hit_spark.f3",
+      "promptHash": "740ee07fb028",
+      "estimateCU": 12
+    },
+    {
+      "id": "dust.f1",
+      "promptHash": "b874b3a6ea1c",
+      "estimateCU": 13
+    },
+    {
+      "id": "dust.f2",
+      "promptHash": "0aec86572707",
+      "estimateCU": 13
+    },
+    {
+      "id": "dust.f3",
+      "promptHash": "c1d526916f50",
+      "estimateCU": 13
+    },
+    {
+      "id": "slash.f1",
+      "promptHash": "00bafba635d1",
+      "estimateCU": 12
+    },
+    {
+      "id": "slash.f2",
+      "promptHash": "0fc07fc415a2",
+      "estimateCU": 12
+    },
+    {
+      "id": "slash.f3",
+      "promptHash": "7b7b795d63c5",
+      "estimateCU": 12
+    },
+    {
+      "id": "shield_fx",
+      "promptHash": "bc0cb1695efc",
+      "estimateCU": 12
+    },
+    {
+      "id": "coin",
+      "promptHash": "feeae4933d9f",
+      "estimateCU": 12
+    },
+    {
+      "id": "heal.f1",
+      "promptHash": "c197028933e7",
+      "estimateCU": 12
+    },
+    {
+      "id": "heal.f2",
+      "promptHash": "d37c83fccfcb",
+      "estimateCU": 12
+    },
+    {
+      "id": "heal.f3",
+      "promptHash": "2fb390f1b404",
+      "estimateCU": 12
+    },
+    {
+      "id": "death.f1",
+      "promptHash": "94677338da3e",
+      "estimateCU": 12
+    },
+    {
+      "id": "death.f2",
+      "promptHash": "58a7eb410c38",
+      "estimateCU": 12
+    },
+    {
+      "id": "death.f3",
+      "promptHash": "a36bc5c63e12",
+      "estimateCU": 12
+    },
+    {
+      "id": "death.f4",
+      "promptHash": "f1f5dbeddf94",
+      "estimateCU": 12
+    },
+    {
+      "id": "charge.f1",
+      "promptHash": "6b2dc0cb0d3c",
+      "estimateCU": 13
+    },
+    {
+      "id": "charge.f2",
+      "promptHash": "d64f1f3c60ce",
+      "estimateCU": 13
+    },
+    {
+      "id": "charge.f3",
+      "promptHash": "ce38f9f04208",
+      "estimateCU": 13
+    },
+    {
+      "id": "stomp.f1",
+      "promptHash": "d031740bc612",
+      "estimateCU": 12
+    },
+    {
+      "id": "stomp.f2",
+      "promptHash": "4e4f08270754",
+      "estimateCU": 12
+    },
+    {
+      "id": "stomp.f3",
+      "promptHash": "f642d0d11fc1",
+      "estimateCU": 12
+    },
+    {
+      "id": "bamboo_small",
+      "promptHash": "fdd26d87b1dd",
+      "estimateCU": 13
+    },
+    {
+      "id": "bamboo_large",
+      "promptHash": "f345cfe08267",
+      "estimateCU": 12
+    },
+    {
+      "id": "bamboo_single",
+      "promptHash": "ce16a279e550",
+      "estimateCU": 13
+    },
+    {
+      "id": "tree",
+      "promptHash": "535808a6920f",
+      "estimateCU": 12
+    },
+    {
+      "id": "pine",
+      "promptHash": "3b66db1e2e7c",
+      "estimateCU": 13
+    },
+    {
+      "id": "rock_small",
+      "promptHash": "9e0f40be07ec",
+      "estimateCU": 12
+    },
+    {
+      "id": "rock_large",
+      "promptHash": "62a4db014637",
+      "estimateCU": 12
+    },
+    {
+      "id": "grass",
+      "promptHash": "c59839c28721",
+      "estimateCU": 12
+    },
+    {
+      "id": "flowers",
+      "promptHash": "d2a9aaa8a078",
+      "estimateCU": 13
+    },
+    {
+      "id": "shrub",
+      "promptHash": "37aeef25b28e",
+      "estimateCU": 12
+    },
+    {
+      "id": "lantern_post",
+      "promptHash": "dd8543995e7f",
+      "estimateCU": 13
+    },
+    {
+      "id": "barrel",
+      "promptHash": "bb53571dedab",
+      "estimateCU": 12
+    },
+    {
+      "id": "crate",
+      "promptHash": "651e2c8f0d07",
+      "estimateCU": 12
+    },
+    {
+      "id": "path_edge",
+      "promptHash": "aca587abf246",
+      "estimateCU": 12
+    },
+    {
+      "id": "water_edge",
+      "promptHash": "d942cac52d5d",
+      "estimateCU": 13
+    },
+    {
+      "id": "ground_greyhollow",
+      "promptHash": "174569c4256a",
+      "estimateCU": 13
+    },
+    {
+      "id": "tile_grass",
+      "promptHash": "985adc8aabf2",
+      "estimateCU": 12
+    },
+    {
+      "id": "tile_path",
+      "promptHash": "398ec10f244f",
+      "estimateCU": 12
+    },
+    {
+      "id": "tile_stone",
+      "promptHash": "3e17c7c30503",
+      "estimateCU": 12
+    },
+    {
+      "id": "map_background",
+      "promptHash": "65e092bccf20",
+      "estimateCU": 13
+    }
+  ],
+  "skipped": [
+    {
+      "id": "house",
+      "reason": "validated"
+    }
+  ],
+  "runs": [
+    {
+      "at": "2026-10-14T17:20:51.660Z",
+      "budgetCU": 1100,
+      "spentCU": 1095,
+      "done": [
+        "warlord_weapon",
+        "warlord_bodyguard",
+        "warlord_bodyguard.back",
+        "castle_1",
+        "castle_2",
+        "castle_3",
+        "manor",
+        "gold_mine",
+        "tower",
+        "watchtower",
+        "ballista_tower",
+        "volley_tower",
+        "ballista_tower_base",
+        "ballista_turret",
+        "barracks",
+        "garrison",
+        "knight_hall",
+        "archery_range",
+        "marksmen",
+        "crossbow_range",
+        "guardian_lodge",
+        "guardian_bastion",
+        "monk_sanctuary",
+        "monastery",
+        "wall_post",
+        "stone_wall_post",
+        "gate_wood.f1",
+        "gate_wood.f2",
+        "gate_stone.f1",
+        "gate_stone.f2",
+        "slot_empty",
+        "construction",
+        "ruin",
+        "window_glow",
+        "lantern_glow",
+        "panda_banner",
+        "castle_flag",
+        "arrow",
+        "bolt",
+        "ballista_bolt",
+        "boulder",
+        "hit_spark.f1",
+        "hit_spark.f2",
+        "hit_spark.f3",
+        "dust.f1",
+        "dust.f2",
+        "dust.f3",
+        "slash.f1",
+        "slash.f2",
+        "slash.f3",
+        "shield_fx",
+        "coin",
+        "heal.f1",
+        "heal.f2",
+        "heal.f3",
+        "death.f1",
+        "death.f2",
+        "death.f3",
+        "death.f4",
+        "charge.f1",
+        "charge.f2",
+        "charge.f3",
+        "stomp.f1",
+        "stomp.f2",
+        "stomp.f3",
+        "bamboo_small",
+        "bamboo_large",
+        "bamboo_single",
+        "tree",
+        "pine",
+        "rock_small",
+        "rock_large",
+        "grass",
+        "flowers",
+        "shrub",
+        "lantern_post",
+        "barrel",
+        "crate"
+      ],
+      "failed": [],
+      "stoppedFor": "budget: 1095 CU spent, path_edge needs 12 more of 1100"
+    }
+  ]
+}

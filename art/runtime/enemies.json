@@ -1,0 +1,663 @@
+{
+  "frames": {
+    "brute": {
+      "frame": {
+        "x": 478,
+        "y": 2,
+        "w": 124,
+        "h": 150
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 66,
+        "y": 80,
+        "w": 124,
+        "h": 150
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "brute",
+      "num": 31,
+      "contentId": "brute"
+    },
+    "brute_weapon": {
+      "frame": {
+        "x": 219,
+        "y": 225,
+        "w": 177,
+        "h": 58
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 8,
+        "y": 19,
+        "w": 177,
+        "h": 58
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 96
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "asset": "brute_weapon",
+      "num": 32,
+      "contentId": "brute"
+    },
+    "brute.back": {
+      "frame": {
+        "x": 604,
+        "y": 2,
+        "w": 104,
+        "h": 150
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 76,
+        "y": 80,
+        "w": 104,
+        "h": 150
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "brute",
+      "num": 31,
+      "contentId": "brute"
+    },
+    "catapult_arm.f1": {
+      "frame": {
+        "x": 358,
+        "y": 2,
+        "w": 118,
+        "h": 153
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 5,
+        "y": 77,
+        "w": 118,
+        "h": 153
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "catapult_arm",
+      "num": 36,
+      "contentId": "catapult"
+    },
+    "catapult_arm.f2": {
+      "frame": {
+        "x": 2,
+        "y": 2,
+        "w": 77,
+        "h": 221
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 26,
+        "y": 9,
+        "w": 77,
+        "h": 221
+      },
+      "sourceSize": {
+        "w": 128,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "catapult_arm",
+      "num": 36,
+      "contentId": "catapult"
+    },
+    "catapult_chassis": {
+      "frame": {
+        "x": 710,
+        "y": 2,
+        "w": 151,
+        "h": 120
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 53,
+        "y": 110,
+        "w": 151,
+        "h": 120
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "catapult_chassis",
+      "num": 35,
+      "contentId": "catapult"
+    },
+    "harpy_weapon": {
+      "frame": {
+        "x": 1655,
+        "y": 2,
+        "w": 55,
+        "h": 88
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 21,
+        "y": 4,
+        "w": 55,
+        "h": 88
+      },
+      "sourceSize": {
+        "w": 96,
+        "h": 96
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "asset": "harpy_weapon",
+      "num": 34,
+      "contentId": "harpy"
+    },
+    "harpy.back.f1": {
+      "frame": {
+        "x": 1296,
+        "y": 2,
+        "w": 99,
+        "h": 110
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 47,
+        "y": 41,
+        "w": 99,
+        "h": 110
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "asset": "harpy",
+      "num": 33,
+      "contentId": "harpy"
+    },
+    "harpy.back.f2": {
+      "frame": {
+        "x": 906,
+        "y": 2,
+        "w": 171,
+        "h": 110
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 11,
+        "y": 41,
+        "w": 171,
+        "h": 110
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "asset": "harpy",
+      "num": 33,
+      "contentId": "harpy"
+    },
+    "harpy.back.f3": {
+      "frame": {
+        "x": 1397,
+        "y": 2,
+        "w": 77,
+        "h": 110
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 58,
+        "y": 41,
+        "w": 77,
+        "h": 110
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "asset": "harpy",
+      "num": 33,
+      "contentId": "harpy"
+    },
+    "harpy.f1": {
+      "frame": {
+        "x": 1079,
+        "y": 2,
+        "w": 114,
+        "h": 110
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 39,
+        "y": 41,
+        "w": 114,
+        "h": 110
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "asset": "harpy",
+      "num": 33,
+      "contentId": "harpy"
+    },
+    "harpy.f2": {
+      "frame": {
+        "x": 1476,
+        "y": 2,
+        "w": 177,
+        "h": 101
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 8,
+        "y": 46,
+        "w": 177,
+        "h": 101
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "asset": "harpy",
+      "num": 33,
+      "contentId": "harpy"
+    },
+    "harpy.f3": {
+      "frame": {
+        "x": 1195,
+        "y": 2,
+        "w": 99,
+        "h": 110
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 47,
+        "y": 41,
+        "w": 99,
+        "h": 110
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 192
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "asset": "harpy",
+      "num": 33,
+      "contentId": "harpy"
+    },
+    "raider": {
+      "frame": {
+        "x": 1924,
+        "y": 2,
+        "w": 54,
+        "h": 80
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 53,
+        "y": 64,
+        "w": 54,
+        "h": 80
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 160
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "raider",
+      "num": 27,
+      "contentId": "raider"
+    },
+    "raider_weapon": {
+      "frame": {
+        "x": 181,
+        "y": 225,
+        "w": 36,
+        "h": 59
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 30,
+        "y": 3,
+        "w": 36,
+        "h": 59
+      },
+      "sourceSize": {
+        "w": 96,
+        "h": 64
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "asset": "raider_weapon",
+      "num": 28,
+      "contentId": "raider"
+    },
+    "raider.back": {
+      "frame": {
+        "x": 1980,
+        "y": 2,
+        "w": 42,
+        "h": 80
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 59,
+        "y": 64,
+        "w": 42,
+        "h": 80
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 160
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "raider",
+      "num": 27,
+      "contentId": "raider"
+    },
+    "skirmisher": {
+      "frame": {
+        "x": 1712,
+        "y": 2,
+        "w": 47,
+        "h": 84
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 57,
+        "y": 60,
+        "w": 47,
+        "h": 84
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 160
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "skirmisher",
+      "num": 29,
+      "contentId": "skirmisher"
+    },
+    "skirmisher_weapon": {
+      "frame": {
+        "x": 863,
+        "y": 2,
+        "w": 41,
+        "h": 118
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 12,
+        "y": 5,
+        "w": 41,
+        "h": 118
+      },
+      "sourceSize": {
+        "w": 64,
+        "h": 128
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "asset": "skirmisher_weapon",
+      "num": 30,
+      "contentId": "skirmisher"
+    },
+    "skirmisher.back": {
+      "frame": {
+        "x": 1761,
+        "y": 2,
+        "w": 43,
+        "h": 84
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 59,
+        "y": 60,
+        "w": 43,
+        "h": 84
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 160
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "skirmisher",
+      "num": 29,
+      "contentId": "skirmisher"
+    },
+    "warlord": {
+      "frame": {
+        "x": 81,
+        "y": 2,
+        "w": 164,
+        "h": 170
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 46,
+        "y": 60,
+        "w": 164,
+        "h": 170
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "warlord",
+      "num": 37,
+      "contentId": "warlord"
+    },
+    "warlord_bodyguard": {
+      "frame": {
+        "x": 1806,
+        "y": 2,
+        "w": 69,
+        "h": 82
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 46,
+        "y": 62,
+        "w": 69,
+        "h": 82
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 160
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "warlord_bodyguard",
+      "num": 39,
+      "contentId": "warlord"
+    },
+    "warlord_bodyguard.back": {
+      "frame": {
+        "x": 1877,
+        "y": 2,
+        "w": 45,
+        "h": 82
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 58,
+        "y": 62,
+        "w": 45,
+        "h": 82
+      },
+      "sourceSize": {
+        "w": 160,
+        "h": 160
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "warlord_bodyguard",
+      "num": 39,
+      "contentId": "warlord"
+    },
+    "warlord_weapon": {
+      "frame": {
+        "x": 2,
+        "y": 225,
+        "w": 177,
+        "h": 72
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 8,
+        "y": 12,
+        "w": 177,
+        "h": 72
+      },
+      "sourceSize": {
+        "w": 192,
+        "h": 96
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "asset": "warlord_weapon",
+      "num": 38,
+      "contentId": "warlord"
+    },
+    "warlord.back": {
+      "frame": {
+        "x": 247,
+        "y": 2,
+        "w": 109,
+        "h": 170
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 74,
+        "y": 60,
+        "w": 109,
+        "h": 170
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 256
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "asset": "warlord",
+      "num": 37,
+      "contentId": "warlord"
+    }
+  },
+  "meta": {
+    "app": "@kd/art-pipeline",
+    "version": "1",
+    "image": "enemies.webp",
+    "format": "RGBA8888",
+    "size": {
+      "w": 2024,
+      "h": 299
+    },
+    "scale": "1"
+  }
+}

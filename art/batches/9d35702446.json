@@ -1,0 +1,38 @@
+{
+  "token": "9d35702446",
+  "selector": "ruin_archery_range,ruin_marksmen,ruin_crossbow_range",
+  "modelId": "model_openai-gpt-image-2-5-flare",
+  "createdAt": "2026-10-15T08:35:36.175Z",
+  "totalCU": 39,
+  "parts": [
+    {
+      "id": "ruin_archery_range",
+      "promptHash": "fafc6f968118",
+      "estimateCU": 13
+    },
+    {
+      "id": "ruin_marksmen",
+      "promptHash": "b46b5a5c5e0f",
+      "estimateCU": 13
+    },
+    {
+      "id": "ruin_crossbow_range",
+      "promptHash": "879a430f990e",
+      "estimateCU": 13
+    }
+  ],
+  "skipped": [],
+  "runs": [
+    {
+      "at": "2026-10-15T08:37:10.411Z",
+      "budgetCU": 50,
+      "spentCU": 39,
+      "done": [
+        "ruin_archery_range",
+        "ruin_marksmen"
+      ],
+      "failed": [],
+      "stoppedFor": "budget: 39 CU spent, ruin_crossbow_range needs 13 more of 50"
+    }
+  ]
+}

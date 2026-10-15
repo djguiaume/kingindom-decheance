@@ -3,6 +3,63 @@
 Choices made while building the skeleton, answering the open questions at the end of
 ADR-010. Significant ones can be promoted to ADRs in the design corpus.
 
+## Active implementation plans
+
+The [2026-10-14 panda playtest remediation strategy](plans/2026-10-14-playtest-remediation.md)
+tracks the 21 findings from the latest main-branch playtest, their implementation order and
+acceptance criteria. It is planned work; the notes below describe implemented behavior.
+
+## Panda playtest integration fixes (2026-10-14)
+
+First remediation batch; existing assets only, view-only changes with no new art generation or
+simulation/content changes:
+
+- Night combat uses a compact toolbar. A ResizeObserver measures treasury, night track, boss
+  HP, pause and sound; the Phaser canvas starts below them and refreshes its size when the
+  inset changes. Camera projection includes that offset so edge markers still point correctly;
+  enemies clipped above the battlefield receive an off-screen marker. Day/restart restores
+  the full canvas. Night messages sit near the bottom instead of expanding the top toolbar.
+- The on-foot king's four walk frames use a 2.8 m stride (about 10 frame advances/s at the
+  current 7 m/s), independently of movement stats. Feet settle by elapsed time rather than
+  one increment per rendered frame.
+- Actual dash state selects anticipation, rolling and uncurl assets. The spear and normal
+  walk bob are hidden during these poses. The initial anticipation is visual only and never
+  postpones the dash. Death/restart clears action state; pause freezes the animation clock.
+- Attacks retain their target facing during the longer 300 ms visual swing/recoil; ranged
+  attackers face the projectile destination at release. Spear thrust and bow/crossbow recoil
+  are stronger. Projectile impacts do not replay the release animation.
+- Empty foundations are drawn dynamically only at unoccupied slots. Buildings and ruins carry
+  their own footing; repair and restart need no static-image cleanup.
+- Shot art is selected by source: arrows for archers/goblin archers/ordinary towers/castle,
+  bolts for crossbowmen, heavy bolts for ballistas, boulders for catapults. Friendly in-flight
+  shots use art with a pale blue tint. Existing instant tower shot effects remain view-only;
+  their damage/flight semantics are unchanged.
+
+Real audio, king selection and tutorial remain in the remediation plan. Attack quality still
+needs playtest feedback; these rig improvements do not constitute new attack sequences or
+pre-hit gameplay telegraphs.
+
+## Panda gates and ground anchors (2026-10-14)
+
+Existing-asset batch 2, view-only:
+
+- `game/groundRigs.ts` records building/ruin ground centres and gate hinge points on the
+  untrimmed masters. Building footprints now centre on their slot, rather than placing the
+  canvas's generic 90% pivot at the slot. Roof HP bars follow the same anchor.
+- Gates fit the core's projected 2.2 m passage. Their ground plane stretches/shears to the
+  lane direction while posts remain upright; `Painter.projectedImage` pools a parent container
+  and image, decomposing the affine matrix into normal Phaser rotation/scale transforms.
+- Side and diagonal gate perspectives both mirror when required. The same source hinge
+  calibration is used for open/closed frames, and reversing lane direction cannot change
+  placement. Near-vertical custom-map gates use a small depth projection so the side painting
+  remains visible while both hinge endpoints still match the exact passage. Tests cover all 360
+  degrees of presentation and 24 rotated paths with actual king, footman and enemy movement.
+- Second-playtest follow-up: the upright axis is enlarged 1.5× so the complete structure reads
+  as a fortification while its 2.2 m passage stays unchanged. Each rig records the occupied
+  closed/open art heights; open frames are normalized around the fixed hinges so toggling the
+  leaves does not make the gate appear to shrink.
+- No PNG masters, runtime atlas files, collision dimensions, content or balance changed.
+
 ## PRNG
 
 sfc32 (four 32-bit integers of state), seeded through splitmix32 and warmed up 12 rounds.
@@ -125,7 +182,8 @@ steering, hand-made maps) and the prototype design (corpus 11), and are easy to 
   its edge to the nearest free spot, and steps just past a panel only when the whole edge is
   blocked there. There is no joystick zone: the stick floats anywhere on the left, and a fixed
   zone only pushed left-edge pins off the edge (playtest, 2026-10-14). A spawn pin
-  standing over an on-screen spawn is kept inside the screen.
+  stands over an on-screen spawn only when it fits there; a spawn just on screen at an edge
+  keeps an ordinary edge pin, so left-edge spawns look like the other edges.
 - **Spawn pin while the spawn is on screen**: by day the pin stands over the spawn, pointing
   down, so the king can walk there and still read what is coming.
 - **Readable attacks**: melee hits draw a short slash on the target instead of a white line
@@ -242,9 +300,44 @@ recipe for `{ url: 'sfx/….ogg' }` and nothing else changes. Music is three syn
 - The Charge has no event of its own, so the layer watches the king's dash start.
 - Sound on/off: the top-right button or M, remembered on the device.
 
+## Painted terrain and paths (2026-10-15)
+
+- Standalone runtime textures load alongside atlases. Grass tiles cover any validated map size;
+  path and water textures are clipped to the map's lane and terrain polylines with rounded joins.
+  No route, collision or balance data changes during the art pass.
+- Path rendering accepts every segment angle and both directions. Water keeps a narrow stone
+  bank at its actual blocker boundary. Bridges select the nearest front/diagonal/side painting
+  from their endpoints and scale to the declared span.
+- Cliffs (`game/cliffs.ts`, F22) are raised from each declared cliff line, for any map: a grass
+  top covering exactly the strip the core blocks, and a rock face, built from `cliff_section`'s
+  painted lip and rock, dropping 2.2 m wherever the edge faces the camera. Bends, rings and round
+  ends follow the line in every direction. The relief is painted once, then cut across the line
+  into pieces of at most 1.5 m, packed in one texture, that join the ground-y depth sort; the king
+  sees through a piece he walks behind. The contact shadow is baked into the ground canvas.
+- Tall scenery uses atlas pivots and joins actors/buildings in ground-y depth sorting, so a king
+  can walk in front of or behind a tree. Ground-level grass, flowers, rocks and supplies stay in the
+  static layer to avoid needless per-frame work.
+- Corrected `grass_patch` art is selected directly from the environment atlas; the procedural
+  patch remains only as a missing-art fallback. `cliff_end` is not needed by the continuous
+  geometry-driven cliff renderer: cliff ends are rounded like the blocked capsule.
+- F09 audit (2026-10-15): every Greyhollow blocker is natural (cliff or water) and now drawn over
+  exactly the ground it blocks; the man-made barriers are the buyable walls in the three passes,
+  which already have wall art and gates. No collision or balance data changed.
+
+## Night lighting (F12, 2026-10-15)
+
+- Night is lighting, not new art (`game/lighting.ts`). A night level eases from 0 to 1 over dusk
+  and back at dawn (0.9 s time constant, frame-rate independent) instead of switching.
+- The ground gets a cool moonlit wash; cliffs, tall scenery, walls, gates, empty plots and
+  buildings get the same moonlight as a multiply tint, so nothing glows out of the dark.
+- Warm additive glows (`window_glow`, `lantern_glow`) light standing building windows and lantern
+  posts once dusk has fallen; ruins stay dark. Actors (king, units, enemies, shots) stay untinted
+  so silhouettes and attacks remain readable.
+- The pooled painter image resets blend mode as well as flip and tint.
+
 ## Not built yet
 
-- Day/night lighting, object pools for effects; the real audio (recorded sounds and music).
+- Object pools for effects; the real audio (recorded sounds and music).
 - Web Worker pool and Comlink (ADR-003): the runner is ready to be moved into a worker.
 - Tier 3 nightly balance assertions (ADR-007) and the ECharts dashboard (ADR-005).
 - Starting perks, mutators, research (Gambler's Oath already stores its multiplier).
