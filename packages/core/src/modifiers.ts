@@ -80,6 +80,9 @@ function select(t: Tunables, stat: string): { objects: Bag[]; field: string[] } 
     });
     return { objects: objects as unknown as Bag[], field: parts.slice(2) };
   }
+  // Compatibility for PR #63 content authored while abilities still belonged to weapons.
+  if (kind === 'weapon' && parts[1] === 'ability')
+    return { objects: [t.king as unknown as Bag], field: parts.slice(1) };
   const one = { king: t.king, weapon: t.weapon, castle: t.castle, rules: t.rules }[kind];
   return { objects: one ? [one as unknown as Bag] : [], field: parts.slice(1) };
 }

@@ -1,12 +1,66 @@
 {
   "$schema": "../schema/king.schema.json",
   "schemaVersion": 1,
-  "notes": "Prototype design 11 §5. Starting values, to be tuned.",
-  "hp": 200,
-  "speed": 7,
-  "radius": 0.6,
-  "regen": 10,
-  "regenDelay": 4,
-  "respawnSeconds": 8,
-  "buildReach": 1.5
+  "notes": "Selectable panda kings. Weapons own normal attacks; each king owns one active ability.",
+  "defaultKing": "roll",
+  "kings": [
+    {
+      "id": "roll",
+      "name": "Panda King",
+      "description": "Tough crowd fighter. Royal Roll damages every enemy it crosses.",
+      "hp": 200,
+      "speed": 7,
+      "radius": 0.6,
+      "regen": 10,
+      "regenDelay": 4,
+      "respawnSeconds": 8,
+      "buildReach": 1.5,
+      "ability": {
+        "id": "royal_roll",
+        "name": "Royal Roll",
+        "kind": "roll",
+        "distance": 6,
+        "duration": 0.3,
+        "damage": 40,
+        "cooldown": 8
+      },
+      "art": {
+        "idle": "king_roll_idle",
+        "walk": "king_roll_walk",
+        "ability": {
+          "anticipate": "king_roll_anticipate",
+          "active": "king_roll_roll",
+          "recover": "king_roll_uncurl"
+        },
+        "weapon": true
+      }
+    },
+    {
+      "id": "wolf",
+      "name": "Wolf Rider",
+      "description": "Fast hunter. Hunting Lunge races farther and bites one enemy for heavy damage.",
+      "hp": 190,
+      "speed": 8,
+      "radius": 0.72,
+      "regen": 10,
+      "regenDelay": 4,
+      "respawnSeconds": 8,
+      "buildReach": 1.5,
+      "ability": {
+        "id": "hunting_lunge",
+        "name": "Hunting Lunge",
+        "kind": "lunge",
+        "distance": 8,
+        "duration": 0.28,
+        "damage": 180,
+        "cooldown": 6
+      },
+      "art": {
+        "idle": "king_wolf_idle",
+        "walk": "king_wolf_walk",
+        "ability": { "active": "king_wolf_lunge" },
+        "weapon": false
+      }
+    }
+  ]
 }

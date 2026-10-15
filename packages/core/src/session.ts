@@ -30,7 +30,8 @@ export class Session {
 
   constructor(content: ContentBundle, config: RunConfig) {
     this.ctx = createContext(content, config);
-    this.config = config;
+    // Normalize defaults into the recorded config so a replay never depends on future defaults.
+    this.config = { ...config, kingId: this.ctx.kingId };
     this.state = createGame(this.ctx, config);
   }
 

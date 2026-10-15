@@ -13,15 +13,6 @@
         "arc": 90,
         "maxTargets": 3,
         "targets": ["ground", "air"]
-      },
-      "ability": {
-        "id": "charge",
-        "name": "Charge",
-        "kind": "dash",
-        "distance": 6,
-        "duration": 0.3,
-        "damage": 40,
-        "cooldown": 8
       }
     }
   ]

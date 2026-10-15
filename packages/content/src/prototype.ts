@@ -24,4 +24,4 @@ export const prototypeRaw: RawContent = {
 export const prototypeContent = loadContentOrThrow(prototypeRaw);
 
 /** The run the prototype plays: Greyhollow with the spear. */
-export const prototypeRun = { mapId: 'greyhollow', weaponId: 'spear' } as const;
+export const prototypeRun = { mapId: 'greyhollow', weaponId: 'spear', kingId: 'roll' } as const;

@@ -166,11 +166,9 @@ export const Enemy = z.object({
     .optional(),
 });
 
-/** The king's active ability. Only dashes exist so far. */
-export const Ability = z.object({
+const DashAbility = z.object({
   id: Id,
   name: z.string(),
-  kind: z.literal('dash'),
   /** Metres covered by the dash. */
   distance: Positive,
   /** Seconds the dash lasts. */
@@ -180,6 +178,12 @@ export const Ability = z.object({
   cooldown: Positive,
 });
 
+/** The roll clears every touched enemy; the wolf lunge stops on one target for focused damage. */
+export const Ability = z.discriminatedUnion('kind', [
+  DashAbility.extend({ kind: z.literal('roll') }),
+  DashAbility.extend({ kind: z.literal('lunge') }),
+]);
+
 /**
  * A king weapon. The run's weapon is chosen in RunConfig (later from a starter or bonus pick),
  * so adding a weapon means adding an entry here, never changing king code.
@@ -188,7 +192,6 @@ export const Weapon = z.object({
   id: Id,
   name: z.string(),
   attack: Attack,
-  ability: Ability.optional(),
   unlock: Unlock.optional(),
 });
 
@@ -232,9 +235,19 @@ export const CastleLevel = z.object({
   perks: z.array(Id).min(1),
 });
 
-/** King settings shared by every weapon. */
+export const KingArt = z.object({
+  idle: Id,
+  walk: Id,
+  ability: z.object({ active: Id, anticipate: Id.optional(), recover: Id.optional() }),
+  /** The on-foot king holds the selected weapon; the wolf rider keeps both hands on the reins. */
+  weapon: z.boolean().default(true),
+});
+
+/** One selectable king. The weapon owns normal attacks; the king owns the active ability. */
 export const KingSettings = z.object({
-  ...Meta,
+  id: Id,
+  name: z.string(),
+  description: z.string(),
   hp: Positive,
   speed: Positive,
   radius: Positive.default(0.5),
@@ -244,6 +257,14 @@ export const KingSettings = z.object({
   respawnSeconds: NonNegative,
   /** How close the king must stand to a slot to build there (used by the input layer). */
   buildReach: Positive,
+  ability: Ability,
+  art: KingArt,
+});
+
+export const KingCatalog = z.object({
+  ...Meta,
+  defaultKing: Id,
+  kings: z.array(KingSettings).min(1),
 });
 
 export const MapNode = z.object({
@@ -389,6 +410,7 @@ export type Mutator = z.infer<typeof Mutator>;
 export type CastleLevel = z.infer<typeof CastleLevel>;
 export type CastleCatalog = z.infer<typeof CastleCatalog>;
 export type Ability = z.infer<typeof Ability>;
+export type KingArt = z.infer<typeof KingArt>;
 export type KingSettings = z.infer<typeof KingSettings>;
 export type MapNode = z.infer<typeof MapNode>;
 export type Lane = z.infer<typeof Lane>;
@@ -406,7 +428,8 @@ export interface ContentBundle {
   units: Unit[];
   enemies: Enemy[];
   weapons: Weapon[];
-  king: KingSettings;
+  kings: KingSettings[];
+  defaultKing: string;
   castle: { levels: CastleLevel[]; perks: Perk[] };
   mutators: Mutator[];
   maps: GameMap[];

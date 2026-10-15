@@ -10,7 +10,7 @@ import {
   CastleCatalog,
   EnemyCatalog,
   GameMap,
-  KingSettings,
+  KingCatalog,
   MutatorCatalog,
   UnitCatalog,
   WeaponCatalog,
@@ -46,7 +46,7 @@ export function loadContent(raw: RawContent): LoadResult {
   const units = parse(UnitCatalog, raw.units, 'units.json');
   const enemies = parse(EnemyCatalog, raw.enemies, 'enemies.json');
   const weapons = parse(WeaponCatalog, raw.weapons, 'weapons.json');
-  const king = parse(KingSettings, raw.king, 'king.json');
+  const king = parse(KingCatalog, raw.king, 'king.json');
   const castle = parse(CastleCatalog, raw.castle, 'castle.json');
   const mutators = parse(MutatorCatalog, raw.mutators, 'mutators.json');
   const maps = raw.maps.map((m, i) => {
@@ -75,7 +75,8 @@ export function loadContent(raw: RawContent): LoadResult {
     units: units.units,
     enemies: enemies.enemies,
     weapons: weapons.weapons,
-    king,
+    kings: king.kings,
+    defaultKing: king.defaultKing,
     castle: { levels: castle.levels, perks: castle.perks },
     mutators: mutators.mutators,
     maps: maps.filter((m) => m !== undefined),
@@ -120,6 +121,12 @@ export function checkSemantics(bundle: Omit<ContentBundle, 'hash'>): ContentErro
     'enemies.json',
     bundle.enemies.map((e) => e.id),
   );
+  const kingIds = unique(
+    'king.json',
+    bundle.kings.map((k) => k.id),
+  );
+  if (!kingIds.has(bundle.defaultKing))
+    err('king.json', 'defaultKing', `unknown king "${bundle.defaultKing}"`);
   unique(
     'weapons.json',
     bundle.weapons.map((w) => w.id),

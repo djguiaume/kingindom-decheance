@@ -22,6 +22,7 @@ export function createGame(ctx: GameContext, config: RunConfig): GameState {
     contentHash: ctx.contentHash,
     mapId: map.id,
     weaponId: ctx.weapon.id,
+    kingId: ctx.kingId,
     seed: config.seed,
     rng: seedRng(config.seed),
     phase: 'day',

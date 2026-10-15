@@ -29,7 +29,7 @@ export const KING_DECISION_TICKS = 6;
 
 /**
  * Walks the king toward the nearest enemy, stands still once in reach, and uses the weapon's
- * ability when an enemy is within its dash distance.
+ * active ability when an enemy is within its dash distance.
  */
 export function chaseNearestEnemy(state: GameState, ctx: GameContext): Command[] {
   const king = state.king;
@@ -60,9 +60,8 @@ export function chaseNearestEnemy(state: GameState, ctx: GameContext): Command[]
       y: round((aim.y - king.pos.y) / aimD),
     },
   ];
-  const ability = ctx.weapon.ability;
-  if (ability && king.abilityCooldown === 0 && bestD <= ability.distance)
-    commands.push({ type: 'ability' });
+  const ability = ctx.king.ability;
+  if (king.abilityCooldown === 0 && bestD <= ability.distance) commands.push({ type: 'ability' });
   return commands;
 }
 

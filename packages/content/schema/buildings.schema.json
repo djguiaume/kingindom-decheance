@@ -30,12 +30,7 @@
           },
           "class": {
             "type": "string",
-            "enum": [
-              "eco",
-              "tower",
-              "wall",
-              "military"
-            ]
+            "enum": ["eco", "tower", "wall", "military"]
           },
           "cost": {
             "type": "number",
@@ -77,16 +72,10 @@
                 },
                 "exclusiveGroup": {
                   "default": null,
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": ["string", "null"]
                 }
               },
-              "required": [
-                "to",
-                "cost"
-              ]
+              "required": ["to", "cost"]
             }
           },
           "attack": {
@@ -137,10 +126,7 @@
                 "type": "array",
                 "items": {
                   "type": "string",
-                  "enum": [
-                    "ground",
-                    "air"
-                  ]
+                  "enum": ["ground", "air"]
                 }
               },
               "projectile": {
@@ -151,17 +137,10 @@
                     "exclusiveMinimum": 0
                   }
                 },
-                "required": [
-                  "speed"
-                ]
+                "required": ["speed"]
               }
             },
-            "required": [
-              "damage",
-              "interval",
-              "range",
-              "targets"
-            ]
+            "required": ["damage", "interval", "range", "targets"]
           },
           "spawns": {
             "type": "object",
@@ -176,24 +155,12 @@
                 "maximum": 9007199254740991
               }
             },
-            "required": [
-              "unit",
-              "count"
-            ]
+            "required": ["unit", "count"]
           }
         },
-        "required": [
-          "id",
-          "name",
-          "class",
-          "cost",
-          "hp"
-        ]
+        "required": ["id", "name", "class", "cost", "hp"]
       }
     }
   },
-  "required": [
-    "schemaVersion",
-    "buildings"
-  ]
+  "required": ["schemaVersion", "buildings"]
 }

@@ -111,10 +111,7 @@
               "type": "array",
               "items": {
                 "type": "string",
-                "enum": [
-                  "ground",
-                  "air"
-                ]
+                "enum": ["ground", "air"]
               }
             },
             "projectile": {
@@ -125,23 +122,13 @@
                   "exclusiveMinimum": 0
                 }
               },
-              "required": [
-                "speed"
-              ]
+              "required": ["speed"]
             }
           },
-          "required": [
-            "damage",
-            "interval",
-            "range",
-            "targets"
-          ]
+          "required": ["damage", "interval", "range", "targets"]
         }
       },
-      "required": [
-        "node",
-        "hp"
-      ]
+      "required": ["node", "hp"]
     },
     "kingSpawn": {
       "type": "string",
@@ -190,15 +177,10 @@
                 }
               }
             },
-            "required": [
-              "options"
-            ]
+            "required": ["options"]
           }
         },
-        "required": [
-          "id",
-          "pos"
-        ]
+        "required": ["id", "pos"]
       }
     },
     "lanes": {
@@ -224,10 +206,7 @@
             "type": "boolean"
           }
         },
-        "required": [
-          "id",
-          "path"
-        ]
+        "required": ["id", "path"]
       }
     },
     "waves": {
@@ -271,18 +250,11 @@
                   "minimum": 0
                 }
               },
-              "required": [
-                "lane",
-                "enemy",
-                "count"
-              ]
+              "required": ["lane", "enemy", "count"]
             }
           }
         },
-        "required": [
-          "night",
-          "groups"
-        ]
+        "required": ["night", "groups"]
       }
     },
     "terrain": {
@@ -323,10 +295,7 @@
                 "exclusiveMinimum": 0
               }
             },
-            "required": [
-              "points",
-              "width"
-            ]
+            "required": ["points", "width"]
           }
         },
         "water": {
@@ -358,10 +327,7 @@
                 "exclusiveMinimum": 0
               }
             },
-            "required": [
-              "points",
-              "width"
-            ]
+            "required": ["points", "width"]
           }
         },
         "bridges": {
@@ -403,11 +369,7 @@
                 "exclusiveMinimum": 0
               }
             },
-            "required": [
-              "from",
-              "to",
-              "width"
-            ]
+            "required": ["from", "to", "width"]
           }
         },
         "props": {
@@ -460,10 +422,7 @@
                 "type": "boolean"
               }
             },
-            "required": [
-              "kind",
-              "pos"
-            ]
+            "required": ["kind", "pos"]
           }
         }
       }

@@ -69,6 +69,7 @@ function finish(): void {
     won: score.won,
     nights: score.nightsHeld,
     weaponId: state.weaponId,
+    kingId: state.kingId,
     perks: [...state.perks],
     mutators: ctx.mutators.map((m) => m.id),
     seed: state.seed,
@@ -359,7 +360,7 @@ const pct = (v: number, max: number) =>
       >
         <span class="ring" :style="cooldownStyle" />
         <span class="face panel round">
-          <ArtSprite name="king_roll_roll.f1" icon="spear" class="charge-art" />
+          <ArtSprite :name="`${store.hud.abilityArt}.f1`" icon="spear" class="charge-art" />
           <span>{{ store.hud.abilityName }}</span>
           <kbd v-if="!touch">Space</kbd>
         </span>

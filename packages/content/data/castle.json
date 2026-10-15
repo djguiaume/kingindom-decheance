@@ -61,7 +61,7 @@
       "description": "The king has +50% HP and his ability recharges 30% faster.",
       "modifiers": [
         { "stat": "king.hp", "op": "mul", "value": 1.5 },
-        { "stat": "weapon.ability.cooldown", "op": "mul", "value": 0.7 }
+        { "stat": "king.ability.cooldown", "op": "mul", "value": 0.7 }
       ]
     },
     {

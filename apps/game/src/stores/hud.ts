@@ -84,6 +84,7 @@ export interface HudSnapshot {
   /** 0 = ready, 1 = just used. */
   abilityCooldown: number;
   abilityName: string | null;
+  abilityArt: string;
   nearby: NearbySlot | null;
   /** By day, when the king stands at the castle (and at no plot). */
   castle: CastleSnap | null;
@@ -184,7 +185,7 @@ export function snapshot(state: GameState, ctx: GameContext): HudSnapshot {
     lane.total += t.count;
     lane.enemies.push({ id: t.enemy, name: ctx.enemies.get(t.enemy)!.name, count: t.count });
   }
-  const ability = ctx.weapon.ability;
+  const ability = ctx.king.ability;
   return {
     phase: state.phase,
     day: state.day,
@@ -197,8 +198,9 @@ export function snapshot(state: GameState, ctx: GameContext): HudSnapshot {
     kingAlive: state.king.alive,
     kingRespawnSeconds: Math.ceil(state.king.respawnIn / 30),
     enemiesLeft: state.enemies.length + state.spawnQueue.length,
-    abilityCooldown: ability ? state.king.abilityCooldown / (ability.cooldown * 30) : 0,
-    abilityName: ability?.name ?? null,
+    abilityCooldown: state.king.abilityCooldown / (ability.cooldown * 30),
+    abilityName: ability.name,
+    abilityArt: ctx.king.art.ability.active,
     nearby,
     castle,
     castleLevel: state.castleLevel,

@@ -11,6 +11,7 @@
  * (the feet, or the centre of effects and weapons). Art is painted at 1 m = 64 px.
  */
 import type Phaser from 'phaser';
+import type { KingArt } from '@kd/content';
 import type { KingAction } from './animation.ts';
 
 const files = import.meta.glob(
@@ -206,9 +207,6 @@ export const CATAPULT_ARM = {
   axle: 0.5,
 };
 
-/** Frames drawing the king: the rolling panda king on foot (the default king, design note). */
-const KING = { idle: 'king_roll_idle', walk: 'king_roll_walk' };
-
 /** Building and structure frames whose name differs from the content id. */
 const ALIAS: Record<string, string> = { castle: 'castle_1', catapult: 'catapult_chassis' };
 
@@ -278,14 +276,17 @@ export class Art {
     strideM: number,
     now: number,
     action: KingAction | null = null,
+    kingArt?: KingArt,
   ): string | null {
-    if (id === 'king' && action) {
+    if (id === 'king' && action && kingArt) {
       const frame =
         action.phase === 'anticipate'
-          ? this.still('king_roll_anticipate')
+          ? this.still(kingArt.ability.anticipate ?? kingArt.ability.active)
           : action.phase === 'roll'
-            ? this.pick('king_roll_roll', () => Math.floor(action.elapsed / 60))
-            : this.at('king_roll_uncurl', action.elapsed / 160);
+            ? this.pick(kingArt.ability.active, () => Math.floor(action.elapsed / 60))
+            : kingArt.ability.recover
+              ? this.at(kingArt.ability.recover, action.elapsed / 160)
+              : this.still(kingArt.idle);
       if (frame) return frame;
     }
     const step = (n: number) =>
@@ -297,7 +298,11 @@ export class Art {
       return i < n ? i : cycle - i;
     };
     const bases =
-      id === 'king' ? (pose.moving ? [KING.walk, KING.idle] : [KING.idle]) : [ALIAS[id] ?? id];
+      id === 'king' && kingArt
+        ? pose.moving
+          ? [kingArt.walk, kingArt.idle]
+          : [kingArt.idle]
+        : [ALIAS[id] ?? id];
     for (const base of bases) {
       const views = pose.back ? [`${base}.back`, base] : [base];
       for (const name of views) {

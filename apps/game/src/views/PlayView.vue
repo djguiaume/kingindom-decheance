@@ -22,6 +22,7 @@ import { InputHub } from '../game/input/hub.ts';
 import { attachKeyboard } from '../game/input/keyboard.ts';
 import { GameRuntime } from '../game/runtime.ts';
 import { loadProfile, runSetup } from '../progression.ts';
+import { selectedKingId } from '../king-selection.ts';
 import { useHudStore } from '../stores/hud.ts';
 import GameHud from './GameHud.vue';
 
@@ -32,6 +33,7 @@ const runtime = markRaw(
   new GameRuntime(prototypeContent, {
     ...prototypeRun,
     ...runSetup(loadProfile(), prototypeContent),
+    kingId: selectedKingId(prototypeContent),
     seed: Math.floor(Math.random() * 2 ** 31),
   }),
 );
