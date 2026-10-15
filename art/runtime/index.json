@@ -1275,6 +1275,11 @@
       "num": 88,
       "asset": "bamboo_single"
     },
+    "cliff_end": {
+      "atlas": "environment",
+      "num": 107,
+      "asset": "cliff_end"
+    },
     "cliff_section": {
       "atlas": "environment",
       "num": 106,
@@ -1284,11 +1289,6 @@
       "atlas": "environment",
       "num": 95,
       "asset": "shrub"
-    },
-    "cliff_end": {
-      "atlas": "environment",
-      "num": 107,
-      "asset": "cliff_end"
     },
     "barrel": {
       "atlas": "environment",
