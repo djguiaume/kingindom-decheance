@@ -3975,6 +3975,461 @@
           "master": "art/masters/environment/110_bridge_diag.png"
         }
       ]
+    },
+    {
+      "num": 111,
+      "code": "111",
+      "id": "ruin_house",
+      "name": "House ruin",
+      "group": "buildings",
+      "kind": "building",
+      "contentId": "house",
+      "subject": "the same house (thatched bamboo hut with a paper lantern and a chimney) after an enemy attack: wrecked but still recognisable, standing on the same base and footprint; the walls half collapsed, the roof caved in with torn and fallen blue tiles, broken beams, a few of its most distinctive features still visible among the rubble, scattered stones and planks, a few scorch marks and a thin wisp of smoke; lower than the intact building, nothing standing whole",
+      "canvas": {
+        "w": 256,
+        "h": 256
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [
+        "Reads as the house, destroyed: same footprint and base, lower than the intact building."
+      ],
+      "inferred": "Not on the sheet. Destroyed buildings kept their identity (playtest finding F24).",
+      "followAsset": "house",
+      "parts": [
+        {
+          "id": "ruin_house",
+          "frame": 0,
+          "master": "art/masters/buildings/111_ruin_house.png"
+        }
+      ]
+    },
+    {
+      "num": 112,
+      "code": "112",
+      "id": "ruin_manor",
+      "name": "Manor ruin",
+      "group": "buildings",
+      "kind": "building",
+      "contentId": "manor",
+      "subject": "the same manor (two-storey timber house with a blue tiled roof and a panda banner) after an enemy attack: wrecked but still recognisable, standing on the same base and footprint; the walls half collapsed, the roof caved in with torn and fallen blue tiles, broken beams, a few of its most distinctive features still visible among the rubble, scattered stones and planks, a few scorch marks and a thin wisp of smoke; lower than the intact building, nothing standing whole",
+      "canvas": {
+        "w": 256,
+        "h": 256
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [
+        "Reads as the manor, destroyed: same footprint and base, lower than the intact building."
+      ],
+      "inferred": "Not on the sheet. Destroyed buildings kept their identity (playtest finding F24).",
+      "followAsset": "manor",
+      "parts": [
+        {
+          "id": "ruin_manor",
+          "frame": 0,
+          "master": "art/masters/buildings/112_ruin_manor.png"
+        }
+      ]
+    },
+    {
+      "num": 113,
+      "code": "113",
+      "id": "ruin_gold_mine",
+      "name": "Gold mine ruin",
+      "group": "buildings",
+      "kind": "building",
+      "contentId": "gold_mine",
+      "subject": "the same gold mine (rocky mine entrance with a timber frame, rails and a cart of gold nuggets) after an enemy attack: wrecked but still recognisable, standing on the same base and footprint; the walls half collapsed, the roof caved in with torn and fallen blue tiles, broken beams, a few of its most distinctive features still visible among the rubble, scattered stones and planks, a few scorch marks and a thin wisp of smoke; lower than the intact building, nothing standing whole",
+      "canvas": {
+        "w": 256,
+        "h": 256
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [
+        "Reads as the gold mine, destroyed: same footprint and base, lower than the intact building."
+      ],
+      "inferred": "Not on the sheet. Destroyed buildings kept their identity (playtest finding F24).",
+      "followAsset": "gold_mine",
+      "parts": [
+        {
+          "id": "ruin_gold_mine",
+          "frame": 0,
+          "master": "art/masters/buildings/113_ruin_gold_mine.png"
+        }
+      ]
+    },
+    {
+      "num": 114,
+      "code": "114",
+      "id": "ruin_tower",
+      "name": "Tower ruin",
+      "group": "buildings",
+      "kind": "building",
+      "contentId": "tower",
+      "subject": "the same tower (simple bamboo archer tower with a small blue roof) after an enemy attack: wrecked but still recognisable, standing on the same base and footprint; the walls half collapsed, the roof caved in with torn and fallen blue tiles, broken beams, a few of its most distinctive features still visible among the rubble, scattered stones and planks, a few scorch marks and a thin wisp of smoke; lower than the intact building, nothing standing whole",
+      "canvas": {
+        "w": 192,
+        "h": 288
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1536
+      },
+      "checks": [
+        "Reads as the tower, destroyed: same footprint and base, lower than the intact building."
+      ],
+      "inferred": "Not on the sheet. Destroyed buildings kept their identity (playtest finding F24).",
+      "followAsset": "tower",
+      "parts": [
+        {
+          "id": "ruin_tower",
+          "frame": 0,
+          "master": "art/masters/buildings/114_ruin_tower.png"
+        }
+      ]
+    },
+    {
+      "num": 115,
+      "code": "115",
+      "id": "ruin_watchtower",
+      "name": "Watchtower ruin",
+      "group": "buildings",
+      "kind": "building",
+      "contentId": "watchtower",
+      "subject": "the same watchtower (tall watchtower: stone base, timber upper floor, blue pagoda roof, lantern) after an enemy attack: wrecked but still recognisable, standing on the same base and footprint; the walls half collapsed, the roof caved in with torn and fallen blue tiles, broken beams, a few of its most distinctive features still visible among the rubble, scattered stones and planks, a few scorch marks and a thin wisp of smoke; lower than the intact building, nothing standing whole",
+      "canvas": {
+        "w": 224,
+        "h": 320
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1536
+      },
+      "checks": [
+        "Reads as the watchtower, destroyed: same footprint and base, lower than the intact building."
+      ],
+      "inferred": "Not on the sheet. Destroyed buildings kept their identity (playtest finding F24).",
+      "followAsset": "watchtower",
+      "parts": [
+        {
+          "id": "ruin_watchtower",
+          "frame": 0,
+          "master": "art/masters/buildings/115_ruin_watchtower.png"
+        }
+      ]
+    },
+    {
+      "num": 116,
+      "code": "116",
+      "id": "ruin_ballista_tower",
+      "name": "Ballista tower ruin",
+      "group": "buildings",
+      "kind": "building",
+      "contentId": "ballista_tower",
+      "subject": "the same ballista tower (stone and timber tower with a working ballista mounted on its top platform: two bow limbs, taut string, central rail with a loaded bolt) after an enemy attack: wrecked but still recognisable, standing on the same base and footprint; the walls half collapsed, the roof caved in with torn and fallen blue tiles, broken beams, a few of its most distinctive features still visible among the rubble, scattered stones and planks, a few scorch marks and a thin wisp of smoke; lower than the intact building, nothing standing whole",
+      "canvas": {
+        "w": 256,
+        "h": 320
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [
+        "Reads as the ballista tower, destroyed: same footprint and base, lower than the intact building."
+      ],
+      "inferred": "Not on the sheet. Destroyed buildings kept their identity (playtest finding F24).",
+      "followAsset": "ballista_tower",
+      "parts": [
+        {
+          "id": "ruin_ballista_tower",
+          "frame": 0,
+          "master": "art/masters/buildings/116_ruin_ballista_tower.png"
+        }
+      ]
+    },
+    {
+      "num": 117,
+      "code": "117",
+      "id": "ruin_volley_tower",
+      "name": "Volley tower ruin",
+      "group": "buildings",
+      "kind": "building",
+      "contentId": "volley_tower",
+      "subject": "the same volley tower (stone tower with several timber archer platforms at different heights and a blue roof) after an enemy attack: wrecked but still recognisable, standing on the same base and footprint; the walls half collapsed, the roof caved in with torn and fallen blue tiles, broken beams, a few of its most distinctive features still visible among the rubble, scattered stones and planks, a few scorch marks and a thin wisp of smoke; lower than the intact building, nothing standing whole",
+      "canvas": {
+        "w": 256,
+        "h": 320
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [
+        "Reads as the volley tower, destroyed: same footprint and base, lower than the intact building."
+      ],
+      "inferred": "Not on the sheet. Destroyed buildings kept their identity (playtest finding F24).",
+      "followAsset": "volley_tower",
+      "parts": [
+        {
+          "id": "ruin_volley_tower",
+          "frame": 0,
+          "master": "art/masters/buildings/117_ruin_volley_tower.png"
+        }
+      ]
+    },
+    {
+      "num": 118,
+      "code": "118",
+      "id": "ruin_barracks",
+      "name": "Barracks ruin",
+      "group": "buildings",
+      "kind": "building",
+      "contentId": "barracks",
+      "subject": "the same barracks (training hall with spear racks and a blue roof) after an enemy attack: wrecked but still recognisable, standing on the same base and footprint; the walls half collapsed, the roof caved in with torn and fallen blue tiles, broken beams, a few of its most distinctive features still visible among the rubble, scattered stones and planks, a few scorch marks and a thin wisp of smoke; lower than the intact building, nothing standing whole",
+      "canvas": {
+        "w": 320,
+        "h": 320
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [
+        "Reads as the barracks, destroyed: same footprint and base, lower than the intact building."
+      ],
+      "inferred": "Not on the sheet. Destroyed buildings kept their identity (playtest finding F24).",
+      "followAsset": "barracks",
+      "parts": [
+        {
+          "id": "ruin_barracks",
+          "frame": 0,
+          "master": "art/masters/buildings/118_ruin_barracks.png"
+        }
+      ]
+    },
+    {
+      "num": 119,
+      "code": "119",
+      "id": "ruin_garrison",
+      "name": "Garrison ruin",
+      "group": "buildings",
+      "kind": "building",
+      "contentId": "garrison",
+      "subject": "the same garrison (fortified barracks: palisade, several blue banners, wooden melee training dummies in the yard, coherent blue roof) after an enemy attack: wrecked but still recognisable, standing on the same base and footprint; the walls half collapsed, the roof caved in with torn and fallen blue tiles, broken beams, a few of its most distinctive features still visible among the rubble, scattered stones and planks, a few scorch marks and a thin wisp of smoke; lower than the intact building, nothing standing whole",
+      "canvas": {
+        "w": 320,
+        "h": 320
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [
+        "Reads as the garrison, destroyed: same footprint and base, lower than the intact building."
+      ],
+      "inferred": "Not on the sheet. Destroyed buildings kept their identity (playtest finding F24).",
+      "followAsset": "garrison",
+      "parts": [
+        {
+          "id": "ruin_garrison",
+          "frame": 0,
+          "master": "art/masters/buildings/119_ruin_garrison.png"
+        }
+      ]
+    },
+    {
+      "num": 120,
+      "code": "120",
+      "id": "ruin_knight_hall",
+      "name": "Knight hall ruin",
+      "group": "buildings",
+      "kind": "building",
+      "contentId": "knight_hall",
+      "subject": "the same knight hall (stone hall with crossed swords over the door, shields on the walls, armour stands and a knight banner) after an enemy attack: wrecked but still recognisable, standing on the same base and footprint; the walls half collapsed, the roof caved in with torn and fallen blue tiles, broken beams, a few of its most distinctive features still visible among the rubble, scattered stones and planks, a few scorch marks and a thin wisp of smoke; lower than the intact building, nothing standing whole",
+      "canvas": {
+        "w": 320,
+        "h": 320
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [
+        "Reads as the knight hall, destroyed: same footprint and base, lower than the intact building."
+      ],
+      "inferred": "Not on the sheet. Destroyed buildings kept their identity (playtest finding F24).",
+      "followAsset": "knight_hall",
+      "parts": [
+        {
+          "id": "ruin_knight_hall",
+          "frame": 0,
+          "master": "art/masters/buildings/120_ruin_knight_hall.png"
+        }
+      ]
+    },
+    {
+      "num": 121,
+      "code": "121",
+      "id": "ruin_archery_range",
+      "name": "Archery range ruin",
+      "group": "buildings",
+      "kind": "building",
+      "contentId": "archery_range",
+      "subject": "the same archery range (open roofed range with straw targets, bow racks and a shooting lane) after an enemy attack: wrecked but still recognisable, standing on the same base and footprint; the walls half collapsed, the roof caved in with torn and fallen blue tiles, broken beams, a few of its most distinctive features still visible among the rubble, scattered stones and planks, a few scorch marks and a thin wisp of smoke; lower than the intact building, nothing standing whole",
+      "canvas": {
+        "w": 320,
+        "h": 320
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [
+        "Reads as the archery range, destroyed: same footprint and base, lower than the intact building."
+      ],
+      "inferred": "Not on the sheet. Destroyed buildings kept their identity (playtest finding F24).",
+      "followAsset": "archery_range",
+      "parts": [
+        {
+          "id": "ruin_archery_range",
+          "frame": 0,
+          "master": "art/masters/buildings/121_ruin_archery_range.png"
+        }
+      ]
+    },
+    {
+      "num": 122,
+      "code": "122",
+      "id": "ruin_marksmen",
+      "name": "Marksmen ruin",
+      "group": "buildings",
+      "kind": "building",
+      "contentId": "marksmen",
+      "subject": "the same marksmen (upgraded range: raised shooting platforms, several targets at varied distances, longbow racks) after an enemy attack: wrecked but still recognisable, standing on the same base and footprint; the walls half collapsed, the roof caved in with torn and fallen blue tiles, broken beams, a few of its most distinctive features still visible among the rubble, scattered stones and planks, a few scorch marks and a thin wisp of smoke; lower than the intact building, nothing standing whole",
+      "canvas": {
+        "w": 320,
+        "h": 320
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [
+        "Reads as the marksmen, destroyed: same footprint and base, lower than the intact building."
+      ],
+      "inferred": "Not on the sheet. Destroyed buildings kept their identity (playtest finding F24).",
+      "followAsset": "marksmen",
+      "parts": [
+        {
+          "id": "ruin_marksmen",
+          "frame": 0,
+          "master": "art/masters/buildings/122_ruin_marksmen.png"
+        }
+      ]
+    },
+    {
+      "num": 123,
+      "code": "123",
+      "id": "ruin_crossbow_range",
+      "name": "Crossbow range ruin",
+      "group": "buildings",
+      "kind": "building",
+      "contentId": "crossbow_range",
+      "subject": "the same crossbow range (range with a reinforced shooting platform, large targets and heavy crossbow racks) after an enemy attack: wrecked but still recognisable, standing on the same base and footprint; the walls half collapsed, the roof caved in with torn and fallen blue tiles, broken beams, a few of its most distinctive features still visible among the rubble, scattered stones and planks, a few scorch marks and a thin wisp of smoke; lower than the intact building, nothing standing whole",
+      "canvas": {
+        "w": 320,
+        "h": 320
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [
+        "Reads as the crossbow range, destroyed: same footprint and base, lower than the intact building."
+      ],
+      "inferred": "Not on the sheet. Destroyed buildings kept their identity (playtest finding F24).",
+      "followAsset": "crossbow_range",
+      "parts": [
+        {
+          "id": "ruin_crossbow_range",
+          "frame": 0,
+          "master": "art/masters/buildings/123_ruin_crossbow_range.png"
+        }
+      ]
     }
   ]
 }

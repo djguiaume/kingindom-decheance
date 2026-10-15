@@ -21,6 +21,15 @@ export function emptyPlotIds(
   return new Set(slots.filter((id) => !occupied.has(id)));
 }
 
+/**
+ * The art a destroyed building shows: its own ruin, so a ruined tower still reads as a tower,
+ * else the shared ruin, else null (the scene then fades the intact building).
+ */
+export function ruinFrame(type: string, has: (frame: string) => boolean): string | null {
+  if (has(`ruin_${type}`)) return `ruin_${type}`;
+  return has('ruin') ? 'ruin' : null;
+}
+
 /** Friendly proximity opens the gate from either side, independent of its lane orientation. */
 export function gateIsOpen(
   at: { x: number; y: number },

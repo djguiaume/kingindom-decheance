@@ -2,7 +2,7 @@
   "modelId": "model_openai-gpt-image-2-5-flare",
   "referenceAssetId": "asset_RvvNgxiXxMS5HiHWN85YLtqS",
   "referenceSha256": "1ced3f125f8dd4584f33ed856a41dec5b679d0f7b65d0e95681f59689a4f65d8",
-  "spentCU": 3333,
+  "spentCU": 3554,
   "parts": {
     "archer": {
       "state": "validated",
@@ -1737,6 +1737,149 @@
       "originalSha256": "a1ddb38f431f88a723e2b0b849071794098f177778eaa6868e2297130845f153",
       "issues": [],
       "updatedAt": "2026-10-14T16:55:51.787Z"
+    },
+    "ruin_archery_range": {
+      "state": "validated",
+      "attempts": 1,
+      "promptHash": "fafc6f968118",
+      "jobId": "job_B97hRgxXvRzUQj4dtVUCoabQ",
+      "assetId": "asset_wiFuTA6PwFJc2acPE3vhww1D",
+      "costCU": 13,
+      "originalSha256": "8c5a988b85613c09dab3903ec1be2905e349bc9d9233f9467132fe4943f04dda",
+      "issues": [],
+      "updatedAt": "2026-10-15T08:36:11.586Z"
+    },
+    "ruin_ballista_tower": {
+      "state": "validated",
+      "attempts": 1,
+      "promptHash": "7117abfe1b9c",
+      "jobId": "job_duQTcBEaEwH4zdr4puQLzCsK",
+      "assetId": "asset_rPqaCBjEsf2J7G9hpD9qK5rf",
+      "costCU": 13,
+      "originalSha256": "6c85b1e7a4ecddde8bf04dc82c66df1f0c6c98856f0b79eb83c898d707b428a1",
+      "issues": [],
+      "updatedAt": "2026-10-15T08:27:27.816Z"
+    },
+    "ruin_barracks": {
+      "state": "validated",
+      "attempts": 1,
+      "promptHash": "1c547e5f2368",
+      "jobId": "job_aHL4Ry26DgReSqfNVCnMg8Sx",
+      "assetId": "asset_JYpVTMRAqeUrSN9YJZqCQqoT",
+      "costCU": 13,
+      "originalSha256": "8289ebf3ba535b923e7b427bd616a0b1e1f3b2e8746533acfdf7820a6d464222",
+      "issues": [],
+      "updatedAt": "2026-10-15T08:29:48.097Z"
+    },
+    "ruin_crossbow_range": {
+      "state": "validated",
+      "attempts": 1,
+      "costCU": 13,
+      "issues": [],
+      "promptHash": "879a430f990e",
+      "updatedAt": "2026-10-15T08:40:25.334Z",
+      "jobId": "job_w3dyzQNyoKVM4qrjrMnTAXCb",
+      "assetId": "asset_eHfravRrY8GYYZxUvXoF5bby",
+      "originalSha256": "d335b0fcf1b646a465ad6e7880a500df74234e981125ba65aa8727dfca2ed2dd"
+    },
+    "ruin_garrison": {
+      "state": "validated",
+      "attempts": 1,
+      "promptHash": "c19d748b0c8b",
+      "jobId": "job_Jwvko2RJLaTdGNpubeuMj6Sr",
+      "assetId": "asset_YiecXHt2QQk1vjRYUKafCecp",
+      "costCU": 13,
+      "originalSha256": "76aa332ba54445e428b5b7fa868273f367aad22bdd32eca6fdae07af207f86e0",
+      "issues": [],
+      "updatedAt": "2026-10-15T08:30:20.526Z"
+    },
+    "ruin_gold_mine": {
+      "state": "validated",
+      "attempts": 2,
+      "promptHash": "11e0f4c64f06",
+      "jobId": "job_YBzDnZXXGa2LqBSikf2UrrG6",
+      "assetId": "asset_Mtuqaw7AXpSULaCFHaLHJ7gn",
+      "costCU": 26,
+      "originalSha256": "3ea7e795916ecd024c5ded291edc8f85a70a07214189b437d2c78e1dd6a30cca",
+      "issues": [],
+      "updatedAt": "2026-10-15T08:25:55.258Z"
+    },
+    "ruin_house": {
+      "state": "validated",
+      "attempts": 1,
+      "promptHash": "ac864fe43ad8",
+      "jobId": "job_dJioLeoYBQrjxmSKzaMt1HSP",
+      "assetId": "asset_su12zSdeKmc95ouD9m9XjE6a",
+      "costCU": 13,
+      "originalSha256": "b3e4115fa06255428243c05551af530509b684b1f88a0a51be9efe4880046472",
+      "issues": [],
+      "updatedAt": "2026-10-15T08:24:20.442Z"
+    },
+    "ruin_knight_hall": {
+      "state": "validated",
+      "attempts": 1,
+      "promptHash": "80008f4c710b",
+      "jobId": "job_CgUphfzTxqyKhTtUUpJ7EpCW",
+      "assetId": "asset_EESEGWvvi2xYRPBXAEBCyjmh",
+      "costCU": 13,
+      "originalSha256": "2e3f17cdf936c019230e756ad1845d857bf578d5408a9fda2195b9bd18157d28",
+      "issues": [],
+      "updatedAt": "2026-10-15T08:30:52.897Z"
+    },
+    "ruin_manor": {
+      "state": "validated",
+      "attempts": 1,
+      "promptHash": "7b075f1d876d",
+      "jobId": "job_W3b1kumDf4Yfvs94uhvA2pAM",
+      "assetId": "asset_uEcQu2FBJ854VpWwSc3BB6EA",
+      "costCU": 13,
+      "originalSha256": "c28d46b20c56480881d46bbd58a53da8cf2e4b7ac2c3d6944217b9a28bfc2098",
+      "issues": [],
+      "updatedAt": "2026-10-15T08:24:52.208Z"
+    },
+    "ruin_marksmen": {
+      "state": "validated",
+      "attempts": 2,
+      "promptHash": "b46b5a5c5e0f",
+      "jobId": "job_sT3w6pyjryfPu8nvnkL1y1mW",
+      "assetId": "asset_r9eSx4KqE14V1H9LnqXn7kEx",
+      "costCU": 26,
+      "originalSha256": "ffcd8a8cf5b887a2775abd8fde5a7afe73fb06502e77fc13fd90aa6f79d83f52",
+      "issues": [],
+      "updatedAt": "2026-10-15T08:37:10.409Z"
+    },
+    "ruin_tower": {
+      "state": "validated",
+      "attempts": 1,
+      "promptHash": "58845abeb98f",
+      "jobId": "job_jEb7M6TDkfjX8zntN2VjkvM2",
+      "assetId": "asset_HicP8FcGBd9nTfSxc7S8cDRN",
+      "costCU": 13,
+      "originalSha256": "7c7f6abba61b6e88956738b0f8f11af09005b1ba91b54489b178cd1ce8256c2e",
+      "issues": [],
+      "updatedAt": "2026-10-15T08:26:20.766Z"
+    },
+    "ruin_volley_tower": {
+      "state": "validated",
+      "attempts": 3,
+      "promptHash": "065df6e426ea",
+      "jobId": "job_qvXkbQCZBePc1chJhYPxeMN2",
+      "assetId": "asset_QVqAD3zBBAe1K3WZHK6aci2c",
+      "costCU": 39,
+      "originalSha256": "d225a41a175af2de9e759c18fa4c3cbe8f50380cd91d23d5da16c609fa265c39",
+      "issues": [],
+      "updatedAt": "2026-10-15T08:29:13.052Z"
+    },
+    "ruin_watchtower": {
+      "state": "validated",
+      "attempts": 1,
+      "promptHash": "87103f57506b",
+      "jobId": "job_KdeNJNagFig6X65WxkuCteTT",
+      "assetId": "asset_yQNrwZ4MCV9UJu5PFTHg9vNF",
+      "costCU": 13,
+      "originalSha256": "eca4693d9538f04391f933573f743d126a8969d469b545432c13a10265ed5eec",
+      "issues": [],
+      "updatedAt": "2026-10-15T08:26:49.707Z"
     },
     "shield_fx": {
       "state": "validated",

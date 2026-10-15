@@ -35,10 +35,9 @@ simulation/content changes:
   shots use art with a pale blue tint. Existing instant tower shot effects remain view-only;
   their damage/flight semantics are unchanged.
 
-Gate scale/orientation, per-building ground anchor calibration, painted terrain, panda UI,
-real audio, king selection and tutorial remain in the remediation plan. Attack
-quality still needs playtest feedback; these rig improvements do not constitute new attack
-sequences or pre-hit gameplay telegraphs.
+Real audio, king selection and tutorial remain in the remediation plan. Attack quality still
+needs playtest feedback; these rig improvements do not constitute new attack sequences or
+pre-hit gameplay telegraphs.
 
 ## Panda gates and ground anchors (2026-10-14)
 
@@ -52,9 +51,13 @@ Existing-asset batch 2, view-only:
   and image, decomposing the affine matrix into normal Phaser rotation/scale transforms.
 - Side and diagonal gate perspectives both mirror when required. The same source hinge
   calibration is used for open/closed frames, and reversing lane direction cannot change
-  placement. Near-vertical custom-map gates use a small depth projection so the side painting remains
-  visible while both hinge endpoints still match the exact passage. Tests cover all 360 degrees
-  of presentation and 24 rotated paths with actual king, footman and enemy movement.
+  placement. Near-vertical custom-map gates use a small depth projection so the side painting
+  remains visible while both hinge endpoints still match the exact passage. Tests cover all 360
+  degrees of presentation and 24 rotated paths with actual king, footman and enemy movement.
+- Second-playtest follow-up: the upright axis is enlarged 1.5× so the complete structure reads
+  as a fortification while its 2.2 m passage stays unchanged. Each rig records the occupied
+  closed/open art heights; open frames are normalized around the fixed hinges so toggling the
+  leaves does not make the gate appear to shrink.
 - No PNG masters, runtime atlas files, collision dimensions, content or balance changed.
 
 ## PRNG
@@ -314,9 +317,9 @@ recipe for `{ url: 'sfx/….ogg' }` and nothing else changes. Music is three syn
 - Tall scenery uses atlas pivots and joins actors/buildings in ground-y depth sorting, so a king
   can walk in front of or behind a tree. Ground-level grass, flowers, rocks and supplies stay in the
   static layer to avoid needless per-frame work.
-- The reviewed inventory's `grass_patch` is a panda guard, so grass patches keep their
-  procedural fallback. `cliff_end` was repainted as a ramp but is not needed: cliff ends are
-  rounded like the blocked capsule.
+- Corrected `grass_patch` art is selected directly from the environment atlas; the procedural
+  patch remains only as a missing-art fallback. `cliff_end` is not needed by the continuous
+  geometry-driven cliff renderer: cliff ends are rounded like the blocked capsule.
 - F09 audit (2026-10-15): every Greyhollow blocker is natural (cliff or water) and now drawn over
   exactly the ground it blocks; the man-made barriers are the buyable walls in the three passes,
   which already have wall art and gates. No collision or balance data changed.

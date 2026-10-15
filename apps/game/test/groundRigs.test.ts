@@ -3,6 +3,7 @@ import {
   decomposeAffine,
   gatePlacement,
   gateView,
+  GATE_UPRIGHT_SCALE,
   GATE_RIGS,
   groundOrigin,
   GROUND_ANCHORS,
@@ -44,6 +45,20 @@ describe('building ground anchors', () => {
   it('uses the untrimmed canvas, so packing/trim changes cannot shift a building', () => {
     expect(groundOrigin('house', 256, 256)).toEqual([0.5, 198 / 256]);
     expect(groundOrigin('unpainted', 256, 256)).toEqual([0.5, 0.9]);
+  });
+
+  it('stands each building ruin on its building footing, inside the painted ruin', () => {
+    const frames = atlas('buildings');
+    for (const id of Object.keys(frames).filter((f) => f.startsWith('ruin_'))) {
+      const f = frames[id]!;
+      const [ox, oy] = groundOrigin(id, f.sourceSize.w, f.sourceSize.h);
+      expect([ox, oy], id).toEqual(
+        groundOrigin(id.slice('ruin_'.length), f.sourceSize.w, f.sourceSize.h),
+      );
+      expect(ox * f.sourceSize.w).toBeGreaterThan(f.spriteSourceSize.x);
+      expect(ox * f.sourceSize.w).toBeLessThan(f.spriteSourceSize.x + f.spriteSourceSize.w);
+      expect(oy * f.sourceSize.h).toBeLessThan(f.spriteSourceSize.y + f.spriteSourceSize.h);
+    }
   });
 });
 
@@ -88,7 +103,7 @@ describe('gate placement', () => {
         expect(points[1]!.x).toBeCloseTo(-sign * expected.x);
         expect(points[1]!.y).toBeCloseTo(-sign * expected.y);
         expect(p.matrix.c).toBeCloseTo(0);
-        expect(p.matrix.d).toBe(SCALE / 64);
+        expect(p.matrix.d).toBe((SCALE / 64) * GATE_UPRIGHT_SCALE);
       }
     }
   });
@@ -97,8 +112,47 @@ describe('gate placement', () => {
     const rig = GATE_RIGS['gate_wood.side']!;
     const p = gatePlacement(rig, { x: 0, y: 1 }, false, 2.2, SCALE, SQUASH);
     expect(p.matrix.c).toBeGreaterThan(0);
-    expect(p.matrix.d).toBe(SCALE / 64);
+    expect(p.matrix.d).toBe((SCALE / 64) * GATE_UPRIGHT_SCALE);
     expect(p).toEqual(gatePlacement(rig, { x: 0, y: -1 }, false, 2.2, SCALE, SQUASH));
+  });
+
+  it('keeps the larger apparent height stable when each painted gate opens', () => {
+    for (const rig of Object.values(GATE_RIGS)) {
+      const closed = gatePlacement(rig, { x: 1, y: 0 }, false, 2.2, SCALE, SQUASH);
+      const open = gatePlacement(rig, { x: 1, y: 0 }, false, 2.2, SCALE, SQUASH, true);
+      expect(closed.matrix.d * rig.visibleHeights[0]).toBeCloseTo(
+        open.matrix.d * rig.visibleHeights[1],
+      );
+      expect(closed.matrix.d).toBeGreaterThan(SCALE / 64);
+    }
+  });
+
+  it('keeps open and closed hinges fixed on future-map passages at every angle', () => {
+    for (let degree = 0; degree < 360; degree++) {
+      const radians = (degree * Math.PI) / 180;
+      const across = { x: Math.cos(radians), y: Math.sin(radians) };
+      for (const base of ['gate_wood', 'gate_stone']) {
+        const { view, mirror } = gateView(across, SQUASH);
+        const rig = GATE_RIGS[`${base}${view}`]!;
+        const placements = [false, true].map((open) =>
+          gatePlacement(rig, across, mirror, 2.2, SCALE, SQUASH, open),
+        );
+        const hinges = placements.map((placement) =>
+          rig.hinges.map(([x, y]) => ({
+            x:
+              placement.matrix.a * (x - placement.anchor[0]) +
+              placement.matrix.c * (y - placement.anchor[1]),
+            y:
+              placement.matrix.b * (x - placement.anchor[0]) +
+              placement.matrix.d * (y - placement.anchor[1]),
+          })),
+        );
+        for (let i = 0; i < 2; i++) {
+          expect(hinges[1]![i]!.x).toBeCloseTo(hinges[0]![i]!.x);
+          expect(hinges[1]![i]!.y).toBeCloseTo(hinges[0]![i]!.y);
+        }
+      }
+    }
   });
 });
 

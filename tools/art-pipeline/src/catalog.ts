@@ -904,6 +904,47 @@ export const CATALOG: CatalogEntry[] = [
   },
 ];
 
+// Ruins (111-123): one per building the enemy can destroy, painted from that building's own
+// master so a ruined tower still reads as a tower (playtest finding F24). The castle has none:
+// its fall ends the run.
+CATALOG.push(
+  ...[
+    'house',
+    'manor',
+    'gold_mine',
+    'tower',
+    'watchtower',
+    'ballista_tower',
+    'volley_tower',
+    'barracks',
+    'garrison',
+    'knight_hall',
+    'archery_range',
+    'marksmen',
+    'crossbow_range',
+  ].map((id, i) => ruinOf(111 + i, id)),
+);
+
+/** The destroyed state of a building, painted from the building's own master. */
+function ruinOf(num: number, id: string): CatalogEntry {
+  const building = CATALOG.find((e) => e.id === id)!;
+  return {
+    num,
+    id: `ruin_${id}`,
+    name: `${building.name} ruin`,
+    group: 'buildings',
+    kind: 'building',
+    contentId: id,
+    subject: `the same ${building.name.toLowerCase()} (${building.subject}) after an enemy attack: wrecked but still recognisable, standing on the same base and footprint; the walls half collapsed, the roof caved in with torn and fallen blue tiles, broken beams, a few of its most distinctive features still visible among the rubble, scattered stones and planks, a few scorch marks and a thin wisp of smoke; lower than the intact building, nothing standing whole`,
+    canvas: building.canvas,
+    checks: [
+      `Reads as the ${building.name.toLowerCase()}, destroyed: same footprint and base, lower than the intact building.`,
+    ],
+    inferred: 'Not on the sheet. Destroyed buildings kept their identity (playtest finding F24).',
+    followAsset: id,
+  };
+}
+
 function unit(
   num: number,
   contentId: string,
