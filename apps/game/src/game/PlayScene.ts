@@ -1263,7 +1263,7 @@ export class PlayScene extends Phaser.Scene {
       im.setTint(sceneryTint(this.night));
       // Lit windows: every standing building, never a ruin.
       const glow = glowStrength(this.night);
-      if (glow > 0 && id !== 'ruin' && alpha >= 1) this.addWindowGlow(im, glow);
+      if (glow > 0 && !id.startsWith('ruin') && alpha >= 1) this.addWindowGlow(im, glow);
       if (flash > 0) this.painter.whiteout(im, flash * 0.7);
       return;
     }
