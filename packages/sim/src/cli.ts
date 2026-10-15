@@ -23,12 +23,15 @@ const { values } = parseArgs({
     branches: { type: 'string' },
     /** Mutator ids for every run, e.g. "ironhide,no_walls" (13 §3). */
     mutators: { type: 'string' },
+    /** Starting perk ids for every run, at most 3, e.g. "gold_rush,veterans" (13 §4). */
+    starting: { type: 'string' },
   },
 });
 
 const picks = values.perks?.split(',').map(Number);
 const branches = values.branches?.split(',');
 const mutatorIds = values.mutators?.split(',');
+const perkIds = values.starting?.split(',');
 const makers: Record<string, typeof makeBalanced> = {
   balanced: makeBalanced,
   defensive: makeDefensive,
@@ -43,7 +46,13 @@ const firstSeed = Number(values.seed);
 const started = Date.now();
 const summaries = [];
 for (let i = 0; i < runs; i++) {
-  const config = { mapId: values.map, weaponId: values.weapon, seed: firstSeed + i, mutatorIds };
+  const config = {
+    mapId: values.map,
+    weaponId: values.weapon,
+    seed: firstSeed + i,
+    mutatorIds,
+    perkIds,
+  };
   summaries.push(runHeadless(prototypeContent, config, policy).summary);
 }
 const elapsed = (Date.now() - started) / 1000;
@@ -54,7 +63,7 @@ if (values.json) {
   const wins = summaries.filter((s) => s.outcome === 'won').length;
   const meanNight = summaries.reduce((n, s) => n + s.nightReached, 0) / runs;
   console.log(
-    `content ${prototypeContent.hash} · policy ${policy.id}${picks ? ` perks ${picks.join(',')}` : ''}${branches ? ` branches ${branches.join(',')}` : ''}${mutatorIds ? ` mutators ${mutatorIds.join(',')}` : ''} · ${runs} runs in ${elapsed.toFixed(2)}s`,
+    `content ${prototypeContent.hash} · policy ${policy.id}${picks ? ` perks ${picks.join(',')}` : ''}${branches ? ` branches ${branches.join(',')}` : ''}${mutatorIds ? ` mutators ${mutatorIds.join(',')}` : ''}${perkIds ? ` starting ${perkIds.join(',')}` : ''} · ${runs} runs in ${elapsed.toFixed(2)}s`,
   );
   const meanScore = summaries.reduce((n, s) => n + s.score, 0) / runs;
   console.log(

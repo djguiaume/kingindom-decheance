@@ -4,7 +4,8 @@
  * bean built once at startup.
  *
  * The tunable part (buildings, units, enemies, weapon, king, castle, rules) is the content
- * after the run's mutators, then the castle level and the perks picked so far (13 §6.2). It is
+ * after the run's mutators and starting perks, then the castle level and the castle perks picked
+ * so far (13 §6.2). It is
  * a pure function of (content, run config, castle level, perks, night), all of which are in the state, and is
  * rebuilt by `syncContext` whenever one of them changes. So the rules read plain stats and
  * never check a perk id, and any state, restored or replayed, gets the same context.
@@ -25,8 +26,10 @@ import type {
 import { clone } from './hash.ts';
 import {
   applyModifier,
+  applyPerk,
   BASE_RULES,
   checkModifiers,
+  countTargets,
   type CastleStats,
   type Rules,
   type Tunables,
@@ -66,6 +69,8 @@ export interface GameContext {
   perks: ReadonlyMap<string, Perk>;
   /** The run's mutators, from RunConfig, in the order picked. */
   mutators: readonly Mutator[];
+  /** The run's starting perks, from RunConfig (13 §4). */
+  startingPerks: readonly Perk[];
   /** Building classes no slot may hold this run (No Walls). */
   closedClasses: ReadonlySet<BuildingClass>;
   /** The content the tunable fields are rebuilt from, and what they were last built for. */
@@ -95,7 +100,12 @@ export interface RunConfig {
   seed: number;
   /** Mutator ids (13 §3); none when absent. The app checks unlocks before a run starts. */
   mutatorIds?: string[];
+  /** Starting perk ids (13 §4), at most STARTING_PERK_SLOTS; none when absent. */
+  perkIds?: string[];
 }
+
+/** How many starting perks a run may take (13 §7, choice 1). */
+export const STARTING_PERK_SLOTS = 3;
 
 export function createContext(bundle: ContentBundle, config: RunConfig): GameContext {
   const map = bundle.maps.find((m) => m.id === config.mapId);
@@ -109,6 +119,15 @@ export function createContext(bundle: ContentBundle, config: RunConfig): GameCon
   });
   if (new Set(config.mutatorIds).size !== mutators.length)
     throw new Error('A mutator is picked twice');
+  const startingPerks = (config.perkIds ?? []).map((id) => {
+    const p = bundle.perks.find((x) => x.id === id);
+    if (!p) throw new Error(`Unknown starting perk "${id}"`);
+    return p;
+  });
+  if (new Set(config.perkIds).size !== startingPerks.length)
+    throw new Error('A starting perk is picked twice');
+  if (startingPerks.length > STARTING_PERK_SLOTS)
+    throw new Error(`At most ${STARTING_PERK_SLOTS} starting perks`);
 
   const nodes = new Map<string, Vec>(map.nodes.map((n) => [n.id, { x: n.pos[0], y: n.pos[1] }]));
   const at = (id: string): Vec => {
@@ -131,6 +150,7 @@ export function createContext(bundle: ContentBundle, config: RunConfig): GameCon
     castleLevels: bundle.castle.levels,
     perks: new Map(bundle.castle.perks.map((p) => [p.id, p])),
     mutators,
+    startingPerks,
     closedClasses: new Set(mutators.flatMap((m) => m.closesClasses)),
     base: { bundle, weapon, derivedFor: '', level: 1, perks: [], rulesByNight: new Map() },
     nodes,
@@ -147,9 +167,17 @@ export function createContext(bundle: ContentBundle, config: RunConfig): GameCon
   const wrong = checkModifiers(tunablesFor(ctx, 1, [], 1), [
     ...bundle.castle.perks,
     ...bundle.mutators,
+    ...bundle.perks,
   ]);
   if (wrong.length > 0)
     throw new Error(`Perk or mutator stats that reach nothing: ${wrong.join(', ')}`);
+  const unarmed = [...bundle.castle.perks, ...bundle.perks].filter(
+    (p) =>
+      p.grantsAttack &&
+      countTargets(tunablesFor(ctx, 1, [], 1), `building.${p.grantsAttack.buildings}.hp`) === 0,
+  );
+  if (unarmed.length > 0)
+    throw new Error(`Perks that arm no building: ${unarmed.map((p) => p.id).join(', ')}`);
   derive(ctx, 1, [], 1);
   return ctx;
 }
@@ -168,9 +196,9 @@ export function syncContext(ctx: GameContext, state: GameState): void {
 }
 
 /**
- * The content after the mutators, `level` and `perks`, on `night`: a fresh copy, the base is
- * untouched. Mutators come first, so a castle perk that multiplies (Gambler's Oath) applies to
- * the mutators' summed score bonus.
+ * The content after the mutators, the starting perks, `level` and the castle `perks`, on
+ * `night`: a fresh copy, the base is untouched. Mutators come first, so a castle perk that
+ * multiplies (Gambler's Oath) applies to the mutators' summed score bonus.
  */
 function tunablesFor(
   ctx: GameContext,
@@ -200,9 +228,8 @@ function tunablesFor(
     t.rules.scoreMultiplier += m.scoreBonus;
     for (const mod of m.modifiers) applyModifier(t, mod, night);
   }
-  for (const id of perks) {
-    for (const m of req(ctx.perks, id).modifiers) applyModifier(t, m, night);
-  }
+  for (const p of ctx.startingPerks) applyPerk(t, p, night);
+  for (const id of perks) applyPerk(t, req(ctx.perks, id), night);
   return t;
 }
 

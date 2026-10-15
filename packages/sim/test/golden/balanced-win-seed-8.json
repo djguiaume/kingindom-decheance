@@ -2,7 +2,7 @@
   "name": "balanced-win-seed-8",
   "why": "same plan, another seed: RNG flows through spawns",
   "replay": {
-    "contentHash": "03f7cc03a76190",
+    "contentHash": "0e8d60a2be455e",
     "config": {
       "mapId": "greyhollow",
       "weaponId": "spear",
@@ -2546,7 +2546,7 @@
     ]
   },
   "expected": {
-    "contentHash": "03f7cc03a76190",
+    "contentHash": "0e8d60a2be455e",
     "policy": "balanced",
     "config": {
       "mapId": "greyhollow",
@@ -2560,6 +2560,6 @@
     "enemiesKilled": 207,
     "score": 1075,
     "ticks": 7202,
-    "finalHash": "11096268dfab7d"
+    "finalHash": "07b06ded44d062"
   }
 }

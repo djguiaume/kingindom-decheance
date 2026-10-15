@@ -12,6 +12,7 @@ import {
   GameMap,
   KingSettings,
   MutatorCatalog,
+  PerkCatalog,
   UnitCatalog,
   WeaponCatalog,
   type ContentBundle,
@@ -49,6 +50,7 @@ export function loadContent(raw: RawContent): LoadResult {
   const king = parse(KingSettings, raw.king, 'king.json');
   const castle = parse(CastleCatalog, raw.castle, 'castle.json');
   const mutators = parse(MutatorCatalog, raw.mutators, 'mutators.json');
+  const perks = parse(PerkCatalog, raw.perks, 'perks.json');
   const maps = raw.maps.map((m, i) => {
     const id =
       m !== null && typeof m === 'object' && 'id' in m && typeof m.id === 'string'
@@ -65,7 +67,8 @@ export function loadContent(raw: RawContent): LoadResult {
     !weapons ||
     !king ||
     !castle ||
-    !mutators
+    !mutators ||
+    !perks
   ) {
     return { ok: false, errors };
   }
@@ -78,6 +81,7 @@ export function loadContent(raw: RawContent): LoadResult {
     king,
     castle: { levels: castle.levels, perks: castle.perks },
     mutators: mutators.mutators,
+    perks: perks.perks,
     maps: maps.filter((m) => m !== undefined),
   };
   errors.push(...checkSemantics(bundle));
@@ -180,6 +184,14 @@ export function checkSemantics(bundle: Omit<ContentBundle, 'hash'>): ContentErro
   const perkIds = unique(
     'castle.json',
     bundle.castle.perks.map((p) => p.id),
+  );
+  // Starting perks share the castle perks' id space: a run's perk list names either kind.
+  bundle.perks.forEach((p, i) => {
+    if (perkIds.has(p.id)) err('perks.json', `perks.${i}.id`, `"${p.id}" is a castle perk too`);
+  });
+  unique(
+    'perks.json',
+    bundle.perks.map((p) => p.id),
   );
   bundle.castle.levels.forEach((l, i) => {
     if (l.level !== i + 2) err('castle.json', `levels.${i}.level`, `expected level ${i + 2}`);

@@ -2,7 +2,7 @@
   "name": "king-only",
   "why": "no buildings: the king and the castle alone fall on night 5",
   "replay": {
-    "contentHash": "03f7cc03a76190",
+    "contentHash": "0e8d60a2be455e",
     "config": {
       "mapId": "greyhollow",
       "weaponId": "spear",
@@ -1680,7 +1680,7 @@
     ]
   },
   "expected": {
-    "contentHash": "03f7cc03a76190",
+    "contentHash": "0e8d60a2be455e",
     "policy": "king-only",
     "config": {
       "mapId": "greyhollow",
@@ -1694,6 +1694,6 @@
     "enemiesKilled": 109,
     "score": 600,
     "ticks": 4037,
-    "finalHash": "0bdc8ad7e377f9"
+    "finalHash": "02e865d43596c7"
   }
 }

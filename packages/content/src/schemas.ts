@@ -193,12 +193,30 @@ export const Weapon = z.object({
 });
 
 /** A perk: a named bundle of modifiers. Castle perks are picked when the castle levels up. */
+/** The families starting perks are grouped by on the setup screen (13 §4). */
+export const PerkFamily = z.enum(['economy', 'defense', 'units', 'king']);
+
+/**
+ * A perk: a named bundle of modifiers. Castle perks are picked when the castle levels up;
+ * starting perks on the setup screen, before the run.
+ */
 export const Perk = z.object({
   id: Id,
   name: z.string(),
   /** One line saying exactly what changes, shown on the perk card. */
   description: z.string(),
-  modifiers: z.array(Modifier).min(1),
+  modifiers: z.array(Modifier).default([]),
+  /**
+   * Gives buildings that have no attack this one (Scarecrows arms houses and mines).
+   * `buildings` is a selector like a modifier's: an id, `*` or `class:<class>`.
+   */
+  grantsAttack: z
+    .object({
+      buildings: z.string().regex(/^(\*|class:[a-z]+|[a-z0-9][a-z0-9_-]*)$/),
+      attack: Attack,
+    })
+    .optional(),
+  family: PerkFamily.optional(),
   unlock: Unlock.optional(),
 });
 
@@ -367,6 +385,7 @@ export const UnitCatalog = z.object({ ...Meta, units: z.array(Unit) });
 export const EnemyCatalog = z.object({ ...Meta, enemies: z.array(Enemy) });
 export const WeaponCatalog = z.object({ ...Meta, weapons: z.array(Weapon) });
 export const MutatorCatalog = z.object({ ...Meta, mutators: z.array(Mutator) });
+export const PerkCatalog = z.object({ ...Meta, perks: z.array(Perk) });
 export const CastleCatalog = z.object({
   ...Meta,
   levels: z.array(CastleLevel),
@@ -385,6 +404,7 @@ export type Weapon = z.infer<typeof Weapon>;
 export type Unlock = z.infer<typeof Unlock>;
 export type Modifier = z.infer<typeof Modifier>;
 export type Perk = z.infer<typeof Perk>;
+export type PerkFamily = z.infer<typeof PerkFamily>;
 export type Mutator = z.infer<typeof Mutator>;
 export type CastleLevel = z.infer<typeof CastleLevel>;
 export type CastleCatalog = z.infer<typeof CastleCatalog>;
@@ -409,6 +429,8 @@ export interface ContentBundle {
   king: KingSettings;
   castle: { levels: CastleLevel[]; perks: Perk[] };
   mutators: Mutator[];
+  /** Starting perks, picked on the setup screen (13 §4). */
+  perks: Perk[];
   maps: GameMap[];
   /** Stable hash of the validated content, recorded in every run (ADR-006). */
   hash: string;
@@ -423,5 +445,6 @@ export interface RawContent {
   king: unknown;
   castle: unknown;
   mutators: unknown;
+  perks: unknown;
   maps: unknown[];
 }

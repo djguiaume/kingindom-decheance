@@ -1,0 +1,188 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "schemaVersion": {
+      "type": "number",
+      "const": 1
+    },
+    "notes": {
+      "type": "string"
+    },
+    "perks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9_-]*$"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "modifiers": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "stat": {
+                  "type": "string",
+                  "pattern": "^((building|unit|enemy)\\.(\\*|class:[a-z]+|[a-z0-9][a-z0-9_-]*)|king|weapon|castle|rules)(\\.[a-zA-Z]+)+$"
+                },
+                "op": {
+                  "type": "string",
+                  "enum": [
+                    "add",
+                    "mul"
+                  ]
+                },
+                "value": {
+                  "type": "number"
+                },
+                "nights": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                }
+              },
+              "required": [
+                "stat",
+                "op",
+                "value"
+              ]
+            }
+          },
+          "grantsAttack": {
+            "type": "object",
+            "properties": {
+              "buildings": {
+                "type": "string",
+                "pattern": "^(\\*|class:[a-z]+|[a-z0-9][a-z0-9_-]*)$"
+              },
+              "attack": {
+                "type": "object",
+                "properties": {
+                  "damage": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "interval": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "range": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "aoe": {
+                    "default": 0,
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "maxTargets": {
+                    "default": 1,
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "arc": {
+                    "default": 360,
+                    "type": "number",
+                    "exclusiveMinimum": 0,
+                    "maximum": 360
+                  },
+                  "bonus": {
+                    "default": {},
+                    "type": "object",
+                    "propertyNames": {
+                      "type": "string"
+                    },
+                    "additionalProperties": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    }
+                  },
+                  "targets": {
+                    "minItems": 1,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "ground",
+                        "air"
+                      ]
+                    }
+                  },
+                  "projectile": {
+                    "type": "object",
+                    "properties": {
+                      "speed": {
+                        "type": "number",
+                        "exclusiveMinimum": 0
+                      }
+                    },
+                    "required": [
+                      "speed"
+                    ]
+                  }
+                },
+                "required": [
+                  "damage",
+                  "interval",
+                  "range",
+                  "targets"
+                ]
+              }
+            },
+            "required": [
+              "buildings",
+              "attack"
+            ]
+          },
+          "family": {
+            "type": "string",
+            "enum": [
+              "economy",
+              "defense",
+              "units",
+              "king"
+            ]
+          },
+          "unlock": {
+            "type": "object",
+            "properties": {
+              "level": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "level"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description"
+        ]
+      }
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "perks"
+  ]
+}

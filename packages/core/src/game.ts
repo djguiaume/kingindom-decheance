@@ -28,7 +28,7 @@ export function createGame(ctx: GameContext, config: RunConfig): GameState {
     day: 1,
     tick: 0,
     nightTick: 0,
-    gold: map.startingGold,
+    gold: map.startingGold + ctx.rules.startingGold,
     castleLevel: 1,
     perks: [],
     nextId: 1,

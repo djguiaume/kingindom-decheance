@@ -5,6 +5,7 @@
  * `progression.json` content file), not the screens or the core. The core never knows about
  * unlocks: it receives a RunConfig the app has already checked.
  */
+import { STARTING_PERK_SLOTS } from '@kd/core';
 
 /** What a finished run tells progression (a subset of the simulator's RunSummary). */
 export interface RunRecord {
@@ -24,7 +25,8 @@ export interface RunEntry {
   weaponId: string;
   /** Castle perks picked during the run. */
   perks: string[];
-  /** Mutators the run was played with. */
+  /** Starting perks and mutators the run was played with. */
+  startingPerks: string[];
   mutators: string[];
   seed: number;
   /** ISO date and time the run ended. */
@@ -33,6 +35,8 @@ export interface RunEntry {
 
 /** The choices of the run setup screen (13 §6.1), remembered for the next run. */
 export interface RunSetup {
+  /** Starting perks, at most STARTING_PERK_SLOTS (13 §4). */
+  perkIds: string[];
   mutatorIds: string[];
 }
 
@@ -63,7 +67,7 @@ const fresh = (): Profile => ({
   unlocked: [],
   records: {},
   recent: [],
-  lastSetup: { mutatorIds: [] },
+  lastSetup: { perkIds: [], mutatorIds: [] },
 });
 
 /** Reads the profile, or a fresh one when there is none, it is unreadable or storage is off. */
@@ -102,13 +106,23 @@ export function isUnlocked(_profile: Profile, _entry: { unlock?: { level: number
  */
 export function runSetup(
   profile: Profile,
-  content: { mutators: readonly { id: string; unlock?: { level: number } }[] },
+  content: {
+    mutators: readonly { id: string; unlock?: { level: number } }[];
+    perks: readonly { id: string; unlock?: { level: number } }[];
+  },
 ): RunSetup {
-  const mutatorIds = profile.lastSetup.mutatorIds.filter((id) => {
-    const m = content.mutators.find((x) => x.id === id);
-    return m !== undefined && isUnlocked(profile, m);
-  });
-  return { mutatorIds: [...new Set(mutatorIds)] };
+  const keep = (ids: readonly string[] | undefined, list: readonly { id: string }[]) => [
+    ...new Set(
+      (ids ?? []).filter((id) => {
+        const entry = list.find((x) => x.id === id);
+        return entry !== undefined && isUnlocked(profile, entry);
+      }),
+    ),
+  ];
+  return {
+    perkIds: keep(profile.lastSetup.perkIds, content.perks).slice(0, STARTING_PERK_SLOTS),
+    mutatorIds: keep(profile.lastSetup.mutatorIds, content.mutators),
+  };
 }
 
 /**

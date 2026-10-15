@@ -1,0 +1,95 @@
+{
+  "$schema": "../schema/perks.schema.json",
+  "schemaVersion": 1,
+  "notes": "Starting perks, corpus 13 §4. Three slots, picked on the setup screen. A perk that helps everywhere carries a cost; one that helps a single building type may be free. Starting values, to be tuned with the bots.",
+  "perks": [
+    {
+      "id": "gold_rush",
+      "name": "Gold Rush",
+      "family": "economy",
+      "description": "Gold mines pay +8 gold each dawn.",
+      "modifiers": [{ "stat": "building.gold_mine.income", "op": "add", "value": 8 }]
+    },
+    {
+      "id": "royal_mint",
+      "name": "Royal Mint",
+      "family": "economy",
+      "description": "Castle income +10 each dawn. King HP −25%.",
+      "modifiers": [
+        { "stat": "castle.income", "op": "add", "value": 10 },
+        { "stat": "king.hp", "op": "mul", "value": 0.75 }
+      ]
+    },
+    {
+      "id": "early_start",
+      "name": "Early Start",
+      "family": "economy",
+      "description": "+40 starting gold. Houses pay 3 less each dawn.",
+      "modifiers": [
+        { "stat": "rules.startingGold", "op": "add", "value": 40 },
+        { "stat": "building.house.income", "op": "add", "value": -3 },
+        { "stat": "building.manor.income", "op": "add", "value": -3 }
+      ]
+    },
+    {
+      "id": "stonemasons",
+      "name": "Stonemasons",
+      "family": "defense",
+      "description": "Walls +50% HP. Walls cost 5 more.",
+      "modifiers": [
+        { "stat": "building.class:wall.hp", "op": "mul", "value": 1.5 },
+        { "stat": "building.class:wall.cost", "op": "add", "value": 5 }
+      ]
+    },
+    {
+      "id": "eagle_eyes",
+      "name": "Eagle Eyes",
+      "family": "defense",
+      "description": "Towers +1.5 m range. Towers −20% HP.",
+      "modifiers": [
+        { "stat": "building.class:tower.attack.range", "op": "add", "value": 1.5 },
+        { "stat": "building.class:tower.hp", "op": "mul", "value": 0.8 }
+      ]
+    },
+    {
+      "id": "scarecrows",
+      "name": "Scarecrows",
+      "family": "defense",
+      "description": "Houses and mines shoot flyers: 4 damage every second, 4 m.",
+      "grantsAttack": {
+        "buildings": "class:eco",
+        "attack": { "damage": 4, "interval": 1, "range": 4, "targets": ["air"] }
+      }
+    },
+    {
+      "id": "drill_sergeant",
+      "name": "Drill Sergeant",
+      "family": "units",
+      "description": "Barracks and garrisons train one more footman.",
+      "modifiers": [
+        { "stat": "building.barracks.spawns.count", "op": "add", "value": 1 },
+        { "stat": "building.garrison.spawns.count", "op": "add", "value": 1 }
+      ]
+    },
+    {
+      "id": "veterans",
+      "name": "Veterans",
+      "family": "units",
+      "description": "Footmen +50% HP. Barracks cost 10 more.",
+      "modifiers": [
+        { "stat": "unit.footman.hp", "op": "mul", "value": 1.5 },
+        { "stat": "building.barracks.cost", "op": "add", "value": 10 }
+      ]
+    },
+    {
+      "id": "light_cavalry",
+      "name": "Light Cavalry",
+      "family": "king",
+      "description": "King moves 20% faster. Charge recharges 2 s slower.",
+      "modifiers": [
+        { "stat": "king.speed", "op": "mul", "value": 1.2 },
+        { "stat": "weapon.ability.cooldown", "op": "add", "value": 2 }
+      ]
+    }
+  ]
+}
