@@ -47,7 +47,7 @@ export class Painter {
   }
 
   /**
-   * An atlas frame above everything drawn so far, reset to its pivot, unscaled, untinted and
+   * An atlas frame above everything drawn so far, reset to its pivot, unscaled, unflipped, unblended, untinted and
    * opaque; the caller places it.
    */
   image(atlas: string, frame: string): Phaser.GameObjects.Image {
@@ -64,6 +64,8 @@ export class Painter {
       .setAlpha(1)
       .setRotation(0)
       .setScale(1)
+      .setFlip(false, false)
+      .setBlendMode(Phaser.BlendModes.NORMAL)
       .clearTint();
   }
 

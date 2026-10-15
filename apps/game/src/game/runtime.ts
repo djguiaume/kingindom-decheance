@@ -70,6 +70,11 @@ export class GameRuntime {
     if (ticks === MAX_TICKS_PER_FRAME) this.accumulator = 0;
   }
 
+  /** How far the clock is between the last tick and the next, 0 to 1. */
+  get tickProgress(): number {
+    return Math.min(1, this.accumulator / TICK_MS);
+  }
+
   /** Where to draw an entity now: between its previous and current tick positions. */
   drawPos(key: string, current: Vec): Vec {
     const prev = this.previous.get(key);

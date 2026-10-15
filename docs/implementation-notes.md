@@ -36,7 +36,7 @@ simulation/content changes:
   their damage/flight semantics are unchanged.
 
 Gate scale/orientation, per-building ground anchor calibration, painted terrain, panda UI,
-night lighting, real audio, king selection and tutorial remain in the remediation plan. Attack
+real audio, king selection and tutorial remain in the remediation plan. Attack
 quality still needs playtest feedback; these rig improvements do not constitute new attack
 sequences or pre-hit gameplay telegraphs.
 
@@ -305,18 +305,36 @@ recipe for `{ url: 'sfx/….ogg' }` and nothing else changes. Music is three syn
 - Path rendering accepts every segment angle and both directions. Water keeps a narrow stone
   bank at its actual blocker boundary. Bridges select the nearest front/diagonal/side painting
   from their endpoints and scale to the declared span.
-- Cliff-section art is sampled along each declared cliff polyline at a bounded spacing. Tall
-  scenery uses atlas pivots and joins actors/buildings in ground-y depth sorting, so a king can
-  walk in front of or behind a tree. Ground-level grass, flowers, rocks and supplies stay in the
+- Cliffs (`game/cliffs.ts`, F22) are raised from each declared cliff line, for any map: a grass
+  top covering exactly the strip the core blocks, and a rock face, built from `cliff_section`'s
+  painted lip and rock, dropping 2.2 m wherever the edge faces the camera. Bends, rings and round
+  ends follow the line in every direction. The relief is painted once, then cut across the line
+  into pieces of at most 1.5 m, packed in one texture, that join the ground-y depth sort; the king
+  sees through a piece he walks behind. The contact shadow is baked into the ground canvas.
+- Tall scenery uses atlas pivots and joins actors/buildings in ground-y depth sorting, so a king
+  can walk in front of or behind a tree. Ground-level grass, flowers, rocks and supplies stay in the
   static layer to avoid needless per-frame work.
-- The reviewed inventory contains two mislabeled images: `grass_patch` is a panda guard and
-  `cliff_end` is a watchtower. The game does not show either under the wrong meaning; grass
-  patches retain their procedural fallback and cliffs use the repeatable section until corrected
-  art exists.
+- The reviewed inventory's `grass_patch` is a panda guard, so grass patches keep their
+  procedural fallback. `cliff_end` was repainted as a ramp but is not needed: cliff ends are
+  rounded like the blocked capsule.
+- F09 audit (2026-10-15): every Greyhollow blocker is natural (cliff or water) and now drawn over
+  exactly the ground it blocks; the man-made barriers are the buyable walls in the three passes,
+  which already have wall art and gates. No collision or balance data changed.
+
+## Night lighting (F12, 2026-10-15)
+
+- Night is lighting, not new art (`game/lighting.ts`). A night level eases from 0 to 1 over dusk
+  and back at dawn (0.9 s time constant, frame-rate independent) instead of switching.
+- The ground gets a cool moonlit wash; cliffs, tall scenery, walls, gates, empty plots and
+  buildings get the same moonlight as a multiply tint, so nothing glows out of the dark.
+- Warm additive glows (`window_glow`, `lantern_glow`) light standing building windows and lantern
+  posts once dusk has fallen; ruins stay dark. Actors (king, units, enemies, shots) stay untinted
+  so silhouettes and attacks remain readable.
+- The pooled painter image resets blend mode as well as flip and tint.
 
 ## Not built yet
 
-- Day/night lighting, object pools for effects; the real audio (recorded sounds and music).
+- Object pools for effects; the real audio (recorded sounds and music).
 - Web Worker pool and Comlink (ADR-003): the runner is ready to be moved into a worker.
 - Tier 3 nightly balance assertions (ADR-007) and the ECharts dashboard (ADR-005).
 - Starting perks, mutators, research (Gambler's Oath already stores its multiplier).

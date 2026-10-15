@@ -7,6 +7,7 @@ import type Phaser from 'phaser';
 import type { GameMap, Prop } from '@kd/content';
 import { SCALE, SQUASH } from './camera.ts';
 import type { Art } from './art.ts';
+import { CLIFF_HEIGHT, paintCliffShadows } from './cliffs.ts';
 
 type Graphics = Phaser.GameObjects.Graphics;
 type Pt = readonly [number, number];
@@ -53,9 +54,6 @@ const tint = {
   banner: 0x2f5aa8,
 } as const;
 
-/** Height a cliff stands above the ground, in metres. */
-const CLIFF_HEIGHT = 1.3;
-
 const px = (p: Pt) => ({ x: p[0] * SCALE, y: p[1] * SCALE * SQUASH });
 
 const screen = (p: { x: number; y: number }) => ({ x: p.x * SCALE, y: p.y * SCALE * SQUASH });
@@ -67,27 +65,6 @@ export function bridgeFrame(from: Pt, to: Pt): string {
   if (dy < dx * 0.45) return 'bridge';
   if (dx < dy * 0.45) return 'bridge.side';
   return 'bridge.diag';
-}
-
-/** Evenly samples a polyline, including each end, for repeatable scenery at any orientation. */
-export function terrainSamples(points: readonly Pt[], spacing: number): Pt[] {
-  if (points.length === 0) return [];
-  const out: Pt[] = [points[0]!];
-  let carry = 0;
-  for (let i = 1; i < points.length; i++) {
-    const [ax, ay] = points[i - 1]!;
-    const [bx, by] = points[i]!;
-    const length = Math.hypot(bx - ax, by - ay);
-    if (length === 0) continue;
-    for (let at = spacing - carry; at < length; at += spacing) {
-      const t = at / length;
-      out.push([ax + (bx - ax) * t, ay + (by - ay) * t]);
-    }
-    carry = (carry + length) % spacing;
-  }
-  const last = points[points.length - 1]!;
-  if (out[out.length - 1] !== last) out.push(last);
-  return out;
 }
 
 /** Assets reviewed as matching their prop id; grass_patch currently contains a panda guard. */
@@ -199,6 +176,9 @@ export function addPaintedTerrain(
       strokeBands(ctx, water, waters);
       painted.water = true;
     }
+
+    // Painted cliffs stand on a soft contact shadow (the placeholder cliffs draw their own foot).
+    if (painted.ground && art.has('cliff_section')) paintCliffShadows(ctx, map);
 
     if (painted.ground || painted.paths || painted.water) {
       texture.refresh();

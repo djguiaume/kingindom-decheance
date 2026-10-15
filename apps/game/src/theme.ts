@@ -9,8 +9,6 @@ export const colors = {
   ground: 0x243044,
   grass: 0x6fa857,
   night: 0x0b1a4a,
-  /** Multiplied over painted buildings at night: moonlit blue, still readable. */
-  nightArt: 0xb4c0dc,
   lane: 0xc9b47e,
   airLane: 0x5b4a7a,
   slot: 0x6b7d99,
@@ -44,7 +42,9 @@ export const css = (color: number): string => `#${color.toString(16).padStart(6,
 
 /**
  * UI identity tokens, direction A "Linen and ink" (corpus 14 §2.1, chosen 2026-10-14).
- * Red is for enemies, gold for money, blue for night: nothing else uses those three.
+ * Red is for enemies, gold for money, blue for night: nothing else uses those three. The panda
+ * livery (F15) adds lacquer blue with gold trim for frames and the main button, bamboo and stone;
+ * the livery blue is deeper than the night's and never fills a night element.
  * style.css mirrors these as CSS custom properties for the Vue HUD.
  */
 export const ui = {
@@ -56,6 +56,11 @@ export const ui = {
   enemy: 0xc4412f,
   night: 0x34507a,
   moss: 0x5d7a4c,
+  livery: 0x2d4c93,
+  liveryDeep: 0x1b2f63,
+  trim: 0xe0b54a,
+  bamboo: 0x7a9e45,
+  stone: 0x8e918b,
 } as const;
 
 /** One glyph per enemy type, from the game's icon set (icons.ts), for the HUD, waves and pins. */
