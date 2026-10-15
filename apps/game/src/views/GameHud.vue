@@ -71,6 +71,7 @@ function finish(): void {
     weaponId: state.weaponId,
     kingId: state.kingId,
     perks: [...state.perks],
+    startingPerks: ctx.startingPerks.map((p) => p.id),
     mutators: ctx.mutators.map((m) => m.id),
     seed: state.seed,
     date: new Date().toISOString(),

@@ -12,9 +12,7 @@
       </p>
       <nav class="choices">
         <RouterLink class="primary big" to="/play" data-testid="play">Play</RouterLink>
-        <p v-if="picked.length" class="setup-line" data-testid="setup-line">
-          {{ picked.map((m) => m.name).join(', ') }} · score ×{{ multiplier.toFixed(2) }}
-        </p>
+        <p v-if="setupLine" class="setup-line" data-testid="setup-line">{{ setupLine }}</p>
         <div class="row">
           <button data-testid="customise" @click="openSetup()">
             <GameIcon name="gear" /> Customise run
@@ -54,7 +52,7 @@
     <div v-if="sheet" class="modal" @click.self="sheet = null">
       <div
         class="sheet panel capped"
-        :class="{ 'king-sheet': sheet === 'king' }"
+        :class="{ wide: sheet === 'setup', 'king-sheet': sheet === 'king' }"
         role="dialog"
         :aria-label="SHEET_TITLES[sheet]"
       >
@@ -115,29 +113,74 @@
         </template>
         <template v-else-if="sheet === 'setup'">
           <h2 class="display">Greyhollow</h2>
-          <p v-if="best !== null">Best: {{ best }}</p>
-          <h3 class="section">Mutators</h3>
-          <p class="setup-intro">
-            Each makes the run harder and raises the score of a win. Bonuses add up.
-          </p>
-          <div class="mutators" data-testid="mutators">
+          <p v-if="best !== null" class="setup-best">Best: {{ best }}</p>
+          <div class="tabs" role="tablist">
             <button
-              v-for="m in mutators"
-              :key="m.id"
-              class="mutator"
-              :class="{ on: draft.includes(m.id), easier: m.scoreBonus < 0 }"
-              :aria-pressed="draft.includes(m.id)"
-              :disabled="!isUnlocked(profile, m)"
-              :data-testid="`mutator-${m.id}`"
-              @click="toggle(m.id)"
+              role="tab"
+              :aria-selected="tab === 'perks'"
+              data-testid="tab-perks"
+              @click="tab = 'perks'"
             >
-              <span class="head">
-                <b>{{ m.name }}</b>
-                <span class="bonus">{{ bonusText(m.scoreBonus) }}</span>
-              </span>
-              <small>{{ m.description }}</small>
+              Perks {{ draftPerks.length }}/{{ STARTING_PERK_SLOTS }}
+            </button>
+            <button
+              role="tab"
+              :aria-selected="tab === 'mutators'"
+              data-testid="tab-mutators"
+              @click="tab = 'mutators'"
+            >
+              Mutators {{ draftMutators.length ? `×${draftMultiplier.toFixed(2)}` : '' }}
             </button>
           </div>
+          <template v-if="tab === 'perks'">
+            <p class="setup-intro">
+              Pick up to {{ STARTING_PERK_SLOTS }}. A perk that helps everywhere has a cost.
+            </p>
+            <div class="picks" data-testid="perks">
+              <button
+                v-for="p in perks"
+                :key="p.id"
+                class="pick"
+                :class="{ on: draftPerks.includes(p.id) }"
+                :aria-pressed="draftPerks.includes(p.id)"
+                :disabled="
+                  !isUnlocked(profile, p) ||
+                  (!draftPerks.includes(p.id) && draftPerks.length >= STARTING_PERK_SLOTS)
+                "
+                :data-testid="`perk-${p.id}`"
+                @click="draftPerks = toggled(draftPerks, p.id)"
+              >
+                <span class="head">
+                  <b>{{ p.name }}</b>
+                  <span class="family">{{ p.family }}</span>
+                </span>
+                <small>{{ p.description }}</small>
+              </button>
+            </div>
+          </template>
+          <template v-else>
+            <p class="setup-intro">
+              Each makes the run harder and raises the score of a win. Bonuses add up.
+            </p>
+            <div class="picks" data-testid="mutators">
+              <button
+                v-for="m in mutators"
+                :key="m.id"
+                class="pick"
+                :class="{ on: draftMutators.includes(m.id), easier: m.scoreBonus < 0 }"
+                :aria-pressed="draftMutators.includes(m.id)"
+                :disabled="!isUnlocked(profile, m)"
+                :data-testid="`mutator-${m.id}`"
+                @click="draftMutators = toggled(draftMutators, m.id)"
+              >
+                <span class="head">
+                  <b>{{ m.name }}</b>
+                  <span class="bonus">{{ bonusText(m.scoreBonus) }}</span>
+                </span>
+                <small>{{ m.description }}</small>
+              </button>
+            </div>
+          </template>
           <div class="start">
             <span class="mult" data-testid="setup-multiplier"
               >Score ×{{ draftMultiplier.toFixed(2) }}</span
@@ -161,7 +204,7 @@
 
 <script setup lang="ts">
 import { prototypeContent, prototypeRun } from '@kd/content/prototype';
-import { SCORE } from '@kd/core';
+import { SCORE, STARTING_PERK_SLOTS } from '@kd/core';
 import { computed, onBeforeUnmount, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { audio } from '../audio/engine.ts';
@@ -206,28 +249,38 @@ function selectKing(id: string): void {
 }
 
 // The run setup (13 §6.1). Play starts with the remembered setup; a first launch has none.
-const mutators = prototypeContent.mutators;
-const byIds = (ids: readonly string[]) => mutators.filter((m) => ids.includes(m.id));
-const picked = computed(() => byIds(runSetup(profile.value, prototypeContent).mutatorIds));
-const multiplier = computed(() => mutatorMultiplier(picked.value, SCORE.multiplierFloor));
-const draft = ref<string[]>([]);
+const { mutators, perks } = prototypeContent;
+const named = <T extends { id: string }>(list: readonly T[], ids: readonly string[]) =>
+  list.filter((x) => ids.includes(x.id));
+const setup = computed(() => runSetup(profile.value, prototypeContent));
+/** What Play will start with, in one line under the button. */
+const setupLine = computed(() => {
+  const parts = [...named(perks, setup.value.perkIds), ...named(mutators, setup.value.mutatorIds)];
+  if (parts.length === 0) return '';
+  const chosen = named(mutators, setup.value.mutatorIds);
+  const mult = mutatorMultiplier(chosen, SCORE.multiplierFloor);
+  const names = parts.map((x) => x.name).join(', ');
+  return chosen.length ? `${names} · score ×${mult.toFixed(2)}` : names;
+});
+const tab = ref<'perks' | 'mutators'>('perks');
+const draftPerks = ref<string[]>([]);
+const draftMutators = ref<string[]>([]);
 const draftMultiplier = computed(() =>
-  mutatorMultiplier(byIds(draft.value), SCORE.multiplierFloor),
+  mutatorMultiplier(named(mutators, draftMutators.value), SCORE.multiplierFloor),
 );
 const bonusText = (bonus: number) =>
   `${bonus < 0 ? '−' : '+'}${Math.round(Math.abs(bonus) * 100)}%`;
+const toggled = (list: readonly string[], id: string) =>
+  list.includes(id) ? list.filter((x) => x !== id) : [...list, id];
 
 function openSetup(): void {
-  draft.value = picked.value.map((m) => m.id);
+  draftPerks.value = [...setup.value.perkIds];
+  draftMutators.value = [...setup.value.mutatorIds];
   sheet.value = 'setup';
 }
-function toggle(id: string): void {
-  draft.value = draft.value.includes(id)
-    ? draft.value.filter((x) => x !== id)
-    : [...draft.value, id];
-}
 function startRun(): void {
-  profile.value = { ...loadProfile(), lastSetup: { mutatorIds: [...draft.value] } };
+  const lastSetup = { perkIds: [...draftPerks.value], mutatorIds: [...draftMutators.value] };
+  profile.value = { ...loadProfile(), lastSetup };
   saveProfile(profile.value);
   void router.push('/play');
 }
@@ -508,7 +561,7 @@ const backdrop = computed(() =>
   color: var(--livery);
 }
 
-/* The run setup sheet: one card per mutator, its effect always visible (no hover on touch). */
+/* The run setup sheet: one card per perk or mutator, its effect always visible (no hover on touch). */
 .section {
   margin: 4px 0 0;
   font: 700 15px var(--display);
@@ -516,13 +569,13 @@ const backdrop = computed(() =>
   text-transform: uppercase;
   color: var(--livery);
 }
-.mutators {
+.picks {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 8px;
   width: 100%;
 }
-.mutator {
+.pick {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -532,26 +585,55 @@ const backdrop = computed(() =>
   text-align: left;
   border: 2px solid var(--line);
 }
-.mutator .head {
+.pick .head {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
   width: 100%;
   gap: 8px;
 }
-.mutator .bonus {
+.pick .family {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--livery);
+}
+.tabs {
+  display: flex;
+  gap: 6px;
+}
+.tabs button {
+  min-height: 44px;
+  padding: 6px 16px;
+  box-shadow: none;
+  border: 2px solid var(--line);
+}
+.tabs button[aria-selected='true'] {
+  border-color: var(--livery);
+  box-shadow: inset 0 0 0 2px var(--trim);
+}
+/* The setup sheet keeps its width whatever the tab, so the cards sit in columns. */
+.sheet.wide {
+  width: min(92vw, 820px);
+  max-width: none;
+}
+.setup-best {
+  margin-top: -6px !important;
+}
+.pick .bonus {
   font-weight: 800;
   color: var(--enemy);
 }
-.mutator.easier .bonus {
+.pick.easier .bonus {
   color: var(--muted);
 }
-.mutator small {
+.pick small {
   font-size: 12px;
   line-height: 1.3;
   color: var(--muted);
 }
-.mutator.on {
+.pick.on {
   border-color: var(--livery);
   box-shadow: inset 0 0 0 2px var(--trim);
 }
@@ -585,19 +667,39 @@ const backdrop = computed(() =>
   .setup-intro {
     display: none;
   }
-  .mutators {
-    grid-template-columns: repeat(4, 1fr);
+  .picks {
+    grid-template-columns: repeat(5, 1fr);
     gap: 6px;
   }
-  .mutator {
+  .pick {
     min-height: 48px;
     padding: 6px 8px;
   }
-  .mutator small {
+  .pick small {
     font-size: 11px;
   }
+  /* Start run joins the title line, so the cards keep the whole height. */
+  .sheet.wide {
+    width: 96vw;
+  }
   .start {
-    margin-top: 2px;
+    position: absolute;
+    top: 8px;
+    right: 56px;
+    width: auto;
+    margin: 0;
+    gap: 10px;
+  }
+  .start .big {
+    min-width: 150px;
+    min-height: 44px;
+    font-size: 17px;
+  }
+  .mult {
+    font-size: 15px;
+  }
+  .pick .family {
+    display: none;
   }
   .tagline {
     font-size: 13px;

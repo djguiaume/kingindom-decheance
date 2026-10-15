@@ -50,9 +50,8 @@ these rig improvements do not constitute new attack sequences or pre-hit gamepla
   Existing wolf-rider art includes the rider's grip, so it does not draw the on-foot spear layer.
 - `kingId` is stored in game state, normalized into replay/simulator configs and written to new
   profile run records. Existing profile entries remain valid without the optional field.
-- Modifier rebuilding starts from the selected king rather than a global default. A compatibility
-  alias maps PR #63's `weapon.ability.*` starting-perk paths onto `king.ability.*`, allowing the
-  independently developed perk branch to merge without dropping its cooldown effect.
+- Modifier rebuilding starts from the selected king rather than a global default. Starting perks
+  that touch the ability use `king.ability.*` (Light Cavalry).
 
 ## Panda gates and ground anchors (2026-10-14)
 
@@ -301,6 +300,20 @@ balance are untouched.
   the design's guesses; repricing (bonus ≈ win-rate drop) belongs to the end-of-stage balancing
   pass.
 
+## Stage A, starting perks (2026-10-15, corpus 13 §4)
+
+- `perks.json`: nine starting perks (same `Perk` shape as castle perks, plus a `family`).
+  `RunConfig.perkIds` takes up to `STARTING_PERK_SLOTS` (3); they apply after the mutators and
+  before the castle perks. Ids are unique across castle and starting perks.
+- New perk field `grantsAttack { buildings, attack }` gives buildings without an attack one
+  (Scarecrows arms houses and mines against flyers); new rule `startingGold` (Early Start).
+- **Setup screen**: the sheet now has two tabs, Perks (n/3, the rest lock once full) and
+  Mutators. On phones Start run sits on the title line so both tabs fit one screen.
+- **Sim**: `--starting a,b,c`. Balanced bot, 100 runs each (none 95%): Gold Rush 95%, Royal
+  Mint 77%, Early Start 94%, Stonemasons 62%, Eagle Eyes 81%, Scarecrows 94%, Drill Sergeant
+  94%, Veterans 95%, Light Cavalry 87%. No perk lifts the bot above its 95% ceiling, so their
+  upside needs a harder baseline (a mutator) in the end-of-stage balancing pass.
+
 ## Balance (first playtest, 2026-10-13)
 
 Gold felt scarce in play while the simulator found the game easy (the king alone reached
@@ -372,4 +385,4 @@ recipe for `{ url: 'sfx/….ogg' }` and nothing else changes. Music is three syn
 - Object pools for effects; the real audio (recorded sounds and music).
 - Web Worker pool and Comlink (ADR-003): the runner is ready to be moved into a worker.
 - Tier 3 nightly balance assertions (ADR-007) and the ECharts dashboard (ADR-005).
-- Starting perks, research (Gambler's Oath already stores its multiplier).
+- Research (Gambler's Oath already stores its multiplier).

@@ -2,7 +2,7 @@
   "name": "defensive-loss",
   "why": "defences only, no eco: a seed where night 6 breaks through",
   "replay": {
-    "contentHash": "05cc6b018d8c9f",
+    "contentHash": "131e244ab1d24a",
     "config": {
       "mapId": "greyhollow",
       "weaponId": "spear",
@@ -2527,7 +2527,7 @@
     ]
   },
   "expected": {
-    "contentHash": "05cc6b018d8c9f",
+    "contentHash": "131e244ab1d24a",
     "policy": "defensive",
     "config": {
       "mapId": "greyhollow",
@@ -2542,6 +2542,6 @@
     "enemiesKilled": 201,
     "score": 600,
     "ticks": 6108,
-    "finalHash": "08480cf334b7f9"
+    "finalHash": "181d0c106b4ada"
   }
 }

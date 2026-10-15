@@ -5,6 +5,7 @@
  * reaches a number is checked here, when a run's context is built (`checkModifiers`). Nothing
  * here knows a perk by its id.
  */
+import { clone } from './hash.ts';
 import type {
   Attack,
   Building,
@@ -31,6 +32,8 @@ export interface Rules {
   waveSize: number;
   /** Multiplies all gold paid at dawn, castle and buildings (rounded). */
   incomeRate: number;
+  /** Gold added to the map's starting gold (Early Start). */
+  startingGold: number;
 }
 
 export const BASE_RULES: Readonly<Rules> = {
@@ -39,6 +42,7 @@ export const BASE_RULES: Readonly<Rules> = {
   scoreMultiplier: 1,
   waveSize: 1,
   incomeRate: 1,
+  startingGold: 0,
 };
 
 /** The castle's numbers for the current level, before or after modifiers. */
@@ -80,9 +84,6 @@ function select(t: Tunables, stat: string): { objects: Bag[]; field: string[] } 
     });
     return { objects: objects as unknown as Bag[], field: parts.slice(2) };
   }
-  // Compatibility for PR #63 content authored while abilities still belonged to weapons.
-  if (kind === 'weapon' && parts[1] === 'ability')
-    return { objects: [t.king as unknown as Bag], field: parts.slice(1) };
   const one = { king: t.king, weapon: t.weapon, castle: t.castle, rules: t.rules }[kind];
   return { objects: one ? [one as unknown as Bag] : [], field: parts.slice(1) };
 }
@@ -117,6 +118,19 @@ export function applyModifier(t: Tunables, m: Modifier, night: number): void {
     if (!h) continue;
     const v = h[key] as number;
     h[key] = m.op === 'add' ? v + m.value : v * m.value;
+  }
+}
+
+/**
+ * Applies a perk to `t` in place: its modifiers, then the attack it grants to buildings that
+ * have none (an attack the content gives a building is never replaced).
+ */
+export function applyPerk(t: Tunables, perk: Perk, night: number): void {
+  for (const m of perk.modifiers) applyModifier(t, m, night);
+  const grant = perk.grantsAttack;
+  if (!grant) return;
+  for (const o of select(t, `building.${grant.buildings}.hp`).objects) {
+    if (!o.attack) o.attack = clone(grant.attack);
   }
 }
 

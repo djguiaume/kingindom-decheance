@@ -79,7 +79,7 @@ describe('progression (all open in Stage A)', () => {
       unlocked: [],
       records: {},
       recent: [],
-      lastSetup: { mutatorIds: [] },
+      lastSetup: { perkIds: [], mutatorIds: [] },
     });
     expect(isUnlocked(profile, { unlock: { level: 9 } })).toBe(true);
     const run = { mapId: 'greyhollow', won: true, nightsSurvived: 6, score: 0 };
@@ -94,6 +94,7 @@ describe('progression (all open in Stage A)', () => {
       nights: 6,
       weaponId: 'spear',
       perks: [],
+      startingPerks: [],
       mutators: [],
       seed: 1,
       date: '2026-10-14T10:00:00.000Z',
@@ -113,11 +114,32 @@ describe('progression (all open in Stage A)', () => {
     expect(profile.recent[0]?.score).toBe(11);
   });
 
-  it('remembers the run setup, dropping mutators the content no longer has', () => {
-    const profile = { ...loadProfile(null), lastSetup: { mutatorIds: ['swarm', 'gone', 'mercy'] } };
-    const content = { mutators: [{ id: 'swarm' }, { id: 'mercy' }] };
-    expect(runSetup(profile, content)).toEqual({ mutatorIds: ['swarm', 'mercy'] });
-    expect(runSetup(loadProfile(null), content)).toEqual({ mutatorIds: [] });
+  it('remembers the run setup, dropping what the content no longer has', () => {
+    const profile = {
+      ...loadProfile(null),
+      lastSetup: {
+        perkIds: ['veterans', 'gone', 'gold_rush', 'scarecrows', 'stonemasons'],
+        mutatorIds: ['swarm', 'gone', 'mercy'],
+      },
+    };
+    const content = {
+      mutators: [{ id: 'swarm' }, { id: 'mercy' }],
+      perks: ['veterans', 'gold_rush', 'scarecrows', 'stonemasons'].map((id) => ({ id })),
+    };
+    expect(runSetup(profile, content)).toEqual({
+      perkIds: ['veterans', 'gold_rush', 'scarecrows'],
+      mutatorIds: ['swarm', 'mercy'],
+    });
+    expect(runSetup(loadProfile(null), content)).toEqual({ perkIds: [], mutatorIds: [] });
+  });
+
+  it('reads a profile saved before starting perks existed', () => {
+    const old = JSON.stringify({ schemaVersion: 1, lastSetup: { mutatorIds: ['swarm'] } });
+    const profile = loadProfile({ getItem: () => old });
+    expect(runSetup(profile, { mutators: [{ id: 'swarm' }], perks: [] })).toEqual({
+      perkIds: [],
+      mutatorIds: ['swarm'],
+    });
   });
 
   it('adds mutator bonuses up, never below the floor', () => {
