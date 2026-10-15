@@ -305,9 +305,10 @@ recipe for `{ url: 'sfx/….ogg' }` and nothing else changes. Music is three syn
 - Path rendering accepts every segment angle and both directions. Water keeps a narrow stone
   bank at its actual blocker boundary. Bridges select the nearest front/diagonal/side painting
   from their endpoints and scale to the declared span.
-- Cliff-section art is sampled along each declared cliff polyline at a bounded spacing. Scenery
-  props use their atlas pivots and join actors/buildings in ground-y depth sorting, so a king can
-  walk in front of or behind a tree.
+- Cliff-section art is sampled along each declared cliff polyline at a bounded spacing. Tall
+  scenery uses atlas pivots and joins actors/buildings in ground-y depth sorting, so a king can
+  walk in front of or behind a tree. Ground-level grass, flowers, rocks and supplies stay in the
+  static layer to avoid needless per-frame work.
 - The reviewed inventory contains two mislabeled images: `grass_patch` is a panda guard and
   `cliff_end` is a watchtower. The game does not show either under the wrong meaning; grass
   patches retain their procedural fallback and cliffs use the repeatable section until corrected

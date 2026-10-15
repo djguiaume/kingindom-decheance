@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { bridgeFrame, terrainSamples } from '../src/game/terrain.ts';
+import { bridgeFrame, propNeedsDepth, terrainSamples } from '../src/game/terrain.ts';
 
 describe('painted terrain orientation', () => {
   it('selects bridge perspectives from geometry in either direction', () => {
@@ -43,5 +43,16 @@ describe('painted cliff placement', () => {
       const b = points[i]!;
       expect(Math.hypot(b[0] - a[0], b[1] - a[1])).toBeLessThanOrEqual(3.01);
     }
+  });
+});
+
+describe('scenery depth', () => {
+  it('sorts tall occluders while leaving ground decoration static', () => {
+    expect(propNeedsDepth('tree')).toBe(true);
+    expect(propNeedsDepth('bamboo_large')).toBe(true);
+    expect(propNeedsDepth('lantern_post')).toBe(true);
+    expect(propNeedsDepth('grass')).toBe(false);
+    expect(propNeedsDepth('flowers')).toBe(false);
+    expect(propNeedsDepth('rock_large')).toBe(false);
   });
 });

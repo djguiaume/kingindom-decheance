@@ -33,7 +33,13 @@ import {
 import { Art, ART_PX_PER_M, CATAPULT_ARM, HAND, loadArt, weaponAngle } from './art.ts';
 import { Painter } from './painter.ts';
 import { bobHeight, shadow, spriteFor } from './sprites.ts';
-import { addPaintedTerrain, drawTerrain, paintedPropFrame, terrainSamples } from './terrain.ts';
+import {
+  addPaintedTerrain,
+  drawTerrain,
+  paintedPropFrame,
+  propNeedsDepth,
+  terrainSamples,
+} from './terrain.ts';
 import { emptyPlotIds, gateIsOpen, projectileFrame } from './presentation.ts';
 import { gatePlacement, gateView, GATE_RIGS, groundOrigin } from './groundRigs.ts';
 
@@ -303,6 +309,18 @@ export class PlayScene extends Phaser.Scene {
       cliffs: !this.paintedCliffs,
       paintedProps: this.paintedPropKinds,
     });
+    // Ground decoration never occludes an actor. Keep it static; only tall scenery joins the
+    // per-frame ground-y sort below.
+    for (const prop of ctx.map.terrain.props) {
+      if (!this.paintedPropKinds.has(prop.kind) || propNeedsDepth(prop.kind)) continue;
+      const frame = paintedPropFrame(this.art, prop.kind)!;
+      const p = this.px({ x: prop.pos[0], y: prop.pos[1] });
+      this.add
+        .image(p.x, p.y, this.art.atlas(frame)!, frame)
+        .setDepth(1)
+        .setScale(ART_SCALE * prop.scale)
+        .setFlipX(Boolean(prop.flip));
+    }
     for (const lane of ctx.lanes.values()) {
       const s = this.px(lane.points[0]!);
       g.fillStyle(lane.air ? colors.enemies.flyer : colors.enemies.swarm, 0.6);
@@ -386,7 +404,7 @@ export class PlayScene extends Phaser.Scene {
       }
     }
     for (const prop of ctx.map.terrain.props) {
-      if (this.paintedPropKinds.has(prop.kind)) {
+      if (this.paintedPropKinds.has(prop.kind) && propNeedsDepth(prop.kind)) {
         const frame = paintedPropFrame(this.art, prop.kind)!;
         const p = this.px({ x: prop.pos[0], y: prop.pos[1] });
         items.push({

@@ -96,6 +96,20 @@ export function paintedPropFrame(art: Art, kind: string): string | null {
   return art.still(kind);
 }
 
+/** Only tall scenery can occlude an actor and needs per-frame ground-y sorting. */
+export function propNeedsDepth(kind: string): boolean {
+  return [
+    'tree',
+    'pine',
+    'bamboo_large',
+    'bamboo_small',
+    'bamboo_single',
+    'shrub',
+    'lantern_post',
+    'panda_banner',
+  ].includes(kind);
+}
+
 function paintBands(
   scene: Phaser.Scene,
   key: string,
