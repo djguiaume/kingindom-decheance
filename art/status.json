@@ -2,7 +2,7 @@
   "modelId": "model_openai-gpt-image-2-5-flare",
   "referenceAssetId": "asset_RvvNgxiXxMS5HiHWN85YLtqS",
   "referenceSha256": "1ced3f125f8dd4584f33ed856a41dec5b679d0f7b65d0e95681f59689a4f65d8",
-  "spentCU": 3269,
+  "spentCU": 3281,
   "parts": {
     "archer": {
       "state": "validated",
@@ -192,21 +192,15 @@
       "updatedAt": "2026-10-14T20:27:53.648Z"
     },
     "bridge.diag": {
-      "state": "failed",
-      "attempts": 2,
+      "state": "validated",
+      "attempts": 3,
       "promptHash": "440c428a06f6",
-      "jobId": "job_9XR2pXFiMfMJCh7iAjW472XT",
-      "assetId": "asset_2PAMNkUQFpamxKuRFda4f8R4",
-      "costCU": 24,
-      "originalSha256": "9aaf921f3445aa2d4eb6ce5fab490764774c425f19bfeef8ce6c273c45490fcd",
-      "issues": [
-        {
-          "level": "error",
-          "code": "background",
-          "message": "Corners are not transparent (painted background or checkerboard)."
-        }
-      ],
-      "updatedAt": "2026-10-14T20:28:48.231Z"
+      "jobId": "job_ApeRQtzeSrt1FA7ihmzsBn92",
+      "assetId": "asset_Mc5Npwtmt1PHZ8KKiNQzq4kR",
+      "costCU": 36,
+      "originalSha256": "a7078df0395a76f30752ceb841d78724ed1061cda864e582f013386c498c6e9a",
+      "issues": [],
+      "updatedAt": "2026-10-15T02:33:28.620Z"
     },
     "bridge.side": {
       "state": "validated",
