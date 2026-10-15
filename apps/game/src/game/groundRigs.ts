@@ -98,6 +98,22 @@ export function gateView(across: { x: number; y: number }, squash: number) {
 }
 
 /**
+ * Projects a stone wall block's painted horizontal axis onto the actual wall line while keeping
+ * its upright axis vertical. Near an edge-on wall, a small depth component keeps the block from
+ * collapsing to a line. The wall is undirected, so reversing a future map lane is identical.
+ */
+export function wallPostMatrix(across: { x: number; y: number }, scale: number, squash: number) {
+  let x = across.x;
+  let y = across.y;
+  if (x < 0 || (Math.abs(x) < 1e-9 && y < 0)) {
+    x = -x;
+    y = -y;
+  }
+  const depth = 0.18 * Math.max(0, 1 - Math.abs(x));
+  return { a: (x + depth) * scale, b: y * squash * scale, c: 0, d: scale };
+}
+
+/**
  * Fit the painted hinge segment to the real gate passage, after projecting the wall to screen.
  * The same closed-frame calibration is used for both states. This replaces a raw pixel scale
  * with world geometry; reversing the wall's vector cannot move or flip the gate differently.

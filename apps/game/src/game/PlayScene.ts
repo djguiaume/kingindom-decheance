@@ -55,7 +55,7 @@ import { addCliffs, CLIFF_TEXTURE, type CliffSprite } from './cliffs.ts';
 import { bobHeight, shadow, spriteFor } from './sprites.ts';
 import { addPaintedTerrain, drawTerrain, paintedPropFrame, propNeedsDepth } from './terrain.ts';
 import { emptyPlotIds, gateIsOpen, projectileFrame, ruinFrame } from './presentation.ts';
-import { gatePlacement, gateView, GATE_RIGS, groundOrigin } from './groundRigs.ts';
+import { gatePlacement, gateView, GATE_RIGS, groundOrigin, wallPostMatrix } from './groundRigs.ts';
 
 const HIT_FLASH_MS = 160;
 const TICK_MS = 1000 / TICK_RATE;
@@ -698,10 +698,18 @@ export class PlayScene extends Phaser.Scene {
           const p = this.px(at(sign * (GATE_HALF_WIDTH + (span * (i + 0.5)) / count)));
           items.push({
             y: p.y,
-            draw: () =>
-              this.image(post, p.x, p.y, ART_SCALE)
-                .setAlpha(alpha)
-                .setTint(sceneryTint(this.night)),
+            draw: () => {
+              const image = stone
+                ? this.painter.projectedImage(
+                    this.art.atlas(post)!,
+                    post,
+                    p.x,
+                    p.y,
+                    wallPostMatrix(line.across, ART_SCALE, SQUASH),
+                  )
+                : this.image(post, p.x, p.y, ART_SCALE);
+              image.setAlpha(alpha).setTint(sceneryTint(this.night));
+            },
           });
         }
     }
