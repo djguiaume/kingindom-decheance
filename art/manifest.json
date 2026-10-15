@@ -4430,6 +4430,199 @@
           "master": "art/masters/buildings/123_ruin_crossbow_range.png"
         }
       ]
+    },
+    {
+      "num": 124,
+      "code": "124",
+      "id": "king_longbow_idle",
+      "name": "Longbow king: idle",
+      "group": "kings",
+      "kind": "character",
+      "contentId": "king",
+      "subject": "the panda Longbow King on foot: leaner and younger than the old king, small gold crown, deep blue hooded hunting cloak with gold trim over light leather armour, leather bracers, a quiver of gold-fletched arrows on his back, standing ready; hands in a grip pose without a weapon (the bow is a separate layer)",
+      "canvas": {
+        "w": 192,
+        "h": 192
+      },
+      "heightPx": 125,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "inferred": "Not on the sheet: the third selectable king (Stage A Longbow).",
+      "parts": [
+        {
+          "id": "king_longbow_idle",
+          "frame": 0,
+          "master": "art/masters/kings/124_king_longbow_idle.png"
+        },
+        {
+          "id": "king_longbow_idle.back",
+          "frame": 0,
+          "view": "back",
+          "master": "art/masters/kings/124_king_longbow_idle_back.png"
+        }
+      ]
+    },
+    {
+      "num": 125,
+      "code": "125",
+      "id": "king_longbow_walk",
+      "name": "Longbow king: walk",
+      "group": "kings",
+      "kind": "character",
+      "contentId": "king",
+      "subject": "the panda Longbow King on foot (same design as his idle pose: hooded blue cloak, quiver on the back), walking right, no weapon in hand",
+      "canvas": {
+        "w": 192,
+        "h": 192
+      },
+      "heightPx": 125,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [],
+      "inferred": "Not on the sheet: the third selectable king (Stage A Longbow).",
+      "parts": [
+        {
+          "id": "king_longbow_walk.f1",
+          "frame": 0,
+          "pose": "contact pose, left foot forward",
+          "master": "art/masters/kings/125_king_longbow_walk_f1.png"
+        },
+        {
+          "id": "king_longbow_walk.f2",
+          "frame": 1,
+          "pose": "passing pose, body slightly raised",
+          "master": "art/masters/kings/125_king_longbow_walk_f2.png"
+        },
+        {
+          "id": "king_longbow_walk.f3",
+          "frame": 2,
+          "pose": "contact pose, right foot forward",
+          "master": "art/masters/kings/125_king_longbow_walk_f3.png"
+        },
+        {
+          "id": "king_longbow_walk.f4",
+          "frame": 3,
+          "pose": "passing pose, body slightly raised, opposite arm swing",
+          "master": "art/masters/kings/125_king_longbow_walk_f4.png"
+        },
+        {
+          "id": "king_longbow_walk.back.f1",
+          "frame": 0,
+          "view": "back",
+          "pose": "contact pose, left foot forward",
+          "master": "art/masters/kings/125_king_longbow_walk_back_f1.png"
+        },
+        {
+          "id": "king_longbow_walk.back.f2",
+          "frame": 1,
+          "view": "back",
+          "pose": "passing pose, body slightly raised",
+          "master": "art/masters/kings/125_king_longbow_walk_back_f2.png"
+        },
+        {
+          "id": "king_longbow_walk.back.f3",
+          "frame": 2,
+          "view": "back",
+          "pose": "contact pose, right foot forward",
+          "master": "art/masters/kings/125_king_longbow_walk_back_f3.png"
+        },
+        {
+          "id": "king_longbow_walk.back.f4",
+          "frame": 3,
+          "view": "back",
+          "pose": "passing pose, body slightly raised, opposite arm swing",
+          "master": "art/masters/kings/125_king_longbow_walk_back_f4.png"
+        }
+      ]
+    },
+    {
+      "num": 126,
+      "code": "126",
+      "id": "king_longbow_volley",
+      "name": "Longbow king: volley",
+      "group": "kings",
+      "kind": "character",
+      "contentId": "king",
+      "subject": "the panda Longbow King (same design as his idle pose) shooting a volley to the right with his tall gold-tipped longbow held in his hands; no arrows in flight (effects are separate)",
+      "canvas": {
+        "w": 192,
+        "h": 192
+      },
+      "heightPx": 125,
+      "anchor": {
+        "x": 0.5,
+        "y": 0.9
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1024
+      },
+      "checks": [
+        "He holds the bow in both frames."
+      ],
+      "inferred": "Not on the sheet: the Longbow king’s ability pose (also his HUD ability icon).",
+      "parts": [
+        {
+          "id": "king_longbow_volley.f1",
+          "frame": 0,
+          "pose": "bow raised and fully drawn, aiming up and to the right, several arrows nocked",
+          "master": "art/masters/kings/126_king_longbow_volley_f1.png"
+        },
+        {
+          "id": "king_longbow_volley.f2",
+          "frame": 1,
+          "pose": "just released: bow arm forward, string snapped back, cloak flaring",
+          "master": "art/masters/kings/126_king_longbow_volley_f2.png"
+        }
+      ]
+    },
+    {
+      "num": 127,
+      "code": "127",
+      "id": "king_longbow_bow",
+      "name": "Longbow king bow (weapon layer)",
+      "group": "kings",
+      "kind": "weapon",
+      "contentId": "king",
+      "subject": "the Longbow King’s royal longbow: tall dark yew bow with gold tips and a blue grip wrap, string taut, drawn vertical",
+      "canvas": {
+        "w": 64,
+        "h": 192
+      },
+      "anchor": {
+        "x": 0.5,
+        "y": 0.5
+      },
+      "transparent": true,
+      "generate": {
+        "w": 1024,
+        "h": 1536
+      },
+      "checks": [],
+      "inferred": "Not on the sheet: the Longbow king’s weapon layer, held like the archer’s bow.",
+      "parts": [
+        {
+          "id": "king_longbow_bow",
+          "frame": 0,
+          "master": "art/masters/kings/127_king_longbow_bow.png"
+        }
+      ]
     }
   ]
 }
