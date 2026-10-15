@@ -111,7 +111,8 @@ export function runSetup(
     perks: readonly { id: string; unlock?: { level: number } }[];
   },
 ): RunSetup {
-  const keep = (ids: readonly string[] | undefined, list: readonly { id: string }[]) => [
+  type Entry = { id: string; unlock?: { level: number } };
+  const keep = (ids: readonly string[] | undefined, list: readonly Entry[]) => [
     ...new Set(
       (ids ?? []).filter((id) => {
         const entry = list.find((x) => x.id === id);
