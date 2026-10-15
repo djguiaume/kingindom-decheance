@@ -1018,7 +1018,10 @@ export class PlayScene extends Phaser.Scene {
     return true;
   }
 
-  /** A warm window light over a painted building, in its lower half where the windows are. */
+  /**
+   * A soft warm light at a painted building's doorway and lower windows. Small and faint: it must
+   * suggest a lit interior without washing out the building.
+   */
   private addWindowGlow(im: Phaser.GameObjects.Image, strength: number): void {
     const frame = this.art.still('window_glow');
     if (!frame) return;
@@ -1027,9 +1030,9 @@ export class PlayScene extends Phaser.Scene {
     this.glows.push({
       frame,
       x: b.centerX,
-      y: b.y + b.height * 0.62,
-      scale: (b.width * 0.75) / source,
-      alpha: 0.8 * strength,
+      y: b.y + b.height * 0.7,
+      scale: (b.width * 0.3) / source,
+      alpha: 0.4 * strength,
     });
   }
 
@@ -1044,8 +1047,8 @@ export class PlayScene extends Phaser.Scene {
       frame,
       x: b.x + b.width * lamp,
       y: b.y + b.height * 0.5,
-      scale: (SCALE * 1.2) / source,
-      alpha: 0.75 * strength,
+      scale: (SCALE * 0.7) / source,
+      alpha: 0.45 * strength,
     });
   }
 
