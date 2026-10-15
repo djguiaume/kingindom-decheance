@@ -22,8 +22,10 @@ export function attachKeyboard(hub: InputHub): () => void {
   const store = useHudStore();
   const down = new Set<string>();
   let holdTimer: number | undefined;
-  /** The hold in progress: when it started, how long it needs and what it does. */
+  /** The hold in progress: when its key went down, how long it needs and what it does. */
   let hold: { start: number; ms: number; action: () => void } | null = null;
+  /** When the last key went down (the event's own time, not when it was handled). */
+  let downAt = 0;
 
   const updateMove = () => {
     let x = 0;
@@ -41,25 +43,27 @@ export function attachKeyboard(hub: InputHub): () => void {
   const startHold = (id: string, ms: number, action: () => void) => {
     clearTimeout(holdTimer);
     store.keyHold = id;
-    hold = { start: performance.now(), ms, action };
+    hold = { start: downAt, ms, action };
     holdTimer = window.setTimeout(() => {
       store.keyHold = null;
       hold = null;
       action();
     }, ms);
   };
-  const cancelHold = (id: string) => {
+  const cancelHold = (id: string, upAt: number) => {
     if (store.keyHold !== id) return;
     clearTimeout(holdTimer);
     store.keyHold = null;
     // On a busy page the key can come up before the timer gets to run although it was held long
-    // enough (the browser handles input before timers): the hold still counts.
-    const done = hold && performance.now() - hold.start >= hold.ms ? hold.action : null;
+    // enough (the browser handles input before timers): the hold still counts. Event times, not
+    // handling times, so a quick tap handled late never counts as a hold.
+    const done = hold && upAt - hold.start >= hold.ms ? hold.action : null;
     hold = null;
     done?.();
   };
 
   const onDown = (e: KeyboardEvent) => {
+    downAt = e.timeStamp;
     if (e.repeat) {
       if (MOVE_KEYS[e.code] || ['Space', 'Tab'].includes(e.code)) e.preventDefault();
       return;
@@ -122,9 +126,9 @@ export function attachKeyboard(hub: InputHub): () => void {
       down.delete(e.code);
       updateMove();
     }
-    if (e.code === 'KeyE') cancelHold('buy-0');
-    if (e.code === 'KeyR') cancelHold('buy-1');
-    if (e.code === 'Enter') cancelHold('night');
+    if (e.code === 'KeyE') cancelHold('buy-0', e.timeStamp);
+    if (e.code === 'KeyR') cancelHold('buy-1', e.timeStamp);
+    if (e.code === 'Enter') cancelHold('night', e.timeStamp);
   };
 
   // Losing focus must not leave the king walking with a key "stuck" down.
