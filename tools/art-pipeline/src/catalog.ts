@@ -864,7 +864,7 @@ export const CATALOG: CatalogEntry[] = [
     kind: 'prop',
     subject:
       'the right-hand end of the same straight cliff edge: on its left it continues the cliff face at full height, cut straight to join a section; towards the right the rock face gets lower and lower until the grass top meets the ground level, a gentle grassy ramp; same front-facing camera, running left to right, never diagonal; only the front face shows, no rock at the back, not a floating island or a round mound',
-    canvas: [256, 192],
+    canvas: [384, 192],
     heightPx: 90,
     checks: ['Matches cliff_section; mirrored by the game for the left end.'],
     inferred: 'See 106.',
