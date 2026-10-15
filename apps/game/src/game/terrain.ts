@@ -110,26 +110,23 @@ export function propNeedsDepth(kind: string): boolean {
   ].includes(kind);
 }
 
-function paintBands(
+type Band = { points: readonly { x: number; y: number }[]; width: number };
+
+/** A repeating fill of a loaded texture, or null when it is missing or not drawable. */
+function pattern(
   scene: Phaser.Scene,
-  key: string,
+  ctx: CanvasRenderingContext2D,
   textureKey: string,
-  size: readonly [number, number],
-  bands: readonly { points: readonly { x: number; y: number }[]; width: number }[],
-  depth: number,
-): boolean {
-  if (!scene.textures.exists(textureKey) || bands.length === 0) return false;
-  const width = Math.ceil(size[0] * SCALE);
-  const height = Math.ceil(size[1] * SCALE * SQUASH);
-  if (scene.textures.exists(key)) scene.textures.remove(key);
-  const texture = scene.textures.createCanvas(key, width, height);
-  if (!texture) return false;
-  const ctx = texture.context;
+): CanvasPattern | null {
+  if (!scene.textures.exists(textureKey)) return null;
   const source = scene.textures.get(textureKey).getSourceImage();
-  if (!(source instanceof HTMLImageElement || source instanceof HTMLCanvasElement)) return false;
-  const pattern = ctx.createPattern(source, 'repeat');
-  if (!pattern) return false;
-  ctx.strokeStyle = pattern;
+  if (!(source instanceof HTMLImageElement || source instanceof HTMLCanvasElement)) return null;
+  return ctx.createPattern(source, 'repeat');
+}
+
+/** Strokes each band with `fill`, round-capped, in screen pixels. */
+function strokeBands(ctx: CanvasRenderingContext2D, fill: CanvasPattern, bands: readonly Band[]) {
+  ctx.strokeStyle = fill;
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
   for (const strip of bands) {
@@ -144,15 +141,15 @@ function paintBands(
     }
     ctx.stroke();
   }
-  texture.refresh();
-  scene.add.image(0, 0, key).setOrigin(0).setDepth(depth);
-  return true;
 }
 
 /**
  * Adds the reviewed repeatable ground/path/water textures and bridge art under gameplay. The
  * geometry still comes entirely from the validated map, so new lane angles and map sizes work
  * without a hand-painted background or route-specific coordinates.
+ *
+ * Grass, paths, the stone bank and water are baked into one map-sized texture: drawn as separate
+ * full-map layers they cost a full-screen fill each, every frame, which slow GPUs feel.
  */
 export function addPaintedTerrain(
   scene: Phaser.Scene,
@@ -160,32 +157,55 @@ export function addPaintedTerrain(
   lanes: Iterable<GroundLane>,
   art: Art,
 ): PaintedTerrain {
-  const [mw, mh] = map.size;
-  const width = mw * SCALE;
-  const height = mh * SCALE * SQUASH;
-  const ground = scene.textures.exists('art:tile_grass');
-  if (ground)
-    scene.add.tileSprite(width / 2, height / 2, width, height, 'art:tile_grass').setDepth(-4);
+  const none = { ground: false, paths: false, water: false };
+  const width = Math.ceil(map.size[0] * SCALE);
+  const height = Math.ceil(map.size[1] * SCALE * SQUASH);
+  const key = 'painted:ground';
+  if (scene.textures.exists(key)) scene.textures.remove(key);
+  const texture = scene.textures.createCanvas(key, width, height);
+  const painted = { ...none };
+  if (texture) {
+    const ctx = texture.context;
+    const grass = pattern(scene, ctx, 'art:tile_grass');
+    if (grass) {
+      ctx.fillStyle = grass;
+      ctx.fillRect(0, 0, width, height);
+      painted.ground = true;
+    }
 
-  const pathBands = [...lanes]
-    .filter((lane) => !lane.air)
-    .map((lane) => ({ points: lane.points, width: 1.4 }));
-  const paths = paintBands(scene, 'painted:paths', 'art:tile_path', map.size, pathBands, -3);
+    const pathBands = [...lanes]
+      .filter((lane) => !lane.air)
+      .map((lane) => ({ points: lane.points, width: 1.4 }));
+    const path = pattern(scene, ctx, 'art:tile_path');
+    if (path && pathBands.length > 0) {
+      strokeBands(ctx, path, pathBands);
+      painted.paths = true;
+    }
 
-  const waters = map.terrain.water.map((water) => ({
-    points: water.points.map(([x, y]) => ({ x, y })),
-    width: water.width,
-  }));
-  // A narrow stone bank keeps the collision boundary legible before the water is laid over it.
-  paintBands(
-    scene,
-    'painted:water-bank',
-    'art:tile_stone',
-    map.size,
-    waters.map((water) => ({ ...water, width: water.width + 0.6 })),
-    -2,
-  );
-  const water = paintBands(scene, 'painted:water', 'art:tile_water', map.size, waters, -1.9);
+    const waters = map.terrain.water.map((water) => ({
+      points: water.points.map(([x, y]) => ({ x, y })),
+      width: water.width,
+    }));
+    const stone = pattern(scene, ctx, 'art:tile_stone');
+    const water = pattern(scene, ctx, 'art:tile_water');
+    if (water && waters.length > 0) {
+      // A narrow stone bank keeps the collision boundary legible before the water is laid over it.
+      if (stone)
+        strokeBands(
+          ctx,
+          stone,
+          waters.map((w) => ({ ...w, width: w.width + 0.6 })),
+        );
+      strokeBands(ctx, water, waters);
+      painted.water = true;
+    }
+
+    if (painted.ground || painted.paths || painted.water) {
+      texture.refresh();
+      scene.add.image(0, 0, key).setOrigin(0).setDepth(-4);
+    } else scene.textures.remove(key);
+  }
+  const { ground, paths, water } = painted;
 
   const bridges = map.terrain.bridges.every((bridge) =>
     art.has(bridgeFrame(bridge.from, bridge.to)),
