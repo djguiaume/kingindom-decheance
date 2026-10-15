@@ -143,6 +143,11 @@ export function cuesFor(
     }
   };
 
+  // A stomp also reports each one it hits as a hit: those are the stomp, not axe blows.
+  const stompers = new Set(
+    events.flatMap((e) => (e.type === 'stomp' ? [refKey({ kind: 'enemy', id: e.enemy })] : [])),
+  );
+
   for (const e of events) {
     switch (e.type) {
       case 'built':
@@ -175,6 +180,10 @@ export function cuesFor(
         break;
       }
       case 'hit': {
+        if (stompers.has(refKey(e.attacker))) {
+          if (e.target.kind === 'king') add('kingHurt');
+          break;
+        }
         let weapon = weaponOf(world, e.attacker);
         // A shooter killed while its shot flew no longer answers: it still landed an arrow.
         if (e.projectile && !RELEASE[weapon]) weapon = 'bow';

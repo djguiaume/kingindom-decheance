@@ -135,6 +135,18 @@ describe('audio cues', () => {
     expect(shots.take(13)).toBeUndefined();
   });
 
+  it('hears a stomp as a stomp, not as axe blows on everyone it hits', () => {
+    const ids = cuesFor(
+      [
+        { type: 'stomp', enemy: 9, hits: 2 },
+        hit({ kind: 'enemy', id: 9 }, { kind: 'unit', id: 4 }),
+        hit({ kind: 'enemy', id: 9 }, { kind: 'king' }),
+      ],
+      world({ 9: 'warlord' }),
+    ).map((c) => c.id);
+    expect(ids).toEqual(['stomp', 'kingHurt']);
+  });
+
   it('plays one attack that strikes several targets once', () => {
     const cues = cuesFor(
       [
